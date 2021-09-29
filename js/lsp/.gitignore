@@ -1,0 +1,8 @@
+dist
+node_modules
+target
+**/.local*
+*.tgz
+yarn-error.log
+index.js
+index.d.ts

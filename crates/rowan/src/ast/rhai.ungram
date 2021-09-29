@@ -1,0 +1,168 @@
+Name =
+  'ident' | 'this'
+
+Lit =
+  'lit_int'
+| 'lit_float'
+| 'lit_str'
+| 'lit_bool'
+| 'lit_char'
+
+Path =
+  (qualifier:Path '::')? segment:PathSegment
+
+PathSegment =
+  '::'? Name
+
+File =
+  'shebang'?
+  Stmt*
+
+Item =
+  Doc?
+  Expr
+
+Doc =
+  ('comment_line_doc' | 'comment_block_doc')*
+
+Stmt =
+  ';'
+| Item ';'?
+
+Expr =
+  ExprIdent
+| ExprLit
+| ExprLet
+| ExprConst
+| ExprBlock
+| ExprUni
+| ExprBin
+| ExprParen
+| ExprArray
+| ExprIndex
+| ExprObject
+| ExprCall
+| ExprMethodCall
+| ExprAccess
+| ExprClosure
+| ExprIf
+| ExprLoop
+| ExprFor
+| ExprWhile
+| ExprBreak
+| ExprContinue
+| ExprSwitch
+| ExprReturn
+| ExprFn
+| ExprPath
+| ExprImport
+
+// Standalone identifiers are also valid expressions.
+ExprIdent =
+  'ident'
+
+ExprLit =
+  Lit
+
+ExprLet =
+  'let' 'ident' '=' Expr
+
+ExprConst =
+  'const' 'ident' '=' Expr
+
+ExprBlock =
+  '{'
+    statements:Stmt*
+  '}'
+
+ExprUni =
+  op:('+' | '-' | '!') Expr
+
+ExprBin =
+  lhs:Expr
+  op:(
+    '||' | '&&'
+  | '==' | '!=' | '<=' | '>=' | '<' | '>'
+  | '+' | '*' | '**' | '-' | '/' | '%' | '<<' | '>>' | '^' | '|' | '&'
+  | '=' | '+=' | '/=' | '*=' | '**=' | '%=' | '>>=' | '<<=' | '-=' | '|=' | '&=' | '^='
+  )
+  rhs:Expr
+
+ExprParen =
+  '(' Expr ')'
+
+ExprArray =
+  '['  (Expr (',' Expr)* ','?)? ']'
+
+ExprIndex =
+  base:Expr '[' index:Expr ']'
+
+ExprObject =
+  '#{' fields:(ObjectField (',' ObjectField)* ','?)? '}'
+
+ObjectField =
+  'ident' ':' Expr
+
+ExprCall =
+  Expr ArgList
+
+ArgList =
+  '(' args:(Expr (',' Expr)* ','?)? ')'
+
+ExprMethodCall =
+  receiver:Expr '.' Name ArgList
+
+ExprAccess =
+  Expr '.' 'ident'
+
+ExprClosure =
+  ParamList body:Expr
+
+ParamList =
+  '(' (Param (',' Param)* ','?)? ')'
+| '|' (Param (',' Param)* ','?)? '|'
+
+Param =
+  'ident'
+
+ExprIf =
+  'if' Expr then_branch:ExprBlock
+  ('else' else_branch:(ExprIf | ExprBlock))?
+
+ExprLoop =
+  'loop' loop_body:ExprBlock
+
+ExprFor =
+  'for' Expr 'in' iterable:Expr
+  loop_body:ExprBlock
+
+ExprWhile =
+  'while' Expr
+  loop_body:ExprBlock
+
+ExprBreak =
+  'break' Expr?
+
+ExprContinue =
+  'continue'
+
+ExprSwitch =
+  'switch' Expr
+
+SwitchArmList =
+  '{' arms:SwitchArm* '}'
+
+SwitchArm =
+  pattern:(Expr | '_') '=>' Expr ','?
+
+ExprReturn =
+  'return' Expr?
+
+ExprFn =
+  'fn' 'ident' ParamList body:ExprBlock
+
+ExprPath =
+  Path
+
+ExprImport =
+  'import' 'lit_str' ('as' 'ident')?

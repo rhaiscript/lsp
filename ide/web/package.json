@@ -1,0 +1,38 @@
+{
+  "name": "example-project",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint --ext .ts,.tsx --ignore-path .gitignore .",
+    "format": "prettier -w .",
+    "build": "yarn typecheck && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.11.1",
+    "@rhai/lsp": "../../js/lsp",
+    "monaco-editor": "^0.28.1",
+    "pinia": "^2.0.0-rc.9",
+    "quasar": "^2.1.0",
+    "vue": "^3.2.19",
+    "vue-i18n": "^9.1.6",
+    "vue-router": "4"
+  },
+  "devDependencies": {
+    "@rollup/plugin-yaml": "^3.1.0",
+    "@types/node": "^16.10.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "@vitejs/plugin-vue": "^1.4.0",
+    "@vue/eslint-config-typescript": "^7.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^7.18.0",
+    "prettier": "^2.4.1",
+    "sass": "^1.42.1",
+    "typescript": "^4.4.3",
+    "vite": "^2.5.10",
+    "vue-tsc": "^0.2.0"
+  }
+}

@@ -1,0 +1,11 @@
+error: index setter requires exactly 3 parameters
+  --> $DIR/rhai_fn_setter_index_signature.rs:13:20
+   |
+13 |     pub fn test_fn(input: Point) -> bool {
+   |                    ^^^^^^^^^^^^
+
+error[E0433]: failed to resolve: use of undeclared crate or module `test_module`
+  --> $DIR/rhai_fn_setter_index_signature.rs:23:8
+   |
+23 |     if test_module::test_fn(n) {
+   |        ^^^^^^^^^^^ use of undeclared crate or module `test_module`

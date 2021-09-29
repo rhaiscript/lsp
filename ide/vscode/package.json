@@ -1,0 +1,97 @@
+{
+  "name": "rhai",
+  "displayName": "Rhai Language Support",
+  "description": "Rhai Language Support",
+  "version": "0.0.0",
+  "publisher": "tamasfe",
+  "author": {
+    "name": "tamasfe"
+  },
+  "repository": {
+    "url": "https://example.com"
+  },
+  "preview": true,
+  "galleryBanner": {
+    "color": "#731c12",
+    "theme": "dark"
+  },
+  "license": "SEE LICENSE IN LICENSE.md",
+  "engines": {
+    "vscode": "^1.44.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Formatters",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:rhai"
+  ],
+  "contributes": {
+		"languages": [
+			{
+				"id": "rhai",
+				"aliases": [
+					"Rhai"
+				],
+				"extensions": [
+					".rhai"
+				],
+				"filenames": [],
+				"filenamePatterns": [],
+				"mimetypes": [],
+				"configuration": "./syntax/rhai.configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "rhai",
+				"scopeName": "source.rhai",
+				"path": "./syntax/rhai.tmLanguage.json"
+			},
+			{
+				"scopeName": "markdown.rhai.codeblock",
+				"path": "./syntax/rhai.markdown.json",
+				"injectTo": [
+					"text.html.markdown"
+				],
+				"embeddedLanguages": {
+					"meta.embedded.block.rhai": "rhai"
+				}
+			}
+		]
+  },
+  "keywords": [
+    "rhai",
+    "syntax",
+    "rust",
+    "formatter"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "vscode:prepublish": "yarn --ignore-engines build",
+    "build:ext": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "build:server": "esbuild ./src/server.ts --bundle --outfile=dist/server.js --external:env --format=cjs --platform=node --minify",
+    "build": "yarn build:ext && yarn build:server"
+  },
+  "dependencies": {
+    "@rhai/lsp": "../../js/lsp",
+    "deep-equal": "^2.0.4",
+    "encoding": "^0.1.13",
+    "node-fetch": "^2.6.1",
+    "vscode-languageclient": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/deep-equal": "^1.0.1",
+    "@types/node": "^12.12.0",
+    "@types/node-fetch": "^2.5.7",
+    "@types/vscode": "^1.44.0",
+    "esbuild": "^0.13.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^4.0.5"
+  }
+}

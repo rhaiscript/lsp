@@ -1,0 +1,3 @@
+# Rhai LSP
+
+WIP

@@ -1,0 +1,34 @@
+version: 3
+
+tasks:
+  lsp:js:build:
+    desc: Build the LSP
+    dir: js/lsp
+    cmds:
+      - yarn build
+
+  vscode:dev:
+    desc: Build everything and install the extension
+    cmds:
+      - task: lsp:js:build
+      - task: vscode:clean
+      - task: vscode:package
+      - task: vscode:install
+
+  vscode:clean:
+    desc: Clean VS Code extension build artifacts and run Yarn
+    dir: ide/vscode
+    cmds:
+      - rm -rf node_modules
+      - rm -rf dist
+      - yarn
+  vscode:package:
+    desc: Package the VS Code extension
+    dir: ide/vscode
+    cmds:
+      - vsce package
+  vscode:install:
+    desc: Install the VS Code extension
+    dir: ide/vscode
+    cmds:
+      - code --install-extension rhai-*.vsix --force

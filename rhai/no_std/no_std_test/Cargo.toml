@@ -1,0 +1,38 @@
+cargo-features = ["named-profiles"]
+
+[workspace]
+
+[package]
+name = "no_std_test"
+version = "0.1.0"
+edition = "2018"
+authors = ["Stephen Chung"]
+description = "no-std test application"
+homepage = "https://github.com/rhaiscript/rhai/tree/no_std/no_std_test"
+repository = "https://github.com/rhaiscript/rhai"
+
+[dependencies]
+rhai = { path = "../../", features = [ "no_std" ], default_features = false }
+wee_alloc = { version = "0.4.5", default_features = false }
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+opt-level = "z"             # optimize for size
+debug = false
+rpath = false
+debug-assertions = false
+codegen-units = 1
+panic = "abort"
+
+[profile.unix]
+inherits = "release"
+lto = true
+
+[profile.windows]
+inherits = "release"
+
+[profile.macos]
+inherits = "release"
+lto = "fat"
