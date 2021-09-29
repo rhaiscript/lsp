@@ -59,7 +59,7 @@ Current parser results:
 
 ![bench](images/bench.png)
 
-We can only go up from here.
+We can only go up from here. (although it is 3 times faster than a similar LALR generated parser)
 
 ## Profiling
 
