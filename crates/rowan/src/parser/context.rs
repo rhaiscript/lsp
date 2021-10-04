@@ -1,7 +1,7 @@
 //! The parser context is a separate module to limit
 //! the API surface for the parser functions.
 #![allow(dead_code)]
-use rowan::{GreenNodeBuilder, TextRange, TextSize};
+use rowan::{Checkpoint, GreenNodeBuilder, TextRange, TextSize};
 
 use crate::syntax::{
     Lexer,
@@ -10,14 +10,15 @@ use crate::syntax::{
 
 use super::{Parse, ParseError, ParseErrorKind};
 
-pub(crate) struct Context<'src> {
+#[derive(Debug)]
+pub struct Context<'src> {
     lexer: Lexer<'src>,
     current_token: Option<SyntaxKind>,
     last_token: Option<SyntaxKind>,
     green: GreenNodeBuilder<'static>,
     errors: Vec<ParseError>,
 
-    /// Tracks statements being separated by ";".
+    // Tracks statements being separated by ";".
     statement_closed: bool,
 }
 
@@ -69,6 +70,14 @@ impl<'src> Context<'src> {
         self.current_token = None;
     }
 
+    pub(crate) fn insert_token(&mut self, kind: SyntaxKind, s: impl AsRef<str>) {
+        self.green.token(kind.into(), s.as_ref().into())
+    }
+
+    pub(crate) fn discard(&mut self) {
+        self.current_token = None;
+    }
+
     pub(crate) fn eat_as(&mut self, kind: SyntaxKind) {
         if self.current_token.is_some() {
             self.green.token(kind.into(), self.lexer.slice());
@@ -88,6 +97,7 @@ impl<'src> Context<'src> {
     }
 
     pub(crate) fn add_error(&mut self, error: ParseErrorKind) {
+        tracing::trace!(%error, "syntax error");
         let span = self.lexer.span();
         self.errors.push(ParseError::new(
             TextRange::new(
@@ -104,6 +114,14 @@ impl<'src> Context<'src> {
 
     pub(crate) fn finish_node(&mut self) {
         self.green.finish_node();
+    }
+
+    pub(crate) fn checkpoint(&mut self) -> Checkpoint {
+        self.green.checkpoint()
+    }
+
+    pub(crate) fn start_node_at(&mut self, checkpoint: Checkpoint, kind: SyntaxKind) {
+        self.green.start_node_at(checkpoint, kind.into())
     }
 
     pub(crate) fn finish(self) -> Parse {

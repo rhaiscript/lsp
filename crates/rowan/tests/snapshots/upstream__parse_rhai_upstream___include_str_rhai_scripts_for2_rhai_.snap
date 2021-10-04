@@ -1,0 +1,245 @@
+---
+source: crates/rowan/tests/upstream.rs
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+
+---
+FILE@0..360
+  STMT@0..22
+    ITEM@0..21
+      EXPR@0..21
+        EXPR_CONST@0..21
+          KW_CONST@0..5 "const"
+          WHITESPACE@5..6 " "
+          IDENT@6..9 "MAX"
+          WHITESPACE@9..10 " "
+          OP_ASSIGN@10..11 "="
+          EXPR@11..21
+            WHITESPACE@11..12 " "
+            EXPR_LIT@12..21
+              LIT@12..21
+                LIT_INT@12..21 "1_000_000"
+    PUNCT_SEMI@21..22 ";"
+  WHITESPACE@22..24 "\n\n"
+  STMT@24..73
+    ITEM@24..72
+      EXPR@24..72
+        EXPR_CALL@24..72
+          EXPR@24..29
+            EXPR_IDENT@24..29
+              IDENT@24..29 "print"
+          ARG_LIST@29..72
+            PUNCT_PAREN_START@29..30 "("
+            EXPR@30..71
+              EXPR_LIT@30..71
+                LIT@30..71
+                  LIT_STR@30..71 "`Iterating an array w ..."
+            PUNCT_PAREN_END@71..72 ")"
+    PUNCT_SEMI@72..73 ";"
+  WHITESPACE@73..75 "\n\n"
+  STMT@75..97
+    ITEM@75..96
+      EXPR@75..96
+        EXPR_CALL@75..96
+          EXPR@75..80
+            EXPR_IDENT@75..80
+              IDENT@75..80 "print"
+          ARG_LIST@80..96
+            PUNCT_PAREN_START@80..81 "("
+            EXPR@81..95
+              EXPR_LIT@81..95
+                LIT@81..95
+                  LIT_STR@81..95 "\"Ready... Go!\""
+            PUNCT_PAREN_END@95..96 ")"
+    PUNCT_SEMI@96..97 ";"
+  WHITESPACE@97..99 "\n\n"
+  STMT@99..121
+    ITEM@99..120
+      EXPR@99..120
+        EXPR_LET@99..120
+          KW_LET@99..102 "let"
+          WHITESPACE@102..103 " "
+          IDENT@103..106 "now"
+          WHITESPACE@106..107 " "
+          OP_ASSIGN@107..108 "="
+          EXPR@108..120
+            EXPR_CALL@108..120
+              EXPR@108..118
+                WHITESPACE@108..109 " "
+                EXPR_IDENT@109..118
+                  IDENT@109..118 "timestamp"
+              ARG_LIST@118..120
+                PUNCT_PAREN_START@118..119 "("
+                PUNCT_PAREN_END@119..120 ")"
+    PUNCT_SEMI@120..121 ";"
+  WHITESPACE@121..123 "\n\n"
+  STMT@123..137
+    ITEM@123..136
+      EXPR@123..136
+        EXPR_LET@123..136
+          KW_LET@123..126 "let"
+          WHITESPACE@126..127 " "
+          IDENT@127..131 "list"
+          WHITESPACE@131..132 " "
+          OP_ASSIGN@132..133 "="
+          EXPR@133..136
+            WHITESPACE@133..134 " "
+            EXPR_ARRAY@134..136
+              PUNCT_BRACKET_START@134..135 "["
+              PUNCT_BRACKET_END@135..136 "]"
+    PUNCT_SEMI@136..137 ";"
+  WHITESPACE@137..139 "\n\n"
+  STMT@139..185
+    ITEM@139..183
+      EXPR@139..183
+        EXPR_FOR@139..183
+          KW_FOR@139..142 "for"
+          PAT@142..144
+            WHITESPACE@142..143 " "
+            PAT_IDENT@143..144
+              IDENT@143..144 "i"
+          WHITESPACE@144..145 " "
+          KW_IN@145..147 "in"
+          EXPR@147..162
+            EXPR_CALL@147..161
+              EXPR@147..153
+                WHITESPACE@147..148 " "
+                EXPR_IDENT@148..153
+                  IDENT@148..153 "range"
+              ARG_LIST@153..161
+                PUNCT_PAREN_START@153..154 "("
+                EXPR@154..155
+                  EXPR_LIT@154..155
+                    LIT@154..155
+                      LIT_INT@154..155 "0"
+                PUNCT_COMMA@155..156 ","
+                WHITESPACE@156..157 " "
+                EXPR@157..160
+                  EXPR_IDENT@157..160
+                    IDENT@157..160 "MAX"
+                PUNCT_PAREN_END@160..161 ")"
+            WHITESPACE@161..162 " "
+          EXPR_BLOCK@162..183
+            PUNCT_BRACE_START@162..163 "{"
+            WHITESPACE@163..168 "\n    "
+            STMT@168..181
+              ITEM@168..180
+                EXPR@168..180
+                  EXPR_CALL@168..180
+                    EXPR@168..177
+                      EXPR_BINARY@168..177
+                        EXPR_IDENT@168..172
+                          IDENT@168..172 "list"
+                        PUNCT_DOT@172..173 "."
+                        EXPR@173..177
+                          EXPR_IDENT@173..177
+                            IDENT@173..177 "push"
+                    ARG_LIST@177..180
+                      PUNCT_PAREN_START@177..178 "("
+                      EXPR@178..179
+                        EXPR_IDENT@178..179
+                          IDENT@178..179 "i"
+                      PUNCT_PAREN_END@179..180 ")"
+              PUNCT_SEMI@180..181 ";"
+            WHITESPACE@181..182 "\n"
+            PUNCT_BRACE_END@182..183 "}"
+    WHITESPACE@183..185 "\n\n"
+  STMT@185..227
+    ITEM@185..226
+      EXPR@185..226
+        EXPR_CALL@185..226
+          EXPR@185..190
+            EXPR_IDENT@185..190
+              IDENT@185..190 "print"
+          ARG_LIST@190..226
+            PUNCT_PAREN_START@190..191 "("
+            EXPR@191..225
+              EXPR_LIT@191..225
+                LIT@191..225
+                  LIT_STR@191..225 "`Time = ${now.elapsed ..."
+            PUNCT_PAREN_END@225..226 ")"
+    PUNCT_SEMI@226..227 ";"
+  WHITESPACE@227..229 "\n\n"
+  STMT@229..241
+    ITEM@229..240
+      EXPR@229..240
+        EXPR_LET@229..240
+          KW_LET@229..232 "let"
+          WHITESPACE@232..233 " "
+          IDENT@233..236 "sum"
+          WHITESPACE@236..237 " "
+          OP_ASSIGN@237..238 "="
+          EXPR@238..240
+            WHITESPACE@238..239 " "
+            EXPR_LIT@239..240
+              LIT@239..240
+                LIT_INT@239..240 "0"
+    PUNCT_SEMI@240..241 ";"
+  WHITESPACE@241..243 "\n\n"
+  STMT@243..276
+    ITEM@243..274
+      EXPR@243..274
+        EXPR_FOR@243..274
+          KW_FOR@243..246 "for"
+          PAT@246..248
+            WHITESPACE@246..247 " "
+            PAT_IDENT@247..248
+              IDENT@247..248 "i"
+          WHITESPACE@248..249 " "
+          KW_IN@249..251 "in"
+          EXPR@251..257
+            WHITESPACE@251..252 " "
+            EXPR_IDENT@252..257
+              IDENT@252..256 "list"
+              WHITESPACE@256..257 " "
+          EXPR_BLOCK@257..274
+            PUNCT_BRACE_START@257..258 "{"
+            WHITESPACE@258..263 "\n    "
+            STMT@263..272
+              ITEM@263..271
+                EXPR@263..271
+                  EXPR_BINARY@263..271
+                    EXPR_IDENT@263..267
+                      IDENT@263..266 "sum"
+                      WHITESPACE@266..267 " "
+                    OP_ADD_ASSIGN@267..269 "+="
+                    EXPR@269..271
+                      WHITESPACE@269..270 " "
+                      EXPR_IDENT@270..271
+                        IDENT@270..271 "i"
+              PUNCT_SEMI@271..272 ";"
+            WHITESPACE@272..273 "\n"
+            PUNCT_BRACE_END@273..274 "}"
+    WHITESPACE@274..276 "\n\n"
+  STMT@276..298
+    ITEM@276..297
+      EXPR@276..297
+        EXPR_CALL@276..297
+          EXPR@276..281
+            EXPR_IDENT@276..281
+              IDENT@276..281 "print"
+          ARG_LIST@281..297
+            PUNCT_PAREN_START@281..282 "("
+            EXPR@282..296
+              EXPR_LIT@282..296
+                LIT@282..296
+                  LIT_STR@282..296 "`Sum = ${sum}`"
+            PUNCT_PAREN_END@296..297 ")"
+    PUNCT_SEMI@297..298 ";"
+  WHITESPACE@298..299 "\n"
+  STMT@299..359
+    ITEM@299..358
+      EXPR@299..358
+        EXPR_CALL@299..358
+          EXPR@299..304
+            EXPR_IDENT@299..304
+              IDENT@299..304 "print"
+          ARG_LIST@304..358
+            PUNCT_PAREN_START@304..305 "("
+            EXPR@305..357
+              EXPR_LIT@305..357
+                LIT@305..357
+                  LIT_STR@305..357 "`Finished. Total run  ..."
+            PUNCT_PAREN_END@357..358 ")"
+    PUNCT_SEMI@358..359 ";"
+  WHITESPACE@359..360 "\n"
+

@@ -1,0 +1,143 @@
+---
+source: crates/rowan/tests/upstream.rs
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+
+---
+FILE@0..404
+  COMMENT_LINE@0..53 "// This script define ..."
+  WHITESPACE@53..55 "\n\n"
+  STMT@55..65
+    ITEM@55..64
+      EXPR@55..64
+        EXPR_LET@55..64
+          KW_LET@55..58 "let"
+          WHITESPACE@58..59 " "
+          IDENT@59..60 "a"
+          WHITESPACE@60..61 " "
+          OP_ASSIGN@61..62 "="
+          EXPR@62..64
+            WHITESPACE@62..63 " "
+            EXPR_LIT@63..64
+              LIT@63..64
+                LIT_INT@63..64 "3"
+    PUNCT_SEMI@64..65 ";"
+  WHITESPACE@65..67 "\n\n"
+  STMT@67..249
+    ITEM@67..247
+      EXPR@67..247
+        EXPR_FN@67..247
+          KW_FN@67..69 "fn"
+          WHITESPACE@69..70 " "
+          IDENT@70..75 "addme"
+          PARAM_LIST@75..81
+            PUNCT_PAREN_START@75..76 "("
+            PARAM@76..77
+              IDENT@76..77 "a"
+            PUNCT_COMMA@77..78 ","
+            WHITESPACE@78..79 " "
+            PARAM@79..80
+              IDENT@79..80 "b"
+            PUNCT_PAREN_END@80..81 ")"
+          EXPR_BLOCK@81..247
+            WHITESPACE@81..82 " "
+            PUNCT_BRACE_START@82..83 "{"
+            WHITESPACE@83..88 "\n    "
+            STMT@88..95
+              ITEM@88..94
+                EXPR@88..94
+                  EXPR_BINARY@88..94
+                    EXPR_IDENT@88..90
+                      IDENT@88..89 "a"
+                      WHITESPACE@89..90 " "
+                    OP_ASSIGN@90..91 "="
+                    EXPR@91..94
+                      WHITESPACE@91..92 " "
+                      EXPR_LIT@92..94
+                        LIT@92..94
+                          LIT_INT@92..94 "42"
+              PUNCT_SEMI@94..95 ";"
+            WHITESPACE@95..108 "             "
+            COMMENT_LINE@108..145 "// notice that 'a' is ..."
+            WHITESPACE@145..150 "\n    "
+            STMT@150..156
+              ITEM@150..155
+                EXPR@150..155
+                  EXPR_BINARY@150..155
+                    EXPR_IDENT@150..152
+                      IDENT@150..151 "a"
+                      WHITESPACE@151..152 " "
+                    OP_ADD@152..153 "+"
+                    EXPR@153..155
+                      WHITESPACE@153..154 " "
+                      EXPR_IDENT@154..155
+                        IDENT@154..155 "b"
+              PUNCT_SEMI@155..156 ";"
+            WHITESPACE@156..170 "              "
+            COMMENT_LINE@170..245 "// notice that the la ..."
+            WHITESPACE@245..246 "\n"
+            PUNCT_BRACE_END@246..247 "}"
+    WHITESPACE@247..249 "\n\n"
+  STMT@249..274
+    ITEM@249..273
+      EXPR@249..273
+        EXPR_LET@249..273
+          KW_LET@249..252 "let"
+          WHITESPACE@252..253 " "
+          IDENT@253..259 "result"
+          WHITESPACE@259..260 " "
+          OP_ASSIGN@260..261 "="
+          EXPR@261..273
+            EXPR_CALL@261..273
+              EXPR@261..267
+                WHITESPACE@261..262 " "
+                EXPR_IDENT@262..267
+                  IDENT@262..267 "addme"
+              ARG_LIST@267..273
+                PUNCT_PAREN_START@267..268 "("
+                EXPR@268..269
+                  EXPR_IDENT@268..269
+                    IDENT@268..269 "a"
+                PUNCT_COMMA@269..270 ","
+                WHITESPACE@270..271 " "
+                EXPR@271..272
+                  EXPR_LIT@271..272
+                    LIT@271..272
+                      LIT_INT@271..272 "4"
+                PUNCT_PAREN_END@272..273 ")"
+    PUNCT_SEMI@273..274 ";"
+  WHITESPACE@274..276 "\n\n"
+  STMT@276..321
+    ITEM@276..320
+      EXPR@276..320
+        EXPR_CALL@276..320
+          EXPR@276..281
+            EXPR_IDENT@276..281
+              IDENT@276..281 "print"
+          ARG_LIST@281..320
+            PUNCT_PAREN_START@281..282 "("
+            EXPR@282..319
+              EXPR_LIT@282..319
+                LIT@282..319
+                  LIT_STR@282..319 "`addme(a, 4) should b ..."
+            PUNCT_PAREN_END@319..320 ")"
+    PUNCT_SEMI@320..321 ";"
+  WHITESPACE@321..323 "\n\n"
+  STMT@323..358
+    ITEM@323..357
+      EXPR@323..357
+        EXPR_CALL@323..357
+          EXPR@323..328
+            EXPR_IDENT@323..328
+              IDENT@323..328 "print"
+          ARG_LIST@328..357
+            PUNCT_PAREN_START@328..329 "("
+            EXPR@329..356
+              EXPR_LIT@329..356
+                LIT@329..356
+                  LIT_STR@329..356 "`a should still be 3: ..."
+            PUNCT_PAREN_END@356..357 ")"
+    PUNCT_SEMI@357..358 ";"
+  WHITESPACE@358..363 "     "
+  COMMENT_LINE@363..403 "// should print 3 - ' ..."
+  WHITESPACE@403..404 "\n"
+

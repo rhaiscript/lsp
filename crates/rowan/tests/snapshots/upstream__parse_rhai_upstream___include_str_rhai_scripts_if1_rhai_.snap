@@ -1,0 +1,188 @@
+---
+source: crates/rowan/tests/upstream.rs
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+
+---
+FILE@0..269
+  STMT@0..11
+    ITEM@0..10
+      EXPR@0..10
+        EXPR_LET@0..10
+          KW_LET@0..3 "let"
+          WHITESPACE@3..4 " "
+          IDENT@4..5 "a"
+          WHITESPACE@5..6 " "
+          OP_ASSIGN@6..7 "="
+          EXPR@7..10
+            WHITESPACE@7..8 " "
+            EXPR_LIT@8..10
+              LIT@8..10
+                LIT_INT@8..10 "42"
+    PUNCT_SEMI@10..11 ";"
+  WHITESPACE@11..12 "\n"
+  STMT@12..24
+    ITEM@12..23
+      EXPR@12..23
+        EXPR_LET@12..23
+          KW_LET@12..15 "let"
+          WHITESPACE@15..16 " "
+          IDENT@16..17 "b"
+          WHITESPACE@17..18 " "
+          OP_ASSIGN@18..19 "="
+          EXPR@19..23
+            WHITESPACE@19..20 " "
+            EXPR_LIT@20..23
+              LIT@20..23
+                LIT_INT@20..23 "123"
+    PUNCT_SEMI@23..24 ";"
+  WHITESPACE@24..25 "\n"
+  STMT@25..37
+    ITEM@25..36
+      EXPR@25..36
+        EXPR_LET@25..36
+          KW_LET@25..28 "let"
+          WHITESPACE@28..29 " "
+          IDENT@29..30 "x"
+          WHITESPACE@30..31 " "
+          OP_ASSIGN@31..32 "="
+          EXPR@32..36
+            WHITESPACE@32..33 " "
+            EXPR_LIT@33..36
+              LIT@33..36
+                LIT_INT@33..36 "999"
+    PUNCT_SEMI@36..37 ";"
+  WHITESPACE@37..39 "\n\n"
+  STMT@39..269
+    ITEM@39..269
+      EXPR@39..269
+        EXPR_IF@39..268
+          KW_IF@39..41 "if"
+          EXPR@41..48
+            EXPR_BINARY@41..48
+              WHITESPACE@41..42 " "
+              EXPR_IDENT@42..44
+                IDENT@42..43 "a"
+                WHITESPACE@43..44 " "
+              OP_GT@44..45 ">"
+              EXPR@45..48
+                WHITESPACE@45..46 " "
+                EXPR_IDENT@46..48
+                  IDENT@46..47 "b"
+                  WHITESPACE@47..48 " "
+          EXPR_BLOCK@48..77
+            PUNCT_BRACE_START@48..49 "{"
+            WHITESPACE@49..54 "\n    "
+            STMT@54..75
+              ITEM@54..74
+                EXPR@54..74
+                  EXPR_CALL@54..74
+                    EXPR@54..59
+                      EXPR_IDENT@54..59
+                        IDENT@54..59 "print"
+                    ARG_LIST@59..74
+                      PUNCT_PAREN_START@59..60 "("
+                      EXPR@60..73
+                        EXPR_LIT@60..73
+                          LIT@60..73
+                            LIT_STR@60..73 "\"Oops! a > b\""
+                      PUNCT_PAREN_END@73..74 ")"
+              PUNCT_SEMI@74..75 ";"
+            WHITESPACE@75..76 "\n"
+            PUNCT_BRACE_END@76..77 "}"
+          WHITESPACE@77..78 " "
+          KW_ELSE@78..82 "else"
+          WHITESPACE@82..83 " "
+          EXPR_IF@83..268
+            KW_IF@83..85 "if"
+            EXPR@85..92
+              EXPR_BINARY@85..92
+                WHITESPACE@85..86 " "
+                EXPR_IDENT@86..88
+                  IDENT@86..87 "a"
+                  WHITESPACE@87..88 " "
+                OP_LT@88..89 "<"
+                EXPR@89..92
+                  WHITESPACE@89..90 " "
+                  EXPR_IDENT@90..92
+                    IDENT@90..91 "b"
+                    WHITESPACE@91..92 " "
+            EXPR_BLOCK@92..232
+              PUNCT_BRACE_START@92..93 "{"
+              WHITESPACE@93..98 "\n    "
+              STMT@98..128
+                ITEM@98..127
+                  EXPR@98..127
+                    EXPR_CALL@98..127
+                      EXPR@98..103
+                        EXPR_IDENT@98..103
+                          IDENT@98..103 "print"
+                      ARG_LIST@103..127
+                        PUNCT_PAREN_START@103..104 "("
+                        EXPR@104..126
+                          EXPR_LIT@104..126
+                            LIT@104..126
+                              LIT_STR@104..126 "\"a < b, x should be 0\""
+                        PUNCT_PAREN_END@126..127 ")"
+                PUNCT_SEMI@127..128 ";"
+              WHITESPACE@128..134 "\n\n    "
+              STMT@134..144
+                ITEM@134..143
+                  EXPR@134..143
+                    EXPR_LET@134..143
+                      KW_LET@134..137 "let"
+                      WHITESPACE@137..138 " "
+                      IDENT@138..139 "x"
+                      WHITESPACE@139..140 " "
+                      OP_ASSIGN@140..141 "="
+                      EXPR@141..143
+                        WHITESPACE@141..142 " "
+                        EXPR_LIT@142..143
+                          LIT@142..143
+                            LIT_INT@142..143 "0"
+                PUNCT_SEMI@143..144 ";"
+              WHITESPACE@144..154 "          "
+              COMMENT_LINE@154..188 "// this 'x' shadows t ..."
+              WHITESPACE@188..193 "\n    "
+              STMT@193..202
+                ITEM@193..201
+                  EXPR@193..201
+                    EXPR_CALL@193..201
+                      EXPR@193..198
+                        EXPR_IDENT@193..198
+                          IDENT@193..198 "print"
+                      ARG_LIST@198..201
+                        PUNCT_PAREN_START@198..199 "("
+                        EXPR@199..200
+                          EXPR_IDENT@199..200
+                            IDENT@199..200 "x"
+                        PUNCT_PAREN_END@200..201 ")"
+                PUNCT_SEMI@201..202 ";"
+              WHITESPACE@202..213 "           "
+              COMMENT_LINE@213..230 "// should print 0"
+              WHITESPACE@230..231 "\n"
+              PUNCT_BRACE_END@231..232 "}"
+            WHITESPACE@232..233 " "
+            KW_ELSE@233..237 "else"
+            WHITESPACE@237..238 " "
+            EXPR_BLOCK@238..268
+              PUNCT_BRACE_START@238..239 "{"
+              WHITESPACE@239..244 "\n    "
+              STMT@244..266
+                ITEM@244..265
+                  EXPR@244..265
+                    EXPR_CALL@244..265
+                      EXPR@244..249
+                        EXPR_IDENT@244..249
+                          IDENT@244..249 "print"
+                      ARG_LIST@249..265
+                        PUNCT_PAREN_START@249..250 "("
+                        EXPR@250..264
+                          EXPR_LIT@250..264
+                            LIT@250..264
+                              LIT_STR@250..264 "\"Oops! a == b\""
+                        PUNCT_PAREN_END@264..265 ")"
+                PUNCT_SEMI@265..266 ";"
+              WHITESPACE@266..267 "\n"
+              PUNCT_BRACE_END@267..268 "}"
+        WHITESPACE@268..269 "\n"
+

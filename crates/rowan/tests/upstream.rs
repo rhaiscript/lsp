@@ -27,9 +27,7 @@ use test_case::test_case;
 #[test_case(include_str!("../../../rhai/scripts/switch.rhai"))]
 #[test_case(include_str!("../../../rhai/scripts/while.rhai"))]
 fn parse_rhai_upstream(src: &str) {
-    let mut parser = Parser::new(src);
-    parser.parse_file();
-    let parse = parser.finish();
+    let parse = Parser::new(src).parse();
     assert!(parse.errors.is_empty());
     insta::assert_snapshot!(format!("{:#?}", parse.into_syntax()));
 }

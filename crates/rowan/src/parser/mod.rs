@@ -5,7 +5,7 @@ use thiserror::Error;
 use self::context::Context;
 
 mod context;
-mod parser_impl;
+pub mod parsers;
 
 pub struct Parser<'src> {
     context: Context<'src>,
@@ -20,6 +20,12 @@ impl<'src> Parser<'src> {
 
     pub fn finish(self) -> Parse {
         self.context.finish()
+    }
+}
+
+impl<'src> Parser<'src> {
+    pub fn execute<F: FnOnce(&mut Context)>(&mut self, f: F) {
+        f(&mut self.context)
     }
 }
 

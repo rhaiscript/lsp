@@ -1,0 +1,26 @@
+---
+source: crates/rowan/tests/upstream.rs
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+
+---
+FILE@0..88
+  COMMENT_LINE@0..30 "// I am a single line ..."
+  WHITESPACE@30..32 "\n\n"
+  STMT@32..86
+    ITEM@32..85
+      EXPR@32..85
+        EXPR_LET@32..85
+          KW_LET@32..35 "let"
+          WHITESPACE@35..36 " "
+          COMMENT_BLOCK@36..80 "/* I am a spy in a va ..."
+          IDENT@80..81 "x"
+          WHITESPACE@81..82 " "
+          OP_ASSIGN@82..83 "="
+          EXPR@83..85
+            WHITESPACE@83..84 " "
+            EXPR_LIT@84..85
+              LIT@84..85
+                LIT_INT@84..85 "5"
+    PUNCT_SEMI@85..86 ";"
+  WHITESPACE@86..88 "\n\n"
+

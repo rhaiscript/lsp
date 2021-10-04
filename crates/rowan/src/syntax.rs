@@ -9,16 +9,10 @@ use logos::{Lexer as LogosLexer, Logos};
 #[repr(u16)]
 pub enum SyntaxKind {
     // region: Keywords
-    #[token("this")]
-    KW_THIS,
     #[token("let")]
     KW_LET,
     #[token("const")]
     KW_CONST,
-    #[token("global")]
-    KW_GLOBAL,
-    #[token("is_shared")]
-    KW_IS_SHARED,
     #[token("for")]
     KW_FOR,
     #[token("do")]
@@ -63,21 +57,20 @@ pub enum SyntaxKind {
     #[token("as")]
     KW_AS,
 
-    #[token("Fn")]
-    KW_FN_CAPITAL,
-    #[token("call")]
-    KW_CALL,
-    #[token("curry")]
-    KW_CURRY,
+    // The following are keywords,
+    // but syntactically are just identifiers:
 
-    #[token("type_of")]
-    KW_TYPE_OF,
-    #[token("print")]
-    KW_PRINT,
-    #[token("debug")]
-    KW_DEBUG,
-    #[token("eval")]
-    KW_EVAL,
+    // this
+    // is_shared
+    // Fn
+    // call
+    // curry
+    // type_of
+    // print
+    // debug
+    // eval
+    // global
+
     // endregion
 
     // region: Reserved keywords
@@ -242,14 +235,13 @@ pub enum SyntaxKind {
     // endregion
 
     // region: Literals
-
-    #[regex(r"[+-]?[0-9_]+", priority = 3)]
+    #[regex(r"[0-9_]+", priority = 3)]
     #[regex(r"0x[0-9A-Fa-f_]+")]
     #[regex(r"0o[0-7_]+")]
     #[regex(r"0b(0|1|_)+")]
     LIT_INT,
 
-    #[regex(r"[-+]?([0-9_]+(\.[0-9_]+)?([eE][+-]?[0-9_]+)?)", priority = 2)]
+    #[regex(r"([0-9_]+(\.[0-9_]+)?([eE][+-]?[0-9_]+)?)", priority = 2)]
     LIT_FLOAT,
 
     #[regex("true|false")]
@@ -259,24 +251,39 @@ pub enum SyntaxKind {
         let mut escaped = false;
 
         for (i, b) in lex.remainder().bytes().enumerate() {
-            if !escaped && b == '"' as u8 {
+            if !escaped && b == b'"' {
                 lex.bump(i + 1);
                 return Some(());
             }
-            escaped = b == '\\' as u8;
+            escaped = b == b'\\';
         }
 
         None
     })]
     #[token("`", |lex| {
         let mut escaped = false;
+        let mut last_char = 0u8;
+        let mut interpolation_level = 0;
 
         for (i, b) in lex.remainder().bytes().enumerate() {
-            if !escaped && b == '`' as u8 {
+            if b == b'{' && last_char == b'$' {
+                interpolation_level += 1;
+                continue;
+            }
+
+            if interpolation_level > 0 {
+                if b == b'}' {
+                    interpolation_level -= 1;
+                }
+                continue;
+            }
+
+            if !escaped && b == b'`' {
                 lex.bump(i + 1);
                 return Some(());
             }
-            escaped = b == '\\' as u8;
+            escaped = b == b'\\';
+            last_char = b;
         }
 
         None
@@ -300,20 +307,10 @@ pub enum SyntaxKind {
     #[regex(r"///[^\n\r]*")]
     COMMENT_LINE_DOC,
 
-    #[token("/*", |lex| {
-        let len = lex.remainder().find("*/")?;
-        lex.bump(len + 2);
-    
-        Some(())
-    })]
+    #[token("/*", lex_multi_line_comment)]
     COMMENT_BLOCK,
 
-    #[token("/**", |lex| {
-        let len = lex.remainder().find("*/")?;
-        lex.bump(len + 2);
-    
-        Some(())
-    })]
+    #[token("/**", lex_multi_line_comment)]
     COMMENT_BLOCK_DOC,
 
     #[regex(r"[ \t\n\f]+")]
@@ -324,29 +321,26 @@ pub enum SyntaxKind {
 
     // region: Nodes
     // This region is generated from ungrammar, do not touch it!
-    NAME,
     LIT,
     PATH,
-    PATH_SEGMENT,
     FILE,
     STMT,
     ITEM,
     DOC,
     EXPR,
     EXPR_IDENT,
+    EXPR_PATH,
     EXPR_LIT,
     EXPR_LET,
     EXPR_CONST,
     EXPR_BLOCK,
-    EXPR_UNI,
-    EXPR_BIN,
+    EXPR_UNARY,
+    EXPR_BINARY,
     EXPR_PAREN,
     EXPR_ARRAY,
     EXPR_INDEX,
     EXPR_OBJECT,
     EXPR_CALL,
-    EXPR_METHOD_CALL,
-    EXPR_ACCESS,
     EXPR_CLOSURE,
     EXPR_IF,
     EXPR_LOOP,
@@ -357,16 +351,20 @@ pub enum SyntaxKind {
     EXPR_SWITCH,
     EXPR_RETURN,
     EXPR_FN,
-    EXPR_PATH,
     EXPR_IMPORT,
     OBJECT_FIELD,
     ARG_LIST,
     PARAM_LIST,
     PARAM,
+    PAT,
     SWITCH_ARM_LIST,
     SWITCH_ARM,
+    EXPR_EXPORT,
+    EXPORT_TARGET,
+    EXPORT_IDENT,
+    PAT_TUPLE,
+    PAT_IDENT,
     // endregion
-
     #[doc(hidden)]
     __LAST,
 }
@@ -405,6 +403,14 @@ pub(crate) struct Lexer<'source> {
     peeked: Option<Option<SyntaxKind>>,
 }
 
+impl core::fmt::Debug for Lexer<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Lexer")
+            .field("peeked", &self.peeked)
+            .finish()
+    }
+}
+
 impl<'source> Lexer<'source> {
     pub(crate) fn new(source: &'source str) -> Self {
         Self {
@@ -419,7 +425,6 @@ impl<'source> Lexer<'source> {
         }
         self.peeked.unwrap()
     }
-
 
     pub(crate) fn span(&self) -> Range<usize> {
         self.lexer.span()
@@ -440,4 +445,42 @@ impl<'source> Iterator for Lexer<'source> {
             self.lexer.next()
         }
     }
+}
+
+fn lex_multi_line_comment(lex: &mut LogosLexer<SyntaxKind>) -> Option<()> {
+    let mut start = 1;
+    let mut to_bump = 0;
+
+    let mut last_chunk: Option<&[u8]> = None;
+
+    for chunk in lex.remainder().as_bytes().chunks(2) {
+        to_bump += chunk.len();
+
+        match chunk {
+            b"/*" => {
+                start += 1;
+            }
+            b"*/" => {
+                start -= 1;
+            }
+            c => {
+                // handling characters between chunks
+                if matches!((c[0], last_chunk), (b'*', Some([_, b'/']))) {
+                    start += 1;
+                } else if matches!((c[0], last_chunk), (b'/', Some([_, b'*']))) {
+                    start -= 1;
+                }
+            }
+        }
+
+        last_chunk = Some(chunk);
+
+        if start == 0 {
+            break;
+        }
+    }
+
+    lex.bump(to_bump);
+
+    Some(())
 }

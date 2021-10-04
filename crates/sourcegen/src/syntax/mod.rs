@@ -41,13 +41,13 @@ fn generate_token_macro(grammar: &Grammar) -> String {
         quote! {[#t] => { $crate::syntax::SyntaxKind::#name };}
     });
 
-    quote! {
+    (quote! {
         #[macro_export]
         macro_rules! T {
             #(#arms)*
         }
         pub use T;
-    }
+    })
     .to_string()
 }
 

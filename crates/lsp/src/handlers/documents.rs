@@ -11,9 +11,7 @@ pub(crate) async fn document_open(
         Some(p) => p,
     };
 
-    let mut parser = Parser::new(&p.text_document.text);
-    parser.parse_file();
-    let parse = parser.finish();
+    let parse = Parser::new(&p.text_document.text).parse();
 
     let mapper = Mapper::new_utf16(&p.text_document.text, false);
     let uri = p.text_document.uri.clone();
@@ -42,9 +40,7 @@ pub(crate) async fn document_change(
         None => return,
         Some(c) => c,
     };
-    let mut parser = Parser::new(&change.text);
-    parser.parse_file();
-    let parse = parser.finish();
+    let parse = Parser::new(&change.text).parse();
 
     let mapper = Mapper::new_utf16(&change.text, false);
     let uri = p.text_document.uri.clone();

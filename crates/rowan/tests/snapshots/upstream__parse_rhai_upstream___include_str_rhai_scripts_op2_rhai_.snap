@@ -1,0 +1,70 @@
+---
+source: crates/rowan/tests/upstream.rs
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+
+---
+FILE@0..69
+  STMT@0..35
+    ITEM@0..34
+      EXPR@0..34
+        EXPR_CALL@0..34
+          EXPR@0..5
+            EXPR_IDENT@0..5
+              IDENT@0..5 "print"
+          ARG_LIST@5..34
+            PUNCT_PAREN_START@5..6 "("
+            EXPR@6..33
+              EXPR_LIT@6..33
+                LIT@6..33
+                  LIT_STR@6..33 "\"The result should be ..."
+            PUNCT_PAREN_END@33..34 ")"
+    PUNCT_SEMI@34..35 ";"
+  WHITESPACE@35..37 "\n\n"
+  STMT@37..57
+    ITEM@37..56
+      EXPR@37..56
+        EXPR_LET@37..56
+          KW_LET@37..40 "let"
+          WHITESPACE@40..41 " "
+          IDENT@41..42 "x"
+          WHITESPACE@42..43 " "
+          OP_ASSIGN@43..44 "="
+          EXPR@44..56
+            EXPR_BINARY@44..56
+              WHITESPACE@44..45 " "
+              EXPR_LIT@45..47
+                LIT@45..47
+                  LIT_INT@45..47 "12"
+              WHITESPACE@47..48 " "
+              OP_ADD@48..49 "+"
+              EXPR@49..56
+                EXPR_BINARY@49..56
+                  WHITESPACE@49..50 " "
+                  EXPR_LIT@50..52
+                    LIT@50..52
+                      LIT_INT@50..52 "34"
+                  WHITESPACE@52..53 " "
+                  OP_MUL@53..54 "*"
+                  EXPR@54..56
+                    WHITESPACE@54..55 " "
+                    EXPR_LIT@55..56
+                      LIT@55..56
+                        LIT_INT@55..56 "5"
+    PUNCT_SEMI@56..57 ";"
+  WHITESPACE@57..59 "\n\n"
+  STMT@59..68
+    ITEM@59..67
+      EXPR@59..67
+        EXPR_CALL@59..67
+          EXPR@59..64
+            EXPR_IDENT@59..64
+              IDENT@59..64 "print"
+          ARG_LIST@64..67
+            PUNCT_PAREN_START@64..65 "("
+            EXPR@65..66
+              EXPR_IDENT@65..66
+                IDENT@65..66 "x"
+            PUNCT_PAREN_END@66..67 ")"
+    PUNCT_SEMI@67..68 ";"
+  WHITESPACE@68..69 "\n"
+
