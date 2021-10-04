@@ -56,8 +56,8 @@ FILE@0..103
               IDENT@76..77 "b"
     PUNCT_SEMI@77..78 ";"
   WHITESPACE@78..79 " "
-  COMMENT_BLOCK@79..85 "/* */\n"
-  WHITESPACE@85..86 "\n"
+  COMMENT_BLOCK@79..84 "/* */"
+  WHITESPACE@84..86 "\n\n"
   STMT@86..102
     ITEM@86..101
       EXPR@86..101

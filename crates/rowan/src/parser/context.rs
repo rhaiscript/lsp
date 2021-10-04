@@ -1,5 +1,6 @@
 //! The parser context is a separate module to limit
 //! the API surface for the parser functions.
+
 #![allow(dead_code)]
 use rowan::{Checkpoint, GreenNodeBuilder, TextRange, TextSize};
 
@@ -10,6 +11,10 @@ use crate::syntax::{
 
 use super::{Parse, ParseError, ParseErrorKind};
 
+/// A parser context for parser functions.
+/// 
+/// It cannot be constructed and can only be obtained
+/// via a [`super::Parser`].
 #[derive(Debug)]
 pub struct Context<'src> {
     lexer: Lexer<'src>,
@@ -35,7 +40,15 @@ impl<'src> Context<'src> {
         }
     }
 
-    pub(crate) fn token(&mut self) -> Option<SyntaxKind> {
+    pub(crate) fn finish(self) -> Parse {
+        Parse {
+            errors: self.errors,
+            green: self.green.finish(),
+        }
+    }
+
+    /// Get the next token.
+    pub fn token(&mut self) -> Option<SyntaxKind> {
         // Eat insignificant tokens
         loop {
             if self.current_token.is_none() {
@@ -45,11 +58,11 @@ impl<'src> Context<'src> {
             match self.current_token {
                 Some(COMMENT_BLOCK) | Some(COMMENT_LINE) | Some(WHITESPACE) => {
                     self.eat();
-                    self.last_token = None // We aren't interested in these.
+                    self.last_token = None
                 }
                 Some(ERROR) => {
                     self.eat_error(ParseErrorKind::InvalidInput);
-                    self.last_token = None // We aren't interested in these.
+                    self.last_token = None
                 }
                 _ => break,
             }
@@ -58,11 +71,13 @@ impl<'src> Context<'src> {
         self.current_token
     }
 
-    pub(crate) fn previous_token(&self) -> Option<SyntaxKind> {
+    /// Get the previously added token.
+    pub fn previous_token(&self) -> Option<SyntaxKind> {
         self.last_token
     }
 
-    pub(crate) fn eat(&mut self) {
+    /// "Eat" the current token, add it to the tree inside the current node.
+    pub fn eat(&mut self) {
         if let Some(t) = self.current_token.take() {
             self.green.token(t.into(), self.lexer.slice());
             self.last_token = Some(t);
@@ -70,15 +85,20 @@ impl<'src> Context<'src> {
         self.current_token = None;
     }
 
-    pub(crate) fn insert_token(&mut self, kind: SyntaxKind, s: impl AsRef<str>) {
+    /// Insert a token into the tree.
+    pub fn insert_token(&mut self, kind: SyntaxKind, s: impl AsRef<str>) {
         self.green.token(kind.into(), s.as_ref().into())
     }
 
-    pub(crate) fn discard(&mut self) {
+    /// Discard the current token (if any).
+    /// 
+    /// If no token was lexed (by calling [`Self::token`]), this is a no-op.
+    pub fn discard(&mut self) {
         self.current_token = None;
     }
 
-    pub(crate) fn eat_as(&mut self, kind: SyntaxKind) {
+    /// Eat the current token with the given kind.
+    pub fn eat_as(&mut self, kind: SyntaxKind) {
         if self.current_token.is_some() {
             self.green.token(kind.into(), self.lexer.slice());
             self.last_token = Some(kind);
@@ -86,17 +106,20 @@ impl<'src> Context<'src> {
         self.current_token = None;
     }
 
-    pub(crate) fn eat_error(&mut self, error: ParseErrorKind) {
+    /// Eat the current token and add a parse error.
+    pub fn eat_error(&mut self, error: ParseErrorKind) {
         self.add_error(error);
         self.eat();
     }
 
-    pub(crate) fn eat_error_as(&mut self, kind: SyntaxKind, error: ParseErrorKind) {
+    /// Eat the current token with the given kind and add a parse error.
+    pub fn eat_error_as(&mut self, kind: SyntaxKind, error: ParseErrorKind) {
         self.add_error(error);
         self.eat_as(kind);
     }
 
-    pub(crate) fn add_error(&mut self, error: ParseErrorKind) {
+    /// Add a parse error without touching the token or the tree.
+    pub fn add_error(&mut self, error: ParseErrorKind) {
         tracing::trace!(%error, "syntax error");
         let span = self.lexer.span();
         self.errors.push(ParseError::new(
@@ -108,34 +131,35 @@ impl<'src> Context<'src> {
         ));
     }
 
-    pub(crate) fn start_node(&mut self, kind: SyntaxKind) {
+    /// Start a new node in the tree.
+    pub fn start_node(&mut self, kind: SyntaxKind) {
         self.green.start_node(kind.into());
     }
 
-    pub(crate) fn finish_node(&mut self) {
+    /// Finish the current node.
+    pub fn finish_node(&mut self) {
         self.green.finish_node();
     }
 
-    pub(crate) fn checkpoint(&mut self) -> Checkpoint {
+    /// Create a node checkpoint.
+    pub fn checkpoint(&mut self) -> Checkpoint {
         self.green.checkpoint()
     }
 
-    pub(crate) fn start_node_at(&mut self, checkpoint: Checkpoint, kind: SyntaxKind) {
+    /// Start a new node at the given checkpoint.
+    pub fn start_node_at(&mut self, checkpoint: Checkpoint, kind: SyntaxKind) {
         self.green.start_node_at(checkpoint, kind.into())
     }
 
-    pub(crate) fn finish(self) -> Parse {
-        Parse {
-            errors: self.errors,
-            green: self.green.finish(),
-        }
-    }
-
-    pub(crate) fn statement_closed(&self) -> bool {
+    /// Check whether the last statement was closed with `;`.
+    /// 
+    /// Block-like statements are also self-closing.
+    pub fn statement_closed(&self) -> bool {
         self.statement_closed
     }
 
-    pub(crate) fn set_statement_closed(&mut self, v: bool) {
+    /// Signal that the last parsed statement is considered closed.
+    pub fn set_statement_closed(&mut self, v: bool) {
         self.statement_closed = v;
     }
 }

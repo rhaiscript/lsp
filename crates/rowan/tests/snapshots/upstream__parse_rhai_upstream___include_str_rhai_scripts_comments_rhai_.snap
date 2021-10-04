@@ -12,7 +12,8 @@ FILE@0..272
         EXPR_LET@32..85
           KW_LET@32..35 "let"
           WHITESPACE@35..36 " "
-          COMMENT_BLOCK@36..80 "/* I am a spy in a va ..."
+          COMMENT_BLOCK@36..79 "/* I am a spy in a va ..."
+          WHITESPACE@79..80 " "
           IDENT@80..81 "x"
           WHITESPACE@81..82 " "
           OP_ASSIGN@82..83 "="
@@ -25,9 +26,10 @@ FILE@0..272
   WHITESPACE@86..88 "\n\n"
   COMMENT_BLOCK@88..132 "/* I am a simple\n   m ..."
   WHITESPACE@132..134 "\n\n"
-  COMMENT_BLOCK@134..206 "/* look /* at /* that ..."
-  WHITESPACE@206..207 "\n"
-  COMMENT_BLOCK@207..227 "/* surrounded by */ "
+  COMMENT_BLOCK@134..205 "/* look /* at /* that ..."
+  WHITESPACE@205..207 "\n\n"
+  COMMENT_BLOCK@207..226 "/* surrounded by */"
+  WHITESPACE@226..227 " "
   STMT@227..272
     ITEM@227..272
       EXPR@227..272

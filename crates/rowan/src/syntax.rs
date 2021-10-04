@@ -1,3 +1,6 @@
+//! This module contains syntax kind declarations
+//! and a Logos-based lexer implementation.
+
 #![allow(non_camel_case_types)]
 #![allow(dead_code)]
 
@@ -5,6 +8,7 @@ use std::ops::Range;
 
 use logos::{Lexer as LogosLexer, Logos};
 
+/// SyntaxKind represents all the node and token types (kinds) found in the grammar.
 #[derive(Logos, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u16)]
 pub enum SyntaxKind {
@@ -74,6 +78,7 @@ pub enum SyntaxKind {
     // endregion
 
     // region: Reserved keywords
+    // We don't do anything with these yet.
     #[token("var")]
     KW_VAR,
     #[token("static")]
@@ -365,11 +370,14 @@ pub enum SyntaxKind {
     PAT_TUPLE,
     PAT_IDENT,
     // endregion
+
+    // A marker to safely cast between u16 and syntax kinds.
     #[doc(hidden)]
     __LAST,
 }
 
 impl SyntaxKind {
+    /// Whether the syntax kind is a reserved keyword.
     pub fn is_reserved_keyword(&self) -> bool {
         self >= &SyntaxKind::KW_VAR && self < &SyntaxKind::KW_NIL
     }
@@ -447,33 +455,28 @@ impl<'source> Iterator for Lexer<'source> {
     }
 }
 
+// multi-line comments ending with "*/" have to be manually parsed
+// to avoid yet another insane regex.
 fn lex_multi_line_comment(lex: &mut LogosLexer<SyntaxKind>) -> Option<()> {
     let mut start = 1;
     let mut to_bump = 0;
 
-    let mut last_chunk: Option<&[u8]> = None;
+    let mut last_char = 0u8;
 
-    for chunk in lex.remainder().as_bytes().chunks(2) {
-        to_bump += chunk.len();
+    for c in lex.remainder().bytes() {
+        to_bump += 1;
 
-        match chunk {
-            b"/*" => {
+        match (last_char, c) {
+            (b'/', b'*') => {
                 start += 1;
             }
-            b"*/" => {
+            (b'*', b'/') => {
                 start -= 1;
             }
-            c => {
-                // handling characters between chunks
-                if matches!((c[0], last_chunk), (b'*', Some([_, b'/']))) {
-                    start += 1;
-                } else if matches!((c[0], last_chunk), (b'/', Some([_, b'*']))) {
-                    start -= 1;
-                }
-            }
+            _ => {}
         }
 
-        last_chunk = Some(chunk);
+        last_char = c;
 
         if start == 0 {
             break;

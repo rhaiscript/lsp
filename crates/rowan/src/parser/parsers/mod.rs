@@ -1,3 +1,5 @@
+//! A collection modular parser functions for Rhai.
+
 #![deny(unreachable_patterns)]
 
 use super::context::Context;
@@ -7,6 +9,16 @@ use crate::T;
 
 use tracing::instrument;
 
+/// Require a token or else add an unexpected EOF error and return.
+///
+/// # Usage Example
+///
+/// ```ignore
+/// let token = require_token!(ctx);
+///
+/// // Or also call [`Context::finish_node`] on error before returning.
+/// let token = require_token(ctx in node);
+/// ```
 macro_rules! require_token {
     ($ctx:ident) => {
         match $ctx.token() {
@@ -27,6 +39,18 @@ macro_rules! require_token {
     };
 }
 
+/// Expect a given a token or else add an error describing the expected token and return.
+///
+/// # Usage Example
+///
+/// ```ignore
+/// expect_token!(ctx, T!["="]);
+///
+/// // Or also call [`Context::finish_node`] on error before returning.
+/// expect_token!(ctx in node, T!["="]);
+/// ```
+///
+/// It will not cause the current token to be eaten.
 macro_rules! expect_token {
     ($ctx:ident in node, $($token:tt)*) => {
         match $ctx.token() {
@@ -60,6 +84,7 @@ macro_rules! expect_token {
     };
 }
 
+/// Same as [`expect_token`], but will also eat the current token.
 macro_rules! expect_token_eat_error {
     ($ctx:ident in node, $($token:tt)*) => {
         match $ctx.token() {
@@ -94,12 +119,14 @@ macro_rules! expect_token_eat_error {
 }
 
 impl<'src> super::Parser<'src> {
+    /// Parse Rhai code with [`parse_file`], and finish the parser.
     pub fn parse(mut self) -> super::Parse {
         self.execute(parse_file);
         self.finish()
     }
 }
 
+/// Parse a Rhai file.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_file(ctx: &mut Context) {
     ctx.start_node(FILE);
@@ -120,6 +147,7 @@ pub fn parse_file(ctx: &mut Context) {
     ctx.finish_node()
 }
 
+/// Parse a shebang like `#!something`, typically at the start of files.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_shebang(ctx: &mut Context) {
     let token = require_token!(ctx);
@@ -131,6 +159,7 @@ pub fn parse_shebang(ctx: &mut Context) {
     ctx.eat()
 }
 
+/// Parse a statement.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_stmt(ctx: &mut Context) {
     let token = require_token!(ctx);
@@ -155,6 +184,7 @@ pub fn parse_stmt(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse an item.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_item(ctx: &mut Context) {
     ctx.start_node(ITEM);
@@ -172,19 +202,26 @@ pub fn parse_item(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse an expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr(ctx: &mut Context) {
     parse_expr_bp(ctx, 0);
 }
 
+/// Pratt-based expression parsing.
+///
+/// `min_bp` is the current minimum binding power
+/// in the expression.
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
+fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
     ctx.start_node(EXPR);
 
     let expr_start = ctx.checkpoint();
 
     let token = require_token!(ctx in node);
 
+    // Handle "standalone" expressions, and
+    // unary operators.
     match token {
         T!["let"] => {
             parse_expr_let(ctx);
@@ -199,6 +236,11 @@ pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         T!["#{"] => {
             parse_expr_object(ctx);
             if let Some(t) = ctx.token() {
+                // This can be part of a binary expression,
+                // but it's also block-like.
+                //
+                // To disambiguate, we check whether the next token
+                // is a binary operator or not.
                 if t.infix_binding_power().is_none() {
                     ctx.finish_node();
                     return;
@@ -211,7 +253,7 @@ pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             return;
         }
         T!["|"] | T!["||"] => {
-            // boolean "or" is a special case unfortunately.
+            // boolean "or" is a special case that has to be handled here.
             parse_expr_closure(ctx);
             ctx.finish_node();
             return;
@@ -220,6 +262,11 @@ pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             parse_expr_if(ctx);
 
             if let Some(t) = ctx.token() {
+                // This can be part of a binary expression,
+                // but it's also block-like.
+                //
+                // To disambiguate, we check whether the next token
+                // is a binary operator or not.
                 if t.infix_binding_power().is_none() {
                     ctx.finish_node();
                     return;
@@ -263,6 +310,11 @@ pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         T!["switch"] => {
             parse_expr_switch(ctx);
             if let Some(t) = ctx.token() {
+                // This can be part of a binary expression,
+                // but it's also block-like.
+                //
+                // To disambiguate, we check whether the next token
+                // is a binary operator or not.
                 if t.infix_binding_power().is_none() {
                     ctx.finish_node();
                     return;
@@ -282,6 +334,11 @@ pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         T!["{"] => {
             parse_expr_block(ctx);
             if let Some(t) = ctx.token() {
+                // This can be part of a binary expression,
+                // but it's also block-like.
+                //
+                // To disambiguate, we check whether the next token
+                // is a binary operator or not.
                 if t.infix_binding_power().is_none() {
                     ctx.finish_node();
                     return;
@@ -308,6 +365,10 @@ pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
     }
 
     loop {
+        // We treat everything as expressions, statements are simply expressions
+        // delimited by `;`.
+        //
+        // Here we list all the cases when expressions have to end no matter what.
         let op = match ctx.token() {
             Some(T![";"] | T![","] | T!["{"] | T!["}"] | T![")"] | T!["]"] | T!["=>"]) | None => {
                 break
@@ -364,12 +425,7 @@ pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         }
         ctx.eat();
 
-        let expr_kind = match op {
-            T!["("] => EXPR_CALL,
-            _ => EXPR_BINARY,
-        };
-
-        ctx.start_node_at(expr_start, expr_kind);
+        ctx.start_node_at(expr_start, EXPR_BINARY);
         parse_expr_bp(ctx, r_bp);
         ctx.finish_node();
     }
@@ -377,6 +433,7 @@ pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
     ctx.finish_node();
 }
 
+/// Parse a path such as `a::b` or an identifier.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_path_or_ident(ctx: &mut Context) {
     let start = ctx.checkpoint();
@@ -406,6 +463,7 @@ pub fn parse_expr_path_or_ident(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a literal expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_lit(ctx: &mut Context) {
     ctx.start_node(EXPR_LIT);
@@ -413,6 +471,7 @@ pub fn parse_expr_lit(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a `let` expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_let(ctx: &mut Context) {
     ctx.start_node(EXPR_LET);
@@ -432,6 +491,7 @@ pub fn parse_expr_let(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a `const` expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_const(ctx: &mut Context) {
     ctx.start_node(EXPR_CONST);
@@ -445,6 +505,7 @@ pub fn parse_expr_const(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a block expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_block(ctx: &mut Context) {
     ctx.start_node(EXPR_BLOCK);
@@ -474,6 +535,7 @@ pub fn parse_expr_block(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a `fn` expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_fn(ctx: &mut Context) {
     ctx.start_node(EXPR_FN);
@@ -487,6 +549,7 @@ pub fn parse_expr_fn(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a parenthesized expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_paren(ctx: &mut Context) {
     ctx.start_node(EXPR_PAREN);
@@ -507,6 +570,7 @@ pub fn parse_expr_paren(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse an array expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_array(ctx: &mut Context) {
     ctx.start_node(EXPR_ARRAY);
@@ -542,6 +606,7 @@ pub fn parse_expr_array(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a closure expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_closure(ctx: &mut Context) {
     ctx.start_node(EXPR_CLOSURE);
@@ -560,6 +625,7 @@ pub fn parse_expr_closure(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse an "if" expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_if(ctx: &mut Context) {
     ctx.start_node(EXPR_IF);
@@ -584,6 +650,7 @@ pub fn parse_expr_if(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a "loop" expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_loop(ctx: &mut Context) {
     ctx.start_node(EXPR_LOOP);
@@ -607,6 +674,7 @@ pub fn parse_expr_for(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a "while" expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_while(ctx: &mut Context) {
     ctx.start_node(EXPR_WHILE);
@@ -618,6 +686,7 @@ pub fn parse_expr_while(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a "break" expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_break(ctx: &mut Context) {
     ctx.start_node(EXPR_BREAK);
@@ -631,6 +700,7 @@ pub fn parse_expr_break(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a "continue" expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_continue(ctx: &mut Context) {
     ctx.start_node(EXPR_CONTINUE);
@@ -638,6 +708,7 @@ pub fn parse_expr_continue(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a "return" expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_return(ctx: &mut Context) {
     ctx.start_node(EXPR_RETURN);
@@ -651,6 +722,7 @@ pub fn parse_expr_return(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a "switch" expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_switch(ctx: &mut Context) {
     ctx.start_node(EXPR_SWITCH);
@@ -662,6 +734,7 @@ pub fn parse_expr_switch(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse an "import" expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_import(ctx: &mut Context) {
     ctx.start_node(EXPR_IMPORT);
@@ -677,6 +750,7 @@ pub fn parse_expr_import(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse an object literal expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_object(ctx: &mut Context) {
     ctx.start_node(EXPR_OBJECT);
@@ -712,6 +786,7 @@ pub fn parse_expr_object(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse an "export" expression.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_expr_export(ctx: &mut Context) {
     ctx.start_node(EXPR_EXPORT);
@@ -723,7 +798,7 @@ pub fn parse_expr_export(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_export_target(ctx: &mut Context) {
+fn parse_export_target(ctx: &mut Context) {
     ctx.start_node(EXPORT_TARGET);
 
     let token = require_token!(ctx in node);
@@ -739,7 +814,7 @@ pub fn parse_export_target(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_export_ident(ctx: &mut Context) {
+fn parse_export_ident(ctx: &mut Context) {
     ctx.start_node(EXPORT_IDENT);
 
     expect_token!(ctx in node, T!["ident"]);
@@ -753,6 +828,7 @@ pub fn parse_export_ident(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse a pattern.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_pat(ctx: &mut Context) {
     ctx.start_node(PAT);
@@ -771,7 +847,7 @@ pub fn parse_pat(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_pat_ident(ctx: &mut Context) {
+fn parse_pat_ident(ctx: &mut Context) {
     ctx.start_node(PAT_IDENT);
 
     expect_token!(ctx in node, T!["ident"]);
@@ -780,7 +856,7 @@ pub fn parse_pat_ident(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_pat_tuple(ctx: &mut Context) {
+fn parse_pat_tuple(ctx: &mut Context) {
     ctx.start_node(PAT_TUPLE);
 
     let start_token = require_token!(ctx in node);
@@ -825,7 +901,7 @@ pub fn parse_pat_tuple(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_object_field(ctx: &mut Context) {
+fn parse_object_field(ctx: &mut Context) {
     ctx.start_node(OBJECT_FIELD);
 
     if !matches!(require_token!(ctx in node), T!["ident"] | T!["lit_str"]) {
@@ -846,7 +922,7 @@ pub fn parse_object_field(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_switch_arm_list(ctx: &mut Context) {
+fn parse_switch_arm_list(ctx: &mut Context) {
     ctx.start_node(SWITCH_ARM_LIST);
 
     expect_token_eat_error!(ctx in node, T!["{"]);
@@ -881,7 +957,7 @@ pub fn parse_switch_arm_list(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_switch_arm(ctx: &mut Context) {
+fn parse_switch_arm(ctx: &mut Context) {
     ctx.start_node(SWITCH_ARM);
 
     let token = require_token!(ctx in node);
@@ -900,7 +976,7 @@ pub fn parse_switch_arm(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_param_list(ctx: &mut Context) {
+fn parse_param_list(ctx: &mut Context) {
     ctx.start_node(PARAM_LIST);
 
     let start_token = require_token!(ctx in node);
@@ -956,7 +1032,7 @@ pub fn parse_param_list(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_param(ctx: &mut Context) {
+fn parse_param(ctx: &mut Context) {
     ctx.start_node(PARAM);
 
     expect_token!(ctx in node, T!["ident"]);
@@ -965,7 +1041,7 @@ pub fn parse_param(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_arg_list(ctx: &mut Context) {
+fn parse_arg_list(ctx: &mut Context) {
     ctx.start_node(ARG_LIST);
 
     expect_token_eat_error!(ctx in node, T!["("]);
@@ -1000,7 +1076,7 @@ pub fn parse_arg_list(ctx: &mut Context) {
 }
 
 #[instrument(level = "trace", skip(ctx))]
-pub fn parse_lit(ctx: &mut Context) {
+fn parse_lit(ctx: &mut Context) {
     ctx.start_node(LIT);
     let token = require_token!(ctx in node);
 
