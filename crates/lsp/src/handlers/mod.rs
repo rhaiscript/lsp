@@ -7,3 +7,6 @@ pub(crate) use initialize::*;
 
 mod documents;
 pub(crate) use documents::*;
+
+mod document_symbols;
+pub(crate) use document_symbols::*;
