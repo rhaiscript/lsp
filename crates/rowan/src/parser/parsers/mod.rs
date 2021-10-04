@@ -279,7 +279,15 @@ pub fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             ctx.finish_node();
             return;
         }
-        T!["{"] => parse_expr_block(ctx),
+        T!["{"] => {
+            parse_expr_block(ctx);
+            if let Some(t) = ctx.token() {
+                if t.infix_binding_power().is_none() {
+                    ctx.finish_node();
+                    return;
+                }
+            }
+        }
         T!["("] => parse_expr_paren(ctx),
         T!["["] => parse_expr_array(ctx),
         LIT_INT | LIT_FLOAT | LIT_BOOL | LIT_STR | LIT_CHAR => parse_expr_lit(ctx),

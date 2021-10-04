@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..88
+FILE@0..272
   COMMENT_LINE@0..30 "// I am a single line ..."
   WHITESPACE@30..32 "\n\n"
   STMT@32..86
@@ -23,4 +23,26 @@ FILE@0..88
                 LIT_INT@84..85 "5"
     PUNCT_SEMI@85..86 ";"
   WHITESPACE@86..88 "\n\n"
+  COMMENT_BLOCK@88..132 "/* I am a simple\n   m ..."
+  WHITESPACE@132..134 "\n\n"
+  COMMENT_BLOCK@134..206 "/* look /* at /* that ..."
+  WHITESPACE@206..207 "\n"
+  COMMENT_BLOCK@207..227 "/* surrounded by */ "
+  STMT@227..272
+    ITEM@227..272
+      EXPR@227..272
+        EXPR_LET@227..272
+          KW_LET@227..230 "let"
+          WHITESPACE@230..231 " "
+          IDENT@231..252 "this_is_not_a_comment"
+          WHITESPACE@252..253 " "
+          OP_ASSIGN@253..254 "="
+          EXPR@254..272
+            WHITESPACE@254..255 " "
+            EXPR_LIT@255..259
+              LIT@255..259
+                LIT_BOOL@255..259 "true"
+            WHITESPACE@259..260 " "
+            COMMENT_LINE@260..271 "// comments"
+            WHITESPACE@271..272 "\n"
 
