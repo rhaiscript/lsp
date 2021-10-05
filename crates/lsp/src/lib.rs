@@ -33,6 +33,7 @@ pub fn create_server() -> Server<World> {
     Server::new()
         .on_request::<request::Initialize, _>(handlers::initialize)
         .on_request::<request::DocumentSymbolRequest, _>(handlers::document_symbols)
+        .on_request::<request::FoldingRangeRequest, _>(handlers::folding_ranges)
         .on_notification::<notification::DidOpenTextDocument, _>(handlers::document_open)
         .on_notification::<notification::DidChangeTextDocument, _>(handlers::document_change)
         .on_notification::<notification::DidCloseTextDocument, _>(handlers::document_close)
