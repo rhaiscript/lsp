@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as client from "vscode-languageclient/node";
 import * as path from "path";
+import { SyntaxTreeProvider } from "./syntax-tree";
 
 let output: vscode.OutputChannel;
 
@@ -32,6 +33,33 @@ export async function activate(context: vscode.ExtensionContext) {
   };
 
   let c = new client.LanguageClient("rhai", "Rhai LSP", serverOpts, clientOpts);
+
+  const syntaxTreeProvider = new SyntaxTreeProvider(context, c);
+
+  const disposeProvider = vscode.window.registerTreeDataProvider(
+    "rhaiSyntaxTree",
+    syntaxTreeProvider
+  );
+
+  syntaxTreeProvider.setEditor(vscode.window.activeTextEditor);
+
+  context.subscriptions.push(
+    disposeProvider,
+    vscode.window.onDidChangeActiveTextEditor(editor => {
+      if (!editor || editor.document.languageId !== "rhai") {
+        syntaxTreeProvider.setEditor(undefined);
+        return;
+      }
+
+      syntaxTreeProvider.setEditor(editor);
+    }),
+    vscode.workspace.onDidChangeTextDocument(() => {
+      // Let the LSP parse the document.
+      setTimeout(() => {
+        syntaxTreeProvider.update();
+      }, 100);
+    })
+  );
 
   c.registerProposedFeatures();
 

@@ -26,41 +26,60 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:rhai"
+    "onLanguage:rhai",
+    "onView:rhaiSyntaxTree"
   ],
   "contributes": {
-		"languages": [
-			{
-				"id": "rhai",
-				"aliases": [
-					"Rhai"
-				],
-				"extensions": [
-					".rhai"
-				],
-				"filenames": [],
-				"filenamePatterns": [],
-				"mimetypes": [],
-				"configuration": "./syntax/rhai.configuration.json"
-			}
-		],
-		"grammars": [
-			{
-				"language": "rhai",
-				"scopeName": "source.rhai",
-				"path": "./syntax/rhai.tmLanguage.json"
-			},
-			{
-				"scopeName": "markdown.rhai.codeblock",
-				"path": "./syntax/rhai.markdown.json",
-				"injectTo": [
-					"text.html.markdown"
-				],
-				"embeddedLanguages": {
-					"meta.embedded.block.rhai": "rhai"
-				}
-			}
-		]
+    "languages": [
+      {
+        "id": "rhai",
+        "aliases": [
+          "Rhai"
+        ],
+        "extensions": [
+          ".rhai"
+        ],
+        "filenames": [],
+        "filenamePatterns": [],
+        "mimetypes": [],
+        "configuration": "./syntax/rhai.configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rhai",
+        "scopeName": "source.rhai",
+        "path": "./syntax/rhai.tmLanguage.json"
+      },
+      {
+        "scopeName": "markdown.rhai.codeblock",
+        "path": "./syntax/rhai.markdown.json",
+        "injectTo": [
+          "text.html.markdown"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.rhai": "rhai"
+        }
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "rhai-panel",
+          "title": "Rhai",
+          "icon": "assets/rhai-icon-transparent-black.svg"
+        }
+      ]
+    },
+    "views": {
+      "rhai-panel": [
+        {
+          "id": "rhaiSyntaxTree",
+          "name": "Syntax Tree",
+          "contextualTitle": "Rhai Syntax Tree"
+        }
+      ]
+    }
   },
   "keywords": [
     "rhai",

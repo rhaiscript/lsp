@@ -39,7 +39,7 @@ A JavaScript wrapper over the LSP so that it can be used in NodeJS (and browser)
 
 VS Code extension that uses the LSP.
 
-If all the tools are available from the [Requirements](#requirements), it can be built and installed with `task vscode:dev`.
+If all the tools are available from the [Requirements](#requirements), it can be built and installed with `task ide:vscode:dev`.
 
 ### [`ide/web`](ide/web)
 

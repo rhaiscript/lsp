@@ -13,10 +13,10 @@ pub(crate) async fn document_symbols(
 
     let w = context.world().lock().unwrap();
 
-    let doc = w
-        .documents
-        .get(&p.text_document.uri)
-        .ok_or_else(Error::invalid_params)?;
+    let doc = match w.documents.get(&p.text_document.uri) {
+        Some(d) => d,
+        None => return Ok(None),
+    };
 
     Ok(Some(DocumentSymbolResponse::Flat(
         doc.parse
@@ -59,7 +59,7 @@ pub(crate) async fn document_symbols(
                         },
                         deprecated: None,
                     })
-                }                
+                }
                 EXPR_LET => {
                     let name = match n.children_with_tokens().find(|t| t.kind() == IDENT) {
                         Some(t) => t.to_string(),

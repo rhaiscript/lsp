@@ -7,27 +7,27 @@ tasks:
     cmds:
       - yarn build
 
-  vscode:dev:
+  ide:vscode:dev:
     desc: Build everything and install the extension
     cmds:
       - task: lsp:js:build
-      - task: vscode:clean
-      - task: vscode:package
-      - task: vscode:install
+      - task: ide:vscode:clean
+      - task: ide:vscode:package
+      - task: ide:vscode:install
 
-  vscode:clean:
+  ide:vscode:clean:
     desc: Clean VS Code extension build artifacts and run Yarn
     dir: ide/vscode
     cmds:
       - rm -rf node_modules
       - rm -rf dist
       - yarn
-  vscode:package:
+  ide:vscode:package:
     desc: Package the VS Code extension
     dir: ide/vscode
     cmds:
       - vsce package
-  vscode:install:
+  ide:vscode:install:
     desc: Install the VS Code extension
     dir: ide/vscode
     cmds:
