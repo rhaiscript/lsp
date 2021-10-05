@@ -194,7 +194,9 @@ pub fn parse_item(ctx: &mut Context) {
         require_token!(ctx in node),
         COMMENT_BLOCK_DOC | COMMENT_LINE_DOC
     ) {
+        ctx.start_node(DOC);
         ctx.eat();
+        ctx.finish_node();
     }
 
     parse_expr(ctx);

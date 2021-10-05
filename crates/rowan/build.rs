@@ -31,5 +31,10 @@ fn main() {
     f.write_all(new_syntax_file.as_bytes()).unwrap();
 
     let mut f = std::fs::File::create("src/ast/generated.rs").unwrap();
+    f.write_all(b"//! This file was generated from ungrammar, do not touch it!\n")
+        .unwrap();
     f.write_all(generated.token_macro.as_bytes()).unwrap();
+    f.write_all(b"\n").unwrap();
+    f.write_all(rhai_sourcegen::util::format_rust(&generated.ast).as_bytes())
+        .unwrap();
 }

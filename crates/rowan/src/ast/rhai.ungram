@@ -10,14 +10,14 @@ Path =
 
 File =
   'shebang'?
-  Stmt*
+  statements:Stmt*
 
 Item =
-  Doc?
+  Doc*
   Expr
 
 Doc =
-  ('comment_line_doc' | 'comment_block_doc')*
+  'comment_line_doc' | 'comment_block_doc'
 
 Stmt =
   ';'
