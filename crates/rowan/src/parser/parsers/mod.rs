@@ -997,6 +997,7 @@ fn parse_param_list(ctx: &mut Context) {
         }
         _ => {
             ctx.eat_error(ParseErrorKind::ExpectedOneOfTokens(vec![T!["("], T!["|"]]));
+            ctx.finish_node();
             return;
         }
     }

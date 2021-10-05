@@ -214,7 +214,7 @@ fn generate_ast(grammar: &Grammar) -> String {
                             });
 
                             cast_match_arms.extend(quote! {
-                                #inner_node_kind_ident => Some(Self::#inner_variant_ident(#inner_node_ident::cast(syntax)?)),
+                                #inner_node_kind_ident => Some(Self::#inner_variant_ident(#inner_node_ident::cast(first_child)?)),
                             });
                         }
                         _ => unreachable!(),
@@ -239,7 +239,9 @@ fn generate_ast(grammar: &Grammar) -> String {
                                 return None;
                             }
 
-                            match syntax.first_child()?.kind() {
+                            let first_child = syntax.first_child()?;
+
+                            match first_child.kind() {
                                 #cast_match_arms
                                 _ => None
                             }

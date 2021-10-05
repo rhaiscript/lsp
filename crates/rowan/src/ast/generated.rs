@@ -159,31 +159,32 @@ impl AstNode for Expr {
         if !Self::can_cast(&syntax) {
             return None;
         }
-        match syntax.first_child()?.kind() {
-            EXPR_IDENT => Some(Self::Ident(ExprIdent::cast(syntax)?)),
-            EXPR_PATH => Some(Self::Path(ExprPath::cast(syntax)?)),
-            EXPR_LIT => Some(Self::Lit(ExprLit::cast(syntax)?)),
-            EXPR_LET => Some(Self::Let(ExprLet::cast(syntax)?)),
-            EXPR_CONST => Some(Self::Const(ExprConst::cast(syntax)?)),
-            EXPR_BLOCK => Some(Self::Block(ExprBlock::cast(syntax)?)),
-            EXPR_UNARY => Some(Self::Unary(ExprUnary::cast(syntax)?)),
-            EXPR_BINARY => Some(Self::Binary(ExprBinary::cast(syntax)?)),
-            EXPR_PAREN => Some(Self::Paren(ExprParen::cast(syntax)?)),
-            EXPR_ARRAY => Some(Self::Array(ExprArray::cast(syntax)?)),
-            EXPR_INDEX => Some(Self::Index(ExprIndex::cast(syntax)?)),
-            EXPR_OBJECT => Some(Self::Object(ExprObject::cast(syntax)?)),
-            EXPR_CALL => Some(Self::Call(ExprCall::cast(syntax)?)),
-            EXPR_CLOSURE => Some(Self::Closure(ExprClosure::cast(syntax)?)),
-            EXPR_IF => Some(Self::If(ExprIf::cast(syntax)?)),
-            EXPR_LOOP => Some(Self::Loop(ExprLoop::cast(syntax)?)),
-            EXPR_FOR => Some(Self::For(ExprFor::cast(syntax)?)),
-            EXPR_WHILE => Some(Self::While(ExprWhile::cast(syntax)?)),
-            EXPR_BREAK => Some(Self::Break(ExprBreak::cast(syntax)?)),
-            EXPR_CONTINUE => Some(Self::Continue(ExprContinue::cast(syntax)?)),
-            EXPR_SWITCH => Some(Self::Switch(ExprSwitch::cast(syntax)?)),
-            EXPR_RETURN => Some(Self::Return(ExprReturn::cast(syntax)?)),
-            EXPR_FN => Some(Self::Fn(ExprFn::cast(syntax)?)),
-            EXPR_IMPORT => Some(Self::Import(ExprImport::cast(syntax)?)),
+        let first_child = syntax.first_child()?;
+        match first_child.kind() {
+            EXPR_IDENT => Some(Self::Ident(ExprIdent::cast(first_child)?)),
+            EXPR_PATH => Some(Self::Path(ExprPath::cast(first_child)?)),
+            EXPR_LIT => Some(Self::Lit(ExprLit::cast(first_child)?)),
+            EXPR_LET => Some(Self::Let(ExprLet::cast(first_child)?)),
+            EXPR_CONST => Some(Self::Const(ExprConst::cast(first_child)?)),
+            EXPR_BLOCK => Some(Self::Block(ExprBlock::cast(first_child)?)),
+            EXPR_UNARY => Some(Self::Unary(ExprUnary::cast(first_child)?)),
+            EXPR_BINARY => Some(Self::Binary(ExprBinary::cast(first_child)?)),
+            EXPR_PAREN => Some(Self::Paren(ExprParen::cast(first_child)?)),
+            EXPR_ARRAY => Some(Self::Array(ExprArray::cast(first_child)?)),
+            EXPR_INDEX => Some(Self::Index(ExprIndex::cast(first_child)?)),
+            EXPR_OBJECT => Some(Self::Object(ExprObject::cast(first_child)?)),
+            EXPR_CALL => Some(Self::Call(ExprCall::cast(first_child)?)),
+            EXPR_CLOSURE => Some(Self::Closure(ExprClosure::cast(first_child)?)),
+            EXPR_IF => Some(Self::If(ExprIf::cast(first_child)?)),
+            EXPR_LOOP => Some(Self::Loop(ExprLoop::cast(first_child)?)),
+            EXPR_FOR => Some(Self::For(ExprFor::cast(first_child)?)),
+            EXPR_WHILE => Some(Self::While(ExprWhile::cast(first_child)?)),
+            EXPR_BREAK => Some(Self::Break(ExprBreak::cast(first_child)?)),
+            EXPR_CONTINUE => Some(Self::Continue(ExprContinue::cast(first_child)?)),
+            EXPR_SWITCH => Some(Self::Switch(ExprSwitch::cast(first_child)?)),
+            EXPR_RETURN => Some(Self::Return(ExprReturn::cast(first_child)?)),
+            EXPR_FN => Some(Self::Fn(ExprFn::cast(first_child)?)),
+            EXPR_IMPORT => Some(Self::Import(ExprImport::cast(first_child)?)),
             _ => None,
         }
     }
@@ -983,9 +984,10 @@ impl AstNode for Pat {
         if !Self::can_cast(&syntax) {
             return None;
         }
-        match syntax.first_child()?.kind() {
-            PAT_TUPLE => Some(Self::Tuple(PatTuple::cast(syntax)?)),
-            PAT_IDENT => Some(Self::Ident(PatIdent::cast(syntax)?)),
+        let first_child = syntax.first_child()?;
+        match first_child.kind() {
+            PAT_TUPLE => Some(Self::Tuple(PatTuple::cast(first_child)?)),
+            PAT_IDENT => Some(Self::Ident(PatIdent::cast(first_child)?)),
             _ => None,
         }
     }
@@ -1097,10 +1099,11 @@ impl AstNode for ExportTarget {
         if !Self::can_cast(&syntax) {
             return None;
         }
-        match syntax.first_child()?.kind() {
-            EXPR_LET => Some(Self::ExprLet(ExprLet::cast(syntax)?)),
-            EXPR_CONST => Some(Self::ExprConst(ExprConst::cast(syntax)?)),
-            EXPORT_IDENT => Some(Self::Ident(ExportIdent::cast(syntax)?)),
+        let first_child = syntax.first_child()?;
+        match first_child.kind() {
+            EXPR_LET => Some(Self::ExprLet(ExprLet::cast(first_child)?)),
+            EXPR_CONST => Some(Self::ExprConst(ExprConst::cast(first_child)?)),
+            EXPORT_IDENT => Some(Self::Ident(ExportIdent::cast(first_child)?)),
             _ => None,
         }
     }
