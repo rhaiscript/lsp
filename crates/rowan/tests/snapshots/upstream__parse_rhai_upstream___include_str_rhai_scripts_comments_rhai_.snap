@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..272
+RHAI@0..272
   COMMENT_LINE@0..30 "// I am a single line ..."
   WHITESPACE@30..32 "\n\n"
   STMT@32..86

@@ -5,8 +5,10 @@
 
 mod decl;
 
+use std::collections::HashMap;
+
 use quote::{format_ident, quote};
-use ungrammar::{Grammar, Rule};
+use ungrammar::{Grammar, Node, Rule, Token};
 
 use crate::syntax::decl::token_name;
 
@@ -258,6 +260,10 @@ fn generate_ast(grammar: &Grammar) -> String {
             ungrammar::Rule::Seq(rules) => {
                 let mut getters = quote! {};
 
+                // For identical kinds.
+                let mut node_skip_count = HashMap::<Node, usize>::new();
+                let mut token_skip_count = HashMap::<Token, usize>::new();
+
                 for inner_rule in rules {
                     let label = match inner_rule {
                         Rule::Labeled { label, rule: _ } => Some(label.clone()),
@@ -278,9 +284,12 @@ fn generate_ast(grammar: &Grammar) -> String {
                                 label.unwrap_or_else(|| to_lower_snake_case(&inner_node.name));
                             let getter_ident = format_ident!("{}", &getter_name);
 
+                            let skip_count = node_skip_count.get(n).copied().unwrap_or_default();
+                            *node_skip_count.entry(*n).or_insert(0) += 1;
+
                             getters.extend(quote! {
                                 pub fn #getter_ident(&self) -> Option<#inner_node_ident> {
-                                    self.0.children().find_map(#inner_node_ident::cast)
+                                    self.0.children().filter_map(#inner_node_ident::cast).skip(#skip_count).next()
                                 }
                             });
                         }
@@ -294,14 +303,19 @@ fn generate_ast(grammar: &Grammar) -> String {
                                 &label.unwrap_or_else(|| token_getter_name(&inner_token.name))
                             );
 
+                            let skip_count = token_skip_count.get(t).copied().unwrap_or_default();
+                            *token_skip_count.entry(*t).or_insert(0) += 1;
+
                             getters.extend(quote! {
                                 pub fn #getter_ident(&self) -> Option<SyntaxToken> {
-                                    self.0.children_with_tokens().find_map(|t| {
+                                    self.0.children_with_tokens().filter_map(|t| {
                                         if t.kind() != #token_kind_ident {
                                             return None
                                         }
                                         t.into_token()
                                     })
+                                    .skip(#skip_count)
+                                    .next()
                                 }
                             });
                         }

@@ -3,7 +3,7 @@ source: crates/rowan/tests/smoke.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..103
+RHAI@0..103
   SHEBANG@0..17 "#!/bin/echo hello"
   WHITESPACE@17..19 "\n\n"
   COMMENT_LINE@19..28 "// It's a"
@@ -26,7 +26,8 @@ FILE@0..103
   WHITESPACE@41..43 "\n\n"
   STMT@43..64
     ITEM@43..63
-      COMMENT_LINE_DOC@43..53 "/// It's b"
+      DOC@43..53
+        COMMENT_LINE_DOC@43..53 "/// It's b"
       WHITESPACE@53..54 "\n"
       EXPR@54..63
         EXPR_LET@54..63

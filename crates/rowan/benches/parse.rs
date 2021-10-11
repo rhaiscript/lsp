@@ -7,7 +7,7 @@ fn parse(src: &str) -> Parse {
 }
 
 fn bench(c: &mut Criterion) {
-    const SIMPLE_SRC: &str = include_str!("../../../testdata/valid/oop.rhai");
+    const SIMPLE_SRC: &str = include_str!("../../../testdata/valid/simple.rhai");
     const OOP_SRC: &str = include_str!("../../../testdata/valid/oop.rhai");
 
     let mut g = c.benchmark_group("simple");

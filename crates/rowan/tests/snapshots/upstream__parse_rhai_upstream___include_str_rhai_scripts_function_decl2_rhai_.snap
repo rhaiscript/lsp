@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..404
+RHAI@0..404
   COMMENT_LINE@0..53 "// This script define ..."
   WHITESPACE@53..55 "\n\n"
   STMT@55..65
@@ -46,9 +46,10 @@ FILE@0..404
               ITEM@88..94
                 EXPR@88..94
                   EXPR_BINARY@88..94
-                    EXPR_IDENT@88..90
-                      IDENT@88..89 "a"
-                      WHITESPACE@89..90 " "
+                    EXPR@88..90
+                      EXPR_IDENT@88..90
+                        IDENT@88..89 "a"
+                        WHITESPACE@89..90 " "
                     OP_ASSIGN@90..91 "="
                     EXPR@91..94
                       WHITESPACE@91..92 " "
@@ -63,9 +64,10 @@ FILE@0..404
               ITEM@150..155
                 EXPR@150..155
                   EXPR_BINARY@150..155
-                    EXPR_IDENT@150..152
-                      IDENT@150..151 "a"
-                      WHITESPACE@151..152 " "
+                    EXPR@150..152
+                      EXPR_IDENT@150..152
+                        IDENT@150..151 "a"
+                        WHITESPACE@151..152 " "
                     OP_ADD@152..153 "+"
                     EXPR@153..155
                       WHITESPACE@153..154 " "

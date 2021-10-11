@@ -16,12 +16,16 @@ pub(crate) async fn document_open(
     let mapper = Mapper::new_utf16(&p.text_document.text, false);
     let uri = p.text_document.uri.clone();
 
-    context
-        .world()
-        .lock()
-        .unwrap()
-        .documents
+    let mut w = context.world().lock().unwrap();
+
+    w.hir
+        .add_module_from_syntax(uri.as_str(), &parse.clone_syntax());
+    w.hir.resolve_references_in_module(uri.as_str());
+
+    w.documents
         .insert(p.text_document.uri, Document { parse, mapper });
+
+    drop(w);
 
     spawn(diagnostics::publish_diagnostics(context.clone(), uri));
 }
@@ -45,12 +49,16 @@ pub(crate) async fn document_change(
     let mapper = Mapper::new_utf16(&change.text, false);
     let uri = p.text_document.uri.clone();
 
-    context
-        .world()
-        .lock()
-        .unwrap()
-        .documents
+    let mut w = context.world().lock().unwrap();
+
+    w.hir
+        .add_module_from_syntax(uri.as_str(), &parse.clone_syntax());
+    w.hir.resolve_references_in_module(uri.as_str());
+
+    w.documents
         .insert(p.text_document.uri, Document { parse, mapper });
+
+    drop(w);
 
     spawn(diagnostics::publish_diagnostics(context.clone(), uri));
 }

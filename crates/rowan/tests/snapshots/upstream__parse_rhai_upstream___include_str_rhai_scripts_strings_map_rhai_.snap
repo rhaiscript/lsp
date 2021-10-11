@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..5187
+RHAI@0..5187
   STMT@0..22
     ITEM@0..21
       EXPR@0..21
@@ -2591,8 +2591,9 @@ FILE@0..5187
                                       EXPR_CALL@4867..4912
                                         EXPR@4867..4876
                                           EXPR_BINARY@4867..4876
-                                            EXPR_IDENT@4867..4871
-                                              IDENT@4867..4871 "keys"
+                                            EXPR@4867..4871
+                                              EXPR_IDENT@4867..4871
+                                                IDENT@4867..4871 "keys"
                                             PUNCT_DOT@4871..4872 "."
                                             EXPR@4872..4876
                                               EXPR_IDENT@4872..4876
@@ -2666,16 +2667,17 @@ FILE@0..5187
               ITEM@4982..4994
                 EXPR@4982..4994
                   EXPR_BINARY@4982..4994
-                    EXPR_INDEX@4982..4990
-                      EXPR@4982..4985
-                        EXPR_IDENT@4982..4985
-                          IDENT@4982..4985 "map"
-                      PUNCT_BRACKET_START@4985..4986 "["
-                      EXPR@4986..4989
-                        EXPR_IDENT@4986..4989
-                          IDENT@4986..4989 "key"
-                      PUNCT_BRACKET_END@4989..4990 "]"
-                    WHITESPACE@4990..4991 " "
+                    EXPR@4982..4991
+                      EXPR_INDEX@4982..4990
+                        EXPR@4982..4985
+                          EXPR_IDENT@4982..4985
+                            IDENT@4982..4985 "map"
+                        PUNCT_BRACKET_START@4985..4986 "["
+                        EXPR@4986..4989
+                          EXPR_IDENT@4986..4989
+                            IDENT@4986..4989 "key"
+                        PUNCT_BRACKET_END@4989..4990 "]"
+                      WHITESPACE@4990..4991 " "
                     OP_ASSIGN@4991..4992 "="
                     EXPR@4992..4994
                       WHITESPACE@4992..4993 " "
@@ -2687,9 +2689,10 @@ FILE@0..5187
               ITEM@5000..5006
                 EXPR@5000..5006
                   EXPR_BINARY@5000..5006
-                    EXPR_IDENT@5000..5002
-                      IDENT@5000..5001 "i"
-                      WHITESPACE@5001..5002 " "
+                    EXPR@5000..5002
+                      EXPR_IDENT@5000..5002
+                        IDENT@5000..5001 "i"
+                        WHITESPACE@5001..5002 " "
                     OP_ADD_ASSIGN@5002..5004 "+="
                     EXPR@5004..5006
                       WHITESPACE@5004..5005 " "
@@ -2739,9 +2742,10 @@ FILE@0..5187
               ITEM@5047..5062
                 EXPR@5047..5062
                   EXPR_BINARY@5047..5062
-                    EXPR_IDENT@5047..5051
-                      IDENT@5047..5050 "sum"
-                      WHITESPACE@5050..5051 " "
+                    EXPR@5047..5051
+                      EXPR_IDENT@5047..5051
+                        IDENT@5047..5050 "sum"
+                        WHITESPACE@5050..5051 " "
                     OP_ADD_ASSIGN@5051..5053 "+="
                     EXPR@5053..5062
                       EXPR_INDEX@5053..5062
@@ -2783,8 +2787,9 @@ FILE@0..5187
                   EXPR_CALL@5089..5104
                     EXPR@5089..5099
                       EXPR_BINARY@5089..5099
-                        EXPR_IDENT@5089..5092
-                          IDENT@5089..5092 "map"
+                        EXPR@5089..5092
+                          EXPR_IDENT@5089..5092
+                            IDENT@5089..5092 "map"
                         PUNCT_DOT@5092..5093 "."
                         EXPR@5093..5099
                           EXPR_IDENT@5093..5099

@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..1409
+RHAI@0..1409
   COMMENT_LINE@0..85 "// This script simula ..."
   WHITESPACE@85..87 "\n\n"
   COMMENT_LINE@87..130 "// External variable  ..."
@@ -63,9 +63,10 @@ FILE@0..1409
                       OP_BIT_OR@261..262 "|"
                     EXPR@262..273
                       EXPR_BINARY@262..273
-                        WHITESPACE@262..263 " "
-                        EXPR_IDENT@263..267
-                          IDENT@263..267 "this"
+                        EXPR@262..267
+                          WHITESPACE@262..263 " "
+                          EXPR_IDENT@263..267
+                            IDENT@263..267 "this"
                         PUNCT_DOT@267..268 "."
                         EXPR@268..273
                           EXPR_IDENT@268..273
@@ -122,14 +123,16 @@ FILE@0..1409
                           ITEM@446..460
                             EXPR@446..460
                               EXPR_BINARY@446..460
-                                EXPR_BINARY@446..457
-                                  EXPR_IDENT@446..450
-                                    IDENT@446..450 "this"
-                                  PUNCT_DOT@450..451 "."
-                                  EXPR@451..457
-                                    EXPR_IDENT@451..457
-                                      IDENT@451..456 "_data"
-                                      WHITESPACE@456..457 " "
+                                EXPR@446..457
+                                  EXPR_BINARY@446..457
+                                    EXPR@446..450
+                                      EXPR_IDENT@446..450
+                                        IDENT@446..450 "this"
+                                    PUNCT_DOT@450..451 "."
+                                    EXPR@451..457
+                                      EXPR_IDENT@451..457
+                                        IDENT@451..456 "_data"
+                                        WHITESPACE@456..457 " "
                                 OP_ASSIGN@457..458 "="
                                 EXPR@458..460
                                   WHITESPACE@458..459 " "
@@ -141,15 +144,17 @@ FILE@0..1409
                           ITEM@470..493
                             EXPR@470..493
                               EXPR_BINARY@470..493
-                                EXPR_IDENT@470..481
-                                  IDENT@470..480 "last_value"
-                                  WHITESPACE@480..481 " "
+                                EXPR@470..481
+                                  EXPR_IDENT@470..481
+                                    IDENT@470..480 "last_value"
+                                    WHITESPACE@480..481 " "
                                 OP_ASSIGN@481..482 "="
                                 EXPR@482..493
                                   EXPR_BINARY@482..493
-                                    WHITESPACE@482..483 " "
-                                    EXPR_IDENT@483..487
-                                      IDENT@483..487 "this"
+                                    EXPR@482..487
+                                      WHITESPACE@482..483 " "
+                                      EXPR_IDENT@483..487
+                                        IDENT@483..487 "this"
                                     PUNCT_DOT@487..488 "."
                                     EXPR@488..493
                                       EXPR_IDENT@488..493
@@ -164,8 +169,9 @@ FILE@0..1409
                               EXPR_CALL@542..555
                                 EXPR@542..553
                                   EXPR_BINARY@542..553
-                                    EXPR_IDENT@542..546
-                                      IDENT@542..546 "this"
+                                    EXPR@542..546
+                                      EXPR_IDENT@542..546
+                                        IDENT@542..546 "this"
                                     PUNCT_DOT@546..547 "."
                                     EXPR@547..553
                                       EXPR_IDENT@547..553
@@ -187,20 +193,22 @@ FILE@0..1409
           KW_IF@567..569 "if"
           EXPR@569..590
             EXPR_BINARY@569..590
-              EXPR_CALL@569..585
-                EXPR@569..583
-                  EXPR_BINARY@569..583
-                    WHITESPACE@569..570 " "
-                    EXPR_IDENT@570..574
-                      IDENT@570..574 "obj1"
-                    PUNCT_DOT@574..575 "."
-                    EXPR@575..583
-                      EXPR_IDENT@575..583
-                        IDENT@575..583 "get_data"
-                ARG_LIST@583..585
-                  PUNCT_PAREN_START@583..584 "("
-                  PUNCT_PAREN_END@584..585 ")"
-              WHITESPACE@585..586 " "
+              EXPR@569..586
+                EXPR_CALL@569..585
+                  EXPR@569..583
+                    EXPR_BINARY@569..583
+                      EXPR@569..574
+                        WHITESPACE@569..570 " "
+                        EXPR_IDENT@570..574
+                          IDENT@570..574 "obj1"
+                      PUNCT_DOT@574..575 "."
+                      EXPR@575..583
+                        EXPR_IDENT@575..583
+                          IDENT@575..583 "get_data"
+                  ARG_LIST@583..585
+                    PUNCT_PAREN_START@583..584 "("
+                    PUNCT_PAREN_END@584..585 ")"
+                WHITESPACE@585..586 " "
               OP_GT@586..587 ">"
               EXPR@587..590
                 WHITESPACE@587..588 " "
@@ -219,8 +227,9 @@ FILE@0..1409
                   EXPR_CALL@638..654
                     EXPR@638..649
                       EXPR_BINARY@638..649
-                        EXPR_IDENT@638..642
-                          IDENT@638..642 "obj1"
+                        EXPR@638..642
+                          EXPR_IDENT@638..642
+                            IDENT@638..642 "obj1"
                         PUNCT_DOT@642..643 "."
                         EXPR@643..649
                           EXPR_IDENT@643..649
@@ -311,21 +320,24 @@ FILE@0..1409
                           ITEM@979..997
                             EXPR@979..997
                               EXPR_BINARY@979..997
-                                EXPR_BINARY@979..990
-                                  EXPR_IDENT@979..983
-                                    IDENT@979..983 "this"
-                                  PUNCT_DOT@983..984 "."
-                                  EXPR@984..990
-                                    EXPR_IDENT@984..990
-                                      IDENT@984..989 "_data"
-                                      WHITESPACE@989..990 " "
+                                EXPR@979..990
+                                  EXPR_BINARY@979..990
+                                    EXPR@979..983
+                                      EXPR_IDENT@979..983
+                                        IDENT@979..983 "this"
+                                    PUNCT_DOT@983..984 "."
+                                    EXPR@984..990
+                                      EXPR_IDENT@984..990
+                                        IDENT@984..989 "_data"
+                                        WHITESPACE@989..990 " "
                                 OP_ASSIGN@990..991 "="
                                 EXPR@991..997
                                   EXPR_BINARY@991..997
-                                    WHITESPACE@991..992 " "
-                                    EXPR_IDENT@992..994
-                                      IDENT@992..993 "x"
-                                      WHITESPACE@993..994 " "
+                                    EXPR@991..994
+                                      WHITESPACE@991..992 " "
+                                      EXPR_IDENT@992..994
+                                        IDENT@992..993 "x"
+                                        WHITESPACE@993..994 " "
                                     OP_MUL@994..995 "*"
                                     EXPR@995..997
                                       WHITESPACE@995..996 " "
@@ -338,15 +350,17 @@ FILE@0..1409
                           ITEM@1007..1030
                             EXPR@1007..1030
                               EXPR_BINARY@1007..1030
-                                EXPR_IDENT@1007..1018
-                                  IDENT@1007..1017 "last_value"
-                                  WHITESPACE@1017..1018 " "
+                                EXPR@1007..1018
+                                  EXPR_IDENT@1007..1018
+                                    IDENT@1007..1017 "last_value"
+                                    WHITESPACE@1017..1018 " "
                                 OP_ASSIGN@1018..1019 "="
                                 EXPR@1019..1030
                                   EXPR_BINARY@1019..1030
-                                    WHITESPACE@1019..1020 " "
-                                    EXPR_IDENT@1020..1024
-                                      IDENT@1020..1024 "this"
+                                    EXPR@1019..1024
+                                      WHITESPACE@1019..1020 " "
+                                      EXPR_IDENT@1020..1024
+                                        IDENT@1020..1024 "this"
                                     PUNCT_DOT@1024..1025 "."
                                     EXPR@1025..1030
                                       EXPR_IDENT@1025..1030
@@ -361,8 +375,9 @@ FILE@0..1409
                               EXPR_CALL@1079..1092
                                 EXPR@1079..1090
                                   EXPR_BINARY@1079..1090
-                                    EXPR_IDENT@1079..1083
-                                      IDENT@1079..1083 "this"
+                                    EXPR@1079..1083
+                                      EXPR_IDENT@1079..1083
+                                        IDENT@1079..1083 "this"
                                     PUNCT_DOT@1083..1084 "."
                                     EXPR@1084..1090
                                       EXPR_IDENT@1084..1090
@@ -383,8 +398,9 @@ FILE@0..1409
         EXPR_CALL@1103..1123
           EXPR@1103..1117
             EXPR_BINARY@1103..1117
-              EXPR_IDENT@1103..1107
-                IDENT@1103..1107 "obj2"
+              EXPR@1103..1107
+                EXPR_IDENT@1103..1107
+                  IDENT@1103..1107 "obj2"
               PUNCT_DOT@1107..1108 "."
               EXPR@1108..1117
                 EXPR_IDENT@1108..1117
@@ -406,20 +422,22 @@ FILE@0..1409
           KW_IF@1186..1188 "if"
           EXPR@1188..1209
             EXPR_BINARY@1188..1209
-              EXPR_CALL@1188..1204
-                EXPR@1188..1202
-                  EXPR_BINARY@1188..1202
-                    WHITESPACE@1188..1189 " "
-                    EXPR_IDENT@1189..1193
-                      IDENT@1189..1193 "obj2"
-                    PUNCT_DOT@1193..1194 "."
-                    EXPR@1194..1202
-                      EXPR_IDENT@1194..1202
-                        IDENT@1194..1202 "get_data"
-                ARG_LIST@1202..1204
-                  PUNCT_PAREN_START@1202..1203 "("
-                  PUNCT_PAREN_END@1203..1204 ")"
-              WHITESPACE@1204..1205 " "
+              EXPR@1188..1205
+                EXPR_CALL@1188..1204
+                  EXPR@1188..1202
+                    EXPR_BINARY@1188..1202
+                      EXPR@1188..1193
+                        WHITESPACE@1188..1189 " "
+                        EXPR_IDENT@1189..1193
+                          IDENT@1189..1193 "obj2"
+                      PUNCT_DOT@1193..1194 "."
+                      EXPR@1194..1202
+                        EXPR_IDENT@1194..1202
+                          IDENT@1194..1202 "get_data"
+                  ARG_LIST@1202..1204
+                    PUNCT_PAREN_START@1202..1203 "("
+                    PUNCT_PAREN_END@1203..1204 ")"
+                WHITESPACE@1204..1205 " "
               OP_GT@1205..1206 ">"
               EXPR@1206..1209
                 WHITESPACE@1206..1207 " "
@@ -461,8 +479,9 @@ FILE@0..1409
                   EXPR_CALL@1309..1324
                     EXPR@1309..1320
                       EXPR_BINARY@1309..1320
-                        EXPR_IDENT@1309..1313
-                          IDENT@1309..1313 "obj2"
+                        EXPR@1309..1313
+                          EXPR_IDENT@1309..1313
+                            IDENT@1309..1313 "obj2"
                         PUNCT_DOT@1313..1314 "."
                         EXPR@1314..1320
                           EXPR_IDENT@1314..1320

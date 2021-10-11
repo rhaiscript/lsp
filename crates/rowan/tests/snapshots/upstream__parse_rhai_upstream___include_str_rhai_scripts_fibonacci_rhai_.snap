@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..610
+RHAI@0..610
   COMMENT_LINE@0..81 "// This script calcul ..."
   WHITESPACE@81..82 "\n"
   COMMENT_LINE@82..127 "// to test the speed  ..."
@@ -63,10 +63,11 @@ FILE@0..610
                     KW_IF@183..185 "if"
                     EXPR@185..192
                       EXPR_BINARY@185..192
-                        WHITESPACE@185..186 " "
-                        EXPR_IDENT@186..188
-                          IDENT@186..187 "n"
-                          WHITESPACE@187..188 " "
+                        EXPR@185..188
+                          WHITESPACE@185..186 " "
+                          EXPR_IDENT@186..188
+                            IDENT@186..187 "n"
+                            WHITESPACE@187..188 " "
                         OP_LT@188..189 "<"
                         EXPR@189..192
                           WHITESPACE@189..190 " "
@@ -94,23 +95,25 @@ FILE@0..610
                         ITEM@225..249
                           EXPR@225..249
                             EXPR_BINARY@225..249
-                              EXPR_CALL@225..233
-                                EXPR@225..228
-                                  EXPR_IDENT@225..228
-                                    IDENT@225..228 "fib"
-                                ARG_LIST@228..233
-                                  PUNCT_PAREN_START@228..229 "("
-                                  EXPR@229..232
-                                    EXPR_BINARY@229..232
-                                      EXPR_IDENT@229..230
-                                        IDENT@229..230 "n"
-                                      OP_SUB@230..231 "-"
-                                      EXPR@231..232
-                                        EXPR_LIT@231..232
-                                          LIT@231..232
-                                            LIT_INT@231..232 "1"
-                                  PUNCT_PAREN_END@232..233 ")"
-                              WHITESPACE@233..234 " "
+                              EXPR@225..234
+                                EXPR_CALL@225..233
+                                  EXPR@225..228
+                                    EXPR_IDENT@225..228
+                                      IDENT@225..228 "fib"
+                                  ARG_LIST@228..233
+                                    PUNCT_PAREN_START@228..229 "("
+                                    EXPR@229..232
+                                      EXPR_BINARY@229..232
+                                        EXPR@229..230
+                                          EXPR_IDENT@229..230
+                                            IDENT@229..230 "n"
+                                        OP_SUB@230..231 "-"
+                                        EXPR@231..232
+                                          EXPR_LIT@231..232
+                                            LIT@231..232
+                                              LIT_INT@231..232 "1"
+                                    PUNCT_PAREN_END@232..233 ")"
+                                WHITESPACE@233..234 " "
                               OP_ADD@234..235 "+"
                               EXPR@235..249
                                 EXPR_CALL@235..244
@@ -122,8 +125,9 @@ FILE@0..610
                                     PUNCT_PAREN_START@239..240 "("
                                     EXPR@240..243
                                       EXPR_BINARY@240..243
-                                        EXPR_IDENT@240..241
-                                          IDENT@240..241 "n"
+                                        EXPR@240..241
+                                          EXPR_IDENT@240..241
+                                            IDENT@240..241 "n"
                                         OP_SUB@241..242 "-"
                                         EXPR@242..243
                                           EXPR_LIT@242..243
@@ -233,9 +237,10 @@ FILE@0..610
               ITEM@399..419
                 EXPR@399..419
                   EXPR_BINARY@399..419
-                    EXPR_IDENT@399..406
-                      IDENT@399..405 "result"
-                      WHITESPACE@405..406 " "
+                    EXPR@399..406
+                      EXPR_IDENT@399..406
+                        IDENT@399..405 "result"
+                        WHITESPACE@405..406 " "
                     OP_ASSIGN@406..407 "="
                     EXPR@407..419
                       EXPR_CALL@407..419
@@ -292,10 +297,11 @@ FILE@0..610
           KW_IF@531..533 "if"
           EXPR@533..552
             EXPR_BINARY@533..552
-              WHITESPACE@533..534 " "
-              EXPR_IDENT@534..541
-                IDENT@534..540 "result"
-                WHITESPACE@540..541 " "
+              EXPR@533..541
+                WHITESPACE@533..534 " "
+                EXPR_IDENT@534..541
+                  IDENT@534..540 "result"
+                  WHITESPACE@540..541 " "
               OP_NOT_EQ@541..543 "!="
               EXPR@543..552
                 WHITESPACE@543..544 " "

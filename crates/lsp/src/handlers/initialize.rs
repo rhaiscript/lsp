@@ -1,3 +1,5 @@
+use enum_iterator::IntoEnumIterator;
+
 use super::*;
 
 pub(crate) async fn initialize(
@@ -9,6 +11,36 @@ pub(crate) async fn initialize(
             text_document_sync: Some(TextDocumentSyncCapability::Kind(TextDocumentSyncKind::Full)),
             document_symbol_provider: Some(OneOf::Left(true)),
             folding_range_provider: Some(FoldingRangeProviderCapability::Simple(true)),
+            hover_provider: Some(HoverProviderCapability::Simple(true)),
+            declaration_provider: Some(DeclarationCapability::Simple(true)),
+            definition_provider: Some(OneOf::Left(true)),
+            references_provider: Some(OneOf::Left(true)),
+            code_lens_provider: Some(CodeLensOptions {
+                resolve_provider: Some(false),
+            }),
+            semantic_tokens_provider: Some(
+                SemanticTokensServerCapabilities::SemanticTokensOptions(SemanticTokensOptions {
+                    legend: SemanticTokensLegend {
+                        token_types: SemanticTokenKind::into_enum_iter()
+                            .map(Into::into)
+                            .collect(),
+                        token_modifiers: SemanticTokenModifierKind::into_enum_iter()
+                            .map(Into::into)
+                            .collect(),
+                        ..Default::default()
+                    },
+                    full: Some(SemanticTokensFullOptions::Bool(true)),
+                    range: None,
+                    ..Default::default()
+                }),
+            ),
+            completion_provider: Some(CompletionOptions {
+                resolve_provider: Some(false),
+                trigger_characters: Some(vec![
+                    "#".into(),
+                ]),
+                ..Default::default()
+            }),
             ..Default::default()
         },
         server_info: Some(ServerInfo {

@@ -5,11 +5,13 @@
 #![allow(dead_code)]
 
 use std::ops::Range;
-
+use serde::{Serialize, Deserialize};
 use logos::{Lexer as LogosLexer, Logos};
 
 /// SyntaxKind represents all the node and token types (kinds) found in the grammar.
-#[derive(Logos, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(
+    Logos, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
+)]
 #[repr(u16)]
 pub enum SyntaxKind {
     // region: Keywords
@@ -328,7 +330,7 @@ pub enum SyntaxKind {
     // This region is generated from ungrammar, do not touch it!
     LIT,
     PATH,
-    FILE,
+    RHAI,
     STMT,
     ITEM,
     DOC,

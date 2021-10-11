@@ -26,8 +26,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:rhai",
-    "onView:rhaiSyntaxTree"
+    "onLanguage:rhai"
   ],
   "contributes": {
     "languages": [
@@ -76,7 +75,8 @@
         {
           "id": "rhaiSyntaxTree",
           "name": "Syntax Tree",
-          "contextualTitle": "Rhai Syntax Tree"
+          "contextualTitle": "Rhai Syntax Tree",
+          "when": "rhai.extensionActive"
         }
       ]
     }

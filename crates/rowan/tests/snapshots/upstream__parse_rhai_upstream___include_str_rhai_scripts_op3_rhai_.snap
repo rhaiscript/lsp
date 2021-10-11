@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..71
+RHAI@0..71
   STMT@0..35
     ITEM@0..34
       EXPR@0..34
@@ -31,23 +31,25 @@ FILE@0..71
           OP_ASSIGN@43..44 "="
           EXPR@44..58
             EXPR_BINARY@44..58
-              WHITESPACE@44..45 " "
-              EXPR_PAREN@45..54
-                PUNCT_PAREN_START@45..46 "("
-                EXPR@46..53
-                  EXPR_BINARY@46..53
-                    EXPR_LIT@46..48
-                      LIT@46..48
-                        LIT_INT@46..48 "12"
-                    WHITESPACE@48..49 " "
-                    OP_ADD@49..50 "+"
-                    EXPR@50..53
-                      WHITESPACE@50..51 " "
-                      EXPR_LIT@51..53
-                        LIT@51..53
-                          LIT_INT@51..53 "34"
-                PUNCT_PAREN_END@53..54 ")"
-              WHITESPACE@54..55 " "
+              EXPR@44..55
+                WHITESPACE@44..45 " "
+                EXPR_PAREN@45..54
+                  PUNCT_PAREN_START@45..46 "("
+                  EXPR@46..53
+                    EXPR_BINARY@46..53
+                      EXPR@46..49
+                        EXPR_LIT@46..48
+                          LIT@46..48
+                            LIT_INT@46..48 "12"
+                        WHITESPACE@48..49 " "
+                      OP_ADD@49..50 "+"
+                      EXPR@50..53
+                        WHITESPACE@50..51 " "
+                        EXPR_LIT@51..53
+                          LIT@51..53
+                            LIT_INT@51..53 "34"
+                  PUNCT_PAREN_END@53..54 ")"
+                WHITESPACE@54..55 " "
               OP_MUL@55..56 "*"
               EXPR@56..58
                 WHITESPACE@56..57 " "

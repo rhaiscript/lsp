@@ -8,7 +8,8 @@ Lit =
 Path =
   root:'ident' segments:('::' 'ident')*
 
-File =
+// Some Rhai code, could be a file, a module, etc.
+Rhai =
   'shebang'?
   statements:Stmt*
 

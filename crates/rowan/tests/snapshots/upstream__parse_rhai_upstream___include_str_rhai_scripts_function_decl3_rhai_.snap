@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..233
+RHAI@0..233
   COMMENT_LINE@0..67 "// This script define ..."
   WHITESPACE@67..69 "\n\n"
   STMT@69..84
@@ -62,44 +62,50 @@ FILE@0..233
               ITEM@115..151
                 EXPR@115..151
                   EXPR_BINARY@115..151
-                    EXPR_BINARY@115..137
-                      EXPR_BINARY@115..133
-                        EXPR_BINARY@115..125
-                          EXPR_IDENT@115..117
-                            IDENT@115..116 "a"
-                            WHITESPACE@116..117 " "
-                          OP_SUB@117..118 "-"
-                          EXPR@118..125
-                            EXPR_BINARY@118..125
-                              WHITESPACE@118..119 " "
-                              EXPR_IDENT@119..121
-                                IDENT@119..120 "b"
-                                WHITESPACE@120..121 " "
-                              OP_MUL@121..122 "*"
-                              EXPR@122..125
-                                WHITESPACE@122..123 " "
-                                EXPR_IDENT@123..125
-                                  IDENT@123..124 "c"
-                                  WHITESPACE@124..125 " "
-                        OP_SUB@125..126 "-"
-                        EXPR@126..133
-                          EXPR_BINARY@126..133
-                            WHITESPACE@126..127 " "
-                            EXPR_IDENT@127..129
-                              IDENT@127..128 "d"
-                              WHITESPACE@128..129 " "
-                            OP_MUL@129..130 "*"
-                            EXPR@130..133
-                              WHITESPACE@130..131 " "
-                              EXPR_IDENT@131..133
-                                IDENT@131..132 "e"
-                                WHITESPACE@132..133 " "
-                      OP_SUB@133..134 "-"
-                      EXPR@134..137
-                        WHITESPACE@134..135 " "
-                        EXPR_IDENT@135..137
-                          IDENT@135..136 "f"
-                          WHITESPACE@136..137 " "
+                    EXPR@115..137
+                      EXPR_BINARY@115..137
+                        EXPR@115..133
+                          EXPR_BINARY@115..133
+                            EXPR@115..125
+                              EXPR_BINARY@115..125
+                                EXPR@115..117
+                                  EXPR_IDENT@115..117
+                                    IDENT@115..116 "a"
+                                    WHITESPACE@116..117 " "
+                                OP_SUB@117..118 "-"
+                                EXPR@118..125
+                                  EXPR_BINARY@118..125
+                                    EXPR@118..121
+                                      WHITESPACE@118..119 " "
+                                      EXPR_IDENT@119..121
+                                        IDENT@119..120 "b"
+                                        WHITESPACE@120..121 " "
+                                    OP_MUL@121..122 "*"
+                                    EXPR@122..125
+                                      WHITESPACE@122..123 " "
+                                      EXPR_IDENT@123..125
+                                        IDENT@123..124 "c"
+                                        WHITESPACE@124..125 " "
+                            OP_SUB@125..126 "-"
+                            EXPR@126..133
+                              EXPR_BINARY@126..133
+                                EXPR@126..129
+                                  WHITESPACE@126..127 " "
+                                  EXPR_IDENT@127..129
+                                    IDENT@127..128 "d"
+                                    WHITESPACE@128..129 " "
+                                OP_MUL@129..130 "*"
+                                EXPR@130..133
+                                  WHITESPACE@130..131 " "
+                                  EXPR_IDENT@131..133
+                                    IDENT@131..132 "e"
+                                    WHITESPACE@132..133 " "
+                        OP_SUB@133..134 "-"
+                        EXPR@134..137
+                          WHITESPACE@134..135 " "
+                          EXPR_IDENT@135..137
+                            IDENT@135..136 "f"
+                            WHITESPACE@136..137 " "
                     OP_ADD@137..138 "+"
                     EXPR@138..151
                       WHITESPACE@138..139 " "

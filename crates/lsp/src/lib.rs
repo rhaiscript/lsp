@@ -1,6 +1,7 @@
 use lsp_async_stub::Server;
 use lsp_types::{notification, request, Url};
 use mapper::Mapper;
+use rhai_hir::Hir;
 use rhai_rowan::parser::Parse;
 use std::{
     collections::HashMap,
@@ -20,6 +21,7 @@ mod handlers;
 
 pub mod lsp_ext;
 pub mod mapper;
+mod util;
 
 #[derive(Debug, Clone)]
 pub struct Document {
@@ -30,6 +32,7 @@ pub struct Document {
 #[derive(Default)]
 pub struct WorldState {
     documents: HashMap<Url, Document>,
+    hir: Hir,
 }
 
 pub type World = Arc<Mutex<WorldState>>;
@@ -41,6 +44,13 @@ pub fn create_server() -> Server<World> {
         .on_request::<request::FoldingRangeRequest, _>(handlers::folding_ranges)
         .on_request::<lsp_ext::request::SyntaxTree, _>(handlers::syntax_tree)
         .on_request::<lsp_ext::request::ConvertOffsets, _>(handlers::convert_offsets)
+        .on_request::<request::HoverRequest, _>(handlers::hover)
+        .on_request::<request::GotoDeclaration, _>(handlers::goto_declaration)
+        .on_request::<request::GotoDefinition, _>(handlers::goto_definition)
+        .on_request::<request::References, _>(handlers::references)
+        .on_request::<request::CodeLensRequest, _>(handlers::code_lens)
+        .on_request::<request::SemanticTokensFullRequest, _>(handlers::semantic_tokens)
+        .on_request::<request::Completion, _>(handlers::completion)
         .on_notification::<notification::DidOpenTextDocument, _>(handlers::document_open)
         .on_notification::<notification::DidChangeTextDocument, _>(handlers::document_change)
         .on_notification::<notification::DidCloseTextDocument, _>(handlers::document_close)

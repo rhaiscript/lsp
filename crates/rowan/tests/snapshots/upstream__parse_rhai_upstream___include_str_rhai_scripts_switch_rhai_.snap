@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..324
+RHAI@0..324
   STMT@0..52
     ITEM@0..51
       EXPR@0..51

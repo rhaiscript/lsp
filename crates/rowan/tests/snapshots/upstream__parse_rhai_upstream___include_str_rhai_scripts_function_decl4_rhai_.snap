@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..313
+RHAI@0..313
   COMMENT_LINE@0..55 "// This script define ..."
   WHITESPACE@55..57 "\n\n"
   COMMENT_LINE@57..110 "// Use 'this' to refe ..."
@@ -32,33 +32,37 @@ FILE@0..313
               ITEM@133..158
                 EXPR@133..158
                   EXPR_BINARY@133..158
-                    EXPR_IDENT@133..138
-                      IDENT@133..137 "this"
-                      WHITESPACE@137..138 " "
+                    EXPR@133..138
+                      EXPR_IDENT@133..138
+                        IDENT@133..137 "this"
+                        WHITESPACE@137..138 " "
                     OP_ASSIGN@138..139 "="
                     EXPR@139..158
                       EXPR_BINARY@139..158
-                        EXPR_CALL@139..150
-                          EXPR@139..148
-                            EXPR_BINARY@139..148
-                              WHITESPACE@139..140 " "
-                              EXPR_IDENT@140..144
-                                IDENT@140..144 "this"
-                              PUNCT_DOT@144..145 "."
-                              EXPR@145..148
-                                EXPR_IDENT@145..148
-                                  IDENT@145..148 "abs"
-                          ARG_LIST@148..150
-                            PUNCT_PAREN_START@148..149 "("
-                            PUNCT_PAREN_END@149..150 ")"
-                        WHITESPACE@150..151 " "
+                        EXPR@139..151
+                          EXPR_CALL@139..150
+                            EXPR@139..148
+                              EXPR_BINARY@139..148
+                                EXPR@139..144
+                                  WHITESPACE@139..140 " "
+                                  EXPR_IDENT@140..144
+                                    IDENT@140..144 "this"
+                                PUNCT_DOT@144..145 "."
+                                EXPR@145..148
+                                  EXPR_IDENT@145..148
+                                    IDENT@145..148 "abs"
+                            ARG_LIST@148..150
+                              PUNCT_PAREN_START@148..149 "("
+                              PUNCT_PAREN_END@149..150 ")"
+                          WHITESPACE@150..151 " "
                         OP_ADD@151..152 "+"
                         EXPR@152..158
                           EXPR_BINARY@152..158
-                            WHITESPACE@152..153 " "
-                            EXPR_IDENT@153..155
-                              IDENT@153..154 "x"
-                              WHITESPACE@154..155 " "
+                            EXPR@152..155
+                              WHITESPACE@152..153 " "
+                              EXPR_IDENT@153..155
+                                IDENT@153..154 "x"
+                                WHITESPACE@154..155 " "
                             OP_MUL@155..156 "*"
                             EXPR@156..158
                               WHITESPACE@156..157 " "
@@ -95,8 +99,9 @@ FILE@0..313
         EXPR_CALL@210..226
           EXPR@210..220
             EXPR_BINARY@210..220
-              EXPR_IDENT@210..213
-                IDENT@210..213 "obj"
+              EXPR@210..213
+                EXPR_IDENT@210..213
+                  IDENT@210..213 "obj"
               PUNCT_DOT@213..214 "."
               EXPR@214..220
                 EXPR_IDENT@214..220

@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..360
+RHAI@0..360
   STMT@0..22
     ITEM@0..21
       EXPR@0..21
@@ -127,8 +127,9 @@ FILE@0..360
                   EXPR_CALL@168..180
                     EXPR@168..177
                       EXPR_BINARY@168..177
-                        EXPR_IDENT@168..172
-                          IDENT@168..172 "list"
+                        EXPR@168..172
+                          EXPR_IDENT@168..172
+                            IDENT@168..172 "list"
                         PUNCT_DOT@172..173 "."
                         EXPR@173..177
                           EXPR_IDENT@173..177
@@ -198,9 +199,10 @@ FILE@0..360
               ITEM@263..271
                 EXPR@263..271
                   EXPR_BINARY@263..271
-                    EXPR_IDENT@263..267
-                      IDENT@263..266 "sum"
-                      WHITESPACE@266..267 " "
+                    EXPR@263..267
+                      EXPR_IDENT@263..267
+                        IDENT@263..266 "sum"
+                        WHITESPACE@266..267 " "
                     OP_ADD_ASSIGN@267..269 "+="
                     EXPR@269..271
                       WHITESPACE@269..270 " "

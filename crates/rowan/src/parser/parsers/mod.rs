@@ -129,7 +129,7 @@ impl<'src> super::Parser<'src> {
 /// Parse a Rhai file.
 #[instrument(level = "trace", skip(ctx))]
 pub fn parse_file(ctx: &mut Context) {
-    ctx.start_node(FILE);
+    ctx.start_node(RHAI);
     if let Some(SHEBANG) = ctx.token() {
         parse_shebang(ctx);
     }
@@ -383,12 +383,12 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
                 break;
             }
 
+            // Wrap the existing EXPR_SOMETHING into an EXPR for consistency.
+            ctx.start_node_at(expr_start, EXPR);
+            ctx.finish_node();
+
             match op {
                 T!["["] => {
-                    // Wrap the existing EXPR_SOMETHING into an EXPR for consistency.
-                    ctx.start_node_at(expr_start, EXPR);
-                    ctx.finish_node();
-
                     ctx.start_node_at(expr_start, EXPR_INDEX);
                     ctx.eat();
                     parse_expr_bp(ctx, 0);
@@ -401,10 +401,6 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
                     ctx.finish_node();
                 }
                 T!["("] => {
-                    // Wrap the existing EXPR_SOMETHING into an EXPR for consistency.
-                    ctx.start_node_at(expr_start, EXPR);
-                    ctx.finish_node();
-
                     ctx.start_node_at(expr_start, EXPR_CALL);
                     parse_arg_list(ctx);
                     ctx.finish_node();
@@ -425,6 +421,10 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         if l_bp < min_bp {
             break;
         }
+        // Wrap the existing EXPR_SOMETHING into an EXPR for consistency.
+        ctx.start_node_at(expr_start, EXPR);
+        ctx.finish_node();
+
         ctx.eat();
 
         ctx.start_node_at(expr_start, EXPR_BINARY);

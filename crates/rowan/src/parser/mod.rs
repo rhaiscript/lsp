@@ -80,6 +80,13 @@ impl Parse {
     /// Turn the result green tree into a CST.
     /// *This ignores errors*, the resulting tree
     /// can be potentially syntactically invalid.
+    pub fn clone_syntax(&self) -> SyntaxNode {
+        SyntaxNode::new_root(self.green.clone())
+    }
+
+    /// Turn the result green tree into a CST.
+    /// *This ignores errors*, the resulting tree
+    /// can be potentially syntactically invalid.
     pub fn into_syntax(self) -> SyntaxNode {
         SyntaxNode::new_root(self.green)
     }

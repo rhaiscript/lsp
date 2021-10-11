@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..1384
+RHAI@0..1384
   COMMENT_LINE@0..38 "// This script tests  ..."
   WHITESPACE@38..40 "\n\n"
   STMT@40..55
@@ -105,18 +105,20 @@ FILE@0..1384
             PUNCT_PAREN_START@286..287 "("
             EXPR@287..306
               EXPR_BINARY@287..306
-                EXPR_BINARY@287..299
-                  EXPR_LIT@287..292
-                    LIT@287..292
-                      LIT_STR@287..292 "\"foo\""
-                  WHITESPACE@292..293 " "
-                  OP_ADD@293..294 "+"
-                  EXPR@294..299
-                    WHITESPACE@294..295 " "
-                    EXPR_LIT@295..298
-                      LIT@295..298
-                        LIT_STR@295..298 "\" \""
-                    WHITESPACE@298..299 " "
+                EXPR@287..299
+                  EXPR_BINARY@287..299
+                    EXPR@287..293
+                      EXPR_LIT@287..292
+                        LIT@287..292
+                          LIT_STR@287..292 "\"foo\""
+                      WHITESPACE@292..293 " "
+                    OP_ADD@293..294 "+"
+                    EXPR@294..299
+                      WHITESPACE@294..295 " "
+                      EXPR_LIT@295..298
+                        LIT@295..298
+                          LIT_STR@295..298 "\" \""
+                      WHITESPACE@298..299 " "
                 OP_ADD@299..300 "+"
                 EXPR@300..306
                   WHITESPACE@300..301 " "
@@ -139,10 +141,11 @@ FILE@0..1384
             PUNCT_PAREN_START@351..352 "("
             EXPR@352..365
               EXPR_BINARY@352..365
-                EXPR_LIT@352..357
-                  LIT@352..357
-                    LIT_STR@352..357 "\"foo\""
-                WHITESPACE@357..358 " "
+                EXPR@352..358
+                  EXPR_LIT@352..357
+                    LIT@352..357
+                      LIT_STR@352..357 "\"foo\""
+                  WHITESPACE@357..358 " "
                 OP_LT@358..359 "<"
                 EXPR@359..365
                   WHITESPACE@359..360 " "
@@ -165,10 +168,11 @@ FILE@0..1384
             PUNCT_PAREN_START@404..405 "("
             EXPR@405..419
               EXPR_BINARY@405..419
-                EXPR_LIT@405..410
-                  LIT@405..410
-                    LIT_STR@405..410 "\"foo\""
-                WHITESPACE@410..411 " "
+                EXPR@405..411
+                  EXPR_LIT@405..410
+                    LIT@405..410
+                      LIT_STR@405..410 "\"foo\""
+                  WHITESPACE@410..411 " "
                 OP_GT_EQ@411..413 ">="
                 EXPR@413..419
                   WHITESPACE@413..414 " "
@@ -191,10 +195,11 @@ FILE@0..1384
             PUNCT_PAREN_START@457..458 "("
             EXPR@458..479
               EXPR_BINARY@458..479
-                EXPR_LIT@458..474
-                  LIT@458..474
-                    LIT_STR@458..474 "\"the answer is \""
-                WHITESPACE@474..475 " "
+                EXPR@458..475
+                  EXPR_LIT@458..474
+                    LIT@458..474
+                      LIT_STR@458..474 "\"the answer is \""
+                  WHITESPACE@474..475 " "
                 OP_ADD@475..476 "+"
                 EXPR@476..479
                   WHITESPACE@476..477 " "
@@ -246,27 +251,30 @@ FILE@0..1384
     ITEM@638..654
       EXPR@638..654
         EXPR_BINARY@638..654
-          EXPR_INDEX@638..648
-            EXPR@638..639
-              EXPR_IDENT@638..639
-                IDENT@638..639 "s"
-            PUNCT_BRACKET_START@639..640 "["
-            EXPR@640..647
-              EXPR_BINARY@640..647
-                EXPR_BINARY@640..645
-                  EXPR_IDENT@640..641
-                    IDENT@640..641 "s"
-                  PUNCT_DOT@641..642 "."
-                  EXPR@642..645
-                    EXPR_IDENT@642..645
-                      IDENT@642..645 "len"
-                OP_SUB@645..646 "-"
-                EXPR@646..647
-                  EXPR_LIT@646..647
-                    LIT@646..647
-                      LIT_INT@646..647 "3"
-            PUNCT_BRACKET_END@647..648 "]"
-          WHITESPACE@648..649 " "
+          EXPR@638..649
+            EXPR_INDEX@638..648
+              EXPR@638..639
+                EXPR_IDENT@638..639
+                  IDENT@638..639 "s"
+              PUNCT_BRACKET_START@639..640 "["
+              EXPR@640..647
+                EXPR_BINARY@640..647
+                  EXPR@640..645
+                    EXPR_BINARY@640..645
+                      EXPR@640..641
+                        EXPR_IDENT@640..641
+                          IDENT@640..641 "s"
+                      PUNCT_DOT@641..642 "."
+                      EXPR@642..645
+                        EXPR_IDENT@642..645
+                          IDENT@642..645 "len"
+                  OP_SUB@645..646 "-"
+                  EXPR@646..647
+                    EXPR_LIT@646..647
+                      LIT@646..647
+                        LIT_INT@646..647 "3"
+              PUNCT_BRACKET_END@647..648 "]"
+            WHITESPACE@648..649 " "
           OP_ASSIGN@649..650 "="
           EXPR@650..654
             WHITESPACE@650..651 " "

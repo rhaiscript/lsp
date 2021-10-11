@@ -20,3 +20,21 @@ pub(crate) use convert_offsets::*;
 
 mod folding_ranges;
 pub(crate) use folding_ranges::*;
+
+mod hover;
+pub(crate) use hover::*;
+
+mod goto;
+pub(crate) use goto::*;
+
+mod references;
+pub(crate) use references::*;
+
+mod code_lens;
+pub(crate) use code_lens::*;
+
+mod semantic_tokens;
+pub(crate) use semantic_tokens::*;
+
+mod completion;
+pub(crate) use completion::*;

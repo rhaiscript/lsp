@@ -120,12 +120,12 @@ class SyntaxTreeItem extends vscode.TreeItem {
     super(
       syntax.kind,
       (syntax.children?.length ?? 0) > 0
-        ? ["FILE", "ITEM", "STMT", "EXPR"].includes(syntax.kind)
+        ? ["RHAI", "ITEM", "STMT", "EXPR"].includes(syntax.kind)
           ? vscode.TreeItemCollapsibleState.Expanded
           : vscode.TreeItemCollapsibleState.Collapsed
         : vscode.TreeItemCollapsibleState.None
     );
-    this.description = syntax.text;
+    this.description = `${syntax.text_range[0]}..${syntax.text_range[1]}`;
     this.command = {
       command: "highlightRhaiSyntax",
       title: "Highlight Rhai Syntax",

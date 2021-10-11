@@ -1,0 +1,33 @@
+[package]
+name = "rhai-hir"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ahash = { version = "0.7.4", features = ["serde"] }
+enum-as-inner = "0.3.3"
+indexmap = { version = "1.7.0", features = ["serde"] }
+itertools = "0.10.1"
+rhai-rowan = { path = "../rowan" }
+serde = "1"
+serde_json = "1"
+slotmap = { version = "1.0.6", features = ["serde"] }
+static_assertions = "1.1.0"
+thiserror = "1.0.30"
+
+[dev-dependencies]
+insta = "1.8.0"
+criterion = { version = "0.3", features = ["html_reports"] }
+pprof = { version = "0.5", features = ["flamegraph", "criterion"] }
+test-case = "1.2.0"
+tracing-subscriber = "0.2.24"
+
+[[bench]]
+name = "create"
+harness = false
+
+[[bench]]
+name = "query"
+harness = false

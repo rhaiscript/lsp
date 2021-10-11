@@ -3,7 +3,7 @@ source: crates/rowan/tests/upstream.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-FILE@0..1045
+RHAI@0..1045
   STMT@0..16
     ITEM@0..15
       EXPR@0..15
@@ -62,8 +62,9 @@ FILE@0..1045
                   EXPR_CALL@59..74
                     EXPR@59..66
                       EXPR_BINARY@59..66
-                        EXPR_IDENT@59..62
-                          IDENT@59..62 "row"
+                        EXPR@59..62
+                          EXPR_IDENT@59..62
+                            IDENT@59..62 "row"
                         PUNCT_DOT@62..63 "."
                         EXPR@63..66
                           EXPR_IDENT@63..66
@@ -104,8 +105,9 @@ FILE@0..1045
                   EXPR_CALL@106..124
                     EXPR@106..116
                       EXPR_BINARY@106..116
-                        EXPR_IDENT@106..112
-                          IDENT@106..112 "matrix"
+                        EXPR@106..112
+                          EXPR_IDENT@106..112
+                            IDENT@106..112 "matrix"
                         PUNCT_DOT@112..113 "."
                         EXPR@113..116
                           EXPR_IDENT@113..116
@@ -174,18 +176,20 @@ FILE@0..1045
                     OP_ASSIGN@202..203 "="
                     EXPR@203..215
                       EXPR_BINARY@203..215
-                        EXPR_BINARY@203..212
-                          WHITESPACE@203..204 " "
-                          EXPR_LIT@204..207
-                            LIT@204..207
-                              LIT_FLOAT@204..207 "1.0"
-                          WHITESPACE@207..208 " "
-                          OP_DIV@208..209 "/"
-                          EXPR@209..212
-                            WHITESPACE@209..210 " "
-                            EXPR_IDENT@210..212
-                              IDENT@210..211 "n"
-                              WHITESPACE@211..212 " "
+                        EXPR@203..212
+                          EXPR_BINARY@203..212
+                            EXPR@203..208
+                              WHITESPACE@203..204 " "
+                              EXPR_LIT@204..207
+                                LIT@204..207
+                                  LIT_FLOAT@204..207 "1.0"
+                              WHITESPACE@207..208 " "
+                            OP_DIV@208..209 "/"
+                            EXPR@209..212
+                              WHITESPACE@209..210 " "
+                              EXPR_IDENT@210..212
+                                IDENT@210..211 "n"
+                                WHITESPACE@211..212 " "
                         OP_DIV@212..213 "/"
                         EXPR@213..215
                           WHITESPACE@213..214 " "
@@ -291,48 +295,52 @@ FILE@0..1045
                                   ITEM@315..348
                                     EXPR@315..348
                                       EXPR_BINARY@315..348
-                                        EXPR_INDEX@315..322
-                                          EXPR@315..319
-                                            EXPR_INDEX@315..319
-                                              EXPR@315..316
-                                                EXPR_IDENT@315..316
-                                                  IDENT@315..316 "m"
-                                              PUNCT_BRACKET_START@316..317 "["
-                                              EXPR@317..318
-                                                EXPR_IDENT@317..318
-                                                  IDENT@317..318 "i"
-                                              PUNCT_BRACKET_END@318..319 "]"
-                                          PUNCT_BRACKET_START@319..320 "["
-                                          EXPR@320..321
-                                            EXPR_IDENT@320..321
-                                              IDENT@320..321 "j"
-                                          PUNCT_BRACKET_END@321..322 "]"
-                                        WHITESPACE@322..323 " "
+                                        EXPR@315..323
+                                          EXPR_INDEX@315..322
+                                            EXPR@315..319
+                                              EXPR_INDEX@315..319
+                                                EXPR@315..316
+                                                  EXPR_IDENT@315..316
+                                                    IDENT@315..316 "m"
+                                                PUNCT_BRACKET_START@316..317 "["
+                                                EXPR@317..318
+                                                  EXPR_IDENT@317..318
+                                                    IDENT@317..318 "i"
+                                                PUNCT_BRACKET_END@318..319 "]"
+                                            PUNCT_BRACKET_START@319..320 "["
+                                            EXPR@320..321
+                                              EXPR_IDENT@320..321
+                                                IDENT@320..321 "j"
+                                            PUNCT_BRACKET_END@321..322 "]"
+                                          WHITESPACE@322..323 " "
                                         OP_ASSIGN@323..324 "="
                                         EXPR@324..348
                                           EXPR_BINARY@324..348
-                                            EXPR_BINARY@324..339
-                                              WHITESPACE@324..325 " "
-                                              EXPR_IDENT@325..329
-                                                IDENT@325..328 "tmp"
-                                                WHITESPACE@328..329 " "
-                                              OP_MUL@329..330 "*"
-                                              EXPR@330..339
-                                                WHITESPACE@330..331 " "
-                                                EXPR_PAREN@331..338
-                                                  PUNCT_PAREN_START@331..332 "("
-                                                  EXPR@332..337
-                                                    EXPR_BINARY@332..337
-                                                      EXPR_IDENT@332..334
-                                                        IDENT@332..333 "i"
-                                                        WHITESPACE@333..334 " "
-                                                      OP_SUB@334..335 "-"
-                                                      EXPR@335..337
-                                                        WHITESPACE@335..336 " "
-                                                        EXPR_IDENT@336..337
-                                                          IDENT@336..337 "j"
-                                                  PUNCT_PAREN_END@337..338 ")"
-                                                WHITESPACE@338..339 " "
+                                            EXPR@324..339
+                                              EXPR_BINARY@324..339
+                                                EXPR@324..329
+                                                  WHITESPACE@324..325 " "
+                                                  EXPR_IDENT@325..329
+                                                    IDENT@325..328 "tmp"
+                                                    WHITESPACE@328..329 " "
+                                                OP_MUL@329..330 "*"
+                                                EXPR@330..339
+                                                  WHITESPACE@330..331 " "
+                                                  EXPR_PAREN@331..338
+                                                    PUNCT_PAREN_START@331..332 "("
+                                                    EXPR@332..337
+                                                      EXPR_BINARY@332..337
+                                                        EXPR@332..334
+                                                          EXPR_IDENT@332..334
+                                                            IDENT@332..333 "i"
+                                                            WHITESPACE@333..334 " "
+                                                        OP_SUB@334..335 "-"
+                                                        EXPR@335..337
+                                                          WHITESPACE@335..336 " "
+                                                          EXPR_IDENT@336..337
+                                                            IDENT@336..337 "j"
+                                                    PUNCT_PAREN_END@337..338 ")"
+                                                  WHITESPACE@338..339 " "
                                             OP_MUL@339..340 "*"
                                             EXPR@340..348
                                               WHITESPACE@340..341 " "
@@ -340,9 +348,10 @@ FILE@0..1045
                                                 PUNCT_PAREN_START@341..342 "("
                                                 EXPR@342..347
                                                   EXPR_BINARY@342..347
-                                                    EXPR_IDENT@342..344
-                                                      IDENT@342..343 "i"
-                                                      WHITESPACE@343..344 " "
+                                                    EXPR@342..344
+                                                      EXPR_IDENT@342..344
+                                                        IDENT@342..343 "i"
+                                                        WHITESPACE@343..344 " "
                                                     OP_ADD@344..345 "+"
                                                     EXPR@345..347
                                                       WHITESPACE@345..346 " "
@@ -402,16 +411,17 @@ FILE@0..1045
                           PUNCT_PAREN_START@419..420 "("
                           EXPR@420..428
                             EXPR_BINARY@420..428
-                              EXPR_INDEX@420..424
-                                EXPR@420..421
-                                  EXPR_IDENT@420..421
-                                    IDENT@420..421 "a"
-                                PUNCT_BRACKET_START@421..422 "["
-                                EXPR@422..423
-                                  EXPR_LIT@422..423
-                                    LIT@422..423
-                                      LIT_INT@422..423 "0"
-                                PUNCT_BRACKET_END@423..424 "]"
+                              EXPR@420..424
+                                EXPR_INDEX@420..424
+                                  EXPR@420..421
+                                    EXPR_IDENT@420..421
+                                      IDENT@420..421 "a"
+                                  PUNCT_BRACKET_START@421..422 "["
+                                  EXPR@422..423
+                                    EXPR_LIT@422..423
+                                      LIT@422..423
+                                        LIT_INT@422..423 "0"
+                                  PUNCT_BRACKET_END@423..424 "]"
                               PUNCT_DOT@424..425 "."
                               EXPR@425..428
                                 EXPR_IDENT@425..428
@@ -420,16 +430,17 @@ FILE@0..1045
                           WHITESPACE@429..430 " "
                           EXPR@430..438
                             EXPR_BINARY@430..438
-                              EXPR_INDEX@430..434
-                                EXPR@430..431
-                                  EXPR_IDENT@430..431
-                                    IDENT@430..431 "b"
-                                PUNCT_BRACKET_START@431..432 "["
-                                EXPR@432..433
-                                  EXPR_LIT@432..433
-                                    LIT@432..433
-                                      LIT_INT@432..433 "0"
-                                PUNCT_BRACKET_END@433..434 "]"
+                              EXPR@430..434
+                                EXPR_INDEX@430..434
+                                  EXPR@430..431
+                                    EXPR_IDENT@430..431
+                                      IDENT@430..431 "b"
+                                  PUNCT_BRACKET_START@431..432 "["
+                                  EXPR@432..433
+                                    EXPR_LIT@432..433
+                                      LIT@432..433
+                                        LIT_INT@432..433 "0"
+                                  PUNCT_BRACKET_END@433..434 "]"
                               PUNCT_DOT@434..435 "."
                               EXPR@435..438
                                 EXPR_IDENT@435..438
@@ -464,16 +475,17 @@ FILE@0..1045
                           WHITESPACE@467..468 " "
                           EXPR@468..476
                             EXPR_BINARY@468..476
-                              EXPR_INDEX@468..472
-                                EXPR@468..469
-                                  EXPR_IDENT@468..469
-                                    IDENT@468..469 "a"
-                                PUNCT_BRACKET_START@469..470 "["
-                                EXPR@470..471
-                                  EXPR_LIT@470..471
-                                    LIT@470..471
-                                      LIT_INT@470..471 "0"
-                                PUNCT_BRACKET_END@471..472 "]"
+                              EXPR@468..472
+                                EXPR_INDEX@468..472
+                                  EXPR@468..469
+                                    EXPR_IDENT@468..469
+                                      IDENT@468..469 "a"
+                                  PUNCT_BRACKET_START@469..470 "["
+                                  EXPR@470..471
+                                    EXPR_LIT@470..471
+                                      LIT@470..471
+                                        LIT_INT@470..471 "0"
+                                  PUNCT_BRACKET_END@471..472 "]"
                               PUNCT_DOT@472..473 "."
                               EXPR@473..476
                                 EXPR_IDENT@473..476
@@ -510,16 +522,17 @@ FILE@0..1045
                                     WHITESPACE@505..506 " "
                                     EXPR@506..514
                                       EXPR_BINARY@506..514
-                                        EXPR_INDEX@506..510
-                                          EXPR@506..507
-                                            EXPR_IDENT@506..507
-                                              IDENT@506..507 "b"
-                                          PUNCT_BRACKET_START@507..508 "["
-                                          EXPR@508..509
-                                            EXPR_LIT@508..509
-                                              LIT@508..509
-                                                LIT_INT@508..509 "0"
-                                          PUNCT_BRACKET_END@509..510 "]"
+                                        EXPR@506..510
+                                          EXPR_INDEX@506..510
+                                            EXPR@506..507
+                                              EXPR_IDENT@506..507
+                                                IDENT@506..507 "b"
+                                            PUNCT_BRACKET_START@507..508 "["
+                                            EXPR@508..509
+                                              EXPR_LIT@508..509
+                                                LIT@508..509
+                                                  LIT_INT@508..509 "0"
+                                            PUNCT_BRACKET_END@509..510 "]"
                                         PUNCT_DOT@510..511 "."
                                         EXPR@511..514
                                           EXPR_IDENT@511..514
@@ -533,23 +546,24 @@ FILE@0..1045
                                   ITEM@530..548
                                     EXPR@530..548
                                       EXPR_BINARY@530..548
-                                        EXPR_INDEX@530..538
-                                          EXPR@530..535
-                                            EXPR_INDEX@530..535
-                                              EXPR@530..532
-                                                EXPR_IDENT@530..532
-                                                  IDENT@530..532 "b2"
-                                              PUNCT_BRACKET_START@532..533 "["
-                                              EXPR@533..534
-                                                EXPR_IDENT@533..534
-                                                  IDENT@533..534 "j"
-                                              PUNCT_BRACKET_END@534..535 "]"
-                                          PUNCT_BRACKET_START@535..536 "["
-                                          EXPR@536..537
-                                            EXPR_IDENT@536..537
-                                              IDENT@536..537 "i"
-                                          PUNCT_BRACKET_END@537..538 "]"
-                                        WHITESPACE@538..539 " "
+                                        EXPR@530..539
+                                          EXPR_INDEX@530..538
+                                            EXPR@530..535
+                                              EXPR_INDEX@530..535
+                                                EXPR@530..532
+                                                  EXPR_IDENT@530..532
+                                                    IDENT@530..532 "b2"
+                                                PUNCT_BRACKET_START@532..533 "["
+                                                EXPR@533..534
+                                                  EXPR_IDENT@533..534
+                                                    IDENT@533..534 "j"
+                                                PUNCT_BRACKET_END@534..535 "]"
+                                            PUNCT_BRACKET_START@535..536 "["
+                                            EXPR@536..537
+                                              EXPR_IDENT@536..537
+                                                IDENT@536..537 "i"
+                                            PUNCT_BRACKET_END@537..538 "]"
+                                          WHITESPACE@538..539 " "
                                         OP_ASSIGN@539..540 "="
                                         EXPR@540..548
                                           EXPR_INDEX@540..548
@@ -594,8 +608,9 @@ FILE@0..1045
                           PUNCT_PAREN_START@586..587 "("
                           EXPR@587..592
                             EXPR_BINARY@587..592
-                              EXPR_IDENT@587..588
-                                IDENT@587..588 "a"
+                              EXPR@587..588
+                                EXPR_IDENT@587..588
+                                  IDENT@587..588 "a"
                               PUNCT_DOT@588..589 "."
                               EXPR@589..592
                                 EXPR_IDENT@589..592
@@ -604,16 +619,17 @@ FILE@0..1045
                           WHITESPACE@593..594 " "
                           EXPR@594..602
                             EXPR_BINARY@594..602
-                              EXPR_INDEX@594..598
-                                EXPR@594..595
-                                  EXPR_IDENT@594..595
-                                    IDENT@594..595 "b"
-                                PUNCT_BRACKET_START@595..596 "["
-                                EXPR@596..597
-                                  EXPR_LIT@596..597
-                                    LIT@596..597
-                                      LIT_INT@596..597 "0"
-                                PUNCT_BRACKET_END@597..598 "]"
+                              EXPR@594..598
+                                EXPR_INDEX@594..598
+                                  EXPR@594..595
+                                    EXPR_IDENT@594..595
+                                      IDENT@594..595 "b"
+                                  PUNCT_BRACKET_START@595..596 "["
+                                  EXPR@596..597
+                                    EXPR_LIT@596..597
+                                      LIT@596..597
+                                        LIT_INT@596..597 "0"
+                                  PUNCT_BRACKET_END@597..598 "]"
                               PUNCT_DOT@598..599 "."
                               EXPR@599..602
                                 EXPR_IDENT@599..602
@@ -648,8 +664,9 @@ FILE@0..1045
                           WHITESPACE@627..628 " "
                           EXPR@628..633
                             EXPR_BINARY@628..633
-                              EXPR_IDENT@628..629
-                                IDENT@628..629 "c"
+                              EXPR@628..629
+                                EXPR_IDENT@628..629
+                                  IDENT@628..629 "c"
                               PUNCT_DOT@629..630 "."
                               EXPR@630..633
                                 EXPR_IDENT@630..633
@@ -686,15 +703,16 @@ FILE@0..1045
                                     WHITESPACE@662..663 " "
                                     EXPR@663..671
                                       EXPR_BINARY@663..671
-                                        EXPR_INDEX@663..667
-                                          EXPR@663..664
-                                            EXPR_IDENT@663..664
-                                              IDENT@663..664 "c"
-                                          PUNCT_BRACKET_START@664..665 "["
-                                          EXPR@665..666
-                                            EXPR_IDENT@665..666
-                                              IDENT@665..666 "i"
-                                          PUNCT_BRACKET_END@666..667 "]"
+                                        EXPR@663..667
+                                          EXPR_INDEX@663..667
+                                            EXPR@663..664
+                                              EXPR_IDENT@663..664
+                                                IDENT@663..664 "c"
+                                            PUNCT_BRACKET_START@664..665 "["
+                                            EXPR@665..666
+                                              EXPR_IDENT@665..666
+                                                IDENT@665..666 "i"
+                                            PUNCT_BRACKET_END@666..667 "]"
                                         PUNCT_DOT@667..668 "."
                                         EXPR@668..671
                                           EXPR_IDENT@668..671
@@ -708,23 +726,24 @@ FILE@0..1045
                                   ITEM@687..700
                                     EXPR@687..700
                                       EXPR_BINARY@687..700
-                                        EXPR_INDEX@687..694
-                                          EXPR@687..691
-                                            EXPR_INDEX@687..691
-                                              EXPR@687..688
-                                                EXPR_IDENT@687..688
-                                                  IDENT@687..688 "c"
-                                              PUNCT_BRACKET_START@688..689 "["
-                                              EXPR@689..690
-                                                EXPR_IDENT@689..690
-                                                  IDENT@689..690 "i"
-                                              PUNCT_BRACKET_END@690..691 "]"
-                                          PUNCT_BRACKET_START@691..692 "["
-                                          EXPR@692..693
-                                            EXPR_IDENT@692..693
-                                              IDENT@692..693 "j"
-                                          PUNCT_BRACKET_END@693..694 "]"
-                                        WHITESPACE@694..695 " "
+                                        EXPR@687..695
+                                          EXPR_INDEX@687..694
+                                            EXPR@687..691
+                                              EXPR_INDEX@687..691
+                                                EXPR@687..688
+                                                  EXPR_IDENT@687..688
+                                                    IDENT@687..688 "c"
+                                                PUNCT_BRACKET_START@688..689 "["
+                                                EXPR@689..690
+                                                  EXPR_IDENT@689..690
+                                                    IDENT@689..690 "i"
+                                                PUNCT_BRACKET_END@690..691 "]"
+                                            PUNCT_BRACKET_START@691..692 "["
+                                            EXPR@692..693
+                                              EXPR_IDENT@692..693
+                                                IDENT@692..693 "j"
+                                            PUNCT_BRACKET_END@693..694 "]"
+                                          WHITESPACE@694..695 " "
                                         OP_ASSIGN@695..696 "="
                                         EXPR@696..700
                                           WHITESPACE@696..697 " "
@@ -760,15 +779,16 @@ FILE@0..1045
                                               WHITESPACE@744..745 " "
                                               EXPR@745..753
                                                 EXPR_BINARY@745..753
-                                                  EXPR_INDEX@745..749
-                                                    EXPR@745..746
-                                                      EXPR_IDENT@745..746
-                                                        IDENT@745..746 "a"
-                                                    PUNCT_BRACKET_START@746..747 "["
-                                                    EXPR@747..748
-                                                      EXPR_IDENT@747..748
-                                                        IDENT@747..748 "i"
-                                                    PUNCT_BRACKET_END@748..749 "]"
+                                                  EXPR@745..749
+                                                    EXPR_INDEX@745..749
+                                                      EXPR@745..746
+                                                        EXPR_IDENT@745..746
+                                                          IDENT@745..746 "a"
+                                                      PUNCT_BRACKET_START@746..747 "["
+                                                      EXPR@747..748
+                                                        EXPR_IDENT@747..748
+                                                          IDENT@747..748 "i"
+                                                      PUNCT_BRACKET_END@748..749 "]"
                                                   PUNCT_DOT@749..750 "."
                                                   EXPR@750..753
                                                     EXPR_IDENT@750..753
@@ -782,44 +802,46 @@ FILE@0..1045
                                             ITEM@773..802
                                               EXPR@773..802
                                                 EXPR_BINARY@773..802
-                                                  EXPR_INDEX@773..780
-                                                    EXPR@773..777
-                                                      EXPR_INDEX@773..777
-                                                        EXPR@773..774
-                                                          EXPR_IDENT@773..774
-                                                            IDENT@773..774 "c"
-                                                        PUNCT_BRACKET_START@774..775 "["
-                                                        EXPR@775..776
-                                                          EXPR_IDENT@775..776
-                                                            IDENT@775..776 "i"
-                                                        PUNCT_BRACKET_END@776..777 "]"
-                                                    PUNCT_BRACKET_START@777..778 "["
-                                                    EXPR@778..779
-                                                      EXPR_IDENT@778..779
-                                                        IDENT@778..779 "j"
-                                                    PUNCT_BRACKET_END@779..780 "]"
-                                                  WHITESPACE@780..781 " "
+                                                  EXPR@773..781
+                                                    EXPR_INDEX@773..780
+                                                      EXPR@773..777
+                                                        EXPR_INDEX@773..777
+                                                          EXPR@773..774
+                                                            EXPR_IDENT@773..774
+                                                              IDENT@773..774 "c"
+                                                          PUNCT_BRACKET_START@774..775 "["
+                                                          EXPR@775..776
+                                                            EXPR_IDENT@775..776
+                                                              IDENT@775..776 "i"
+                                                          PUNCT_BRACKET_END@776..777 "]"
+                                                      PUNCT_BRACKET_START@777..778 "["
+                                                      EXPR@778..779
+                                                        EXPR_IDENT@778..779
+                                                          IDENT@778..779 "j"
+                                                      PUNCT_BRACKET_END@779..780 "]"
+                                                    WHITESPACE@780..781 " "
                                                   OP_ADD_ASSIGN@781..783 "+="
                                                   EXPR@783..802
                                                     EXPR_BINARY@783..802
-                                                      EXPR_INDEX@783..791
-                                                        EXPR@783..788
-                                                          EXPR_INDEX@783..788
-                                                            EXPR@783..785
-                                                              WHITESPACE@783..784 " "
-                                                              EXPR_IDENT@784..785
-                                                                IDENT@784..785 "a"
-                                                            PUNCT_BRACKET_START@785..786 "["
-                                                            EXPR@786..787
-                                                              EXPR_IDENT@786..787
-                                                                IDENT@786..787 "i"
-                                                            PUNCT_BRACKET_END@787..788 "]"
-                                                        PUNCT_BRACKET_START@788..789 "["
-                                                        EXPR@789..790
-                                                          EXPR_IDENT@789..790
-                                                            IDENT@789..790 "z"
-                                                        PUNCT_BRACKET_END@790..791 "]"
-                                                      WHITESPACE@791..792 " "
+                                                      EXPR@783..792
+                                                        EXPR_INDEX@783..791
+                                                          EXPR@783..788
+                                                            EXPR_INDEX@783..788
+                                                              EXPR@783..785
+                                                                WHITESPACE@783..784 " "
+                                                                EXPR_IDENT@784..785
+                                                                  IDENT@784..785 "a"
+                                                              PUNCT_BRACKET_START@785..786 "["
+                                                              EXPR@786..787
+                                                                EXPR_IDENT@786..787
+                                                                  IDENT@786..787 "i"
+                                                              PUNCT_BRACKET_END@787..788 "]"
+                                                          PUNCT_BRACKET_START@788..789 "["
+                                                          EXPR@789..790
+                                                            EXPR_IDENT@789..790
+                                                              IDENT@789..790 "z"
+                                                          PUNCT_BRACKET_END@790..791 "]"
+                                                        WHITESPACE@791..792 " "
                                                       OP_MUL@792..793 "*"
                                                       EXPR@793..802
                                                         EXPR_INDEX@793..802

@@ -43,19 +43,23 @@ impl AstNode for Path {
 }
 impl Path {
     pub fn root(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != IDENT {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
-pub struct File(SyntaxNode);
-impl AstNode for File {
+pub struct Rhai(SyntaxNode);
+impl AstNode for Rhai {
     #[inline]
-    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == FILE }
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == RHAI }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(&syntax) {
@@ -66,7 +70,7 @@ impl AstNode for File {
     }
     fn syntax(&self) -> SyntaxNode { self.0.clone() }
 }
-impl File {
+impl Rhai {
     pub fn statements(&self) -> impl Iterator<Item = Stmt> {
         self.0.children().filter_map(Stmt::cast)
     }
@@ -103,7 +107,9 @@ impl AstNode for Item {
 }
 impl Item {
     pub fn docs(&self) -> impl Iterator<Item = Doc> { self.0.children().filter_map(Doc::cast) }
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct Doc(SyntaxNode);
@@ -290,20 +296,28 @@ impl AstNode for ExprLet {
 }
 impl ExprLet {
     pub fn kw_let_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_LET {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_LET {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn ident_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != IDENT {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -323,30 +337,44 @@ impl AstNode for ExprConst {
 }
 impl ExprConst {
     pub fn kw_const_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_CONST {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_CONST {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn ident_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != IDENT {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn op_assign_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != OP_ASSIGN {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != OP_ASSIGN {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprBlock(SyntaxNode);
@@ -365,23 +393,31 @@ impl AstNode for ExprBlock {
 }
 impl ExprBlock {
     pub fn punct_brace_start_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_BRACE_START {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACE_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn statements(&self) -> impl Iterator<Item = Stmt> {
         self.0.children().filter_map(Stmt::cast)
     }
     pub fn punct_brace_end_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_BRACE_END {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACE_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -400,7 +436,9 @@ impl AstNode for ExprUnary {
     fn syntax(&self) -> SyntaxNode { self.0.clone() }
 }
 impl ExprUnary {
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprBinary(SyntaxNode);
@@ -418,8 +456,12 @@ impl AstNode for ExprBinary {
     fn syntax(&self) -> SyntaxNode { self.0.clone() }
 }
 impl ExprBinary {
-    pub fn lhs(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
-    pub fn rhs(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn lhs(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
+    pub fn rhs(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(1usize).next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprParen(SyntaxNode);
@@ -438,21 +480,31 @@ impl AstNode for ExprParen {
 }
 impl ExprParen {
     pub fn punct_paren_start_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_PAREN_START {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
     pub fn punct_paren_end_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_PAREN_END {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -472,20 +524,28 @@ impl AstNode for ExprArray {
 }
 impl ExprArray {
     pub fn punct_bracket_start_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_BRACKET_START {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACKET_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn punct_bracket_end_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_BRACKET_END {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACKET_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -504,23 +564,35 @@ impl AstNode for ExprIndex {
     fn syntax(&self) -> SyntaxNode { self.0.clone() }
 }
 impl ExprIndex {
-    pub fn base(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
-    pub fn punct_bracket_start_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_BRACKET_START {
-                return None;
-            }
-            t.into_token()
-        })
+    pub fn base(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
     }
-    pub fn index(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn punct_bracket_start_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACKET_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn index(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(1usize).next()
+    }
     pub fn punct_bracket_end_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_BRACKET_END {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACKET_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -540,20 +612,28 @@ impl AstNode for ExprObject {
 }
 impl ExprObject {
     pub fn punct_map_start_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_MAP_START {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_MAP_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn punct_brace_end_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_BRACE_END {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACE_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -572,8 +652,16 @@ impl AstNode for ExprCall {
     fn syntax(&self) -> SyntaxNode { self.0.clone() }
 }
 impl ExprCall {
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
-    pub fn arg_list(&self) -> Option<ArgList> { self.0.children().find_map(ArgList::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
+    pub fn arg_list(&self) -> Option<ArgList> {
+        self.0
+            .children()
+            .filter_map(ArgList::cast)
+            .skip(0usize)
+            .next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprClosure(SyntaxNode);
@@ -591,8 +679,16 @@ impl AstNode for ExprClosure {
     fn syntax(&self) -> SyntaxNode { self.0.clone() }
 }
 impl ExprClosure {
-    pub fn param_list(&self) -> Option<ParamList> { self.0.children().find_map(ParamList::cast) }
-    pub fn body(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn param_list(&self) -> Option<ParamList> {
+        self.0
+            .children()
+            .filter_map(ParamList::cast)
+            .skip(0usize)
+            .next()
+    }
+    pub fn body(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprIf(SyntaxNode);
@@ -611,15 +707,27 @@ impl AstNode for ExprIf {
 }
 impl ExprIf {
     pub fn kw_if_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_IF {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_IF {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
-    pub fn then_branch(&self) -> Option<ExprBlock> { self.0.children().find_map(ExprBlock::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
+    pub fn then_branch(&self) -> Option<ExprBlock> {
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprLoop(SyntaxNode);
@@ -638,14 +746,24 @@ impl AstNode for ExprLoop {
 }
 impl ExprLoop {
     pub fn kw_loop_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_LOOP {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_LOOP {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn loop_body(&self) -> Option<ExprBlock> { self.0.children().find_map(ExprBlock::cast) }
+    pub fn loop_body(&self) -> Option<ExprBlock> {
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprFor(SyntaxNode);
@@ -664,24 +782,40 @@ impl AstNode for ExprFor {
 }
 impl ExprFor {
     pub fn kw_for_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_FOR {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_FOR {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn pat(&self) -> Option<Pat> { self.0.children().find_map(Pat::cast) }
+    pub fn pat(&self) -> Option<Pat> { self.0.children().filter_map(Pat::cast).skip(0usize).next() }
     pub fn kw_in_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_IN {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_IN {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn iterable(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
-    pub fn loop_body(&self) -> Option<ExprBlock> { self.0.children().find_map(ExprBlock::cast) }
+    pub fn iterable(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
+    pub fn loop_body(&self) -> Option<ExprBlock> {
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprWhile(SyntaxNode);
@@ -700,15 +834,27 @@ impl AstNode for ExprWhile {
 }
 impl ExprWhile {
     pub fn kw_while_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_WHILE {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_WHILE {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
-    pub fn loop_body(&self) -> Option<ExprBlock> { self.0.children().find_map(ExprBlock::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
+    pub fn loop_body(&self) -> Option<ExprBlock> {
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprBreak(SyntaxNode);
@@ -727,12 +873,16 @@ impl AstNode for ExprBreak {
 }
 impl ExprBreak {
     pub fn kw_break_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_BREAK {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_BREAK {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -772,16 +922,26 @@ impl AstNode for ExprSwitch {
 }
 impl ExprSwitch {
     pub fn kw_switch_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_SWITCH {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_SWITCH {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
     pub fn switch_arm_list(&self) -> Option<SwitchArmList> {
-        self.0.children().find_map(SwitchArmList::cast)
+        self.0
+            .children()
+            .filter_map(SwitchArmList::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -801,12 +961,16 @@ impl AstNode for ExprReturn {
 }
 impl ExprReturn {
     pub fn kw_return_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_RETURN {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_RETURN {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -826,23 +990,43 @@ impl AstNode for ExprFn {
 }
 impl ExprFn {
     pub fn kw_fn_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_FN {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_FN {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn ident_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != IDENT {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn param_list(&self) -> Option<ParamList> { self.0.children().find_map(ParamList::cast) }
-    pub fn body(&self) -> Option<ExprBlock> { self.0.children().find_map(ExprBlock::cast) }
+    pub fn param_list(&self) -> Option<ParamList> {
+        self.0
+            .children()
+            .filter_map(ParamList::cast)
+            .skip(0usize)
+            .next()
+    }
+    pub fn body(&self) -> Option<ExprBlock> {
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprImport(SyntaxNode);
@@ -861,20 +1045,28 @@ impl AstNode for ExprImport {
 }
 impl ExprImport {
     pub fn kw_import_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_IMPORT {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_IMPORT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn lit_str_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != LIT_STR {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != LIT_STR {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -894,14 +1086,20 @@ impl AstNode for ObjectField {
 }
 impl ObjectField {
     pub fn punct_colon_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_COLON {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_COLON {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ArgList(SyntaxNode);
@@ -920,20 +1118,28 @@ impl AstNode for ArgList {
 }
 impl ArgList {
     pub fn punct_paren_start_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_PAREN_START {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn punct_paren_end_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_PAREN_END {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1015,20 +1221,28 @@ impl AstNode for SwitchArmList {
 }
 impl SwitchArmList {
     pub fn punct_brace_start_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_BRACE_START {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACE_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn punct_brace_end_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_BRACE_END {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACE_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1048,14 +1262,20 @@ impl AstNode for SwitchArm {
 }
 impl SwitchArm {
     pub fn punct_arrow_fat_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_ARROW_FAT {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_ARROW_FAT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
-    pub fn expr(&self) -> Option<Expr> { self.0.children().find_map(Expr::cast) }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
 }
 #[derive(Debug, Clone)]
 pub struct ExprExport(SyntaxNode);
@@ -1074,15 +1294,23 @@ impl AstNode for ExprExport {
 }
 impl ExprExport {
     pub fn kw_export_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != KW_EXPORT {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_EXPORT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn export_target(&self) -> Option<ExportTarget> {
-        self.0.children().find_map(ExportTarget::cast)
+        self.0
+            .children()
+            .filter_map(ExportTarget::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1132,12 +1360,16 @@ impl AstNode for ExportIdent {
 }
 impl ExportIdent {
     pub fn ident_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != IDENT {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1157,20 +1389,28 @@ impl AstNode for PatTuple {
 }
 impl PatTuple {
     pub fn punct_paren_start_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_PAREN_START {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
     pub fn punct_paren_end_token(&self) -> Option<SyntaxToken> {
-        self.0.children_with_tokens().find_map(|t| {
-            if t.kind() != PUNCT_PAREN_END {
-                return None;
-            }
-            t.into_token()
-        })
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
