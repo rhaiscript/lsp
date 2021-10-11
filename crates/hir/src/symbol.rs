@@ -14,6 +14,7 @@ pub struct SymbolData {
 }
 
 impl SymbolData {
+    #[must_use]
     pub fn name(&self) -> Option<&str> {
         match &self.kind {
             SymbolKind::Fn(f) => Some(&f.name),
@@ -23,6 +24,7 @@ impl SymbolData {
         }
     }
 
+    #[must_use]
     pub fn docs(&self) -> Option<&str> {
         match &self.kind {
             SymbolKind::Fn(f) => Some(&f.docs),
@@ -32,6 +34,7 @@ impl SymbolData {
     }
 
     /// Whether the given range is the identifier of the symbol.
+    #[must_use]
     pub fn has_selection_range(&self, range: TextRange) -> bool {
         self.selection_syntax
             .and_then(|s| s.text_range.map(|r| r == range))
@@ -39,16 +42,19 @@ impl SymbolData {
     }
 
     #[inline]
+    #[must_use]
     pub fn text_range(&self) -> Option<TextRange> {
         self.syntax.and_then(|s| s.text_range)
     }
 
     #[inline]
+    #[must_use]
     pub fn selection_range(&self) -> Option<TextRange> {
         self.syntax.and_then(|s| s.text_range)
     }
 
     #[inline]
+    #[must_use]
     pub fn selection_or_text_range(&self) -> Option<TextRange> {
         self.selection_range().or_else(|| self.text_range())
     }

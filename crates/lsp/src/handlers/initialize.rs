@@ -27,11 +27,10 @@ pub(crate) async fn initialize(
                         token_modifiers: SemanticTokenModifierKind::into_enum_iter()
                             .map(Into::into)
                             .collect(),
-                        ..Default::default()
                     },
                     full: Some(SemanticTokensFullOptions::Bool(true)),
                     range: None,
-                    ..Default::default()
+                    ..SemanticTokensOptions::default()
                 }),
             ),
             completion_provider: Some(CompletionOptions {
@@ -39,9 +38,9 @@ pub(crate) async fn initialize(
                 trigger_characters: Some(vec![
                     "#".into(),
                 ]),
-                ..Default::default()
+                ..CompletionOptions::default()
             }),
-            ..Default::default()
+            ..ServerCapabilities::default()
         },
         server_info: Some(ServerInfo {
             name: "rhai-lsp".into(),

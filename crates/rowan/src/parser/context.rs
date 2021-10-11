@@ -12,7 +12,7 @@ use crate::syntax::{
 use super::{Parse, ParseError, ParseErrorKind};
 
 /// A parser context for parser functions.
-/// 
+///
 /// It cannot be constructed and can only be obtained
 /// via a [`super::Parser`].
 #[derive(Debug)]
@@ -56,13 +56,13 @@ impl<'src> Context<'src> {
             }
 
             match self.current_token {
-                Some(COMMENT_BLOCK) | Some(COMMENT_LINE) | Some(WHITESPACE) => {
+                Some(COMMENT_BLOCK | COMMENT_LINE | WHITESPACE) => {
                     self.eat();
-                    self.last_token = None
+                    self.last_token = None;
                 }
                 Some(ERROR) => {
                     self.eat_error(ParseErrorKind::InvalidInput);
-                    self.last_token = None
+                    self.last_token = None;
                 }
                 _ => break,
             }
@@ -87,11 +87,11 @@ impl<'src> Context<'src> {
 
     /// Insert a token into the tree.
     pub fn insert_token(&mut self, kind: SyntaxKind, s: impl AsRef<str>) {
-        self.green.token(kind.into(), s.as_ref().into())
+        self.green.token(kind.into(), s.as_ref());
     }
 
     /// Discard the current token (if any).
-    /// 
+    ///
     /// If no token was lexed (by calling [`Self::token`]), this is a no-op.
     pub fn discard(&mut self) {
         self.current_token = None;
@@ -148,11 +148,11 @@ impl<'src> Context<'src> {
 
     /// Start a new node at the given checkpoint.
     pub fn start_node_at(&mut self, checkpoint: Checkpoint, kind: SyntaxKind) {
-        self.green.start_node_at(checkpoint, kind.into())
+        self.green.start_node_at(checkpoint, kind.into());
     }
 
     /// Check whether the last statement was closed with `;`.
-    /// 
+    ///
     /// Block-like statements are also self-closing.
     pub fn statement_closed(&self) -> bool {
         self.statement_closed

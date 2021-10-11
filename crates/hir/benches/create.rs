@@ -5,13 +5,13 @@ use rhai_rowan::{parser::Parser, syntax::SyntaxNode};
 
 fn create_hir(syntax: &SyntaxNode) -> Hir {
     let mut hir = Hir::new();
-    hir.add_module_from_syntax("bench", &syntax);
+    hir.add_module_from_syntax("bench", syntax);
     hir
 }
 
 fn create_hir_full(syntax: &SyntaxNode) -> Hir {
     let mut hir = Hir::new();
-    hir.add_module_from_syntax("bench", &syntax);
+    hir.add_module_from_syntax("bench", syntax);
     hir.resolve_references();
     hir
 }

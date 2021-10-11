@@ -1,3 +1,5 @@
+#![allow(clippy::module_name_repetitions)]
+
 use lsp_async_stub::{Context, RequestWriter};
 use lsp_types::{notification, Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams, Url};
 use rhai_rowan::parser::Parse;

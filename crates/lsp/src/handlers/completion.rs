@@ -62,10 +62,7 @@ fn add_visible_identifiers(
     let reference_sym =
         module
             .symbol_at(offset, true)
-            .and_then(|s| match module[s].kind.as_reference() {
-                Some(r) => Some((&module[s], r)),
-                None => None,
-            });
+            .and_then(|s| module[s].kind.as_reference().map(|r| (&module[s], r)));
 
     completions.extend(
         module
@@ -84,7 +81,7 @@ fn add_visible_identifiers(
                         kind: Some(CompletionItemKind::Function),
                         insert_text: Some(format!("{}($0)", &f.name)),
                         insert_text_format: Some(InsertTextFormat::Snippet),
-                        ..Default::default()
+                        ..CompletionItem::default()
                     }),
                     rhai_hir::symbol::SymbolKind::Decl(d) => Some(CompletionItem {
                         label: d.name.clone(),
@@ -99,7 +96,7 @@ fn add_visible_identifiers(
                             CompletionItemKind::Variable
                         }),
                         insert_text: Some(d.name.clone()),
-                        ..Default::default()
+                        ..CompletionItem::default()
                     }),
                     _ => None,
                 }
@@ -123,7 +120,7 @@ fn add_visible_identifiers(
                     c
                 })
             }),
-    )
+    );
 }
 
 fn add_empty_object(completions: &mut Vec<CompletionItem>) {
@@ -134,6 +131,6 @@ fn add_empty_object(completions: &mut Vec<CompletionItem>) {
         insert_text: Some("#{ $0 }".into()),
         insert_text_format: Some(InsertTextFormat::Snippet),
         sort_text: Some("zzzz".into()),
-        ..Default::default()
-    })
+        ..CompletionItem::default()
+    });
 }

@@ -61,14 +61,7 @@ fn hover_for_symbol(
     symbol: Symbol,
 ) -> Option<Hover> {
     match &module[symbol].kind {
-        rhai_hir::symbol::SymbolKind::Fn(_) => Some(Hover {
-            contents: HoverContents::Markup(MarkupContent {
-                kind: MarkupKind::Markdown,
-                value: documentation_for(module, rhai, symbol, true),
-            }),
-            range: highlight_range,
-        }),
-        rhai_hir::symbol::SymbolKind::Decl(_) => Some(Hover {
+        rhai_hir::symbol::SymbolKind::Fn(_) | rhai_hir::symbol::SymbolKind::Decl(_) => Some(Hover {
             contents: HoverContents::Markup(MarkupContent {
                 kind: MarkupKind::Markdown,
                 value: documentation_for(module, rhai, symbol, true),

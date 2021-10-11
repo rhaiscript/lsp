@@ -20,7 +20,7 @@ aa;
 
     let m = hir.get_module("references").unwrap();
 
-    let (aa_sym, aa_data) = m.symbols().skip(2).next().unwrap();
+    let (aa_sym, aa_data) = m.symbols().nth(2).unwrap();
 
     let aa_decl = m.symbols_by_name("aa").next().unwrap();
     let aa_decl_data = &m[aa_decl];

@@ -54,17 +54,10 @@ macro_rules! require_token {
 macro_rules! expect_token {
     ($ctx:ident in node, $($token:tt)*) => {
         match $ctx.token() {
-            Some(t) => match t {
-                $($token)* => {
-                    $ctx.eat();
-                },
-                _ => {
-                    $ctx.finish_node();
-                    $ctx.add_error(ParseErrorKind::ExpectedToken($($token)*));
-                    return;
-                }
+            Some($($token)*) => {
+                $ctx.eat();
             }
-            None => {
+            _ => {
                 $ctx.finish_node();
                 $ctx.add_error(ParseErrorKind::ExpectedToken($($token)*));
                 return;
@@ -88,17 +81,10 @@ macro_rules! expect_token {
 macro_rules! expect_token_eat_error {
     ($ctx:ident in node, $($token:tt)*) => {
         match $ctx.token() {
-            Some(t) => match t {
-                $($token)* => {
-                    $ctx.eat();
-                },
-                _ => {
-                    $ctx.finish_node();
-                    $ctx.eat_error(ParseErrorKind::ExpectedToken($($token)*));
-                    return;
-                }
-            }
-            None => {
+            Some($($token)*) => {
+                $ctx.eat();
+            },
+            _ => {
                 $ctx.finish_node();
                 $ctx.eat_error(ParseErrorKind::ExpectedToken($($token)*));
                 return;
@@ -144,7 +130,7 @@ pub fn parse_file(ctx: &mut Context) {
     }
     ctx.set_statement_closed(true);
 
-    ctx.finish_node()
+    ctx.finish_node();
 }
 
 /// Parse a shebang like `#!something`, typically at the start of files.
@@ -156,7 +142,7 @@ pub fn parse_shebang(ctx: &mut Context) {
         return ctx.eat_error(ParseErrorKind::ExpectedToken(SHEBANG));
     }
 
-    ctx.eat()
+    ctx.eat();
 }
 
 /// Parse a statement.
@@ -807,7 +793,7 @@ fn parse_export_target(ctx: &mut Context) {
 
     match token {
         T!["let"] => parse_expr_let(ctx),
-        T!["const"] => parse_expr_let(ctx),
+        T!["const"] => parse_expr_const(ctx),
         T!["ident"] => parse_export_ident(ctx),
         _ => ctx.add_error(ParseErrorKind::UnexpectedToken),
     }
@@ -1099,17 +1085,17 @@ fn parse_lit(ctx: &mut Context) {
 
 // Binding powers based on C and python (**) operator precedence.
 impl SyntaxKind {
-    fn prefix_binding_power(&self) -> Option<u8> {
-        let bp = match *self {
-            T!["+"] | T!["-"] | T!["!"] => 22,
+    fn prefix_binding_power(self) -> Option<u8> {
+        let bp = match self {
+            T!["+"] | T!["-"] | T!["!"] => 24,
             _ => return None,
         };
 
         Some(bp)
     }
 
-    fn infix_binding_power(&self) -> Option<(u8, u8)> {
-        let bp = match *self {
+    fn infix_binding_power(self) -> Option<(u8, u8)> {
+        let bp = match self {
             T!["+="]
             | T!["="]
             | T!["&="]
@@ -1127,22 +1113,22 @@ impl SyntaxKind {
             T!["|"] => (7, 8),
             T!["^"] => (9, 10),
             T!["&"] => (10, 11),
-            T!["=="] | T!["!="] => (10, 11),
-            T!["<"] | T!["<="] | T![">"] | T![">="] => (12, 13),
-            T!["<<"] | T![">>"] => (14, 15),
-            T!["+"] | T!["-"] => (16, 17),
-            T!["*"] | T!["/"] | T!["%"] => (18, 19),
-            T!["**"] => (20, 21),
-            T!["."] => (25, 24),
+            T!["=="] | T!["!="] => (12, 13),
+            T!["<"] | T!["<="] | T![">"] | T![">="] => (14, 15),
+            T!["<<"] | T![">>"] => (16, 17),
+            T!["+"] | T!["-"] => (18, 19),
+            T!["*"] | T!["/"] | T!["%"] => (20, 21),
+            T!["**"] => (22, 23),
+            T!["."] => (26, 27),
             _ => return None,
         };
 
         Some(bp)
     }
 
-    fn postfix_binding_power(&self) -> Option<u8> {
-        let bp = match *self {
-            T!["["] | T!["("] => 23,
+    fn postfix_binding_power(self) -> Option<u8> {
+        let bp = match self {
+            T!["["] | T!["("] => 25,
             _ => return None,
         };
 

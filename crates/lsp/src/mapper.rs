@@ -13,6 +13,7 @@ pub struct Position {
 }
 
 impl Position {
+    #[must_use]
     pub fn new(line: u64, character: u64) -> Self {
         Position { line, character }
     }
@@ -27,7 +28,7 @@ pub struct Range {
 }
 
 /// Offset in characters instead of bytes.
-/// It is u64 because lsp_types uses u64.
+/// It is u64 because `lsp_types` uses u64.
 pub type CharacterOffset = u64;
 
 /// Inclusive offset range in characters instead of bytes.
@@ -56,41 +57,50 @@ impl Mapper {
     /// each line starts and ends.
     ///
     /// Uses UTF-16 character sizes for positions.
+    #[must_use]
     pub fn new_utf16(source: &str, one_based: bool) -> Self {
         Self::new_impl(source, true, if one_based { 1 } else { 0 })
     }
 
     /// Uses UTF-8 character sizes for positions.
+    #[must_use]
     pub fn new_utf8(source: &str, one_based: bool) -> Self {
         Self::new_impl(source, false, if one_based { 1 } else { 0 })
     }
 
+    #[must_use]
     pub fn offset(&self, position: Position) -> Option<TextSize> {
         self.position_to_offset.get(&position).copied()
     }
 
+    #[must_use]
     pub fn text_range(&self, range: Range) -> Option<TextRange> {
         self.offset(range.start)
             .and_then(|start| self.offset(range.end).map(|end| TextRange::new(start, end)))
     }
 
+    #[must_use]
     pub fn position(&self, offset: TextSize) -> Option<Position> {
         self.offset_to_position.get(&offset).copied()
     }
 
+    #[must_use]
     pub fn range(&self, range: TextRange) -> Option<Range> {
         self.position(range.start())
             .and_then(|start| self.position(range.end()).map(|end| Range { start, end }))
     }
 
+    #[must_use]
     pub fn mappings(&self) -> (&BTreeMap<TextSize, Position>, &BTreeMap<Position, TextSize>) {
         (&self.offset_to_position, &self.position_to_offset)
     }
 
+    #[must_use]
     pub fn line_count(&self) -> usize {
         self.lines
     }
 
+    #[must_use]
     pub fn all_range(&self) -> Range {
         Range {
             start: Position {
@@ -153,6 +163,7 @@ impl Mapper {
     }
 }
 
+#[must_use]
 pub fn relative_position(position: Position, to: Position) -> Position {
     if position.line == to.line {
         Position {
@@ -168,6 +179,7 @@ pub fn relative_position(position: Position, to: Position) -> Position {
 }
 
 /// Ranges are relative start to start, not end to start.
+#[must_use]
 pub fn relative_range(range: Range, to: Range) -> Range {
     let line_diff = range.end.line - range.start.line;
     let start = relative_position(range.start, to.start);
@@ -251,11 +263,11 @@ line-3"#;
 
     assert!(
         mapper
-            .position(TextSize::from(s1.len() as u32 - 1 as u32))
+            .position(TextSize::from(s1.len() as u32 - 1_u32))
             .unwrap()
             == Position {
                 line: 2,
                 character: 5
             }
-    )
+    );
 }

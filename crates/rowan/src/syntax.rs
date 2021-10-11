@@ -1,14 +1,15 @@
 //! This module contains syntax kind declarations
 //! and a Logos-based lexer implementation.
 
+#![allow(clippy::manual_non_exhaustive)]
 #![allow(non_camel_case_types)]
 #![allow(dead_code)]
 
-use std::ops::Range;
-use serde::{Serialize, Deserialize};
 use logos::{Lexer as LogosLexer, Logos};
+use serde::{Deserialize, Serialize};
+use std::ops::Range;
 
-/// SyntaxKind represents all the node and token types (kinds) found in the grammar.
+/// `SyntaxKind` represents all the node and token types (kinds) found in the grammar.
 #[derive(
     Logos, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
 )]
@@ -269,7 +270,7 @@ pub enum SyntaxKind {
     })]
     #[token("`", |lex| {
         let mut escaped = false;
-        let mut last_char = 0u8;
+        let mut last_char = 0_u8;
         let mut interpolation_level = 0;
 
         for (i, b) in lex.remainder().bytes().enumerate() {
@@ -380,6 +381,7 @@ pub enum SyntaxKind {
 
 impl SyntaxKind {
     /// Whether the syntax kind is a reserved keyword.
+    #[must_use]
     pub fn is_reserved_keyword(&self) -> bool {
         self >= &SyntaxKind::KW_VAR && self < &SyntaxKind::KW_NIL
     }
@@ -449,21 +451,20 @@ impl<'source> Iterator for Lexer<'source> {
     type Item = SyntaxKind;
 
     fn next(&mut self) -> Option<SyntaxKind> {
-        if let Some(peeked) = self.peeked.take() {
-            peeked
-        } else {
-            self.lexer.next()
-        }
+        self.peeked
+            .take()
+            .map_or_else(|| self.lexer.next(), |peeked| peeked)
     }
 }
 
 // multi-line comments ending with "*/" have to be manually parsed
 // to avoid yet another insane regex.
+#[allow(clippy::unnecessary_wraps)]
 fn lex_multi_line_comment(lex: &mut LogosLexer<SyntaxKind>) -> Option<()> {
     let mut start = 1;
     let mut to_bump = 0;
 
-    let mut last_char = 0u8;
+    let mut last_char = 0_u8;
 
     for c in lex.remainder().bytes() {
         to_bump += 1;

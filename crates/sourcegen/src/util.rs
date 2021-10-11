@@ -2,6 +2,7 @@
 
 use xshell::cmd;
 
+#[must_use]
 pub fn format_rust(src: &str) -> String {
     let mut stdout = cmd!("rustfmt --config fn_single_line=true")
         .stdin(src)

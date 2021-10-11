@@ -14,7 +14,7 @@ pub(crate) async fn goto_declaration(
     let pos = p.text_document_position_params.position;
 
     goto_target(context, uri, pos)
-        .map(|result| result.map(|links| GotoDeclarationResponse::Link(links)))
+        .map(|result| result.map(GotoDeclarationResponse::Link))
 }
 
 // Technically the same, as goto_declaration, but a different function for consistency.
@@ -28,11 +28,11 @@ pub(crate) async fn goto_definition(
     let pos = p.text_document_position_params.position;
 
     goto_target(context, uri, pos)
-        .map(|result| result.map(|links| GotoDefinitionResponse::Link(links)))
+        .map(|result| result.map(GotoDefinitionResponse::Link))
 }
 
 fn goto_target(
-    mut context: Context<World>,
+    mut context: Context<World>, 
     uri: Url,
     pos: Position,
 ) -> Result<Option<Vec<LocationLink>>, Error> {

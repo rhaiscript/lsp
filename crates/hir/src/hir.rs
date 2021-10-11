@@ -46,10 +46,12 @@ impl ops::Index<Symbol> for Hir {
 }
 
 impl Hir {
+    #[must_use]
     pub fn new() -> Self {
-        Default::default()
+        Self::default()
     }
 
+    #[must_use]
     pub fn get_module(&self, name: &str) -> Option<&Module> {
         self.modules.get(name)
     }
@@ -63,14 +65,17 @@ impl Hir {
         // TODO: module references
     }
 
+    #[must_use]
     pub fn contains_module(&self, module: &str) -> bool {
         self.modules.contains_key(module)
     }
 
+    #[must_use]
     pub fn module_count(&self) -> usize {
         self.modules.len()
     }
 
+    #[must_use]
     pub fn contains_scope(&self, scope: Scope) -> bool {
         for (_, m) in self.modules() {
             if m.contains_scope(scope) {
@@ -81,11 +86,13 @@ impl Hir {
         false
     }
 
+    #[must_use]
     pub fn scope_count(&self) -> usize {
         self.modules()
             .fold(0, |count, (_, m)| count + m.scope_count())
     }
 
+    #[must_use]
     pub fn contains_symbol(&self, symbol: Symbol) -> bool {
         for (_, m) in self.modules() {
             if m.contains_symbol(symbol) {
@@ -96,6 +103,7 @@ impl Hir {
         false
     }
 
+    #[must_use]
     pub fn symbol_count(&self) -> usize {
         self.modules()
             .fold(0, |count, (_, m)| count + m.symbol_count())

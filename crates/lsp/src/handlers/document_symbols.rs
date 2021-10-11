@@ -7,10 +7,7 @@ use crate::{
 
 use super::*;
 use rhai_hir::{symbol::ObjectSymbol, Module, Scope, Type};
-use rhai_rowan::{
-    ast::{AstNode, ExprFn, Rhai},
-    syntax::SyntaxKind,
-};
+use rhai_rowan::{ast::{AstNode, ExprFn, Rhai}, syntax::{SyntaxElement, SyntaxKind}};
 
 pub(crate) async fn document_symbols(
     mut context: Context<World>,
@@ -63,7 +60,7 @@ fn collect_symbols(
             .syntax
             .and_then(|s| s.text_range)
             .map(|range| rhai.syntax().covering_element(range))
-            .and_then(|n| n.into_node());
+            .and_then(SyntaxElement::into_node);
 
         match &symbol_data.kind {
             rhai_hir::symbol::SymbolKind::Fn(f) => {
@@ -92,10 +89,10 @@ fn collect_symbols(
                     detail: Some(signature_of(module, rhai, symbol)),
                     children: Some(collect_symbols(mapper, rhai, module, f.scope)),
                     tags: None,
-                })
+                });
             }
             rhai_hir::symbol::SymbolKind::Block(block) => {
-                document_symbols.extend(collect_symbols(mapper, rhai, module, block.scope))
+                document_symbols.extend(collect_symbols(mapper, rhai, module, block.scope));
             }
             rhai_hir::symbol::SymbolKind::Decl(decl) => {
                 let syntax = match syntax {
@@ -105,7 +102,7 @@ fn collect_symbols(
 
                 let ident = syntax
                     .descendants_with_tokens()
-                    .filter_map(|t| t.into_token())
+                    .filter_map(SyntaxElement::into_token)
                     .find(|t| t.kind() == SyntaxKind::IDENT);
 
                 let ident = match ident {
@@ -157,7 +154,7 @@ fn collect_symbols(
                         None => None,
                     },
                     tags: None,
-                })
+                });
             }
             _ => {}
         }

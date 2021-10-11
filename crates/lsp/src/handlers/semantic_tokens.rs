@@ -1,3 +1,5 @@
+#![allow(clippy::copy_iterator, clippy::from_over_into)]
+
 use super::*;
 use crate::mapper::{self, relative_position, LspExt, Mapper};
 use enum_iterator::IntoEnumIterator;
@@ -59,7 +61,7 @@ pub(crate) async fn semantic_tokens(
         match &symbol_data.kind {
             rhai_hir::symbol::SymbolKind::Fn(_) => {
                 if let Some(range) = symbol_data.selection_syntax.and_then(|s| s.text_range) {
-                    builder.add_token(range, SemanticTokenKind::Function, &[])
+                    builder.add_token(range, SemanticTokenKind::Function, &[]);
                 }
             }
             rhai_hir::symbol::SymbolKind::Decl(d) => {
@@ -72,7 +74,7 @@ pub(crate) async fn semantic_tokens(
                         } else {
                             &[]
                         },
-                    )
+                    );
                 }
             }
             rhai_hir::symbol::SymbolKind::Reference(r) => {
@@ -81,7 +83,7 @@ pub(crate) async fn semantic_tokens(
                 {
                     match &module[*target].kind {
                         rhai_hir::symbol::SymbolKind::Fn(_) => {
-                            builder.add_token(range, SemanticTokenKind::Function, &[])
+                            builder.add_token(range, SemanticTokenKind::Function, &[]);
                         }
                         rhai_hir::symbol::SymbolKind::Decl(d) => builder.add_token(
                             range,

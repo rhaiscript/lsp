@@ -1,3 +1,16 @@
+#![warn(clippy::pedantic)]
+#![allow(
+    clippy::unused_async,
+    clippy::single_match,
+    clippy::wildcard_imports,
+    clippy::too_many_lines,
+    clippy::enum_glob_use,
+    clippy::cast_possible_truncation,
+    clippy::cast_lossless,
+    clippy::module_name_repetitions,
+    clippy::single_match_else
+)]
+
 use lsp_async_stub::Server;
 use lsp_types::{notification, request, Url};
 use mapper::Mapper;
@@ -37,6 +50,7 @@ pub struct WorldState {
 
 pub type World = Arc<Mutex<WorldState>>;
 
+#[must_use]
 pub fn create_server() -> Server<World> {
     Server::new()
         .on_request::<request::Initialize, _>(handlers::initialize)
@@ -57,6 +71,7 @@ pub fn create_server() -> Server<World> {
         .build()
 }
 
+#[must_use]
 pub fn create_world() -> World {
     Arc::new(Mutex::new(WorldState::default()))
 }

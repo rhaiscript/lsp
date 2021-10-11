@@ -42,6 +42,7 @@ pub struct Parser<'src> {
 
 impl<'src> Parser<'src> {
     /// Create a new parser with the given source.
+    #[must_use]
     pub fn new(source: &'src str) -> Self {
         Self {
             context: Context::new(source),
@@ -54,6 +55,7 @@ impl<'src> Parser<'src> {
     /// 
     /// If no parser function was called,
     /// or a parser was left in an invalid state (bug).
+    #[must_use]
     pub fn finish(self) -> Parse {
         self.context.finish()
     }
@@ -62,7 +64,7 @@ impl<'src> Parser<'src> {
 impl<'src> Parser<'src> {
     /// Execute a parser function for the given parser.
     pub fn execute<F: FnOnce(&mut Context)>(&mut self, f: F) {
-        f(&mut self.context)
+        f(&mut self.context);
     }
 }
 
@@ -80,6 +82,7 @@ impl Parse {
     /// Turn the result green tree into a CST.
     /// *This ignores errors*, the resulting tree
     /// can be potentially syntactically invalid.
+    #[must_use]
     pub fn clone_syntax(&self) -> SyntaxNode {
         SyntaxNode::new_root(self.green.clone())
     }
@@ -87,6 +90,7 @@ impl Parse {
     /// Turn the result green tree into a CST.
     /// *This ignores errors*, the resulting tree
     /// can be potentially syntactically invalid.
+    #[must_use]
     pub fn into_syntax(self) -> SyntaxNode {
         SyntaxNode::new_root(self.green)
     }
@@ -103,7 +107,7 @@ pub struct ParseError {
 }
 
 impl ParseError {
-    pub fn new(range: rowan::TextRange, kind: ParseErrorKind) -> Self {
+    fn new(range: rowan::TextRange, kind: ParseErrorKind) -> Self {
         Self { range, kind }
     }
 }

@@ -3,7 +3,7 @@
 //! These can be gradually turned into code generation if similar
 //! repetitive patterns are found and the effort is worth it.
 
-use crate::syntax::{SyntaxKind, SyntaxToken};
+use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
 
 use super::{AstNode, Expr, ObjectField, Param};
 use super::{ExprBlock, ExprIf, T};
@@ -33,6 +33,7 @@ impl super::Stmt {
 }
 
 impl super::Item {
+    #[must_use]
     pub fn docs_content(&self) -> String {
         let mut s = String::new();
 
@@ -43,14 +44,14 @@ impl super::Item {
                         s += token
                             .text()
                             .strip_prefix("/**")
-                            .unwrap_or(token.text())
+                            .unwrap_or_else(|| token.text())
                             .strip_suffix("*/")
-                            .unwrap_or(token.text())
+                            .unwrap_or_else(|| token.text())
                             .trim();
                     }
                     SyntaxKind::COMMENT_LINE_DOC => {
-                        let t = token.text().strip_prefix("///").unwrap_or(token.text());
-                        let t = t.strip_prefix(" ").unwrap_or(t);
+                        let t = token.text().strip_prefix("///").unwrap_or_else(|| token.text());
+                        let t = t.strip_prefix(' ').unwrap_or(t);
                         let t = t.trim_end();
                         s += t;
                         s += "\n";
@@ -75,7 +76,7 @@ impl super::Path {
     pub fn segments(&self) -> impl Iterator<Item = SyntaxToken> {
         self.syntax()
             .descendants_with_tokens()
-            .filter_map(|t| t.into_token())
+            .filter_map(SyntaxElement::into_token)
     }
 }
 
@@ -83,7 +84,7 @@ impl super::ExprBinary {
     pub fn op_token(&self) -> Option<SyntaxToken> {
         self.syntax()
             .children_with_tokens()
-            .find_map(|t| t.into_token())
+            .find_map(SyntaxElement::into_token)
     }
 }
 
@@ -91,7 +92,7 @@ impl super::ExprUnary {
     pub fn op_token(&self) -> Option<SyntaxToken> {
         self.syntax()
             .children_with_tokens()
-            .find_map(|t| t.into_token())
+            .find_map(SyntaxElement::into_token)
     }
 }
 
@@ -108,6 +109,7 @@ impl super::ExprObject {
 }
 
 impl super::ObjectField {
+    #[must_use]
     pub fn property(&self) -> Option<SyntaxToken> {
         self.syntax()
             .children_with_tokens()
@@ -130,9 +132,13 @@ impl super::ArgList {
 
 impl super::ExprIf {
     pub fn else_if_branch(&self) -> Option<ExprIf> {
-        self.then_branch().and_then(|t| t.syntax().next_sibling()).and_then(ExprIf::cast)
+        self.then_branch()
+            .and_then(|t| t.syntax().next_sibling())
+            .and_then(ExprIf::cast)
     }
     pub fn else_branch(&self) -> Option<ExprBlock> {
-        self.then_branch().and_then(|t| t.syntax().next_sibling()).and_then(ExprBlock::cast)
+        self.then_branch()
+            .and_then(|t| t.syntax().next_sibling())
+            .and_then(ExprBlock::cast)
     }
 }

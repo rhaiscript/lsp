@@ -1,3 +1,5 @@
+#![allow(clippy::unsafe_derive_deserialize)]
+
 use crate::{scope::ScopeData, symbol::*, syntax::SyntaxInfo, Scope};
 use core::ops;
 use rhai_rowan::{
@@ -8,8 +10,8 @@ use serde::{Deserialize, Serialize};
 use slotmap::SlotMap;
 
 mod edit;
-mod remove;
 mod query;
+mod remove;
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Module {
@@ -41,10 +43,12 @@ impl Module {
         self.scopes.iter()
     }
 
+    #[must_use]
     pub fn contains_scope(&self, scope: Scope) -> bool {
         self.scopes.contains_key(scope)
     }
 
+    #[must_use]
     pub fn scope_count(&self) -> usize {
         self.scopes.len()
     }
@@ -53,10 +57,12 @@ impl Module {
         self.symbols.iter()
     }
 
+    #[must_use]
     pub fn contains_symbol(&self, symbol: Symbol) -> bool {
         self.symbols.contains_key(symbol)
     }
 
+    #[must_use]
     pub fn symbol_count(&self) -> usize {
         self.symbols.len()
     }

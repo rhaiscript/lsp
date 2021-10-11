@@ -255,7 +255,7 @@ fn generate_ast(grammar: &Grammar) -> String {
                             }
                         }
                     }
-                })
+                });
             }
             ungrammar::Rule::Seq(rules) => {
                 let mut getters = quote! {};
@@ -337,10 +337,8 @@ fn generate_ast(grammar: &Grammar) -> String {
                             }
                             _ => {}
                         },
-                        Rule::Seq(_) => {}
-                        Rule::Alt(_) => {}
-                        Rule::Opt(_) => {}
-                        _ => unreachable!(),
+                        Rule::Seq(_) | Rule::Alt(_) | Rule::Opt(_) => {}
+                        Rule::Labeled { .. } => unreachable!(),
                     }
                 }
 
@@ -437,7 +435,7 @@ fn to_upper_snake_case(s: &str) -> String {
     let mut prev = false;
     for c in s.chars() {
         if c.is_ascii_uppercase() && prev {
-            buf.push('_')
+            buf.push('_');
         }
         prev = true;
 
@@ -451,7 +449,7 @@ fn to_lower_snake_case(s: &str) -> String {
     let mut prev = false;
     for c in s.chars() {
         if c.is_ascii_uppercase() && prev {
-            buf.push('_')
+            buf.push('_');
         }
         prev = true;
 
@@ -469,7 +467,7 @@ fn token_getter_name(s: &str) -> String {
 }
 
 fn pluralize(s: &str) -> String {
-    format!("{}{}", s, if s.ends_with("s") { "es" } else { "s" })
+    format!("{}{}", s, if s.ends_with('s') { "es" } else { "s" })
 }
 
 fn strip_common_prefix(target: &str, s: &str) -> String {
@@ -478,13 +476,12 @@ fn strip_common_prefix(target: &str, s: &str) -> String {
     if target[cpl..]
         .chars()
         .next()
-        .map(|c| c.is_ascii_lowercase())
-        .unwrap_or(true)
+        .map_or(true, |c| c.is_ascii_lowercase())
     {
         return target.to_string();
     }
 
-    return target[cpl..].to_string();
+    target[cpl..].to_string()
 }
 
 fn common_prefix_length(s1: &str, s2: &str) -> usize {

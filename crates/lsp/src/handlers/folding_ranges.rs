@@ -30,7 +30,7 @@ pub(crate) async fn folding_ranges(
                             COMMENT_BLOCK_DOC | COMMENT_BLOCK => Some(FoldingRangeKind::Comment),
                             _ => None,
                         },
-                        ..Default::default()
+                        ..FoldingRange::default()
                     })
                 }
                 _ => None,
@@ -69,7 +69,7 @@ fn collect_consecutive_comments(
                                     start_line: existing_range.start.line,
                                     end_line: existing_range.end.line,
                                     kind: Some(FoldingRangeKind::Comment),
-                                    ..Default::default()
+                                    ..FoldingRange::default()
                                 });
                             }
 
@@ -96,7 +96,7 @@ fn collect_consecutive_comments(
                                     start_line: existing_range.start.line,
                                     end_line: existing_range.end.line,
                                     kind: Some(FoldingRangeKind::Comment),
-                                    ..Default::default()
+                                    ..FoldingRange::default()
                                 });
                             }
 
@@ -118,7 +118,7 @@ fn collect_consecutive_comments(
             ranges.push(FoldingRange {
                 start_line: existing_range.start.line,
                 end_line: existing_range.end.line,
-                ..Default::default()
+                ..FoldingRange::default()
             });
         }
     }
@@ -128,7 +128,7 @@ fn collect_consecutive_comments(
             ranges.push(FoldingRange {
                 start_line: existing_range.start.line,
                 end_line: existing_range.end.line,
-                ..Default::default()
+                ..FoldingRange::default()
             });
         }
     }

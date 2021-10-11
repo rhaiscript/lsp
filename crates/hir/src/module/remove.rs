@@ -11,7 +11,7 @@ impl Module {
 
     pub fn remove_symbol(&mut self, symbol: Symbol) {
         if let Some(s) = self.symbols.remove(symbol) {
-            self.remove_symbol_data(s)
+            self.remove_symbol_data(s);
         }
     }
 

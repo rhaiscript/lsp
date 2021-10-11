@@ -1,3 +1,5 @@
+use crate::IndexSet;
+
 use super::*;
 
 impl Module {
@@ -6,7 +8,7 @@ impl Module {
             let mut m = Module {
                 name: name.into(),
                 syntax: Some(syntax.into()),
-                ..Default::default()
+                ..Module::default()
             };
             let root_scope = m.create_scope(None, Some(syntax.into()));
             m.root_scope = root_scope;
@@ -17,14 +19,12 @@ impl Module {
 
     fn create_scope(&mut self, parent_symbol: Option<Symbol>, syntax: Option<SyntaxInfo>) -> Scope {
         let data = ScopeData {
-            parent_symbol,
             syntax,
-            ..Default::default()
+            parent_symbol,
+            ..ScopeData::default()
         };
 
-        let scope = self.scopes.insert(data);
-
-        scope
+        self.scopes.insert(data)
     }
 
     fn create_scope_with_statements(
@@ -44,16 +44,25 @@ impl Module {
         statements: impl Iterator<Item = Stmt>,
     ) {
         for stmt in statements {
-            self.create_symbol_from_stmt(scope, stmt);
+            self.create_symbol_from_stmt(scope, &stmt);
         }
     }
 
     fn add_symbol_from_expr(&mut self, parent_scope: Scope, expr: Expr) -> Option<Symbol> {
+        fn get_if_symbol(module: &mut Module, symbol: Symbol) -> &mut IfSymbol {
+            // safety: we've just inserted it.
+            let symbol_data = unsafe { module.symbols.get_unchecked_mut(symbol) };
+            match &mut symbol_data.kind {
+                SymbolKind::If(k) => k,
+                _ => unreachable!(),
+            }
+        }
+
         match expr {
             Expr::Fn(expr_fn) => {
                 let scope = self.scopes.insert(ScopeData {
                     syntax: Some(expr_fn.syntax().into()),
-                    ..Default::default()
+                    ..ScopeData::default()
                 });
 
                 if let Some(param_list) = expr_fn.param_list() {
@@ -68,7 +77,7 @@ impl Module {
                                     .map(|s| s.text().to_string())
                                     .unwrap_or_default(),
                                 is_param: true,
-                                ..Default::default()
+                                ..DeclSymbol::default()
                             }),
                         });
 
@@ -79,7 +88,7 @@ impl Module {
                 }
 
                 if let Some(body) = expr_fn.body() {
-                    self.extend_scope_from_statements(scope, body.statements())
+                    self.extend_scope_from_statements(scope, body.statements());
                 }
 
                 let sym = SymbolData {
@@ -92,7 +101,7 @@ impl Module {
                             .map(|s| s.text().to_string())
                             .unwrap_or_default(),
                         scope,
-                        ..Default::default()
+                        ..FnSymbol::default()
                     }),
                 };
 
@@ -106,10 +115,10 @@ impl Module {
                 Some(sym)
             }
             Expr::Let(expr_let) => {
-                let value = expr_let.expr().and_then(|expr| {
+                let value = expr_let.expr().map(|expr| {
                     let scope = self.create_scope(None, Some(expr_let.syntax().into()));
                     self.add_symbol_from_expr(scope, expr);
-                    Some(scope)
+                    scope
                 });
 
                 let sym = SymbolData {
@@ -122,7 +131,7 @@ impl Module {
                             .map(|s| s.text().to_string())
                             .unwrap_or_default(),
                         value,
-                        ..Default::default()
+                        ..DeclSymbol::default()
                     }),
                 };
 
@@ -137,10 +146,10 @@ impl Module {
                 Some(sym)
             }
             Expr::Const(expr_const) => {
-                let value = expr_const.expr().and_then(|expr| {
+                let value = expr_const.expr().map(|expr| {
                     let scope = self.create_scope(None, Some(expr_const.syntax().into()));
                     self.add_symbol_from_expr(scope, expr);
-                    Some(scope)
+                    scope
                 });
 
                 let sym = SymbolData {
@@ -154,7 +163,7 @@ impl Module {
                             .unwrap_or_default(),
                         is_const: true,
                         value,
-                        ..Default::default()
+                        ..DeclSymbol::default()
                     }),
                 };
 
@@ -173,8 +182,7 @@ impl Module {
                     selection_syntax: Some(
                         expr_ident
                             .ident_token()
-                            .map(|t| t.into())
-                            .unwrap_or_else(|| expr_ident.syntax().into()),
+                            .map_or_else(|| expr_ident.syntax().into(), |t| t.into()),
                     ),
                     parent_scope,
                     syntax: Some(expr_ident.syntax().into()),
@@ -183,7 +191,7 @@ impl Module {
                             .ident_token()
                             .map(|s| s.text().to_string())
                             .unwrap_or_default(),
-                        ..Default::default()
+                        ..ReferenceSymbol::default()
                     }),
                 };
 
@@ -209,13 +217,12 @@ impl Module {
                                     parent_scope,
                                     kind: SymbolKind::Reference(ReferenceSymbol {
                                         name: s.text().to_string(),
-                                        ..Default::default()
+                                        ..ReferenceSymbol::default()
                                     }),
                                     syntax: Some(s.into()),
                                 })
                             })
                             .collect(),
-                        ..Default::default()
                     }),
                 };
 
@@ -229,7 +236,7 @@ impl Module {
                     parent_scope,
                     syntax: Some(expr_lit.syntax().into()),
                     kind: SymbolKind::Lit(LitSymbol {
-                        ..Default::default()
+                        ..LitSymbol::default()
                     }),
                 });
                 self.add_to_scope(parent_scope, sym, false);
@@ -383,7 +390,7 @@ impl Module {
                                 .arguments()
                                 .filter_map(|expr| self.add_symbol_from_expr(parent_scope, expr))
                                 .collect(),
-                            None => Default::default(),
+                            None => IndexSet::default(),
                         },
                     }),
                 };
@@ -395,7 +402,7 @@ impl Module {
             Expr::Closure(expr_closure) => {
                 let scope = self.scopes.insert(ScopeData {
                     syntax: Some(expr_closure.syntax().into()),
-                    ..Default::default()
+                    ..ScopeData::default()
                 });
 
                 if let Some(param_list) = expr_closure.param_list() {
@@ -410,7 +417,7 @@ impl Module {
                                     .map(|s| s.text().to_string())
                                     .unwrap_or_default(),
                                 is_param: true,
-                                ..Default::default()
+                                ..DeclSymbol::default()
                             }),
                         });
 
@@ -460,20 +467,11 @@ impl Module {
                     kind: SymbolKind::If(IfSymbol {
                         condition,
                         then_scope,
-                        ..Default::default()
+                        ..IfSymbol::default()
                     }),
                 });
 
                 self.add_to_scope(parent_scope, sym, false);
-
-                fn get_if_symbol(module: &mut Module, symbol: Symbol) -> &mut IfSymbol {
-                    // safety: we've just inserted it.
-                    let symbol_data = unsafe { module.symbols.get_unchecked_mut(symbol) };
-                    match &mut symbol_data.kind {
-                        SymbolKind::If(k) => k,
-                        _ => unreachable!(),
-                    }
-                }
 
                 if let Some(else_branch) = expr_if.else_branch() {
                     let branch_scope = self.create_scope_with_statements(
@@ -657,8 +655,7 @@ impl Module {
                 self.add_to_scope(parent_scope, sym, false);
                 Some(sym)
             }
-            Expr::Switch(_) => None,
-            Expr::Import(_) => None,
+            Expr::Switch(_) | Expr::Import(_) => None,
         }
     }
 
@@ -676,7 +673,7 @@ impl Module {
         }
     }
 
-    fn create_symbol_from_stmt(&mut self, parent_scope: Scope, stmt: Stmt) -> Option<Symbol> {
+    fn create_symbol_from_stmt(&mut self, parent_scope: Scope, stmt: &Stmt) -> Option<Symbol> {
         stmt.item().and_then(|item| {
             item.expr().and_then(|expr| {
                 match self.add_symbol_from_expr(parent_scope, expr) {
@@ -720,7 +717,7 @@ impl Module {
             // allocate a vector of symbols.
             unsafe {
                 for vis_symbol in (&*self_ptr).visible_symbols_from_symbol(symbol) {
-                    let vis_symbol_data = (&mut *self_ptr).symbols.get_unchecked_mut(vis_symbol);
+                    let vis_symbol_data = (*self_ptr).symbols.get_unchecked_mut(vis_symbol);
                     if let Some(n) = vis_symbol_data.name() {
                         if n != ref_kind.name {
                             continue;
