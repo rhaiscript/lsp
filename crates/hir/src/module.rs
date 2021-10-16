@@ -67,3 +67,26 @@ impl Module {
         self.symbols.len()
     }
 }
+
+#[allow(dead_code)]
+impl Module {
+    pub(crate) fn scope_unchecked(&self, scope: Scope) -> &ScopeData {
+        // safety: Internal, we guarantee that the scope exists.
+        unsafe { self.scopes.get_unchecked(scope) }
+    }
+
+    pub(crate) fn scope_unchecked_mut(&mut self, scope: Scope) -> &mut ScopeData {
+        // safety: Internal, we guarantee that the scope exists.
+        unsafe { self.scopes.get_unchecked_mut(scope) }
+    }
+
+    pub(crate) fn symbol_unchecked(&self, symbol: Symbol) -> &SymbolData {
+        // safety: Internal, we guarantee that the symbol exists.
+        unsafe { self.symbols.get_unchecked(symbol) }
+    }
+
+    pub(crate) fn symbol_unchecked_mut(&mut self, symbol: Symbol) -> &mut SymbolData {
+        // safety: Internal, we guarantee that the symbol exists.
+        unsafe { self.symbols.get_unchecked_mut(symbol) }
+    }
+}

@@ -3,10 +3,9 @@
 //! These can be gradually turned into code generation if similar
 //! repetitive patterns are found and the effort is worth it.
 
-use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
-
-use super::{AstNode, Expr, ObjectField, Param};
+use super::{AstNode, Expr, ObjectField, Param, SwitchArm};
 use super::{ExprBlock, ExprIf, T};
+use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
 
 impl super::ExprLet {
     pub fn expr(&self) -> Option<Expr> {
@@ -50,7 +49,10 @@ impl super::Item {
                             .trim();
                     }
                     SyntaxKind::COMMENT_LINE_DOC => {
-                        let t = token.text().strip_prefix("///").unwrap_or_else(|| token.text());
+                        let t = token
+                            .text()
+                            .strip_prefix("///")
+                            .unwrap_or_else(|| token.text());
                         let t = t.strip_prefix(' ').unwrap_or(t);
                         let t = t.trim_end();
                         s += t;
@@ -140,5 +142,68 @@ impl super::ExprIf {
         self.then_branch()
             .and_then(|t| t.syntax().next_sibling())
             .and_then(ExprBlock::cast)
+    }
+}
+
+impl super::Pat {
+    pub fn idents(&self) -> impl Iterator<Item = SyntaxToken> {
+        self.syntax()
+            .descendants_with_tokens()
+            .filter(|t| t.kind() == T!["ident"])
+            .filter_map(SyntaxElement::into_token)
+    }
+}
+
+impl super::SwitchArmList {
+    pub fn arms(&self) -> impl Iterator<Item = SwitchArm> {
+        self.syntax().children().filter_map(SwitchArm::cast)
+    }
+}
+
+impl super::SwitchArm {
+    #[must_use]
+    pub fn pattern_expr(&self) -> Option<Expr> {
+        let fat_arrow = self.punct_arrow_fat_token();
+
+        fat_arrow
+            .and_then(|arrow| arrow.prev_sibling_or_token())
+            .and_then(SyntaxElement::into_node)
+            .and_then(Expr::cast)
+            .or_else(|| self.syntax().children().next().and_then(Expr::cast))
+    }
+
+    #[must_use]
+    pub fn discard_token(&self) -> Option<SyntaxToken> {
+        self.syntax()
+            .children_with_tokens()
+            .next()
+            .and_then(SyntaxElement::into_token)
+            .and_then(|s| if s.kind() == T!["_"] { Some(s) } else { None })
+    }
+
+    #[must_use]
+    pub fn value_expr(&self) -> Option<Expr> {
+        let fat_arrow = self.punct_arrow_fat_token();
+
+        fat_arrow
+            .and_then(|arrow| arrow.next_sibling_or_token())
+            .and_then(SyntaxElement::into_node)
+            .and_then(Expr::cast)
+    }
+}
+
+impl super::ExprImport {
+    #[must_use]
+    pub fn alias(&self) -> Option<SyntaxToken> {
+        self.syntax()
+            .last_child_or_token()
+            .and_then(SyntaxElement::into_token)
+            .and_then(|t| {
+                if t.kind() == T!["ident"] {
+                    Some(t)
+                } else {
+                    None
+                }
+            })
     }
 }

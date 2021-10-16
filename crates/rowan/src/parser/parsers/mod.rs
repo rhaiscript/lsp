@@ -358,9 +358,10 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         //
         // Here we list all the cases when expressions have to end no matter what.
         let op = match ctx.token() {
-            Some(T![";"] | T![","] | T!["{"] | T!["}"] | T![")"] | T!["]"] | T!["=>"]) | None => {
-                break
-            }
+            Some(
+                T![";"] | T![","] | T!["{"] | T!["}"] | T![")"] | T!["]"] | T!["=>"] | T!["as"],
+            )
+            | None => break,
             Some(t) => t,
         };
 
@@ -728,7 +729,7 @@ pub fn parse_expr_import(ctx: &mut Context) {
     ctx.start_node(EXPR_IMPORT);
 
     expect_token_eat_error!(ctx in node, T!["import"]);
-    expect_token!(ctx in node, T!["lit_str"]);
+    parse_expr(ctx);
 
     if matches!(ctx.token(), Some(T!["as"])) {
         ctx.eat();

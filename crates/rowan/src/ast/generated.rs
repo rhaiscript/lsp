@@ -1056,17 +1056,8 @@ impl ExprImport {
             .skip(0usize)
             .next()
     }
-    pub fn lit_str_token(&self) -> Option<SyntaxToken> {
-        self.0
-            .children_with_tokens()
-            .filter_map(|t| {
-                if t.kind() != LIT_STR {
-                    return None;
-                }
-                t.into_token()
-            })
-            .skip(0usize)
-            .next()
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
     }
 }
 #[derive(Debug, Clone)]

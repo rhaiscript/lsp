@@ -111,12 +111,6 @@ impl Module {
             }
             SymbolKind::Closure(f) => self.remove_scope(f.scope),
             SymbolKind::If(if_sym) => {
-                if let Some(s) = if_sym.condition {
-                    self.remove_symbol(s);
-                }
-
-                self.remove_scope(if_sym.then_scope);
-
                 for (condition, scope) in if_sym.branches {
                     if let Some(s) = condition {
                         self.remove_symbol(s);
@@ -152,7 +146,27 @@ impl Module {
                     self.remove_symbol(s);
                 }
             }
-            SymbolKind::Lit(_) | SymbolKind::Continue(_) => {}
+            SymbolKind::Switch(switch) => {
+                for (pat, val) in switch.arms {
+                    if let Some(s) = pat {
+                        self.remove_symbol(s);
+                    }
+
+                    if let Some(s) = val {
+                        self.remove_symbol(s);
+                    }
+                }
+            }
+            SymbolKind::Import(import) => {
+                if let Some(s) = import.expr {
+                    self.remove_symbol(s);
+                }
+
+                if let Some(s) = import.alias {
+                    self.remove_symbol(s);
+                }
+            }
+            SymbolKind::Lit(_) | SymbolKind::Continue(_) | SymbolKind::Discard(_) => {}
         }
     }
 }

@@ -2,6 +2,7 @@ use crate::{eval::Value, syntax::SyntaxInfo, HashSet, IndexMap, IndexSet, Scope,
 use enum_as_inner::EnumAsInner;
 use rhai_rowan::{syntax::SyntaxKind, TextRange};
 use serde::{Deserialize, Serialize};
+use strum_macros::IntoStaticStr;
 
 slotmap::new_key_type! { pub struct Symbol; }
 
@@ -50,7 +51,7 @@ impl SymbolData {
     #[inline]
     #[must_use]
     pub fn selection_range(&self) -> Option<TextRange> {
-        self.syntax.and_then(|s| s.text_range)
+        self.selection_syntax.and_then(|s| s.text_range)
     }
 
     #[inline]
@@ -60,7 +61,7 @@ impl SymbolData {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, EnumAsInner)]
+#[derive(Debug, Clone, Serialize, Deserialize, EnumAsInner, IntoStaticStr)]
 pub enum SymbolKind {
     Block(BlockSymbol),
     Fn(FnSymbol),
@@ -82,8 +83,9 @@ pub enum SymbolKind {
     Break(BreakSymbol),
     Continue(ContinueSymbol),
     Return(ReturnSymbol),
-    // Switch(SwitchSymbol),
-    // Import(ImportSymbol),
+    Switch(SwitchSymbol),
+    Import(ImportSymbol),
+    Discard(DiscardSymbol),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -105,6 +107,7 @@ pub struct DeclSymbol {
     pub docs: String,
     pub is_param: bool,
     pub is_const: bool,
+    pub is_pat: bool,
     pub ty: Type,
     pub inferred_ty: Option<Type>,
     pub value: Option<Scope>,
@@ -114,6 +117,7 @@ pub struct DeclSymbol {
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ReferenceSymbol {
     pub target: Option<ReferenceTarget>,
+    pub part_of_path: bool,
     pub name: String,
 }
 
@@ -178,9 +182,8 @@ pub struct ClosureSymbol {
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct IfSymbol {
-    pub condition: Option<Symbol>,
-    pub then_scope: Scope,
-    pub branches: IndexSet<(Option<Symbol>, Scope)>,
+    /// Conditions and scopes for each branch.
+    pub branches: Vec<(Option<Symbol>, Scope)>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -212,6 +215,22 @@ pub struct ContinueSymbol {}
 pub struct ReturnSymbol {
     pub expr: Option<Symbol>,
 }
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct SwitchSymbol {
+    pub target: Option<Symbol>,
+    pub arms: Vec<(Option<Symbol>, Option<Symbol>)>,
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct ImportSymbol {
+    pub expr: Option<Symbol>,
+    pub alias: Option<Symbol>,
+    // pub expr: Option<Symbol>,
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct DiscardSymbol {}
 
 #[derive(Debug, Clone, Serialize, Deserialize, EnumAsInner)]
 pub enum ReferenceTarget {

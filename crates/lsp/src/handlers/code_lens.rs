@@ -31,7 +31,7 @@ pub(crate) async fn code_lens(
                         .and_then(|range| doc.mapper.range(range).map(LspExt::into_lsp))
                         .map(|range| (&d.references, range)),
                     rhai_hir::symbol::SymbolKind::Decl(d) => {
-                        if d.is_param {
+                        if d.is_param || d.is_pat {
                             None
                         } else {
                             data.selection_syntax

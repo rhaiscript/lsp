@@ -60,12 +60,12 @@ pub(crate) async fn semantic_tokens(
     for (_, symbol_data) in module.symbols() {
         match &symbol_data.kind {
             rhai_hir::symbol::SymbolKind::Fn(_) => {
-                if let Some(range) = symbol_data.selection_syntax.and_then(|s| s.text_range) {
+                if let Some(range) = symbol_data.selection_range() {
                     builder.add_token(range, SemanticTokenKind::Function, &[]);
                 }
             }
             rhai_hir::symbol::SymbolKind::Decl(d) => {
-                if let Some(range) = symbol_data.selection_syntax.and_then(|s| s.text_range) {
+                if let Some(range) = symbol_data.selection_range() {
                     builder.add_token(
                         range,
                         SemanticTokenKind::Variable,
@@ -79,7 +79,7 @@ pub(crate) async fn semantic_tokens(
             }
             rhai_hir::symbol::SymbolKind::Reference(r) => {
                 if let (Some(range), Some(ReferenceTarget::Symbol(target))) =
-                    (symbol_data.syntax.and_then(|s| s.text_range), &r.target)
+                    (symbol_data.selection_range(), &r.target)
                 {
                     match &module[*target].kind {
                         rhai_hir::symbol::SymbolKind::Fn(_) => {

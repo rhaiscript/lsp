@@ -153,7 +153,7 @@ ExprFn =
   'fn' 'ident' ParamList body:ExprBlock
 
 ExprImport =
-  'import' 'lit_str' ('as' 'ident')?
+  'import' Expr ('as' 'ident')?
 
 ExprExport =
   'export' ExportTarget

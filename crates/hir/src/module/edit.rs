@@ -12,152 +12,156 @@ impl Module {
             };
             let root_scope = m.create_scope(None, Some(syntax.into()));
             m.root_scope = root_scope;
-            m.extend_scope_from_statements(root_scope, rhai.statements());
+            m.add_statements(root_scope, rhai.statements());
             m
         })
     }
 
+    #[tracing::instrument(skip(self), level = "trace")]
     fn create_scope(&mut self, parent_symbol: Option<Symbol>, syntax: Option<SyntaxInfo>) -> Scope {
         let data = ScopeData {
             syntax,
             parent_symbol,
             ..ScopeData::default()
         };
-
         self.scopes.insert(data)
     }
 
-    fn create_scope_with_statements(
-        &mut self,
-        parent_symbol: Option<Symbol>,
-        syntax: Option<SyntaxInfo>,
-        statements: impl Iterator<Item = Stmt>,
-    ) -> Scope {
-        let scope = self.create_scope(parent_symbol, syntax);
-        self.extend_scope_from_statements(scope, statements);
-        scope
-    }
-
-    fn extend_scope_from_statements(
-        &mut self,
-        scope: Scope,
-        statements: impl Iterator<Item = Stmt>,
-    ) {
-        for stmt in statements {
-            self.create_symbol_from_stmt(scope, &stmt);
+    fn add_statements(&mut self, scope: Scope, statements: impl Iterator<Item = Stmt>) {
+        for statement in statements {
+            self.add_statement(scope, statement);
         }
     }
 
-    fn add_symbol_from_expr(&mut self, parent_scope: Scope, expr: Expr) -> Option<Symbol> {
-        fn get_if_symbol(module: &mut Module, symbol: Symbol) -> &mut IfSymbol {
-            // safety: we've just inserted it.
-            let symbol_data = unsafe { module.symbols.get_unchecked_mut(symbol) };
-            match &mut symbol_data.kind {
-                SymbolKind::If(k) => k,
-                _ => unreachable!(),
-            }
-        }
-
-        match expr {
-            Expr::Fn(expr_fn) => {
-                let scope = self.scopes.insert(ScopeData {
-                    syntax: Some(expr_fn.syntax().into()),
-                    ..ScopeData::default()
-                });
-
-                if let Some(param_list) = expr_fn.param_list() {
-                    for param in param_list.params() {
-                        let symbol = self.symbols.insert(SymbolData {
-                            selection_syntax: Some(param.syntax().into()),
-                            syntax: Some(param.syntax().into()),
-                            parent_scope: scope,
-                            kind: SymbolKind::Decl(DeclSymbol {
-                                name: param
-                                    .ident_token()
-                                    .map(|s| s.text().to_string())
-                                    .unwrap_or_default(),
-                                is_param: true,
-                                ..DeclSymbol::default()
-                            }),
-                        });
-
-                        // safety: we've just inserted it.
-                        let scope_data = unsafe { self.scopes.get_unchecked_mut(scope) };
-                        scope_data.symbols.insert(symbol);
+    #[tracing::instrument(skip(self), level = "trace")]
+    fn add_statement(&mut self, scope: Scope, stmt: Stmt) -> Option<Symbol> {
+        stmt.item().and_then(|item| {
+            item.expr()
+                .and_then(|expr| match self.add_expression(scope, expr) {
+                    Some(symbol) => {
+                        match &mut self.symbol_unchecked_mut(symbol).kind {
+                            SymbolKind::Fn(f) => f.docs = item.docs_content(),
+                            SymbolKind::Decl(decl) => decl.docs = item.docs_content(),
+                            _ => {}
+                        };
+                        Some(symbol)
                     }
-                }
+                    None => None,
+                })
+        })
+    }
 
-                if let Some(body) = expr_fn.body() {
-                    self.extend_scope_from_statements(scope, body.statements());
-                }
-
-                let sym = SymbolData {
-                    selection_syntax: expr_fn.ident_token().map(Into::into),
-                    parent_scope,
-                    syntax: Some(expr_fn.syntax().into()),
-                    kind: SymbolKind::Fn(FnSymbol {
-                        name: expr_fn
+    #[tracing::instrument(skip(self), level = "trace")]
+    fn add_expression(&mut self, scope: Scope, expr: Expr) -> Option<Symbol> {
+        match expr {
+            Expr::Ident(expr) => {
+                let symbol = self.symbols.insert(SymbolData {
+                    selection_syntax: Some(
+                        expr.ident_token()
+                            .map_or_else(|| expr.syntax().into(), |t| t.into()),
+                    ),
+                    syntax: Some(expr.syntax().into()),
+                    kind: SymbolKind::Reference(ReferenceSymbol {
+                        name: expr
                             .ident_token()
                             .map(|s| s.text().to_string())
                             .unwrap_or_default(),
-                        scope,
-                        ..FnSymbol::default()
+                        ..ReferenceSymbol::default()
+                    }),
+                    parent_scope: Scope::default(),
+                });
+
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
+            }
+            Expr::Path(expr_path) => {
+                let segments = match expr_path.path() {
+                    Some(p) => p.segments(),
+                    None => return None,
+                };
+                let symbol = SymbolData {
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr_path.syntax().into()),
+                    selection_syntax: None,
+                    kind: SymbolKind::Path(PathSymbol {
+                        segments: segments
+                            .map(|s| {
+                                let symbol = self.symbols.insert(SymbolData {
+                                    selection_syntax: Some(s.clone().into()),
+                                    parent_scope: Scope::default(),
+                                    kind: SymbolKind::Reference(ReferenceSymbol {
+                                        name: s.text().to_string(),
+                                        part_of_path: true,
+                                        ..ReferenceSymbol::default()
+                                    }),
+                                    syntax: Some(s.into()),
+                                });
+                                self.add_to_scope(scope, symbol, false);
+                                symbol
+                            })
+                            .collect(),
                     }),
                 };
+                let sym = self.symbols.insert(symbol);
 
-                let sym = self.symbols.insert(sym);
-                // safety: we've just inserted it.
-                unsafe {
-                    self.scopes.get_unchecked_mut(scope).parent_symbol = Some(sym);
-                }
-
-                self.add_to_scope(parent_scope, sym, true);
+                self.add_to_scope(scope, sym, false);
                 Some(sym)
             }
-            Expr::Let(expr_let) => {
-                let value = expr_let.expr().map(|expr| {
-                    let scope = self.create_scope(None, Some(expr_let.syntax().into()));
-                    self.add_symbol_from_expr(scope, expr);
+            Expr::Lit(expr) => {
+                let symbol = self.symbols.insert(SymbolData {
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
+                    selection_syntax: None,
+                    kind: SymbolKind::Lit(LitSymbol {
+                        ..LitSymbol::default()
+                    }),
+                });
+
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
+            }
+            // `let` and `const` values have a separate scope created for them
+            Expr::Let(expr) => {
+                let value = expr.expr().map(|expr| {
+                    let scope = self.create_scope(None, Some(expr.syntax().into()));
+                    self.add_expression(scope, expr);
                     scope
                 });
 
-                let sym = SymbolData {
-                    selection_syntax: expr_let.ident_token().map(Into::into),
-                    parent_scope,
-                    syntax: Some(expr_let.syntax().into()),
+                let symbol = self.symbols.insert(SymbolData {
+                    selection_syntax: expr.ident_token().map(Into::into),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Decl(DeclSymbol {
-                        name: expr_let
+                        name: expr
                             .ident_token()
                             .map(|s| s.text().to_string())
                             .unwrap_or_default(),
                         value,
                         ..DeclSymbol::default()
                     }),
-                };
+                });
 
-                let sym = self.symbols.insert(sym);
-
-                if let Some(scope) = value {
-                    // safety: guaranteed to exist
-                    unsafe { self.scopes.get_unchecked_mut(scope).parent_symbol = Some(sym) }
+                if let Some(value_scope) = value {
+                    self.set_as_parent_symbol(symbol, value_scope);
                 }
 
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Const(expr_const) => {
-                let value = expr_const.expr().map(|expr| {
-                    let scope = self.create_scope(None, Some(expr_const.syntax().into()));
-                    self.add_symbol_from_expr(scope, expr);
+            Expr::Const(expr) => {
+                let value = expr.expr().map(|expr| {
+                    let scope = self.create_scope(None, Some(expr.syntax().into()));
+                    self.add_expression(scope, expr);
                     scope
                 });
 
-                let sym = SymbolData {
-                    selection_syntax: expr_const.ident_token().map(Into::into),
-                    parent_scope,
-                    syntax: Some(expr_const.syntax().into()),
+                let symbol = self.symbols.insert(SymbolData {
+                    selection_syntax: expr.ident_token().map(Into::into),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Decl(DeclSymbol {
-                        name: expr_const
+                        name: expr
                             .ident_token()
                             .map(|s| s.text().to_string())
                             .unwrap_or_default(),
@@ -165,194 +169,113 @@ impl Module {
                         value,
                         ..DeclSymbol::default()
                     }),
-                };
+                });
 
-                let sym = self.symbols.insert(sym);
-
-                if let Some(scope) = value {
-                    // safety: guaranteed to exist
-                    unsafe { self.scopes.get_unchecked_mut(scope).parent_symbol = Some(sym) }
+                if let Some(value_scope) = value {
+                    self.set_as_parent_symbol(symbol, value_scope);
                 }
 
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Ident(expr_ident) => {
-                let sym = SymbolData {
-                    selection_syntax: Some(
-                        expr_ident
-                            .ident_token()
-                            .map_or_else(|| expr_ident.syntax().into(), |t| t.into()),
-                    ),
-                    parent_scope,
-                    syntax: Some(expr_ident.syntax().into()),
-                    kind: SymbolKind::Reference(ReferenceSymbol {
-                        name: expr_ident
-                            .ident_token()
-                            .map(|s| s.text().to_string())
-                            .unwrap_or_default(),
-                        ..ReferenceSymbol::default()
-                    }),
-                };
+            Expr::Block(expr) => {
+                let block_scope = self.create_scope(None, Some(expr.syntax().into()));
 
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
-            }
-            Expr::Path(expr_path) => {
-                let segments = match expr_path.path() {
-                    Some(p) => p.segments(),
-                    None => return None,
-                };
-
-                let sym = SymbolData {
+                let symbol = self.symbols.insert(SymbolData {
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_path.syntax().into()),
-                    kind: SymbolKind::Path(PathSymbol {
-                        segments: segments
-                            .map(|s| {
-                                self.symbols.insert(SymbolData {
-                                    selection_syntax: None,
-                                    parent_scope,
-                                    kind: SymbolKind::Reference(ReferenceSymbol {
-                                        name: s.text().to_string(),
-                                        ..ReferenceSymbol::default()
-                                    }),
-                                    syntax: Some(s.into()),
-                                })
-                            })
-                            .collect(),
-                    }),
-                };
+                    kind: SymbolKind::Block(BlockSymbol { scope }),
+                });
 
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                self.set_as_parent_symbol(symbol, block_scope);
+                self.add_statements(block_scope, expr.statements());
+
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Lit(expr_lit) => {
-                let sym = self.symbols.insert(SymbolData {
+            Expr::Unary(expr) => {
+                let rhs = expr.expr().and_then(|rhs| self.add_expression(scope, rhs));
+
+                let symbol = self.symbols.insert(SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_lit.syntax().into()),
-                    kind: SymbolKind::Lit(LitSymbol {
-                        ..LitSymbol::default()
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
+                    kind: SymbolKind::Unary(UnarySymbol {
+                        op: expr.op_token().map(|t| t.kind()),
+                        rhs,
                     }),
                 });
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Block(expr_block) => {
-                let scope = self.create_scope_with_statements(
-                    None,
-                    Some(expr_block.syntax().into()),
-                    expr_block.statements(),
-                );
+            Expr::Binary(expr) => {
+                let lhs = expr.lhs().and_then(|lhs| self.add_expression(scope, lhs));
 
-                let sym = SymbolData {
+                let rhs = expr.rhs().and_then(|rhs| self.add_expression(scope, rhs));
+
+                let symbol = self.symbols.insert(SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_block.syntax().into()),
-                    kind: SymbolKind::Block(BlockSymbol { scope }),
-                };
-
-                let sym = self.symbols.insert(sym);
-
-                // safety: we've just inserted it.
-                unsafe { self.scopes.get_unchecked_mut(scope).parent_symbol = Some(sym) }
-
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
-            }
-            Expr::Unary(expr_unary) => {
-                let rhs = expr_unary
-                    .expr()
-                    .and_then(|rhs| self.add_symbol_from_expr(parent_scope, rhs));
-
-                let sym = SymbolData {
-                    selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_unary.syntax().into()),
-                    kind: SymbolKind::Unary(UnarySymbol {
-                        op: expr_unary.op_token().map(|t| t.kind()),
-                        rhs,
-                    }),
-                };
-
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
-            }
-            Expr::Binary(expr_binary) => {
-                let lhs = expr_binary
-                    .lhs()
-                    .and_then(|lhs| self.add_symbol_from_expr(parent_scope, lhs));
-
-                let rhs = expr_binary
-                    .rhs()
-                    .and_then(|rhs| self.add_symbol_from_expr(parent_scope, rhs));
-
-                let sym = SymbolData {
-                    selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_binary.syntax().into()),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Binary(BinarySymbol {
                         rhs,
-                        op: expr_binary.op_token().map(|t| t.kind()),
+                        op: expr.op_token().map(|t| t.kind()),
                         lhs,
                     }),
-                };
+                });
 
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Paren(expr_paren) => match expr_paren.expr() {
-                Some(expr) => self.add_symbol_from_expr(parent_scope, expr),
-                None => None,
-            },
-            Expr::Array(expr_array) => {
-                let sym = SymbolData {
+            Expr::Paren(expr) => expr
+                .expr()
+                .and_then(|expr| self.add_expression(scope, expr)),
+            Expr::Array(expr) => {
+                let symbol_data = SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_array.syntax().into()),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Array(ArraySymbol {
-                        values: expr_array
+                        values: expr
                             .values()
-                            .filter_map(|expr| self.add_symbol_from_expr(parent_scope, expr))
+                            .filter_map(|expr| self.add_expression(scope, expr))
                             .collect(),
                     }),
                 };
 
-                Some(self.symbols.insert(sym))
+                let symbol = self.symbols.insert(symbol_data);
+
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Index(expr_index) => {
-                let base = expr_index
+            Expr::Index(expr) => {
+                let base = expr
                     .base()
-                    .and_then(|base| self.add_symbol_from_expr(parent_scope, base));
+                    .and_then(|base| self.add_expression(scope, base));
 
-                let index = expr_index
+                let index = expr
                     .index()
-                    .and_then(|index| self.add_symbol_from_expr(parent_scope, index));
+                    .and_then(|index| self.add_expression(scope, index));
 
-                let sym = SymbolData {
+                let symbol = self.symbols.insert(SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_index.syntax().into()),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Index(IndexSymbol { base, index }),
-                };
+                });
 
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Object(expr_object) => {
-                let sym = SymbolData {
+            Expr::Object(expr) => {
+                let symbol_data = SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_object.syntax().into()),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Object(ObjectSymbol {
-                        fields: expr_object
+                        fields: expr
                             .fields()
                             .filter_map(|field| match (field.property(), field.expr()) {
                                 (Some(name), Some(expr)) => Some((
@@ -361,7 +284,7 @@ impl Module {
                                         property_name: name.text().to_string(),
                                         property_syntax: Some(name.into()),
                                         field_syntax: Some(field.syntax().into()),
-                                        value: self.add_symbol_from_expr(parent_scope, expr),
+                                        value: self.add_expression(scope, expr),
                                     },
                                 )),
                                 _ => None,
@@ -370,47 +293,44 @@ impl Module {
                     }),
                 };
 
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                let symbol = self.symbols.insert(symbol_data);
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Call(expr_call) => {
-                let lhs = expr_call
+            Expr::Call(expr) => {
+                let lhs = expr
                     .expr()
-                    .and_then(|expr| self.add_symbol_from_expr(parent_scope, expr));
+                    .and_then(|expr| self.add_expression(scope, expr));
 
-                let sym = SymbolData {
+                let symbol_data = SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_call.syntax().into()),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Call(CallSymbol {
                         lhs,
-                        arguments: match expr_call.arg_list() {
+                        arguments: match expr.arg_list() {
                             Some(arg_list) => arg_list
                                 .arguments()
-                                .filter_map(|expr| self.add_symbol_from_expr(parent_scope, expr))
+                                .filter_map(|expr| self.add_expression(scope, expr))
                                 .collect(),
                             None => IndexSet::default(),
                         },
                     }),
                 };
 
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                let symbol = self.symbols.insert(symbol_data);
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Closure(expr_closure) => {
-                let scope = self.scopes.insert(ScopeData {
-                    syntax: Some(expr_closure.syntax().into()),
-                    ..ScopeData::default()
-                });
+            Expr::Closure(expr) => {
+                let closure_scope = self.create_scope(None, Some(expr.syntax().into()));
 
-                if let Some(param_list) = expr_closure.param_list() {
+                if let Some(param_list) = expr.param_list() {
                     for param in param_list.params() {
                         let symbol = self.symbols.insert(SymbolData {
                             selection_syntax: Some(param.syntax().into()),
                             syntax: Some(param.syntax().into()),
-                            parent_scope: scope,
+                            parent_scope: Scope::default(),
                             kind: SymbolKind::Decl(DeclSymbol {
                                 name: param
                                     .ident_token()
@@ -421,277 +341,371 @@ impl Module {
                             }),
                         });
 
-                        // safety: we've just inserted it.
-                        let scope_data = unsafe { self.scopes.get_unchecked_mut(scope) };
-                        scope_data.symbols.insert(symbol);
+                        self.add_to_scope(closure_scope, symbol, false);
                     }
                 }
 
-                let expr = expr_closure
+                let closure_expr_symbol = expr
                     .body()
-                    .and_then(|body| self.add_symbol_from_expr(scope, body));
+                    .and_then(|body| self.add_expression(closure_scope, body));
 
-                let sym = SymbolData {
+                let symbol = self.symbols.insert(SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_closure.syntax().into()),
-                    kind: SymbolKind::Closure(ClosureSymbol { scope, expr }),
-                };
-
-                let sym = self.symbols.insert(sym);
-
-                // safety: we've just inserted it.
-                unsafe { self.scopes.get_unchecked_mut(scope).parent_symbol = Some(sym) }
-
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
-            }
-            Expr::If(expr_if) => {
-                let condition = expr_if
-                    .expr()
-                    .and_then(|expr| self.add_symbol_from_expr(parent_scope, expr));
-
-                let then_scope = match expr_if.then_branch() {
-                    Some(body) => self.create_scope_with_statements(
-                        None,
-                        Some(body.syntax().into()),
-                        body.statements(),
-                    ),
-                    None => return None,
-                };
-
-                let sym = self.symbols.insert(SymbolData {
-                    selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_if.syntax().into()),
-                    kind: SymbolKind::If(IfSymbol {
-                        condition,
-                        then_scope,
-                        ..IfSymbol::default()
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
+                    kind: SymbolKind::Closure(ClosureSymbol {
+                        scope,
+                        expr: closure_expr_symbol,
                     }),
                 });
 
-                self.add_to_scope(parent_scope, sym, false);
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
+            }
+            Expr::If(expr) => {
+                let symbol = self.symbols.insert(SymbolData {
+                    selection_syntax: None,
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
+                    kind: SymbolKind::If(IfSymbol::default()),
+                });
 
-                if let Some(else_branch) = expr_if.else_branch() {
-                    let branch_scope = self.create_scope_with_statements(
-                        Some(sym),
-                        Some(else_branch.syntax().into()),
-                        else_branch.statements(),
-                    );
-
-                    get_if_symbol(self, sym)
-                        .branches
-                        .insert((None, branch_scope));
-
-                    return Some(sym);
-                }
-
-                let mut next_branch = expr_if.else_if_branch();
+                // Here we flatten the branches of the `if` expression
+                // from the recursive syntax tree.
+                let mut next_branch = Some(expr);
 
                 while let Some(branch) = next_branch.take() {
-                    let branch_condition = expr_if
+                    let branch_condition = branch
                         .expr()
-                        .and_then(|expr| self.add_symbol_from_expr(parent_scope, expr));
+                        .and_then(|expr| self.add_expression(scope, expr));
 
-                    let then_scope = match branch.then_branch() {
-                        Some(body) => self.create_scope_with_statements(
-                            Some(sym),
-                            Some(body.syntax().into()),
-                            body.statements(),
-                        ),
-                        None => break,
-                    };
+                    let then_scope = self
+                        .create_scope(None, branch.then_branch().map(|body| body.syntax().into()));
+                    self.set_as_parent_symbol(symbol, then_scope);
 
-                    get_if_symbol(self, sym)
+                    if let Some(body) = branch.then_branch() {
+                        self.add_statements(then_scope, body.statements());
+                    }
+
+                    self.symbol_unchecked_mut(symbol)
+                        .kind
+                        .as_if_mut()
+                        .unwrap()
                         .branches
-                        .insert((branch_condition, then_scope));
+                        .push((branch_condition, then_scope));
 
-                    if let Some(else_branch) = expr_if.else_branch() {
-                        let branch_scope = self.create_scope_with_statements(
-                            Some(sym),
-                            Some(else_branch.syntax().into()),
-                            else_branch.statements(),
-                        );
-
-                        get_if_symbol(self, sym)
+                    // trailing `else` branch
+                    if let Some(else_body) = branch.else_branch() {
+                        let then_scope = self.create_scope(None, Some(else_body.syntax().into()));
+                        self.set_as_parent_symbol(symbol, then_scope);
+                        self.add_statements(then_scope, else_body.statements());
+                        self.symbol_unchecked_mut(symbol)
+                            .kind
+                            .as_if_mut()
+                            .unwrap()
                             .branches
-                            .insert((None, branch_scope));
-
+                            .push((None, then_scope));
                         break;
                     }
 
                     next_branch = branch.else_if_branch();
                 }
 
-                Some(sym)
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Loop(expr_loop) => {
-                let scope = match expr_loop.loop_body() {
-                    Some(body) => self.create_scope_with_statements(
-                        None,
-                        Some(body.syntax().into()),
-                        body.statements(),
-                    ),
-                    None => return None,
-                };
+            Expr::Loop(expr) => {
+                let loop_scope =
+                    self.create_scope(None, expr.loop_body().map(|body| body.syntax().into()));
 
-                let sym = SymbolData {
-                    selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_loop.syntax().into()),
-                    kind: SymbolKind::Loop(LoopSymbol { scope }),
-                };
-
-                let sym = self.symbols.insert(sym);
-                // safety: we've just inserted it.
-                unsafe {
-                    self.scopes.get_unchecked_mut(scope).parent_symbol = Some(sym);
+                if let Some(body) = expr.loop_body() {
+                    self.add_statements(loop_scope, body.statements());
                 }
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+
+                let symbol = self.symbols.insert(SymbolData {
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
+                    selection_syntax: None,
+                    kind: SymbolKind::Loop(LoopSymbol { scope: loop_scope }),
+                });
+
+                self.set_as_parent_symbol(symbol, loop_scope);
+
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::For(expr_for) => {
-                let scope = match expr_for.loop_body() {
-                    Some(body) => self.create_scope_with_statements(
-                        None,
-                        Some(body.syntax().into()),
-                        body.statements(),
-                    ),
-                    None => return None,
-                };
+            Expr::For(expr) => {
+                let for_scope =
+                    self.create_scope(None, expr.loop_body().map(|body| body.syntax().into()));
+
+                if let Some(pat) = expr.pat() {
+                    for ident in pat.idents() {
+                        let ident_symbol = self.symbols.insert(SymbolData {
+                            syntax: Some(ident.clone().into()),
+                            selection_syntax: Some(ident.clone().into()),
+                            parent_scope: Scope::default(),
+                            kind: SymbolKind::Decl(DeclSymbol {
+                                name: ident.text().into(),
+                                docs: String::new(),
+                                is_pat: true,
+                                ..DeclSymbol::default()
+                            }),
+                        });
+                        self.add_to_scope(for_scope, ident_symbol, false);
+                    }
+                }
+
+                if let Some(body) = expr.loop_body() {
+                    self.add_statements(for_scope, body.statements());
+                }
 
                 let sym = SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_for.syntax().into()),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::For(ForSymbol {
-                        iterable: expr_for
+                        iterable: expr
                             .iterable()
-                            .and_then(|expr| self.add_symbol_from_expr(parent_scope, expr)),
+                            .and_then(|expr| self.add_expression(scope, expr)),
                         scope,
                     }),
                 };
 
-                let sym = self.symbols.insert(sym);
-                // safety: we've just inserted it.
-                unsafe {
-                    self.scopes.get_unchecked_mut(scope).parent_symbol = Some(sym);
-                }
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                let symbol = self.symbols.insert(sym);
+                self.set_as_parent_symbol(symbol, for_scope);
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::While(expr_while) => {
-                let scope = match expr_while.loop_body() {
-                    Some(body) => self.create_scope_with_statements(
-                        None,
-                        Some(body.syntax().into()),
-                        body.statements(),
-                    ),
-                    None => return None,
-                };
+            Expr::While(expr) => {
+                let while_scope =
+                    self.create_scope(None, expr.loop_body().map(|body| body.syntax().into()));
 
-                let sym = SymbolData {
+                if let Some(body) = expr.loop_body() {
+                    self.add_statements(while_scope, body.statements());
+                }
+
+                let symbol_data = SymbolData {
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_while.syntax().into()),
                     kind: SymbolKind::While(WhileSymbol {
-                        condition: expr_while
+                        scope: while_scope,
+                        condition: expr
                             .expr()
-                            .and_then(|expr| self.add_symbol_from_expr(parent_scope, expr)),
-                        scope,
+                            .and_then(|expr| self.add_expression(scope, expr)),
                     }),
                 };
 
-                let sym = self.symbols.insert(sym);
-                // safety: we've just inserted it.
-                unsafe {
-                    self.scopes.get_unchecked_mut(scope).parent_symbol = Some(sym);
-                }
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                let symbol = self.symbols.insert(symbol_data);
+
+                self.set_as_parent_symbol(symbol, while_scope);
+
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Break(expr_break) => {
-                let sym = SymbolData {
+            Expr::Break(expr) => {
+                let symbol_data = SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_break.syntax().into()),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Break(BreakSymbol {
-                        expr: expr_break
+                        expr: expr
                             .expr()
-                            .and_then(|expr| self.add_symbol_from_expr(parent_scope, expr)),
+                            .and_then(|expr| self.add_expression(scope, expr)),
                     }),
                 };
 
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                let symbol = self.symbols.insert(symbol_data);
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Continue(expr_continue) => {
-                let sym = SymbolData {
+            Expr::Continue(expr) => {
+                let symbol_data = SymbolData {
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_continue.syntax().into()),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Continue(ContinueSymbol {}),
                 };
 
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                let symbol = self.symbols.insert(symbol_data);
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Return(expr_return) => {
-                let sym = SymbolData {
+            Expr::Switch(expr) => {
+                let target = expr
+                    .expr()
+                    .and_then(|expr| self.add_expression(scope, expr));
+
+                let arms = expr
+                    .switch_arm_list()
+                    .map(|arm_list| {
+                        arm_list
+                            .arms()
+                            .map(|arm| {
+                                let mut left = None;
+                                let mut right = None;
+
+                                if let Some(discard) = arm.discard_token() {
+                                    left = Some(self.symbols.insert(SymbolData {
+                                        syntax: Some(discard.into()),
+                                        selection_syntax: None,
+                                        parent_scope: Scope::default(),
+                                        kind: SymbolKind::Discard(DiscardSymbol {}),
+                                    }));
+                                }
+
+                                if let Some(expr) = arm.pattern_expr() {
+                                    left = self.add_expression(scope, expr);
+                                }
+
+                                if let Some(expr) = arm.value_expr() {
+                                    right = self.add_expression(scope, expr);
+                                }
+
+                                (left, right)
+                            })
+                            .collect()
+                    })
+                    .unwrap_or_default();
+
+                let symbol = self.symbols.insert(SymbolData {
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     selection_syntax: None,
-                    parent_scope,
-                    syntax: Some(expr_return.syntax().into()),
+                    kind: SymbolKind::Switch(SwitchSymbol { target, arms }),
+                });
+
+                self.add_to_scope(scope, symbol, true);
+                Some(symbol)
+            }
+            Expr::Return(expr) => {
+                let symbol_data = SymbolData {
+                    selection_syntax: None,
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Return(ReturnSymbol {
-                        expr: expr_return
+                        expr: expr
                             .expr()
-                            .and_then(|expr| self.add_symbol_from_expr(parent_scope, expr)),
+                            .and_then(|expr| self.add_expression(scope, expr)),
                     }),
                 };
 
-                let sym = self.symbols.insert(sym);
-                self.add_to_scope(parent_scope, sym, false);
-                Some(sym)
+                let symbol = self.symbols.insert(symbol_data);
+                self.add_to_scope(scope, symbol, false);
+                Some(symbol)
             }
-            Expr::Switch(_) | Expr::Import(_) => None,
+            Expr::Fn(expr) => {
+                let fn_scope = self.create_scope(None, Some(expr.syntax().into()));
+
+                if let Some(param_list) = expr.param_list() {
+                    for param in param_list.params() {
+                        let symbol = self.symbols.insert(SymbolData {
+                            selection_syntax: param.ident_token().map(Into::into),
+                            syntax: Some(param.syntax().into()),
+                            parent_scope: Scope::default(),
+                            kind: SymbolKind::Decl(DeclSymbol {
+                                name: param
+                                    .ident_token()
+                                    .map(|s| s.text().to_string())
+                                    .unwrap_or_default(),
+                                is_param: true,
+                                ..DeclSymbol::default()
+                            }),
+                        });
+
+                        self.add_to_scope(fn_scope, symbol, false);
+                    }
+                }
+
+                if let Some(body) = expr.body() {
+                    self.add_statements(scope, body.statements());
+                }
+                let symbol = self.symbols.insert(SymbolData {
+                    selection_syntax: expr.ident_token().map(Into::into),
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
+                    kind: SymbolKind::Fn(FnSymbol {
+                        name: expr
+                            .ident_token()
+                            .map(|s| s.text().to_string())
+                            .unwrap_or_default(),
+                        scope: fn_scope,
+                        ..FnSymbol::default()
+                    }),
+                });
+
+                self.add_to_scope(scope, symbol, true);
+                self.set_as_parent_symbol(symbol, fn_scope);
+                Some(symbol)
+            }
+            Expr::Import(expr) => {
+                let symbol_data = SymbolData {
+                    selection_syntax: None,
+                    parent_scope: Scope::default(),
+                    syntax: Some(expr.syntax().into()),
+                    kind: SymbolKind::Import(ImportSymbol {
+                        alias: expr.alias().map(|alias| {
+                            self.symbols.insert(SymbolData {
+                                selection_syntax: Some(alias.clone().into()),
+                                syntax: Some(alias.clone().into()),
+                                kind: SymbolKind::Decl(DeclSymbol {
+                                    name: alias.text().into(),
+                                    ..DeclSymbol::default()
+                                }),
+                                parent_scope: Scope::default(),
+                            })
+                        }),
+                        expr: expr
+                            .expr()
+                            .and_then(|expr| self.add_expression(scope, expr)),
+                    }),
+                };
+
+                let symbol = self.symbols.insert(symbol_data);
+
+                self.add_to_scope(scope, symbol, true);
+                Some(symbol)
+            }
         }
     }
 
     fn add_to_scope(&mut self, scope: Scope, symbol: Symbol, hoist: bool) {
-        // safety: guaranteed to exist.
-        unsafe {
-            let scope_data = self.scopes.get_unchecked_mut(scope);
-            if hoist {
-                let inserted = scope_data.hoisted_symbols.insert(symbol);
-                debug_assert!(inserted);
-            } else {
-                let inserted = scope_data.symbols.insert(symbol);
-                debug_assert!(inserted);
-            }
+        let s = self.scope_unchecked_mut(scope);
+        debug_assert!(!s.symbols.contains(&symbol));
+        debug_assert!(!s.hoisted_symbols.contains(&symbol));
+
+        if hoist {
+            s.hoisted_symbols.insert(symbol);
+        } else {
+            s.symbols.insert(symbol);
         }
+
+        let sym_data = self.symbol_unchecked_mut(symbol);
+
+        debug_assert!(sym_data.parent_scope == Scope::default());
+
+        sym_data.parent_scope = scope;
+
+        tracing::debug!(
+            symbol_kind = Into::<&'static str>::into(&sym_data.kind),
+            hoist,
+            ?scope,
+            ?symbol,
+            "added symbol to scope"
+        );
     }
 
-    fn create_symbol_from_stmt(&mut self, parent_scope: Scope, stmt: &Stmt) -> Option<Symbol> {
-        stmt.item().and_then(|item| {
-            item.expr().and_then(|expr| {
-                match self.add_symbol_from_expr(parent_scope, expr) {
-                    Some(symbol) => {
-                        // safety: we've just inserted it.
-                        let sym = unsafe { self.symbols.get_unchecked_mut(symbol) };
-                        match &mut sym.kind {
-                            SymbolKind::Fn(f) => f.docs = item.docs_content(),
-                            SymbolKind::Decl(decl) => decl.docs = item.docs_content(),
-                            _ => {}
-                        };
+    fn set_as_parent_symbol(&mut self, symbol: Symbol, scope: Scope) {
+        let s = self.scope_unchecked_mut(scope);
+        debug_assert!(s.parent_symbol.is_none());
+        s.parent_symbol = Some(symbol);
 
-                        Some(symbol)
-                    }
-                    None => None,
-                }
-            })
-        })
+        tracing::debug!(
+            symbol_kind = Into::<&'static str>::into(&self.symbol_unchecked(symbol).kind),
+            ?scope,
+            ?symbol,
+            "set parent symbol of scope"
+        );
     }
 }
 

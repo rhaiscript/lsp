@@ -47,7 +47,7 @@ pub(crate) async fn completion(
     add_visible_identifiers(&mut completions, &doc.mapper, module, &rhai, offset);
     add_empty_object(&mut completions);
 
-    tracing::debug!("{}", completions.len());
+    completions.dedup_by(|a, b| a.label == b.label);
 
     Ok(Some(CompletionResponse::Array(completions)))
 }
@@ -59,10 +59,9 @@ fn add_visible_identifiers(
     rhai: &Rhai,
     offset: TextSize,
 ) {
-    let reference_sym =
-        module
-            .symbol_at(offset, true)
-            .and_then(|s| module[s].kind.as_reference().map(|r| (&module[s], r)));
+    let reference_sym = module
+        .symbol_at(offset, true)
+        .and_then(|s| module[s].kind.as_reference().map(|r| (&module[s], r)));
 
     completions.extend(
         module
