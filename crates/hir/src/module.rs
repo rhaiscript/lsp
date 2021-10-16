@@ -12,6 +12,7 @@ use slotmap::SlotMap;
 mod edit;
 mod query;
 mod remove;
+mod infer;
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Module {

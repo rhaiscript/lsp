@@ -130,4 +130,16 @@ impl Hir {
             m.resolve_references();
         }
     }
+
+    pub fn infer_types(&mut self) {
+        for (_, m) in self.modules.iter_mut() {
+            m.infer_types();
+        }
+    }
+
+    pub fn infer_types_in_module(&mut self, name: &str) {
+        if let Some(m) = self.modules.get_mut(name) {
+            m.infer_types();
+        }
+    }    
 }

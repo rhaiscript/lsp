@@ -1,4 +1,4 @@
-use crate::{eval::Value, syntax::SyntaxInfo, HashSet, IndexMap, IndexSet, Scope, Type};
+use crate::{eval::Value, syntax::SyntaxInfo, HashSet, IndexMap, Module, Scope, Type};
 use enum_as_inner::EnumAsInner;
 use rhai_rowan::{syntax::SyntaxKind, TextRange};
 use serde::{Deserialize, Serialize};
@@ -65,7 +65,7 @@ impl SymbolData {
 pub enum SymbolKind {
     Block(BlockSymbol),
     Fn(FnSymbol),
-    Decl(DeclSymbol),
+    Decl(Box<DeclSymbol>),
     Reference(ReferenceSymbol),
     Path(PathSymbol),
     Lit(LitSymbol),
@@ -100,7 +100,21 @@ pub struct FnSymbol {
     pub name: String,
     pub docs: String,
     pub scope: Scope,
+    pub ty: Type,
     pub references: HashSet<Symbol>,
+}
+
+impl FnSymbol {
+    pub fn params<'s>(&'s self, m: &'s Module) -> impl Iterator<Item = Symbol> + 's {
+        m[self.scope]
+            .symbols
+            .iter()
+            .take_while(|s| match &m[**s].kind {
+                SymbolKind::Decl(d) => d.is_param,
+                _ => false,
+            })
+            .copied()
+    }
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -111,7 +125,6 @@ pub struct DeclSymbol {
     pub is_const: bool,
     pub is_pat: bool,
     pub ty: Type,
-    pub inferred_ty: Option<Type>,
     pub value: Option<Scope>,
     pub references: HashSet<Symbol>,
 }
@@ -125,11 +138,12 @@ pub struct ReferenceSymbol {
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct PathSymbol {
-    pub segments: IndexSet<Symbol>,
+    pub segments: Vec<Symbol>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct LitSymbol {
+    pub ty: Type,
     pub value: Value,
 }
 
@@ -148,7 +162,7 @@ pub struct BinarySymbol {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ArraySymbol {
-    pub values: IndexSet<Symbol>,
+    pub values: Vec<Symbol>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -160,7 +174,7 @@ pub struct IndexSymbol {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CallSymbol {
     pub lhs: Option<Symbol>,
-    pub arguments: IndexSet<Symbol>,
+    pub arguments: Vec<Symbol>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -180,6 +194,19 @@ pub struct ObjectField {
 pub struct ClosureSymbol {
     pub scope: Scope,
     pub expr: Option<Symbol>,
+}
+
+impl ClosureSymbol {
+    pub fn params<'s>(&'s self, m: &'s Module) -> impl Iterator<Item = Symbol> + 's {
+        m[self.scope]
+            .symbols
+            .iter()
+            .take_while(|s| match &m[**s].kind {
+                SymbolKind::Decl(d) => d.is_param,
+                _ => false,
+            })
+            .copied()
+    }
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -226,7 +253,7 @@ pub struct SwitchSymbol {
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ExportSymbol {
-    pub target: Option<Symbol>
+    pub target: Option<Symbol>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -238,7 +265,7 @@ pub struct ImportSymbol {
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct TrySymbol {
     pub try_scope: Scope,
-    pub catch_scope: Scope
+    pub catch_scope: Scope,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]

@@ -7,7 +7,10 @@ use crate::{
 
 use super::*;
 use rhai_hir::{symbol::ObjectSymbol, Module, Scope, Type};
-use rhai_rowan::{ast::{AstNode, ExprFn, Rhai}, syntax::{SyntaxElement, SyntaxKind}};
+use rhai_rowan::{
+    ast::{AstNode, ExprFn, Rhai},
+    syntax::{SyntaxElement, SyntaxKind},
+};
 
 pub(crate) async fn document_symbols(
     mut context: Context<World>,
@@ -112,7 +115,7 @@ fn collect_symbols(
 
                 document_symbols.push(DocumentSymbol {
                     deprecated: None,
-                    kind: if matches!(&decl.ty, Type::Object { .. }) {
+                    kind: if matches!(&decl.ty, Type::Object(_)) {
                         SymbolKind::Object
                     } else if decl.is_const {
                         SymbolKind::Constant

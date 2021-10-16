@@ -1,4 +1,4 @@
-use rhai_hir::{Module, Symbol};
+use rhai_hir::{Module, Symbol, Type};
 use rhai_rowan::{
     ast::{AstNode, ExprFn, Rhai},
     syntax::SyntaxElement,
@@ -49,28 +49,34 @@ pub fn signature_of(module: &Module, rhai: &Rhai, symbol: Symbol) -> String {
             .and_then(SyntaxElement::into_node)
             .and_then(ExprFn::cast)
             .map(|expr_fn| {
-                format!(
-                    "fn {ident}({params})",
-                    ident = &f.name,
-                    params = expr_fn
-                        .param_list()
-                        .map(|param_list| param_list
-                            .params()
-                            .map(|p| p.ident_token().map(|t| t.to_string()).unwrap_or_default())
-                            .intersperse(", ".into())
-                            .collect::<String>())
-                        .unwrap_or_default()
-                )
+                if f.ty == Type::Unknown {
+                    // Format from syntax only.
+                    format!(
+                        "fn {ident}({params})",
+                        ident = &f.name,
+                        params = expr_fn
+                            .param_list()
+                            .map(|param_list| param_list
+                                .params()
+                                .map(|p| p.ident_token().map(|t| t.to_string()).unwrap_or_default())
+                                .intersperse(", ".into())
+                                .collect::<String>())
+                            .unwrap_or_default()
+                    )
+                } else {
+                    format!("fn {ident}{sig:#}", ident = &f.name, sig = &f.ty)
+                }
             })
             .unwrap_or_default(),
         rhai_hir::symbol::SymbolKind::Decl(d) => {
-            if d.is_param {
-                d.name.clone()
+            if d.is_param | d.is_pat {
+                format!("{name}: {ty:#}", name = d.name.clone(), ty = &d.ty)
             } else {
                 format!(
-                    "{kw} {ident}",
+                    "{kw} {ident}: {ty:#}",
                     ident = &d.name,
-                    kw = if d.is_const { "const" } else { "let" }
+                    kw = if d.is_const { "const" } else { "let" },
+                    ty = &d.ty
                 )
             }
         }

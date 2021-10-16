@@ -1,6 +1,9 @@
-use rhai_rowan::{ast::ExportTarget, syntax::SyntaxToken};
+use rhai_rowan::{
+    ast::ExportTarget,
+    syntax::{SyntaxKind, SyntaxToken},
+};
 
-use crate::IndexSet;
+use crate::{eval::Value, Type};
 
 use super::*;
 
@@ -74,14 +77,14 @@ impl Module {
                 selection_syntax: ident_syntax.clone().map(Into::into),
                 parent_scope: Scope::default(),
                 syntax: Some(syntax.into()),
-                kind: SymbolKind::Decl(DeclSymbol {
+                kind: SymbolKind::Decl(Box::new(DeclSymbol {
                     name: ident_syntax
                         .map(|s| s.text().to_string())
                         .unwrap_or_default(),
                     is_const,
                     value,
                     ..DeclSymbol::default()
-                }),
+                })),
             });
 
             if let Some(value_scope) = value {
@@ -152,7 +155,43 @@ impl Module {
                     syntax: Some(expr.syntax().into()),
                     selection_syntax: None,
                     kind: SymbolKind::Lit(LitSymbol {
-                        ..LitSymbol::default()
+                        ty: expr
+                            .lit()
+                            .and_then(|l| l.token())
+                            .map(|lit| match lit.kind() {
+                                SyntaxKind::LIT_INT => Type::Int,
+                                SyntaxKind::LIT_FLOAT => Type::Float,
+                                SyntaxKind::LIT_BOOL => Type::Bool,
+                                SyntaxKind::LIT_STR => Type::String,
+                                SyntaxKind::LIT_CHAR => Type::Char,
+                                _ => Type::Unknown,
+                            })
+                            .unwrap_or(Type::Unknown),
+                        value: expr
+                            .lit()
+                            .and_then(|l| l.token())
+                            .map(|lit| match lit.kind() {
+                                SyntaxKind::LIT_INT => lit
+                                    .text()
+                                    .parse::<i64>()
+                                    .map(Value::Int)
+                                    .unwrap_or(Value::Unknown),
+                                SyntaxKind::LIT_FLOAT => lit
+                                    .text()
+                                    .parse::<f64>()
+                                    .map(Value::Float)
+                                    .unwrap_or(Value::Unknown),
+                                SyntaxKind::LIT_BOOL => lit
+                                    .text()
+                                    .parse::<bool>()
+                                    .map(Value::Bool)
+                                    .unwrap_or(Value::Unknown),
+                                // TODO: parse string and char literals
+                                // SyntaxKind::LIT_STR => Value::Unknown,
+                                // SyntaxKind::LIT_CHAR => Value::Unknown,
+                                _ => Value::Unknown,
+                            })
+                            .unwrap_or(Value::Unknown),
                     }),
                 });
 
@@ -313,7 +352,7 @@ impl Module {
                                 .arguments()
                                 .filter_map(|expr| self.add_expression(scope, expr))
                                 .collect(),
-                            None => IndexSet::default(),
+                            None => Vec::default(),
                         },
                     }),
                 };
@@ -331,14 +370,14 @@ impl Module {
                             selection_syntax: Some(param.syntax().into()),
                             syntax: Some(param.syntax().into()),
                             parent_scope: Scope::default(),
-                            kind: SymbolKind::Decl(DeclSymbol {
+                            kind: SymbolKind::Decl(Box::new(DeclSymbol {
                                 name: param
                                     .ident_token()
                                     .map(|s| s.text().to_string())
                                     .unwrap_or_default(),
                                 is_param: true,
                                 ..DeclSymbol::default()
-                            }),
+                            })),
                         });
 
                         self.add_to_scope(closure_scope, symbol, false);
@@ -444,12 +483,12 @@ impl Module {
                             syntax: Some(ident.clone().into()),
                             selection_syntax: Some(ident.clone().into()),
                             parent_scope: Scope::default(),
-                            kind: SymbolKind::Decl(DeclSymbol {
+                            kind: SymbolKind::Decl(Box::new(DeclSymbol {
                                 name: ident.text().into(),
                                 docs: String::new(),
                                 is_pat: true,
                                 ..DeclSymbol::default()
-                            }),
+                            })),
                         });
                         self.add_to_scope(for_scope, ident_symbol, false);
                     }
@@ -603,14 +642,14 @@ impl Module {
                             selection_syntax: param.ident_token().map(Into::into),
                             syntax: Some(param.syntax().into()),
                             parent_scope: Scope::default(),
-                            kind: SymbolKind::Decl(DeclSymbol {
+                            kind: SymbolKind::Decl(Box::new(DeclSymbol {
                                 name: param
                                     .ident_token()
                                     .map(|s| s.text().to_string())
                                     .unwrap_or_default(),
                                 is_param: true,
                                 ..DeclSymbol::default()
-                            }),
+                            })),
                         });
 
                         self.add_to_scope(fn_scope, symbol, false);
@@ -648,10 +687,10 @@ impl Module {
                             self.symbols.insert(SymbolData {
                                 selection_syntax: Some(alias.clone().into()),
                                 syntax: Some(alias.clone().into()),
-                                kind: SymbolKind::Decl(DeclSymbol {
+                                kind: SymbolKind::Decl(Box::new(DeclSymbol {
                                     name: alias.text().into(),
                                     ..DeclSymbol::default()
-                                }),
+                                })),
                                 parent_scope: Scope::default(),
                             })
                         }),
@@ -720,14 +759,14 @@ impl Module {
                             selection_syntax: Some(param.syntax().into()),
                             syntax: Some(param.syntax().into()),
                             parent_scope: Scope::default(),
-                            kind: SymbolKind::Decl(DeclSymbol {
+                            kind: SymbolKind::Decl(Box::new(DeclSymbol {
                                 name: param
                                     .ident_token()
                                     .map(|s| s.text().to_string())
                                     .unwrap_or_default(),
                                 is_param: true,
                                 ..DeclSymbol::default()
-                            }),
+                            })),
                         });
 
                         self.add_to_scope(catch_scope, symbol, false);
@@ -794,52 +833,5 @@ impl Module {
             ?symbol,
             "set parent symbol of scope"
         );
-    }
-}
-
-impl Module {
-    pub(crate) fn resolve_references(&mut self) {
-        let self_ptr = self as *mut Module;
-
-        for (symbol, ref_kind) in self
-            .symbols
-            .iter_mut()
-            .filter_map(|(s, d)| match &mut d.kind {
-                SymbolKind::Reference(r) => Some((s, r)),
-                _ => None,
-            })
-        {
-            ref_kind.target = None;
-
-            // safety: This is safe because we only operate
-            //  on separate elements (declarations and refs)
-            //  and we don't touch the map itself.
-            //
-            // Without this unsafe block, we'd have to unnecessarily
-            // allocate a vector of symbols.
-            unsafe {
-                for vis_symbol in (&*self_ptr).visible_symbols_from_symbol(symbol) {
-                    let vis_symbol_data = (*self_ptr).symbols.get_unchecked_mut(vis_symbol);
-                    if let Some(n) = vis_symbol_data.name() {
-                        if n != ref_kind.name {
-                            continue;
-                        }
-                    }
-
-                    match &mut vis_symbol_data.kind {
-                        SymbolKind::Fn(target) => {
-                            target.references.insert(symbol);
-                        }
-                        SymbolKind::Decl(target) => {
-                            target.references.insert(symbol);
-                        }
-                        _ => unreachable!(),
-                    }
-
-                    ref_kind.target = Some(ReferenceTarget::Symbol(vis_symbol));
-                    break;
-                }
-            }
-        }
     }
 }

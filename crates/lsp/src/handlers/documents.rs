@@ -21,6 +21,7 @@ pub(crate) async fn document_open(
     w.hir
         .add_module_from_syntax(uri.as_str(), &parse.clone_syntax());
     w.hir.resolve_references_in_module(uri.as_str());
+    w.hir.infer_types_in_module(uri.as_str());
 
     w.documents
         .insert(p.text_document.uri, Document { parse, mapper });
@@ -54,6 +55,7 @@ pub(crate) async fn document_change(
     w.hir
         .add_module_from_syntax(uri.as_str(), &parse.clone_syntax());
     w.hir.resolve_references_in_module(uri.as_str());
+    w.hir.infer_types_in_module(uri.as_str());
 
     w.documents
         .insert(p.text_document.uri, Document { parse, mapper });
