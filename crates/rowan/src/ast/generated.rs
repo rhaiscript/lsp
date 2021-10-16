@@ -1,6 +1,6 @@
 //! This file was generated from ungrammar, do not touch it!
 /// A macro for using tokens in a more humanly way, e.g. `T!["="]`.
-# [macro_export] macro_rules ! T { ["lit_int"] => { $ crate :: syntax :: SyntaxKind :: LIT_INT } ; ["lit_float"] => { $ crate :: syntax :: SyntaxKind :: LIT_FLOAT } ; ["lit_str"] => { $ crate :: syntax :: SyntaxKind :: LIT_STR } ; ["lit_bool"] => { $ crate :: syntax :: SyntaxKind :: LIT_BOOL } ; ["lit_char"] => { $ crate :: syntax :: SyntaxKind :: LIT_CHAR } ; ["ident"] => { $ crate :: syntax :: SyntaxKind :: IDENT } ; ["::"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON2 } ; ["shebang"] => { $ crate :: syntax :: SyntaxKind :: SHEBANG } ; ["comment_line_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_LINE_DOC } ; ["comment_block_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_BLOCK_DOC } ; [";"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_SEMI } ; ["let"] => { $ crate :: syntax :: SyntaxKind :: KW_LET } ; ["="] => { $ crate :: syntax :: SyntaxKind :: OP_ASSIGN } ; ["const"] => { $ crate :: syntax :: SyntaxKind :: KW_CONST } ; ["{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_START } ; ["}"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_END } ; ["+"] => { $ crate :: syntax :: SyntaxKind :: OP_ADD } ; ["-"] => { $ crate :: syntax :: SyntaxKind :: OP_SUB } ; ["!"] => { $ crate :: syntax :: SyntaxKind :: OP_NOT } ; ["||"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_OR } ; ["&&"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_AND } ; ["=="] => { $ crate :: syntax :: SyntaxKind :: OP_EQ } ; ["!="] => { $ crate :: syntax :: SyntaxKind :: OP_NOT_EQ } ; ["<="] => { $ crate :: syntax :: SyntaxKind :: OP_LT_EQ } ; [">="] => { $ crate :: syntax :: SyntaxKind :: OP_GT_EQ } ; ["<"] => { $ crate :: syntax :: SyntaxKind :: OP_LT } ; [">"] => { $ crate :: syntax :: SyntaxKind :: OP_GT } ; ["*"] => { $ crate :: syntax :: SyntaxKind :: OP_MUL } ; ["**"] => { $ crate :: syntax :: SyntaxKind :: OP_POW } ; ["/"] => { $ crate :: syntax :: SyntaxKind :: OP_DIV } ; ["%"] => { $ crate :: syntax :: SyntaxKind :: OP_MOD } ; ["<<"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT } ; [">>"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT } ; ["^"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_XOR } ; ["|"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_OR } ; ["&"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_AND } ; ["+="] => { $ crate :: syntax :: SyntaxKind :: OP_ADD_ASSIGN } ; ["/="] => { $ crate :: syntax :: SyntaxKind :: OP_DIV_ASSIGN } ; ["*="] => { $ crate :: syntax :: SyntaxKind :: OP_MUL_ASSIGN } ; ["**="] => { $ crate :: syntax :: SyntaxKind :: OP_POW_ASSIGN } ; ["%="] => { $ crate :: syntax :: SyntaxKind :: OP_MOD_ASSIGN } ; [">>="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT_ASSIGN } ; ["<<="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT_ASSIGN } ; ["-="] => { $ crate :: syntax :: SyntaxKind :: OP_SUB_ASSIGN } ; ["|="] => { $ crate :: syntax :: SyntaxKind :: OP_OR_ASSIGN } ; ["&="] => { $ crate :: syntax :: SyntaxKind :: OP_AND_ASSIGN } ; ["^="] => { $ crate :: syntax :: SyntaxKind :: OP_XOR_ASSIGN } ; ["."] => { $ crate :: syntax :: SyntaxKind :: PUNCT_DOT } ; ["("] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_START } ; [")"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_END } ; ["["] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_START } ; [","] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COMMA } ; ["]"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_END } ; ["#{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_MAP_START } ; [":"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON } ; ["if"] => { $ crate :: syntax :: SyntaxKind :: KW_IF } ; ["else"] => { $ crate :: syntax :: SyntaxKind :: KW_ELSE } ; ["loop"] => { $ crate :: syntax :: SyntaxKind :: KW_LOOP } ; ["for"] => { $ crate :: syntax :: SyntaxKind :: KW_FOR } ; ["in"] => { $ crate :: syntax :: SyntaxKind :: KW_IN } ; ["while"] => { $ crate :: syntax :: SyntaxKind :: KW_WHILE } ; ["break"] => { $ crate :: syntax :: SyntaxKind :: KW_BREAK } ; ["continue"] => { $ crate :: syntax :: SyntaxKind :: KW_CONTINUE } ; ["switch"] => { $ crate :: syntax :: SyntaxKind :: KW_SWITCH } ; ["_"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_UNDERSCORE } ; ["=>"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_ARROW_FAT } ; ["return"] => { $ crate :: syntax :: SyntaxKind :: KW_RETURN } ; ["fn"] => { $ crate :: syntax :: SyntaxKind :: KW_FN } ; ["import"] => { $ crate :: syntax :: SyntaxKind :: KW_IMPORT } ; ["as"] => { $ crate :: syntax :: SyntaxKind :: KW_AS } ; ["export"] => { $ crate :: syntax :: SyntaxKind :: KW_EXPORT } ; } pub use T ;
+# [macro_export] macro_rules ! T { ["lit_int"] => { $ crate :: syntax :: SyntaxKind :: LIT_INT } ; ["lit_float"] => { $ crate :: syntax :: SyntaxKind :: LIT_FLOAT } ; ["lit_str"] => { $ crate :: syntax :: SyntaxKind :: LIT_STR } ; ["lit_bool"] => { $ crate :: syntax :: SyntaxKind :: LIT_BOOL } ; ["lit_char"] => { $ crate :: syntax :: SyntaxKind :: LIT_CHAR } ; ["ident"] => { $ crate :: syntax :: SyntaxKind :: IDENT } ; ["::"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON2 } ; ["shebang"] => { $ crate :: syntax :: SyntaxKind :: SHEBANG } ; ["comment_line_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_LINE_DOC } ; ["comment_block_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_BLOCK_DOC } ; [";"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_SEMI } ; ["let"] => { $ crate :: syntax :: SyntaxKind :: KW_LET } ; ["="] => { $ crate :: syntax :: SyntaxKind :: OP_ASSIGN } ; ["const"] => { $ crate :: syntax :: SyntaxKind :: KW_CONST } ; ["{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_START } ; ["}"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_END } ; ["+"] => { $ crate :: syntax :: SyntaxKind :: OP_ADD } ; ["-"] => { $ crate :: syntax :: SyntaxKind :: OP_SUB } ; ["!"] => { $ crate :: syntax :: SyntaxKind :: OP_NOT } ; ["||"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_OR } ; ["&&"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_AND } ; ["=="] => { $ crate :: syntax :: SyntaxKind :: OP_EQ } ; ["!="] => { $ crate :: syntax :: SyntaxKind :: OP_NOT_EQ } ; ["<="] => { $ crate :: syntax :: SyntaxKind :: OP_LT_EQ } ; [">="] => { $ crate :: syntax :: SyntaxKind :: OP_GT_EQ } ; ["<"] => { $ crate :: syntax :: SyntaxKind :: OP_LT } ; [">"] => { $ crate :: syntax :: SyntaxKind :: OP_GT } ; ["*"] => { $ crate :: syntax :: SyntaxKind :: OP_MUL } ; ["**"] => { $ crate :: syntax :: SyntaxKind :: OP_POW } ; ["/"] => { $ crate :: syntax :: SyntaxKind :: OP_DIV } ; ["%"] => { $ crate :: syntax :: SyntaxKind :: OP_MOD } ; ["<<"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT } ; [">>"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT } ; ["^"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_XOR } ; ["|"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_OR } ; ["&"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_AND } ; ["+="] => { $ crate :: syntax :: SyntaxKind :: OP_ADD_ASSIGN } ; ["/="] => { $ crate :: syntax :: SyntaxKind :: OP_DIV_ASSIGN } ; ["*="] => { $ crate :: syntax :: SyntaxKind :: OP_MUL_ASSIGN } ; ["**="] => { $ crate :: syntax :: SyntaxKind :: OP_POW_ASSIGN } ; ["%="] => { $ crate :: syntax :: SyntaxKind :: OP_MOD_ASSIGN } ; [">>="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT_ASSIGN } ; ["<<="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT_ASSIGN } ; ["-="] => { $ crate :: syntax :: SyntaxKind :: OP_SUB_ASSIGN } ; ["|="] => { $ crate :: syntax :: SyntaxKind :: OP_OR_ASSIGN } ; ["&="] => { $ crate :: syntax :: SyntaxKind :: OP_AND_ASSIGN } ; ["^="] => { $ crate :: syntax :: SyntaxKind :: OP_XOR_ASSIGN } ; ["."] => { $ crate :: syntax :: SyntaxKind :: PUNCT_DOT } ; ["("] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_START } ; [")"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_END } ; ["["] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_START } ; [","] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COMMA } ; ["]"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_END } ; ["#{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_MAP_START } ; [":"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON } ; ["if"] => { $ crate :: syntax :: SyntaxKind :: KW_IF } ; ["else"] => { $ crate :: syntax :: SyntaxKind :: KW_ELSE } ; ["loop"] => { $ crate :: syntax :: SyntaxKind :: KW_LOOP } ; ["for"] => { $ crate :: syntax :: SyntaxKind :: KW_FOR } ; ["in"] => { $ crate :: syntax :: SyntaxKind :: KW_IN } ; ["while"] => { $ crate :: syntax :: SyntaxKind :: KW_WHILE } ; ["break"] => { $ crate :: syntax :: SyntaxKind :: KW_BREAK } ; ["continue"] => { $ crate :: syntax :: SyntaxKind :: KW_CONTINUE } ; ["switch"] => { $ crate :: syntax :: SyntaxKind :: KW_SWITCH } ; ["_"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_UNDERSCORE } ; ["=>"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_ARROW_FAT } ; ["return"] => { $ crate :: syntax :: SyntaxKind :: KW_RETURN } ; ["fn"] => { $ crate :: syntax :: SyntaxKind :: KW_FN } ; ["import"] => { $ crate :: syntax :: SyntaxKind :: KW_IMPORT } ; ["as"] => { $ crate :: syntax :: SyntaxKind :: KW_AS } ; ["export"] => { $ crate :: syntax :: SyntaxKind :: KW_EXPORT } ; ["try"] => { $ crate :: syntax :: SyntaxKind :: KW_TRY } ; ["catch"] => { $ crate :: syntax :: SyntaxKind :: KW_CATCH } ; } pub use T ;
 use crate::syntax::{SyntaxKind::*, SyntaxNode, SyntaxToken};
 pub trait AstNode: Sized {
     fn can_cast(syntax: &SyntaxNode) -> bool;
@@ -155,7 +155,9 @@ pub enum Expr {
     Switch(ExprSwitch),
     Return(ExprReturn),
     Fn(ExprFn),
+    Export(ExprExport),
     Import(ExprImport),
+    Try(ExprTry),
 }
 impl AstNode for Expr {
     #[inline]
@@ -190,7 +192,9 @@ impl AstNode for Expr {
             EXPR_SWITCH => Some(Self::Switch(ExprSwitch::cast(first_child)?)),
             EXPR_RETURN => Some(Self::Return(ExprReturn::cast(first_child)?)),
             EXPR_FN => Some(Self::Fn(ExprFn::cast(first_child)?)),
+            EXPR_EXPORT => Some(Self::Export(ExprExport::cast(first_child)?)),
             EXPR_IMPORT => Some(Self::Import(ExprImport::cast(first_child)?)),
+            EXPR_TRY => Some(Self::Try(ExprTry::cast(first_child)?)),
             _ => None,
         }
     }
@@ -219,7 +223,9 @@ impl AstNode for Expr {
             Self::Switch(t) => t.syntax().parent().unwrap(),
             Self::Return(t) => t.syntax().parent().unwrap(),
             Self::Fn(t) => t.syntax().parent().unwrap(),
+            Self::Export(t) => t.syntax().parent().unwrap(),
             Self::Import(t) => t.syntax().parent().unwrap(),
+            Self::Try(t) => t.syntax().parent().unwrap(),
         }
     }
 }
@@ -1029,6 +1035,42 @@ impl ExprFn {
     }
 }
 #[derive(Debug, Clone)]
+pub struct ExprExport(SyntaxNode);
+impl AstNode for ExprExport {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == EXPR_EXPORT }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl ExprExport {
+    pub fn kw_export_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_EXPORT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn export_target(&self) -> Option<ExportTarget> {
+        self.0
+            .children()
+            .filter_map(ExportTarget::cast)
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
 pub struct ExprImport(SyntaxNode);
 impl AstNode for ExprImport {
     #[inline]
@@ -1058,6 +1100,61 @@ impl ExprImport {
     }
     pub fn expr(&self) -> Option<Expr> {
         self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct ExprTry(SyntaxNode);
+impl AstNode for ExprTry {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == EXPR_TRY }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl ExprTry {
+    pub fn kw_try_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_TRY {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn try_block(&self) -> Option<ExprBlock> {
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
+    }
+    pub fn kw_catch_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_CATCH {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn catch_block(&self) -> Option<ExprBlock> {
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(1usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1266,42 +1363,6 @@ impl SwitchArm {
     }
     pub fn expr(&self) -> Option<Expr> {
         self.0.children().filter_map(Expr::cast).skip(0usize).next()
-    }
-}
-#[derive(Debug, Clone)]
-pub struct ExprExport(SyntaxNode);
-impl AstNode for ExprExport {
-    #[inline]
-    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == EXPR_EXPORT }
-    #[inline]
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) {
-            Some(Self(syntax))
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> SyntaxNode { self.0.clone() }
-}
-impl ExprExport {
-    pub fn kw_export_token(&self) -> Option<SyntaxToken> {
-        self.0
-            .children_with_tokens()
-            .filter_map(|t| {
-                if t.kind() != KW_EXPORT {
-                    return None;
-                }
-                t.into_token()
-            })
-            .skip(0usize)
-            .next()
-    }
-    pub fn export_target(&self) -> Option<ExportTarget> {
-        self.0
-            .children()
-            .filter_map(ExportTarget::cast)
-            .skip(0usize)
-            .next()
     }
 }
 #[derive(Debug, Clone)]

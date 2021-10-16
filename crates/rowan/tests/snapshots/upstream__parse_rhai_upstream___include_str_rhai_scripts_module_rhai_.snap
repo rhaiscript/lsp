@@ -9,9 +9,12 @@ RHAI@0..60
       EXPR@0..18
         EXPR_IMPORT@0..18
           KW_IMPORT@0..6 "import"
-          WHITESPACE@6..7 " "
-          LIT_STR@7..13 "\"loop\""
-          WHITESPACE@13..14 " "
+          EXPR@6..14
+            WHITESPACE@6..7 " "
+            EXPR_LIT@7..13
+              LIT@7..13
+                LIT_STR@7..13 "\"loop\""
+            WHITESPACE@13..14 " "
           KW_AS@14..16 "as"
           WHITESPACE@16..17 " "
           IDENT@17..18 "x"

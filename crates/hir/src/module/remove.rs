@@ -167,6 +167,15 @@ impl Module {
                 }
             }
             SymbolKind::Lit(_) | SymbolKind::Continue(_) | SymbolKind::Discard(_) => {}
+            SymbolKind::Export(e) => {
+                if let Some(s) = e.target {
+                    self.remove_symbol(s);
+                }
+            }
+            SymbolKind::Try(t) => {
+                self.remove_scope(t.try_scope);
+                self.remove_scope(t.catch_scope);
+            }
         }
     }
 }

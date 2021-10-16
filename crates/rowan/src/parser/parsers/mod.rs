@@ -319,6 +319,11 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             ctx.finish_node();
             return;
         }
+        T!["try"] => {
+            parse_expr_try(ctx);
+            ctx.finish_node();
+            return;
+        },
         T!["{"] => {
             parse_expr_block(ctx);
             if let Some(t) = ctx.token() {
@@ -782,6 +787,25 @@ pub fn parse_expr_export(ctx: &mut Context) {
 
     expect_token_eat_error!(ctx in node, T!["export"]);
     parse_export_target(ctx);
+
+    ctx.finish_node();
+}
+
+/// Parse a "try" expression.
+#[instrument(level = "trace", skip(ctx))]
+pub fn parse_expr_try(ctx: &mut Context) {
+    ctx.start_node(EXPR_TRY);
+
+    expect_token_eat_error!(ctx in node, T!["try"]);
+    parse_expr_block(ctx);
+    expect_token_eat_error!(ctx in node, T!["catch"]);
+    let token = require_token!(ctx in node);
+
+    if token == T!["("] {
+        parse_param_list(ctx);
+    }
+
+    parse_expr_block(ctx);
 
     ctx.finish_node();
 }

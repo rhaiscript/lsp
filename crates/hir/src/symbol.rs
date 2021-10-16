@@ -84,6 +84,8 @@ pub enum SymbolKind {
     Continue(ContinueSymbol),
     Return(ReturnSymbol),
     Switch(SwitchSymbol),
+    Export(ExportSymbol),
+    Try(TrySymbol),
     Import(ImportSymbol),
     Discard(DiscardSymbol),
 }
@@ -223,10 +225,20 @@ pub struct SwitchSymbol {
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct ExportSymbol {
+    pub target: Option<Symbol>
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ImportSymbol {
     pub expr: Option<Symbol>,
     pub alias: Option<Symbol>,
-    // pub expr: Option<Symbol>,
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct TrySymbol {
+    pub try_scope: Scope,
+    pub catch_scope: Scope
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]

@@ -3,7 +3,7 @@
 //! These can be gradually turned into code generation if similar
 //! repetitive patterns are found and the effort is worth it.
 
-use super::{AstNode, Expr, ObjectField, Param, SwitchArm};
+use super::{AstNode, Expr, ObjectField, Param, ParamList, SwitchArm};
 use super::{ExprBlock, ExprIf, T};
 use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
 
@@ -205,5 +205,11 @@ impl super::ExprImport {
                     None
                 }
             })
+    }
+}
+
+impl super::ExprTry {
+    pub fn catch_params(&self) -> Option<ParamList> {
+        self.syntax().children().find_map(ParamList::cast)
     }
 }

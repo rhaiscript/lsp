@@ -48,7 +48,9 @@ Expr =
 | ExprSwitch
 | ExprReturn
 | ExprFn
+| ExprExport
 | ExprImport
+| ExprTry
 
 // Standalone identifiers are also valid expressions.
 ExprIdent =
@@ -157,6 +159,13 @@ ExprImport =
 
 ExprExport =
   'export' ExportTarget
+
+ExprTry =
+  'try'
+  try_block:ExprBlock
+  'catch'
+  catch_params:ParamList?
+  catch_block:ExprBlock
 
 ExportTarget =
   ExprLet
