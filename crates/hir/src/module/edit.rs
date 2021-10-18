@@ -67,11 +67,12 @@ impl Module {
             syntax: SyntaxNode,
             is_const: bool,
         ) -> Symbol {
-            let value = value.map(|expr| {
-                let scope = m.create_scope(None, Some(expr.syntax().into()));
-                m.add_expression(scope, expr);
-                scope
-            });
+            let (value, value_scope) = value
+                .map(|expr| {
+                    let scope = m.create_scope(None, Some(expr.syntax().into()));
+                    (m.add_expression(scope, expr), Some(scope))
+                })
+                .unwrap_or_default();
 
             let symbol = m.symbols.insert(SymbolData {
                 selection_syntax: ident_syntax.clone().map(Into::into),
@@ -83,11 +84,12 @@ impl Module {
                         .unwrap_or_default(),
                     is_const,
                     value,
+                    value_scope,
                     ..DeclSymbol::default()
                 })),
             });
 
-            if let Some(value_scope) = value {
+            if let Some(value_scope) = value_scope {
                 m.set_as_parent_symbol(symbol, value_scope);
             }
 

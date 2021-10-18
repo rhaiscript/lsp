@@ -72,8 +72,7 @@ impl Module {
             match &self[symbol].kind {
                 SymbolKind::Fn(_) => ty = self.infer_symbol_type_for(symbol),
                 SymbolKind::Decl(dec) => {
-                    if let Some(val) = dec.value {
-                        let value_symbol = self[val].symbols.iter().copied().next().unwrap();
+                    if let Some(value_symbol) = dec.value {
                         ty = self.infer_symbol_type_for(value_symbol);
                     }
                 }
@@ -138,6 +137,16 @@ impl Module {
                     .collect(),
                 ret: Box::new(Type::Unknown),
             }),
+            SymbolKind::Reference(r) => match r.target {
+                Some(ReferenceTarget::Symbol(target_symbol)) => match &self[target_symbol].kind {
+                    SymbolKind::Fn(_) => self.infer_symbol_type_for(symbol),
+                    SymbolKind::Decl(dec) => dec.value.map_or(Type::Unknown, |value_symbol| {
+                        self.infer_symbol_type_for(value_symbol)
+                    }),
+                    _ => Type::Unknown,
+                },
+                _ => Type::Unknown,
+            },
             SymbolKind::Decl(_) => Type::Void,
             _ => Type::Unknown,
         }

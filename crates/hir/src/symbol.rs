@@ -125,7 +125,8 @@ pub struct DeclSymbol {
     pub is_const: bool,
     pub is_pat: bool,
     pub ty: Type,
-    pub value: Option<Scope>,
+    pub value: Option<Symbol>,
+    pub value_scope: Option<Scope>,
     pub references: HashSet<Symbol>,
 }
 
@@ -133,6 +134,7 @@ pub struct DeclSymbol {
 pub struct ReferenceSymbol {
     pub target: Option<ReferenceTarget>,
     pub part_of_path: bool,
+    pub part_of_access: bool,
     pub name: String,
 }
 

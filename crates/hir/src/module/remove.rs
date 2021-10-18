@@ -20,7 +20,7 @@ impl Module {
             SymbolKind::Block(block) => self.remove_scope(block.scope),
             SymbolKind::Fn(f) => self.remove_scope(f.scope),
             SymbolKind::Decl(decl) => {
-                if let Some(v) = decl.value {
+                if let Some(v) = decl.value_scope {
                     self.remove_scope(v);
                 }
             }

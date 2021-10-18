@@ -10,7 +10,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 tracing = "0.1.28"
-lsp-async-stub = "0.2.0"
+lsp-async-stub = { version = "0.3.0" }
 rhai-rowan = { path = "../rowan" }
 lsp-types = "0.90.0"
 once_cell = "1.8.0"
@@ -19,12 +19,13 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1.0.68"
 rhai-hir = { path = "../hir" }
 enum-iterator = "0.7.0"
+tracing-subscriber = { version = "0.2.25", optional = true }
+clap = { version = "3.0.0-beta.5", optional = true }
+async-ctrlc = { version = "1.2.0", features = ["stream"], optional = true }
+atty = {version = "0.2.14", optional = true}
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-tokio = { version = "1", features = ["rt-multi-thread"] }
-clap = { version = "3.0.0-beta.2", optional = true }
-ctrlc = { version = "3", optional = true }
-notify = { version = "4", optional = true }
+tokio = { version = "1.12.0", features = ["rt-multi-thread"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = { version = "0.2", features = [
@@ -37,5 +38,17 @@ tracing-wasm = { version = "0.2.0" }
 
 [features]
 default = []
-cli = ["clap", "ctrlc", "notify"]
+cli = [
+    "clap",
+    "lsp-async-stub/tokio-stdio",
+    "lsp-async-stub/tokio-tcp",
+    "async-ctrlc",
+    "tracing-subscriber",
+    "atty"
+]
 wasm-export = []
+
+[[bin]]
+name = "rhai"
+path = "bin/rhai.rs"
+required-features = ["cli"]

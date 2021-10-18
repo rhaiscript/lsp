@@ -133,7 +133,7 @@ fn collect_symbols(
                         .into_lsp(),
                     detail: None,
                     children: match decl
-                        .value
+                        .value_scope
                         .map(|s| &module[s])
                         .and_then(|s| s.symbols.first().map(|s| &module[*s]))
                     {

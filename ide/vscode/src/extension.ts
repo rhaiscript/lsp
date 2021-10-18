@@ -5,8 +5,8 @@ import { SyntaxTreeProvider } from "./syntax-tree";
 import {
   Middleware,
   ProvideCodeLensesSignature,
-  ResolveCodeLensSignature,
 } from "vscode-languageclient/node";
+import which from "which";
 
 let output: vscode.OutputChannel;
 
@@ -17,11 +17,42 @@ export function getOutput(): vscode.OutputChannel {
 export async function activate(context: vscode.ExtensionContext) {
   output = vscode.window.createOutputChannel("Rhai");
 
-  let p = context.asAbsolutePath(path.join("dist", "server.js"));
+  const rhaiPath =
+    vscode.workspace.getConfiguration().get("rhai.executable.path") ??
+    which.sync("rhai", { nothrow: true });
+
+  if (typeof rhaiPath !== "string") {
+    // TODO: download it.
+    output.appendLine("failed to locate Rhai executable");
+    return;
+  }
+
+  let extraArgs = vscode.workspace
+    .getConfiguration()
+    .get("rhai.executable.extraArgs");
+
+  if (!Array.isArray(extraArgs)) {
+    extraArgs = [];
+  }
+
+  const args: string[] = (extraArgs as any[]).filter(
+    a => typeof a === "string"
+  );
+
+  const run: client.Executable = {
+    command: rhaiPath,
+    args: ["lsp", "listen", "stdio", "--no-colors", ...args],
+    options: {
+      env:
+        vscode.workspace
+          .getConfiguration()
+          .get("rhai.executable.environment") ?? undefined,
+    },
+  };
 
   let serverOpts: client.ServerOptions = {
-    run: { module: p, transport: client.TransportKind.ipc },
-    debug: { module: p, transport: client.TransportKind.ipc },
+    run,
+    debug: run,
   };
 
   let clientOpts: client.LanguageClientOptions = {
@@ -36,49 +67,58 @@ export async function activate(context: vscode.ExtensionContext) {
     middleware: new ClientMiddleware(),
   };
 
-  let c = new client.LanguageClient("rhai", "Rhai LSP", serverOpts, clientOpts);
+  try {
+    let c = new client.LanguageClient(
+      "rhai",
+      "Rhai LSP",
+      serverOpts,
+      clientOpts
+    );
 
-  const syntaxTreeProvider = new SyntaxTreeProvider(context, c);
+    const syntaxTreeProvider = new SyntaxTreeProvider(context, c);
 
-  const disposeProvider = vscode.window.registerTreeDataProvider(
-    "rhaiSyntaxTree",
-    syntaxTreeProvider
-  );
+    const disposeProvider = vscode.window.registerTreeDataProvider(
+      "rhaiSyntaxTree",
+      syntaxTreeProvider
+    );
 
-  syntaxTreeProvider.setEditor(vscode.window.activeTextEditor);
+    syntaxTreeProvider.setEditor(vscode.window.activeTextEditor);
 
-  context.subscriptions.push(
-    disposeProvider,
-    vscode.window.onDidChangeActiveTextEditor(editor => {
-      if (!editor || editor.document.languageId !== "rhai") {
-        syntaxTreeProvider.setEditor(undefined);
-        return;
-      }
+    context.subscriptions.push(
+      disposeProvider,
+      vscode.window.onDidChangeActiveTextEditor(editor => {
+        if (!editor || editor.document.languageId !== "rhai") {
+          syntaxTreeProvider.setEditor(undefined);
+          return;
+        }
 
-      syntaxTreeProvider.setEditor(editor);
-    }),
-    vscode.workspace.onDidChangeTextDocument(() => {
-      // Let the LSP parse the document.
-      setTimeout(() => {
-        syntaxTreeProvider.update();
-      }, 100);
-    })
-  );
+        syntaxTreeProvider.setEditor(editor);
+      }),
+      vscode.workspace.onDidChangeTextDocument(() => {
+        // Let the LSP parse the document.
+        setTimeout(() => {
+          syntaxTreeProvider.update();
+        }, 100);
+      })
+    );
 
-  c.registerProposedFeatures();
+    c.registerProposedFeatures();
 
-  context.subscriptions.push(output, c.start());
-  await c.onReady();
-  vscode.commands.executeCommand("setContext", "rhai.extensionActive", true);
-  context.subscriptions.push({
-    dispose: () => {
-      vscode.commands.executeCommand(
-        "setContext",
-        "rhai.extensionActive",
-        false
-      );
-    },
-  });
+    context.subscriptions.push(output, c.start());
+    await c.onReady();
+    vscode.commands.executeCommand("setContext", "rhai.extensionActive", true);
+    context.subscriptions.push({
+      dispose: () => {
+        vscode.commands.executeCommand(
+          "setContext",
+          "rhai.extensionActive",
+          false
+        );
+      },
+    });
+  } catch (e) {
+    output.appendLine(e.message);
+  }
 }
 
 class ClientMiddleware implements Middleware {
