@@ -97,7 +97,7 @@ impl Parse {
 }
 
 /// A parse (syntax) error.
-#[derive(Debug, Clone, Error)]
+#[derive(Debug, Clone, PartialEq, Eq, Error)]
 #[error("parse error at {range:?}: {kind}")]
 pub struct ParseError {
     /// The span of the error in the parsed source.
@@ -113,7 +113,7 @@ impl ParseError {
 }
 
 /// All the non-fatal parsing errors that can occur.
-#[derive(Debug, Clone, Error)]
+#[derive(Debug, PartialEq, Eq, Clone, Error)]
 pub enum ParseErrorKind {
     #[error("unexpected EOF")]
     UnexpectedEof,
@@ -132,8 +132,7 @@ pub enum ParseErrorKind {
         .0
             .iter()
             .map(|s|format!("{:?}", s))
-            .intersperse(String::from(", "))
-            .collect::<String>()
+            .collect::<Vec<String>>().join(",")
     )]
     ExpectedOneOfTokens(Vec<SyntaxKind>),
 }

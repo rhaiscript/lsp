@@ -1,7 +1,7 @@
 use crate::mapper::{LspExt, Mapper};
 
 use super::*;
-use rhai_rowan::syntax::{SyntaxKind::*, SyntaxNode};
+use rhai_rowan::syntax::{SyntaxElement, SyntaxKind::*, SyntaxNode};
 
 pub(crate) async fn folding_ranges(
     mut context: Context<World>,
@@ -52,7 +52,7 @@ fn collect_consecutive_comments(
     for token in syntax
         .descendants_with_tokens()
         .filter(|n| matches!(n.kind(), COMMENT_LINE | COMMENT_LINE_DOC))
-        .filter_map(|e| e.into_token())
+        .filter_map(SyntaxElement::into_token)
     {
         match token.kind() {
             COMMENT_LINE => {

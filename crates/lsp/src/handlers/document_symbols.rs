@@ -53,12 +53,18 @@ fn collect_symbols(
 ) -> Vec<DocumentSymbol> {
     let mut document_symbols = Vec::new();
 
-    let module_symbols = module[scope]
+    let scope_symbols = module[scope]
         .symbols
         .iter()
-        .map(|sym| (*sym, &module[*sym]));
+        .map(|sym| (*sym, &module[*sym]))
+        .chain(
+            module[scope]
+                .hoisted_symbols
+                .iter()
+                .map(|sym| (*sym, &module[*sym])),
+        );
 
-    for (symbol, symbol_data) in module_symbols {
+    for (symbol, symbol_data) in scope_symbols {
         let syntax = symbol_data
             .syntax
             .and_then(|s| s.text_range)

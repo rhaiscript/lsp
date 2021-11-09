@@ -2,6 +2,8 @@ use std::cmp::Ordering;
 
 use rhai_rowan::{TextRange, TextSize};
 
+use crate::error::{Error, ErrorKind};
+
 use super::*;
 
 // Nested ranges only.
@@ -181,6 +183,56 @@ impl Module {
                 }
             })
             .chain(scope_data.hoisted_symbols.iter().copied())
+    }
+}
+
+impl Module {
+    #[must_use]
+    pub fn collect_errors(&self) -> Vec<Error> {
+        let mut errors = Vec::new();
+
+        for (symbol, symbol_data) in self.symbols() {
+            if let SymbolKind::Reference(r) = &symbol_data.kind {
+                if r.target.is_none() {
+                    errors.push(Error {
+                        text_range: symbol_data.selection_or_text_range(),
+                        kind: ErrorKind::UnresolvedReference {
+                            reference_name: r.name.clone(),
+                            reference_range: symbol_data.selection_or_text_range(),
+                            reference_symbol: symbol,
+                            similar_name: self.find_similar_name(symbol, &r.name),
+                        },
+                    });
+                }
+            }
+        }
+
+        errors
+    }
+
+    fn find_similar_name(&self, symbol: Symbol, name: &str) -> Option<String> {
+        const MIN_DISTANCE: f64 = 0.5;
+
+        self.visible_symbols_from_symbol(symbol)
+            .filter_map(|symbol| self[symbol].name())
+            .map(|visible_name| {
+                (
+                    strsim::normalized_damerau_levenshtein(name, visible_name),
+                    visible_name,
+                )
+            })
+            .max_by(|(distance_a, _), (distance_b, _)| {
+                distance_a
+                    .partial_cmp(distance_b)
+                    .unwrap_or(Ordering::Equal)
+            })
+            .and_then(|(distance, name)| {
+                if distance >= MIN_DISTANCE {
+                    Some(name.to_string())
+                } else {
+                    None
+                }
+            })
     }
 }
 

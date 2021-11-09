@@ -1036,8 +1036,7 @@ fn parse_param_list(ctx: &mut Context) {
                 ctx.eat();
             }
             _ => {
-                ctx.eat_error(ParseErrorKind::ExpectedToken(T![","]));
-                break;
+                ctx.add_error(ParseErrorKind::ExpectedToken(T![","]));
             }
         }
     }
@@ -1049,7 +1048,7 @@ fn parse_param_list(ctx: &mut Context) {
 fn parse_param(ctx: &mut Context) {
     ctx.start_node(PARAM);
 
-    expect_token!(ctx in node, T!["ident"]);
+    expect_token_eat_error!(ctx in node, T!["ident"]);
 
     ctx.finish_node();
 }

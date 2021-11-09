@@ -92,6 +92,9 @@ impl<'src> Context<'src> {
 
     /// Discard the current token (if any).
     ///
+    /// This should only be used to split a token into more tokens,
+    /// and source code should never be thrown away.
+    /// 
     /// If no token was lexed (by calling [`Self::token`]), this is a no-op.
     pub fn discard(&mut self) {
         self.current_token = None;
@@ -108,8 +111,7 @@ impl<'src> Context<'src> {
 
     /// Eat the current token and add a parse error.
     pub fn eat_error(&mut self, error: ParseErrorKind) {
-        self.add_error(error);
-        self.eat();
+        self.add_error_inner(error, true);
     }
 
     /// Eat the current token with the given kind and add a parse error.
@@ -120,15 +122,8 @@ impl<'src> Context<'src> {
 
     /// Add a parse error without touching the token or the tree.
     pub fn add_error(&mut self, error: ParseErrorKind) {
-        tracing::trace!(%error, "syntax error");
-        let span = self.lexer.span();
-        self.errors.push(ParseError::new(
-            TextRange::new(
-                TextSize::from(span.start as u32),
-                TextSize::from(span.end as u32),
-            ),
-            error,
-        ));
+        self.add_error_inner(error, false);
+
     }
 
     /// Start a new node in the tree.
@@ -161,5 +156,40 @@ impl<'src> Context<'src> {
     /// Signal that the last parsed statement is considered closed.
     pub fn set_statement_closed(&mut self, v: bool) {
         self.statement_closed = v;
+    }
+
+    fn add_error_inner(&mut self, error: ParseErrorKind, eat: bool) {
+        const MAX_SAME_ERROR: usize = 1;
+
+        tracing::trace!(%error, "syntax error");
+        let span = self.lexer.span();
+
+        let err = ParseError::new(
+            TextRange::new(
+                TextSize::from(span.start as u32),
+                TextSize::from(span.end as u32),
+            ),
+            error,
+        );
+
+        // Escape hatch in case of infinite loops or recursions.
+        //
+        // If an error happens at least MAX_SAME_ERROR times,
+        // we will surely eat the current token.
+        //
+        // This does not defend against alternating errors though,
+        // if that happens we must check for position equality instead.
+        let same_error_count = self.errors.iter().rev().take_while(|e| err == **e).count();
+
+        // Adding the same error is generally pointless.
+        if same_error_count == 0 {
+            self.errors.push(err);
+        }
+
+        let eat = eat || same_error_count >= MAX_SAME_ERROR;
+
+        if eat {
+            self.eat();
+        }
     }
 }

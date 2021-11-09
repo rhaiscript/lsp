@@ -59,8 +59,8 @@ pub fn signature_of(module: &Module, rhai: &Rhai, symbol: Symbol) -> String {
                             .map(|param_list| param_list
                                 .params()
                                 .map(|p| p.ident_token().map(|t| t.to_string()).unwrap_or_default())
-                                .intersperse(", ".into())
-                                .collect::<String>())
+                                .collect::<Vec<String>>()
+                                .join(","))
                             .unwrap_or_default()
                     )
                 } else {

@@ -44,7 +44,10 @@ pub(crate) async fn completion(
 
     let mut completions = Vec::new();
 
-    add_visible_identifiers(&mut completions, &doc.mapper, module, &rhai, offset);
+    // Left side of the cursor.
+    let search_offset = offset.checked_sub(1.into()).unwrap_or(offset);
+
+    add_visible_identifiers(&mut completions, &doc.mapper, module, &rhai, search_offset, offset);
     add_empty_object(&mut completions);
 
     completions.dedup_by(|a, b| a.label == b.label);
@@ -57,6 +60,7 @@ fn add_visible_identifiers(
     mapper: &Mapper,
     module: &Module,
     rhai: &Rhai,
+    search_offset: TextSize,
     offset: TextSize,
 ) {
     let reference_sym = module
@@ -65,7 +69,7 @@ fn add_visible_identifiers(
 
     completions.extend(
         module
-            .visible_symbols_from_offset(offset)
+            .visible_symbols_from_offset(search_offset)
             .filter_map(|symbol| {
                 let symbol_data = &module[symbol];
 

@@ -8,7 +8,7 @@ fn references() {
 let aa = #{
 };
 
-aa;    
+aa;
 "#;
     let parse = Parser::new(src).parse();
     assert!(parse.errors.is_empty());

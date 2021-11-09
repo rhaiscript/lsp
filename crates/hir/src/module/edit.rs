@@ -102,7 +102,7 @@ impl Module {
                 let symbol = self.symbols.insert(SymbolData {
                     selection_syntax: Some(
                         expr.ident_token()
-                            .map_or_else(|| expr.syntax().into(), |t| t.into()),
+                            .map_or_else(|| expr.syntax().into(), Into::into),
                     ),
                     syntax: Some(expr.syntax().into()),
                     kind: SymbolKind::Reference(ReferenceSymbol {
@@ -226,7 +226,7 @@ impl Module {
                     parent_scope: Scope::default(),
                     syntax: Some(expr.syntax().into()),
                     selection_syntax: None,
-                    kind: SymbolKind::Block(BlockSymbol { scope }),
+                    kind: SymbolKind::Block(BlockSymbol { scope: block_scope }),
                 });
 
                 self.set_as_parent_symbol(symbol, block_scope);
@@ -715,7 +715,7 @@ impl Module {
                         let symbol = self.symbols.insert(SymbolData {
                             selection_syntax: Some(
                                 expr.ident_token()
-                                    .map_or_else(|| expr.syntax().into(), |t| t.into()),
+                                    .map_or_else(|| expr.syntax().into(), Into::into),
                             ),
                             syntax: Some(expr.syntax().into()),
                             kind: SymbolKind::Reference(ReferenceSymbol {
