@@ -161,7 +161,10 @@ impl<'src> Context<'src> {
     fn add_error_inner(&mut self, error: ParseErrorKind, eat: bool) {
         const MAX_SAME_ERROR: usize = 1;
 
-        tracing::trace!(%error, "syntax error");
+        #[cfg(not(fuzzing))]
+        {
+            tracing::trace!(%error, "syntax error");
+        }
         let span = self.lexer.span();
 
         let err = ParseError::new(
