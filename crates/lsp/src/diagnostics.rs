@@ -79,27 +79,28 @@ fn syntax_diagnostics(diagnostics: &mut Vec<Diagnostic>, parse: &Parse, mapper: 
 }
 
 fn hir_diagnostics(diagnostics: &mut Vec<Diagnostic>, module: &Module, mapper: &Mapper) {
-    diagnostics.extend(
-        module
-            .collect_errors()
-            .iter()
-            .filter(|e| e.text_range.is_some())
-            .map(|e| {
-                let range = mapper
-                    .range(e.text_range.unwrap())
-                    .unwrap_or_default()
-                    .into_lsp();
-                Diagnostic {
-                    range,
-                    severity: Some(DiagnosticSeverity::Error),
-                    code: None,
-                    code_description: None,
-                    source: Some("Rhai".into()),
-                    message: format!("{}", e),
-                    related_information: None,
-                    tags: None,
-                    data: None,
-                }
-            }),
-    );
+    // TODO: uncomment when proper resolution is implemented.
+    // diagnostics.extend(
+    //     module
+    //         .collect_errors()
+    //         .iter()
+    //         .filter(|e| e.text_range.is_some())
+    //         .map(|e| {
+    //             let range = mapper
+    //                 .range(e.text_range.unwrap())
+    //                 .unwrap_or_default()
+    //                 .into_lsp();
+    //             Diagnostic {
+    //                 range,
+    //                 severity: Some(DiagnosticSeverity::Error),
+    //                 code: None,
+    //                 code_description: None,
+    //                 source: Some("Rhai".into()),
+    //                 message: format!("{}", e),
+    //                 related_information: None,
+    //                 tags: None,
+    //                 data: None,
+    //             }
+    //         }),
+    // );
 }
