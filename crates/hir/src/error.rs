@@ -25,7 +25,7 @@ pub enum ErrorKind {
         "cannot resolve reference `{reference_name}`{}",
         match &similar_name {
             Some(n) => {
-                format!(" maybe you wanted `{}`?", n)
+                format!(", maybe you meant `{}`?", n)
             }
             None => {
                 String::from("")
