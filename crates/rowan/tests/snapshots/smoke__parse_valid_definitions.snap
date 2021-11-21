@@ -1,0 +1,379 @@
+---
+source: crates/rowan/tests/smoke.rs
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+
+---
+RHAI_DEF@0..1619
+  COMMENT_LINE@0..50 "// This module define ..."
+  WHITESPACE@50..51 "\n"
+  COMMENT_LINE@51..53 "//"
+  WHITESPACE@53..54 "\n"
+  COMMENT_LINE@54..98 "// Items defined are  ..."
+  WHITESPACE@98..99 "\n"
+  COMMENT_LINE@99..101 "//"
+  WHITESPACE@101..102 "\n"
+  COMMENT_LINE@102..155 "// Operators are only ..."
+  WHITESPACE@155..156 "\n"
+  DEF_STMT@156..170
+    DEF_ITEM@156..169
+      DEF@156..169
+        DEF_MODULE@156..169
+          KW_STATIC@156..162 "static"
+          WHITESPACE@162..163 " "
+          KW_MODULE@163..169 "module"
+    PUNCT_SEMI@169..170 ";"
+  WHITESPACE@170..172 "\n\n"
+  DEF_STMT@172..281
+    DEF_ITEM@172..280
+      DOC@172..251
+        COMMENT_LINE_DOC@172..251 "/// The built-in `typ ..."
+      WHITESPACE@251..252 "\n"
+      DEF@252..280
+        DEF_FN@252..280
+          KW_FN@252..254 "fn"
+          WHITESPACE@254..255 " "
+          IDENT@255..262 "type_of"
+          TYPED_PARAM_LIST@262..272
+            PUNCT_PAREN_START@262..263 "("
+            TYPED_PARAM@263..271
+              IDENT@263..268 "value"
+              PUNCT_COLON@268..269 ":"
+              TYPE@269..271
+                WHITESPACE@269..270 " "
+                TYPE_UNKNOWN@270..271
+                  PUNCT_QUESTION_MARK@270..271 "?"
+            PUNCT_PAREN_END@271..272 ")"
+          PUNCT_COLON@272..273 ":"
+          TYPE@273..280
+            WHITESPACE@273..274 " "
+            TYPE_IDENT@274..280
+              IDENT@274..280 "string"
+    PUNCT_SEMI@280..281 ";"
+  WHITESPACE@281..283 "\n\n"
+  DEF_STMT@283..356
+    DEF_ITEM@283..355
+      DOC@283..313
+        COMMENT_LINE_DOC@283..313 "/// Describes a 2D co ..."
+      WHITESPACE@313..314 "\n"
+      DEF@314..355
+        DEF_TYPE@314..355
+          IDENT@314..318 "type"
+          WHITESPACE@318..319 " "
+          IDENT@319..324 "Coord"
+          WHITESPACE@324..325 " "
+          OP_ASSIGN@325..326 "="
+          TYPE@326..355
+            WHITESPACE@326..327 " "
+            TYPE_OBJECT@327..355
+              PUNCT_MAP_START@327..329 "#{"
+              WHITESPACE@329..334 "\n    "
+              TYPE_OBJECT_FIELD@334..340
+                IDENT@334..335 "x"
+                PUNCT_COLON@335..336 ":"
+                TYPE@336..340
+                  WHITESPACE@336..337 " "
+                  TYPE_IDENT@337..340
+                    IDENT@337..340 "i64"
+              PUNCT_COMMA@340..341 ","
+              WHITESPACE@341..346 "\n    "
+              TYPE_OBJECT_FIELD@346..352
+                IDENT@346..347 "y"
+                PUNCT_COLON@347..348 ":"
+                TYPE@348..352
+                  WHITESPACE@348..349 " "
+                  TYPE_IDENT@349..352
+                    IDENT@349..352 "i64"
+              PUNCT_COMMA@352..353 ","
+              WHITESPACE@353..354 "\n"
+              PUNCT_BRACE_END@354..355 "}"
+    PUNCT_SEMI@355..356 ";"
+  WHITESPACE@356..358 "\n\n"
+  DEF_STMT@358..509
+    DEF_ITEM@358..508
+      DOC@358..446
+        COMMENT_LINE_DOC@358..446 "/// Add two coordinat ..."
+      WHITESPACE@446..447 "\n"
+      DOC@447..482
+        COMMENT_LINE_DOC@447..482 "/// in the returned n ..."
+      WHITESPACE@482..483 "\n"
+      DEF@483..508
+        DEF_OP@483..508
+          IDENT@483..485 "op"
+          WHITESPACE@485..486 " "
+          OP_ADD@486..487 "+"
+          TYPE_LIST@487..501
+            PUNCT_PAREN_START@487..488 "("
+            TYPE@488..493
+              TYPE_IDENT@488..493
+                IDENT@488..493 "Coord"
+            PUNCT_COMMA@493..494 ","
+            WHITESPACE@494..495 " "
+            TYPE@495..500
+              TYPE_IDENT@495..500
+                IDENT@495..500 "Coord"
+            PUNCT_PAREN_END@500..501 ")"
+          PUNCT_COLON@501..502 ":"
+          TYPE@502..508
+            WHITESPACE@502..503 " "
+            TYPE_IDENT@503..508
+              IDENT@503..508 "Coord"
+    PUNCT_SEMI@508..509 ";"
+  WHITESPACE@509..511 "\n\n"
+  DEF_STMT@511..656
+    DEF_ITEM@511..655
+      DOC@511..534
+        COMMENT_LINE_DOC@511..534 "/// A named coordinate."
+      WHITESPACE@534..535 "\n"
+      DEF@535..655
+        DEF_TYPE@535..655
+          IDENT@535..539 "type"
+          WHITESPACE@539..540 " "
+          IDENT@540..545 "Point"
+          WHITESPACE@545..546 " "
+          OP_ASSIGN@546..547 "="
+          TYPE@547..655
+            WHITESPACE@547..548 " "
+            TYPE_OBJECT@548..655
+              PUNCT_MAP_START@548..550 "#{"
+              WHITESPACE@550..555 "\n    "
+              TYPE_OBJECT_FIELD@555..634
+                DOC@555..611
+                  COMMENT_LINE_DOC@555..611 "/// A name can be eit ..."
+                WHITESPACE@611..616 "\n    "
+                IDENT@616..620 "name"
+                PUNCT_COLON@620..621 ":"
+                TYPE@621..634
+                  TYPE_UNION@621..634
+                    TYPE@621..629
+                      WHITESPACE@621..622 " "
+                      TYPE_IDENT@622..628
+                        IDENT@622..628 "string"
+                      WHITESPACE@628..629 " "
+                    OP_BIT_OR@629..630 "|"
+                    TYPE@630..634
+                      WHITESPACE@630..631 " "
+                      TYPE_IDENT@631..634
+                        IDENT@631..634 "i64"
+              PUNCT_COMMA@634..635 ","
+              WHITESPACE@635..640 "\n    "
+              TYPE_OBJECT_FIELD@640..652
+                IDENT@640..645 "coord"
+                PUNCT_COLON@645..646 ":"
+                TYPE@646..652
+                  WHITESPACE@646..647 " "
+                  TYPE_IDENT@647..652
+                    IDENT@647..652 "Coord"
+              PUNCT_COMMA@652..653 ","
+              WHITESPACE@653..654 "\n"
+              PUNCT_BRACE_END@654..655 "}"
+    PUNCT_SEMI@655..656 ";"
+  WHITESPACE@656..658 "\n\n"
+  DEF_STMT@658..877
+    DEF_ITEM@658..876
+      DOC@658..738
+        COMMENT_LINE_DOC@658..738 "/// An operator that  ..."
+      WHITESPACE@738..739 "\n"
+      DOC@739..742
+        COMMENT_LINE_DOC@739..742 "///"
+      WHITESPACE@742..743 "\n"
+      DOC@743..755
+        COMMENT_LINE_DOC@743..755 "/// Example:"
+      WHITESPACE@755..756 "\n"
+      DOC@756..767
+        COMMENT_LINE_DOC@756..767 "/// ```rhai"
+      WHITESPACE@767..768 "\n"
+      DOC@768..804
+        COMMENT_LINE_DOC@768..804 "/// if start_point at ..."
+      WHITESPACE@804..805 "\n"
+      DOC@805..836
+        COMMENT_LINE_DOC@805..836 "///     // probably d ..."
+      WHITESPACE@836..837 "\n"
+      DOC@837..842
+        COMMENT_LINE_DOC@837..842 "/// }"
+      WHITESPACE@842..843 "\n"
+      DOC@843..850
+        COMMENT_LINE_DOC@843..850 "/// ```"
+      WHITESPACE@850..851 "\n"
+      DEF@851..876
+        DEF_OP@851..876
+          IDENT@851..853 "op"
+          WHITESPACE@853..854 " "
+          IDENT@854..856 "at"
+          TYPE_LIST@856..870
+            PUNCT_PAREN_START@856..857 "("
+            TYPE@857..862
+              TYPE_IDENT@857..862
+                IDENT@857..862 "Coord"
+            PUNCT_COMMA@862..863 ","
+            WHITESPACE@863..864 " "
+            TYPE@864..869
+              TYPE_IDENT@864..869
+                IDENT@864..869 "Coord"
+            PUNCT_PAREN_END@869..870 ")"
+          PUNCT_COLON@870..871 ":"
+          TYPE@871..876
+            WHITESPACE@871..872 " "
+            TYPE_IDENT@872..876
+              IDENT@872..876 "bool"
+    PUNCT_SEMI@876..877 ";"
+  WHITESPACE@877..879 "\n\n"
+  DEF_STMT@879..1020
+    DEF_ITEM@879..1019
+      DOC@879..937
+        COMMENT_LINE_DOC@879..937 "/// Returns informati ..."
+      WHITESPACE@937..938 "\n"
+      DOC@938..941
+        COMMENT_LINE_DOC@938..941 "///"
+      WHITESPACE@941..942 "\n"
+      DOC@942..985
+        COMMENT_LINE_DOC@942..985 "/// Can be called lik ..."
+      WHITESPACE@985..986 "\n"
+      DEF@986..1019
+        DEF_FN@986..1019
+          KW_FN@986..988 "fn"
+          WHITESPACE@988..989 " "
+          IDENT@989..998 "to_string"
+          TYPED_PARAM_LIST@998..1011
+            PUNCT_PAREN_START@998..999 "("
+            TYPED_PARAM@999..1010
+              IDENT@999..1003 "this"
+              PUNCT_COLON@1003..1004 ":"
+              TYPE@1004..1010
+                WHITESPACE@1004..1005 " "
+                TYPE_IDENT@1005..1010
+                  IDENT@1005..1010 "Point"
+            PUNCT_PAREN_END@1010..1011 ")"
+          PUNCT_COLON@1011..1012 ":"
+          TYPE@1012..1019
+            WHITESPACE@1012..1013 " "
+            TYPE_IDENT@1013..1019
+              IDENT@1013..1019 "string"
+    PUNCT_SEMI@1019..1020 ";"
+  WHITESPACE@1020..1022 "\n\n"
+  DEF_STMT@1022..1445
+    DEF_ITEM@1022..1444
+      DOC@1022..1093
+        COMMENT_LINE_DOC@1022..1093 "/// Get the current p ..."
+      WHITESPACE@1093..1094 "\n"
+      DOC@1094..1097
+        COMMENT_LINE_DOC@1094..1097 "///"
+      WHITESPACE@1097..1098 "\n"
+      DOC@1098..1110
+        COMMENT_LINE_DOC@1098..1110 "/// Example:"
+      WHITESPACE@1110..1111 "\n"
+      DOC@1111..1122
+        COMMENT_LINE_DOC@1111..1122 "/// ```rhai"
+      WHITESPACE@1122..1123 "\n"
+      DOC@1123..1155
+        COMMENT_LINE_DOC@1123..1155 "/// let point = curre ..."
+      WHITESPACE@1155..1156 "\n"
+      DOC@1156..1159
+        COMMENT_LINE_DOC@1156..1159 "///"
+      WHITESPACE@1159..1160 "\n"
+      DOC@1160..1183
+        COMMENT_LINE_DOC@1160..1183 "/// switch point.name {"
+      WHITESPACE@1183..1184 "\n"
+      DOC@1184..1204
+        COMMENT_LINE_DOC@1184..1204 "///     \"start\" => {"
+      WHITESPACE@1204..1205 "\n"
+      DOC@1205..1249
+        COMMENT_LINE_DOC@1205..1249 "///         print(`st ..."
+      WHITESPACE@1249..1250 "\n"
+      DOC@1250..1260
+        COMMENT_LINE_DOC@1250..1260 "///     },"
+      WHITESPACE@1260..1261 "\n"
+      DOC@1261..1282
+        COMMENT_LINE_DOC@1261..1282 "///     \"finish\" => {"
+      WHITESPACE@1282..1283 "\n"
+      DOC@1283..1326
+        COMMENT_LINE_DOC@1283..1326 "///         print(`fi ..."
+      WHITESPACE@1326..1327 "\n"
+      DOC@1327..1337
+        COMMENT_LINE_DOC@1327..1337 "///     },"
+      WHITESPACE@1337..1338 "\n"
+      DOC@1338..1352
+        COMMENT_LINE_DOC@1338..1352 "///     _ => {"
+      WHITESPACE@1352..1353 "\n"
+      DOC@1353..1394
+        COMMENT_LINE_DOC@1353..1394 "///         throw err ..."
+      WHITESPACE@1394..1395 "\n"
+      DOC@1395..1404
+        COMMENT_LINE_DOC@1395..1404 "///     }"
+      WHITESPACE@1404..1405 "\n"
+      DOC@1405..1410
+        COMMENT_LINE_DOC@1405..1410 "/// }"
+      WHITESPACE@1410..1411 "\n"
+      DOC@1411..1418
+        COMMENT_LINE_DOC@1411..1418 "/// ```"
+      WHITESPACE@1418..1419 "\n"
+      DEF@1419..1444
+        DEF_FN@1419..1444
+          KW_FN@1419..1421 "fn"
+          WHITESPACE@1421..1422 " "
+          IDENT@1422..1435 "current_point"
+          TYPED_PARAM_LIST@1435..1437
+            PUNCT_PAREN_START@1435..1436 "("
+            PUNCT_PAREN_END@1436..1437 ")"
+          PUNCT_COLON@1437..1438 ":"
+          TYPE@1438..1444
+            WHITESPACE@1438..1439 " "
+            TYPE_IDENT@1439..1444
+              IDENT@1439..1444 "Point"
+    PUNCT_SEMI@1444..1445 ";"
+  WHITESPACE@1445..1447 "\n\n"
+  DEF_STMT@1447..1508
+    DEF_ITEM@1447..1507
+      DOC@1447..1482
+        COMMENT_LINE_DOC@1447..1482 "/// Get all the point ..."
+      WHITESPACE@1482..1483 "\n"
+      DEF@1483..1507
+        DEF_FN@1483..1507
+          KW_FN@1483..1485 "fn"
+          WHITESPACE@1485..1486 " "
+          IDENT@1486..1496 "all_points"
+          TYPED_PARAM_LIST@1496..1498
+            PUNCT_PAREN_START@1496..1497 "("
+            PUNCT_PAREN_END@1497..1498 ")"
+          PUNCT_COLON@1498..1499 ":"
+          TYPE@1499..1507
+            WHITESPACE@1499..1500 " "
+            TYPE_ARRAY@1500..1507
+              PUNCT_BRACKET_START@1500..1501 "["
+              TYPE@1501..1506
+                TYPE_IDENT@1501..1506
+                  IDENT@1501..1506 "Point"
+              PUNCT_BRACKET_END@1506..1507 "]"
+    PUNCT_SEMI@1507..1508 ";"
+  WHITESPACE@1508..1510 "\n\n"
+  DEF_STMT@1510..1618
+    DEF_ITEM@1510..1617
+      DOC@1510..1546
+        COMMENT_LINE_DOC@1510..1546 "/// Some point that c ..."
+      WHITESPACE@1546..1547 "\n"
+      DOC@1547..1550
+        COMMENT_LINE_DOC@1547..1550 "///"
+      WHITESPACE@1550..1551 "\n"
+      DOC@1551..1588
+        COMMENT_LINE_DOC@1551..1588 "/// It might not alwa ..."
+      WHITESPACE@1588..1589 "\n"
+      DEF@1589..1617
+        DEF_LET@1589..1617
+          KW_LET@1589..1592 "let"
+          WHITESPACE@1592..1593 " "
+          IDENT@1593..1603 "some_point"
+          PUNCT_COLON@1603..1604 ":"
+          TYPE@1604..1617
+            TYPE_UNION@1604..1617
+              TYPE@1604..1611
+                WHITESPACE@1604..1605 " "
+                TYPE_IDENT@1605..1610
+                  IDENT@1605..1610 "Point"
+                WHITESPACE@1610..1611 " "
+              OP_BIT_OR@1611..1612 "|"
+              TYPE@1612..1617
+                WHITESPACE@1612..1613 " "
+                TYPE_VOID@1613..1617
+                  KW_VOID@1613..1617 "void"
+    PUNCT_SEMI@1617..1618 ";"
+  WHITESPACE@1618..1619 "\n"
+

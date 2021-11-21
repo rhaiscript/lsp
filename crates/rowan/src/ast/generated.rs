@@ -1,6 +1,6 @@
 //! This file was generated from ungrammar, do not touch it!
 /// A macro for using tokens in a more humanly way, e.g. `T!["="]`.
-# [macro_export] macro_rules ! T { ["lit_int"] => { $ crate :: syntax :: SyntaxKind :: LIT_INT } ; ["lit_float"] => { $ crate :: syntax :: SyntaxKind :: LIT_FLOAT } ; ["lit_str"] => { $ crate :: syntax :: SyntaxKind :: LIT_STR } ; ["lit_bool"] => { $ crate :: syntax :: SyntaxKind :: LIT_BOOL } ; ["lit_char"] => { $ crate :: syntax :: SyntaxKind :: LIT_CHAR } ; ["ident"] => { $ crate :: syntax :: SyntaxKind :: IDENT } ; ["::"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON2 } ; ["shebang"] => { $ crate :: syntax :: SyntaxKind :: SHEBANG } ; ["comment_line_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_LINE_DOC } ; ["comment_block_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_BLOCK_DOC } ; [";"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_SEMI } ; ["let"] => { $ crate :: syntax :: SyntaxKind :: KW_LET } ; ["="] => { $ crate :: syntax :: SyntaxKind :: OP_ASSIGN } ; ["const"] => { $ crate :: syntax :: SyntaxKind :: KW_CONST } ; ["{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_START } ; ["}"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_END } ; ["+"] => { $ crate :: syntax :: SyntaxKind :: OP_ADD } ; ["-"] => { $ crate :: syntax :: SyntaxKind :: OP_SUB } ; ["!"] => { $ crate :: syntax :: SyntaxKind :: OP_NOT } ; ["||"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_OR } ; ["&&"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_AND } ; ["=="] => { $ crate :: syntax :: SyntaxKind :: OP_EQ } ; ["!="] => { $ crate :: syntax :: SyntaxKind :: OP_NOT_EQ } ; ["<="] => { $ crate :: syntax :: SyntaxKind :: OP_LT_EQ } ; [">="] => { $ crate :: syntax :: SyntaxKind :: OP_GT_EQ } ; ["<"] => { $ crate :: syntax :: SyntaxKind :: OP_LT } ; [">"] => { $ crate :: syntax :: SyntaxKind :: OP_GT } ; ["*"] => { $ crate :: syntax :: SyntaxKind :: OP_MUL } ; ["**"] => { $ crate :: syntax :: SyntaxKind :: OP_POW } ; ["/"] => { $ crate :: syntax :: SyntaxKind :: OP_DIV } ; ["%"] => { $ crate :: syntax :: SyntaxKind :: OP_MOD } ; ["<<"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT } ; [">>"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT } ; ["^"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_XOR } ; ["|"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_OR } ; ["&"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_AND } ; ["+="] => { $ crate :: syntax :: SyntaxKind :: OP_ADD_ASSIGN } ; ["/="] => { $ crate :: syntax :: SyntaxKind :: OP_DIV_ASSIGN } ; ["*="] => { $ crate :: syntax :: SyntaxKind :: OP_MUL_ASSIGN } ; ["**="] => { $ crate :: syntax :: SyntaxKind :: OP_POW_ASSIGN } ; ["%="] => { $ crate :: syntax :: SyntaxKind :: OP_MOD_ASSIGN } ; [">>="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT_ASSIGN } ; ["<<="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT_ASSIGN } ; ["-="] => { $ crate :: syntax :: SyntaxKind :: OP_SUB_ASSIGN } ; ["|="] => { $ crate :: syntax :: SyntaxKind :: OP_OR_ASSIGN } ; ["&="] => { $ crate :: syntax :: SyntaxKind :: OP_AND_ASSIGN } ; ["^="] => { $ crate :: syntax :: SyntaxKind :: OP_XOR_ASSIGN } ; ["."] => { $ crate :: syntax :: SyntaxKind :: PUNCT_DOT } ; ["("] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_START } ; [")"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_END } ; ["["] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_START } ; [","] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COMMA } ; ["]"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_END } ; ["#{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_MAP_START } ; [":"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON } ; ["if"] => { $ crate :: syntax :: SyntaxKind :: KW_IF } ; ["else"] => { $ crate :: syntax :: SyntaxKind :: KW_ELSE } ; ["loop"] => { $ crate :: syntax :: SyntaxKind :: KW_LOOP } ; ["for"] => { $ crate :: syntax :: SyntaxKind :: KW_FOR } ; ["in"] => { $ crate :: syntax :: SyntaxKind :: KW_IN } ; ["while"] => { $ crate :: syntax :: SyntaxKind :: KW_WHILE } ; ["break"] => { $ crate :: syntax :: SyntaxKind :: KW_BREAK } ; ["continue"] => { $ crate :: syntax :: SyntaxKind :: KW_CONTINUE } ; ["switch"] => { $ crate :: syntax :: SyntaxKind :: KW_SWITCH } ; ["_"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_UNDERSCORE } ; ["=>"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_ARROW_FAT } ; ["return"] => { $ crate :: syntax :: SyntaxKind :: KW_RETURN } ; ["fn"] => { $ crate :: syntax :: SyntaxKind :: KW_FN } ; ["import"] => { $ crate :: syntax :: SyntaxKind :: KW_IMPORT } ; ["as"] => { $ crate :: syntax :: SyntaxKind :: KW_AS } ; ["export"] => { $ crate :: syntax :: SyntaxKind :: KW_EXPORT } ; ["try"] => { $ crate :: syntax :: SyntaxKind :: KW_TRY } ; ["catch"] => { $ crate :: syntax :: SyntaxKind :: KW_CATCH } ; } pub use T ;
+# [macro_export] macro_rules ! T { ["lit_int"] => { $ crate :: syntax :: SyntaxKind :: LIT_INT } ; ["lit_float"] => { $ crate :: syntax :: SyntaxKind :: LIT_FLOAT } ; ["lit_str"] => { $ crate :: syntax :: SyntaxKind :: LIT_STR } ; ["lit_bool"] => { $ crate :: syntax :: SyntaxKind :: LIT_BOOL } ; ["lit_char"] => { $ crate :: syntax :: SyntaxKind :: LIT_CHAR } ; ["ident"] => { $ crate :: syntax :: SyntaxKind :: IDENT } ; ["::"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON2 } ; ["shebang"] => { $ crate :: syntax :: SyntaxKind :: SHEBANG } ; ["comment_line_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_LINE_DOC } ; ["comment_block_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_BLOCK_DOC } ; [";"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_SEMI } ; ["let"] => { $ crate :: syntax :: SyntaxKind :: KW_LET } ; ["="] => { $ crate :: syntax :: SyntaxKind :: OP_ASSIGN } ; ["const"] => { $ crate :: syntax :: SyntaxKind :: KW_CONST } ; ["{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_START } ; ["}"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_END } ; ["+"] => { $ crate :: syntax :: SyntaxKind :: OP_ADD } ; ["-"] => { $ crate :: syntax :: SyntaxKind :: OP_SUB } ; ["!"] => { $ crate :: syntax :: SyntaxKind :: OP_NOT } ; ["||"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_OR } ; ["&&"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_AND } ; ["=="] => { $ crate :: syntax :: SyntaxKind :: OP_EQ } ; ["!="] => { $ crate :: syntax :: SyntaxKind :: OP_NOT_EQ } ; ["<="] => { $ crate :: syntax :: SyntaxKind :: OP_LT_EQ } ; [">="] => { $ crate :: syntax :: SyntaxKind :: OP_GT_EQ } ; ["<"] => { $ crate :: syntax :: SyntaxKind :: OP_LT } ; [">"] => { $ crate :: syntax :: SyntaxKind :: OP_GT } ; ["*"] => { $ crate :: syntax :: SyntaxKind :: OP_MUL } ; ["**"] => { $ crate :: syntax :: SyntaxKind :: OP_POW } ; ["/"] => { $ crate :: syntax :: SyntaxKind :: OP_DIV } ; ["%"] => { $ crate :: syntax :: SyntaxKind :: OP_MOD } ; ["<<"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT } ; [">>"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT } ; ["^"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_XOR } ; ["|"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_OR } ; ["&"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_AND } ; ["+="] => { $ crate :: syntax :: SyntaxKind :: OP_ADD_ASSIGN } ; ["/="] => { $ crate :: syntax :: SyntaxKind :: OP_DIV_ASSIGN } ; ["*="] => { $ crate :: syntax :: SyntaxKind :: OP_MUL_ASSIGN } ; ["**="] => { $ crate :: syntax :: SyntaxKind :: OP_POW_ASSIGN } ; ["%="] => { $ crate :: syntax :: SyntaxKind :: OP_MOD_ASSIGN } ; [">>="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT_ASSIGN } ; ["<<="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT_ASSIGN } ; ["-="] => { $ crate :: syntax :: SyntaxKind :: OP_SUB_ASSIGN } ; ["|="] => { $ crate :: syntax :: SyntaxKind :: OP_OR_ASSIGN } ; ["&="] => { $ crate :: syntax :: SyntaxKind :: OP_AND_ASSIGN } ; ["^="] => { $ crate :: syntax :: SyntaxKind :: OP_XOR_ASSIGN } ; ["."] => { $ crate :: syntax :: SyntaxKind :: PUNCT_DOT } ; ["("] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_START } ; [")"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_END } ; ["["] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_START } ; [","] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COMMA } ; ["]"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_END } ; ["#{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_MAP_START } ; [":"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON } ; ["if"] => { $ crate :: syntax :: SyntaxKind :: KW_IF } ; ["else"] => { $ crate :: syntax :: SyntaxKind :: KW_ELSE } ; ["loop"] => { $ crate :: syntax :: SyntaxKind :: KW_LOOP } ; ["for"] => { $ crate :: syntax :: SyntaxKind :: KW_FOR } ; ["in"] => { $ crate :: syntax :: SyntaxKind :: KW_IN } ; ["while"] => { $ crate :: syntax :: SyntaxKind :: KW_WHILE } ; ["break"] => { $ crate :: syntax :: SyntaxKind :: KW_BREAK } ; ["continue"] => { $ crate :: syntax :: SyntaxKind :: KW_CONTINUE } ; ["switch"] => { $ crate :: syntax :: SyntaxKind :: KW_SWITCH } ; ["_"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_UNDERSCORE } ; ["=>"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_ARROW_FAT } ; ["return"] => { $ crate :: syntax :: SyntaxKind :: KW_RETURN } ; ["private"] => { $ crate :: syntax :: SyntaxKind :: KW_PRIVATE } ; ["fn"] => { $ crate :: syntax :: SyntaxKind :: KW_FN } ; ["import"] => { $ crate :: syntax :: SyntaxKind :: KW_IMPORT } ; ["as"] => { $ crate :: syntax :: SyntaxKind :: KW_AS } ; ["export"] => { $ crate :: syntax :: SyntaxKind :: KW_EXPORT } ; ["try"] => { $ crate :: syntax :: SyntaxKind :: KW_TRY } ; ["catch"] => { $ crate :: syntax :: SyntaxKind :: KW_CATCH } ; ["static"] => { $ crate :: syntax :: SyntaxKind :: KW_STATIC } ; ["module"] => { $ crate :: syntax :: SyntaxKind :: KW_MODULE } ; ["void"] => { $ crate :: syntax :: SyntaxKind :: KW_VOID } ; ["?"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_QUESTION_MARK } ; } pub use T ;
 use crate::syntax::{SyntaxKind::*, SyntaxNode, SyntaxToken};
 pub trait AstNode: Sized {
     fn can_cast(syntax: &SyntaxNode) -> bool;
@@ -1483,5 +1483,825 @@ impl AstNode for PatIdent {
 impl PatIdent {
     pub fn ident_token(&self) -> Option<SyntaxToken> {
         self.0.first_child_or_token().and_then(|e| e.into_token())
+    }
+}
+#[derive(Debug, Clone)]
+pub struct RhaiDef(SyntaxNode);
+impl AstNode for RhaiDef {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == RHAI_DEF }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+#[derive(Debug, Clone)]
+pub struct DefStmt(SyntaxNode);
+impl AstNode for DefStmt {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_STMT }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+#[derive(Debug, Clone)]
+pub struct DefItem(SyntaxNode);
+impl AstNode for DefItem {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_ITEM }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl DefItem {
+    pub fn docs(&self) -> impl Iterator<Item = Doc> { self.0.children().filter_map(Doc::cast) }
+    pub fn def(&self) -> Option<Def> { self.0.children().filter_map(Def::cast).skip(0usize).next() }
+}
+#[derive(Debug, Clone)]
+pub enum Def {
+    Module(DefModule),
+    Import(DefImport),
+    Const(DefConst),
+    Fn(DefFn),
+    Op(DefOp),
+    Type(DefType),
+}
+impl AstNode for Def {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if !Self::can_cast(&syntax) {
+            return None;
+        }
+        let first_child = syntax.first_child()?;
+        match first_child.kind() {
+            DEF_MODULE => Some(Self::Module(DefModule::cast(first_child)?)),
+            DEF_IMPORT => Some(Self::Import(DefImport::cast(first_child)?)),
+            DEF_CONST => Some(Self::Const(DefConst::cast(first_child)?)),
+            DEF_FN => Some(Self::Fn(DefFn::cast(first_child)?)),
+            DEF_OP => Some(Self::Op(DefOp::cast(first_child)?)),
+            DEF_TYPE => Some(Self::Type(DefType::cast(first_child)?)),
+            _ => None,
+        }
+    }
+    fn syntax(&self) -> SyntaxNode {
+        match self {
+            Self::Module(t) => t.syntax().parent().unwrap(),
+            Self::Import(t) => t.syntax().parent().unwrap(),
+            Self::Const(t) => t.syntax().parent().unwrap(),
+            Self::Fn(t) => t.syntax().parent().unwrap(),
+            Self::Op(t) => t.syntax().parent().unwrap(),
+            Self::Type(t) => t.syntax().parent().unwrap(),
+        }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct DefModule(SyntaxNode);
+impl AstNode for DefModule {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_MODULE }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl DefModule {
+    pub fn kw_module_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_MODULE {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct DefImport(SyntaxNode);
+impl AstNode for DefImport {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_IMPORT }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl DefImport {
+    pub fn kw_import_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_IMPORT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn lit_str_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != LIT_STR {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct DefConst(SyntaxNode);
+impl AstNode for DefConst {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_CONST }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl DefConst {
+    pub fn kw_const_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_CONST {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct DefFn(SyntaxNode);
+impl AstNode for DefFn {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_FN }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl DefFn {
+    pub fn kw_fn_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_FN {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn typed_param_list(&self) -> Option<TypedParamList> {
+        self.0
+            .children()
+            .filter_map(TypedParamList::cast)
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct DefOp(SyntaxNode);
+impl AstNode for DefOp {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_OP }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl DefOp {
+    pub fn op_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn type_list(&self) -> Option<TypeList> {
+        self.0
+            .children()
+            .filter_map(TypeList::cast)
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct DefType(SyntaxNode);
+impl AstNode for DefType {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_TYPE }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl DefType {
+    pub fn ty_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(1usize)
+            .next()
+    }
+    pub fn op_assign_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != OP_ASSIGN {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn ty(&self) -> Option<Type> {
+        self.0.children().filter_map(Type::cast).skip(0usize).next()
+    }
+}
+#[derive(Debug, Clone)]
+pub enum Type {
+    Ident(TypeIdent),
+    Lit(TypeLit),
+    Object(TypeObject),
+    Void(TypeVoid),
+    Array(TypeArray),
+    Unknown(TypeUnknown),
+}
+impl AstNode for Type {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if !Self::can_cast(&syntax) {
+            return None;
+        }
+        let first_child = syntax.first_child()?;
+        match first_child.kind() {
+            TYPE_IDENT => Some(Self::Ident(TypeIdent::cast(first_child)?)),
+            TYPE_LIT => Some(Self::Lit(TypeLit::cast(first_child)?)),
+            TYPE_OBJECT => Some(Self::Object(TypeObject::cast(first_child)?)),
+            TYPE_VOID => Some(Self::Void(TypeVoid::cast(first_child)?)),
+            TYPE_ARRAY => Some(Self::Array(TypeArray::cast(first_child)?)),
+            TYPE_UNKNOWN => Some(Self::Unknown(TypeUnknown::cast(first_child)?)),
+            _ => None,
+        }
+    }
+    fn syntax(&self) -> SyntaxNode {
+        match self {
+            Self::Ident(t) => t.syntax().parent().unwrap(),
+            Self::Lit(t) => t.syntax().parent().unwrap(),
+            Self::Object(t) => t.syntax().parent().unwrap(),
+            Self::Void(t) => t.syntax().parent().unwrap(),
+            Self::Array(t) => t.syntax().parent().unwrap(),
+            Self::Unknown(t) => t.syntax().parent().unwrap(),
+        }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct DefLet(SyntaxNode);
+impl AstNode for DefLet {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_LET }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl DefLet {
+    pub fn kw_const_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_CONST {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypeList(SyntaxNode);
+impl AstNode for TypeList {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_LIST }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeList {
+    pub fn punct_paren_start_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn punct_paren_end_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypedParamList(SyntaxNode);
+impl AstNode for TypedParamList {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPED_PARAM_LIST }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypedParamList {
+    pub fn punct_paren_start_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn punct_paren_end_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypeIdent(SyntaxNode);
+impl AstNode for TypeIdent {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_IDENT }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeIdent {
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        self.0.first_child_or_token().and_then(|e| e.into_token())
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypeLit(SyntaxNode);
+impl AstNode for TypeLit {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_LIT }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeLit {
+    pub fn lit(&self) -> Option<Lit> { self.0.first_child().and_then(Lit::cast) }
+}
+#[derive(Debug, Clone)]
+pub struct TypeObject(SyntaxNode);
+impl AstNode for TypeObject {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_OBJECT }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeObject {
+    pub fn punct_map_start_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_MAP_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn punct_brace_end_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACE_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypeVoid(SyntaxNode);
+impl AstNode for TypeVoid {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_VOID }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeVoid {
+    pub fn kw_void_token(&self) -> Option<SyntaxToken> {
+        self.0.first_child_or_token().and_then(|e| e.into_token())
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypeArray(SyntaxNode);
+impl AstNode for TypeArray {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_ARRAY }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeArray {
+    pub fn punct_bracket_start_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACKET_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn fist_ty(&self) -> Option<Type> {
+        self.0.children().filter_map(Type::cast).skip(0usize).next()
+    }
+    pub fn punct_bracket_end_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_BRACKET_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypeUnknown(SyntaxNode);
+impl AstNode for TypeUnknown {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_UNKNOWN }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeUnknown {
+    pub fn punct_question_mark_token(&self) -> Option<SyntaxToken> {
+        self.0.first_child_or_token().and_then(|e| e.into_token())
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypeObjectField(SyntaxNode);
+impl AstNode for TypeObjectField {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_OBJECT_FIELD }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeObjectField {
+    pub fn docs(&self) -> impl Iterator<Item = Doc> { self.0.children().filter_map(Doc::cast) }
+    pub fn punct_colon_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_COLON {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn ty(&self) -> Option<Type> {
+        self.0.children().filter_map(Type::cast).skip(0usize).next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypedParam(SyntaxNode);
+impl AstNode for TypedParam {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPED_PARAM }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypedParam {
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != IDENT {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn punct_colon_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_COLON {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn ty(&self) -> Option<Type> {
+        self.0.children().filter_map(Type::cast).skip(0usize).next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypeUnion(SyntaxNode);
+impl AstNode for TypeUnion {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_UNION }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeUnion {
+    pub fn ty_left(&self) -> Option<Type> {
+        self.0.children().filter_map(Type::cast).skip(0usize).next()
+    }
+    pub fn op_bit_or_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != OP_BIT_OR {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn ty_right(&self) -> Option<Type> {
+        self.0.children().filter_map(Type::cast).skip(1usize).next()
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TypeParen(SyntaxNode);
+impl AstNode for TypeParen {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == TYPE_PAREN }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl TypeParen {
+    pub fn punct_paren_start_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_START {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn ty(&self) -> Option<Type> {
+        self.0.children().filter_map(Type::cast).skip(0usize).next()
+    }
+    pub fn punct_paren_end_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != PUNCT_PAREN_END {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
     }
 }

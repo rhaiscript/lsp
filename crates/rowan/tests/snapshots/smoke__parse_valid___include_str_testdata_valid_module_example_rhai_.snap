@@ -1,0 +1,76 @@
+---
+source: crates/rowan/tests/smoke.rs
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+
+---
+RHAI@0..86
+  STMT@0..34
+    ITEM@0..32
+      EXPR@0..32
+        EXPR_FN@0..32
+          KW_FN@0..2 "fn"
+          WHITESPACE@2..3 " "
+          IDENT@3..8 "hello"
+          PARAM_LIST@8..14
+            PUNCT_PAREN_START@8..9 "("
+            PARAM@9..13
+              IDENT@9..13 "name"
+            PUNCT_PAREN_END@13..14 ")"
+          EXPR_BLOCK@14..32
+            WHITESPACE@14..15 " "
+            PUNCT_BRACE_START@15..16 "{"
+            WHITESPACE@16..21 "\n    "
+            STMT@21..30
+              ITEM@21..29
+                EXPR@21..29
+                  EXPR_CALL@21..29
+                    EXPR@21..23
+                      EXPR_IDENT@21..23
+                        IDENT@21..23 "hi"
+                    ARG_LIST@23..29
+                      PUNCT_PAREN_START@23..24 "("
+                      EXPR@24..28
+                        EXPR_IDENT@24..28
+                          IDENT@24..28 "name"
+                      PUNCT_PAREN_END@28..29 ")"
+              PUNCT_SEMI@29..30 ";"
+            WHITESPACE@30..31 "\n"
+            PUNCT_BRACE_END@31..32 "}"
+    WHITESPACE@32..34 "\n\n"
+  STMT@34..86
+    ITEM@34..85
+      EXPR@34..85
+        EXPR_FN@34..85
+          KW_PRIVATE@34..41 "private"
+          WHITESPACE@41..42 " "
+          KW_FN@42..44 "fn"
+          WHITESPACE@44..45 " "
+          IDENT@45..47 "hi"
+          PARAM_LIST@47..53
+            PUNCT_PAREN_START@47..48 "("
+            PARAM@48..52
+              IDENT@48..52 "name"
+            PUNCT_PAREN_END@52..53 ")"
+          EXPR_BLOCK@53..85
+            WHITESPACE@53..54 " "
+            PUNCT_BRACE_START@54..55 "{"
+            WHITESPACE@55..60 "\n    "
+            STMT@60..83
+              ITEM@60..82
+                EXPR@60..82
+                  EXPR_CALL@60..82
+                    EXPR@60..65
+                      EXPR_IDENT@60..65
+                        IDENT@60..65 "print"
+                    ARG_LIST@65..82
+                      PUNCT_PAREN_START@65..66 "("
+                      EXPR@66..81
+                        EXPR_LIT@66..81
+                          LIT@66..81
+                            LIT_STR@66..81 "`hello ${name}`"
+                      PUNCT_PAREN_END@81..82 ")"
+              PUNCT_SEMI@82..83 ";"
+            WHITESPACE@83..84 "\n"
+            PUNCT_BRACE_END@84..85 "}"
+    WHITESPACE@85..86 "\n"
+

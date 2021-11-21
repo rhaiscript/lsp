@@ -152,7 +152,7 @@ ExprReturn =
   'return' Expr?
 
 ExprFn =
-  'fn' 'ident' ParamList body:ExprBlock
+  'private'? 'fn' 'ident' ParamList body:ExprBlock
 
 ExprImport =
   'import' Expr ('as' 'ident')?
@@ -184,3 +184,96 @@ PatTuple =
 
 PatIdent =
   'ident'
+
+RhaiDef =
+  DefStmt*
+
+DefStmt =
+  ';'
+| DefItem ';'?
+
+DefItem =
+  Doc*
+  Def
+
+Def =
+  DefModule
+| DefImport
+| DefConst
+| DefFn
+| DefOp
+| DefType
+
+DefModule =
+  'static'? 'module' ( 'ident' | 'lit_str' )?
+
+DefImport =
+  'import' 'lit_str' ('as' 'ident')?
+
+DefConst =
+  'const' 'ident' (':' ty:Type)?
+
+DefLet =
+  'const' 'ident' (':' ty:Type)?
+
+DefOp =
+  op_token:'ident'
+  (
+    'ident'
+    | op:(
+        '||' | '&&'
+      | '==' | '!=' | '<=' | '>=' | '<' | '>'
+      | '+' | '*' | '**' | '-' | '/' | '%' | '<<' | '>>' | '^' | '|' | '&'
+      | '=' | '+=' | '/=' | '*=' | '**=' | '%=' | '>>=' | '<<=' | '-=' | '|=' | '&=' | '^='
+      | '.'
+    )
+  )
+  TypeList (':' ty:Type)?
+
+DefType = ty_token:'ident' 'ident' '=' ty:Type
+
+DefFn =
+  'fn'
+  'ident'
+  TypedParamList
+  (':' ty:Type)?
+
+Type =
+  TypeIdent
+| TypeLit
+| TypeObject
+| TypeVoid
+| TypeArray
+| TypeUnknown
+
+TypeIdent = 'ident'
+
+TypeLit = Lit
+
+TypeObject =
+  '#{'
+  (TypeObjectField (',' TypeObjectField)* ','?)?
+  '}'
+
+TypeObjectField =
+  Doc*
+  ('ident' | Lit) ':' ty:Type
+
+TypedParamList =
+  '(' (TypedParam (',' TypedParam)* ','?)? ')'
+
+TypedParam =
+  'ident' ':' ty:Type
+
+TypeList = 
+  '(' (fist_ty:Type (',' more_ty:Type)* ','?)? ')'
+
+TypeUnion = ty_left:Type '|' ty_right:Type
+
+TypeParen = '(' ty:Type ')'
+
+TypeVoid = 'void'
+
+TypeUnknown = '?'
+
+TypeArray = '[' fist_ty:Type (',' more_ty:Type)* ','? ']'

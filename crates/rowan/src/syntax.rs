@@ -81,7 +81,7 @@ pub enum SyntaxKind {
     // endregion
 
     // region: Reserved keywords
-    // We don't do anything with these yet.
+    // We might not do anything with these yet.
     #[token("var")]
     KW_VAR,
     #[token("static")]
@@ -172,6 +172,9 @@ pub enum SyntaxKind {
     PUNCT_BRACE_START,
     #[token("}")]
     PUNCT_BRACE_END,
+
+    #[token("?")]
+    PUNCT_QUESTION_MARK, // Used only for types.
 
     #[token("+")]
     OP_ADD,
@@ -373,6 +376,30 @@ pub enum SyntaxKind {
     EXPORT_IDENT,
     PAT_TUPLE,
     PAT_IDENT,
+    RHAI_DEF,
+    DEF_STMT,
+    DEF_ITEM,
+    DEF,
+    DEF_MODULE,
+    DEF_IMPORT,
+    DEF_CONST,
+    DEF_FN,
+    DEF_OP,
+    DEF_TYPE,
+    TYPE,
+    DEF_LET,
+    TYPE_LIST,
+    TYPED_PARAM_LIST,
+    TYPE_IDENT,
+    TYPE_LIT,
+    TYPE_OBJECT,
+    TYPE_VOID,
+    TYPE_ARRAY,
+    TYPE_UNKNOWN,
+    TYPE_OBJECT_FIELD,
+    TYPED_PARAM,
+    TYPE_UNION,
+    TYPE_PAREN,
     // endregion
 
     // A marker to safely cast between u16 and syntax kinds.
@@ -384,7 +411,13 @@ impl SyntaxKind {
     /// Whether the syntax kind is a reserved keyword.
     #[must_use]
     pub fn is_reserved_keyword(&self) -> bool {
-        self >= &SyntaxKind::KW_VAR && self < &SyntaxKind::KW_NIL
+        self >= &SyntaxKind::KW_VAR && self <= &SyntaxKind::KW_NIL
+    }
+
+    /// Whether the syntax kind belongs in a definition file.
+    #[must_use]
+    pub fn is_def(&self) -> bool {
+        self >= &SyntaxKind::RHAI_DEF && self <= &SyntaxKind::DEF_FN
     }
 }
 

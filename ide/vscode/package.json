@@ -131,7 +131,7 @@
   "main": "./dist/extension.js",
   "scripts": {
     "vscode:prepublish": "yarn --ignore-engines build",
-    "build:ext": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "build:ext": "js-yaml syntax/rhai.tmLanguage.yaml > syntax/rhai.tmLanguage.json && esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --minify",
     "build": "yarn build:ext"
   },
   "dependencies": {
@@ -149,6 +149,7 @@
     "@types/vscode": "^1.44.0",
     "@types/which": "^2.0.1",
     "esbuild": "^0.13.2",
+    "js-yaml": "^4.1.0",
     "ts-node": "^8.10.2",
     "typescript": "^4.0.5"
   }

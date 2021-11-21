@@ -1,0 +1,533 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Septh/tmlanguage/master/tmLanguage.schema.json
+name: Rhai
+version: v1.0.0
+fileTypes:
+  - rhai
+uuid: 8d2d4261-3030-40b8-a837-08e1625c612b
+scopeName: source.rhai
+information_for_contributors:
+  - "aster: galaster@foxmail.com"
+  - "schungx: schungx@live.com"
+  - "tamasfe: me@tamasfe.dev"
+patterns:
+  - include: "#comments"
+  - include: "#definitions"
+  - include: "#expressions"
+  - include: "#keywords"
+  - include: "#punctuation"
+repository:
+  definitions:
+    patterns:
+      - include: "#import"
+      - include: "#module-definition"
+      - include: "#const-definition"
+      - include: "#fn-definition"
+      - include: "#operator-definition"
+      - include: "#type-definition"
+  import:
+    match: import.*
+    name: import.meta.rhai
+    captures:
+      "0":
+        patterns:
+          - name: keyword.control.import.rhai
+            match: \bimport\b
+          - name: keyword.control.as.rhai
+            match: \bas\b
+          - include: "#literal-string"
+          - include: "#namespace-definition"
+  comments:
+    patterns:
+      - name: comment.block.documentation.rhai
+        begin: /\*\*(?![/|\*])
+        end: \*/
+        captures:
+          "0":
+            name: punctuation.definition.comment.block.documentation.rhai
+        patterns:
+          - include: "#comments"
+      - name: comment.block.rhai
+        begin: /\*
+        end: \*/
+        captures:
+          "0":
+            name: punctuation.definition.comment.block.rhai
+        patterns:
+          - include: "#comments"
+      - name: comment.line.documentation.rhai
+        match: (///)[^/].*$\n?
+        captures:
+          "1":
+            name: punctuation.definition.comment.documentation.rhai
+      - name: comment.line.double-slash.rhai
+        match: (//).*$\n?
+        captures:
+          "1":
+            name: punctuation.definition.comment.double-slash.rhai
+      - name: comment.line.shebang.rhai
+        match: ^(#!).*$\n?
+        captures:
+          "1":
+            name: punctuation.definition.comment.rhai
+  module-definition:
+    match: (static|module).*
+    captures:
+      "0":
+        patterns:
+          - name: keyword.control.static.rhai
+            match: \bstatic\b
+          - name: keyword.control.module.rhai
+            match: \bmodule\b
+          - name: keyword.control.as.rhai
+            match: \bas\b
+          - include: "#literal-string"
+          - include: "#namespace-definition"
+  const-definition:
+    begin: (const)\s*([A-Za-z_][0-9A-Za-z_]*)\s*(\:)?
+    end: (?=;)|(?=\})|(?=\))
+    beginCaptures:
+      "1":
+        patterns:
+          - name: storage.type.rhai
+            match: \bconst\b
+      "2":
+        patterns:
+          - include: "#const-ident"
+      "3":
+        patterns:
+          - include: "#types"
+    patterns:
+      - include: "#types"
+  fn-definition:
+    match: (fn)\s*([^\(]*)(\([^\)]*\))\s*(\:(?:\n|.)*)?(?!\{)
+    captures:
+      "1":
+        name: storage.type.function.rhai
+      "2":
+        patterns:
+          - name: entity.name.function.rhai
+            match: "[A-Za-z_][0-9A-Za-z_]*"
+      "3":
+        patterns:
+          - include: "#parameter-list"
+      "4":
+        patterns:
+          - include: "#types"
+  operator-definition:
+    begin: (op)\s*([^\(]*)(\([^\)]*\))\s*(\:)?
+    end: (?=;)|(?=\})|(?=\))
+    beginCaptures:
+      "1":
+        name: storage.type.operator.rhai
+      "2":
+        name: keyword.other.operator.overload.rhai
+      "3":
+        patterns:
+          - include: "#parameter-list-types"
+      "4":
+        patterns:
+          - include: "#types"
+    patterns:
+      - include: "#types"
+  type-definition:
+    begin: (type)\s*([A-Za-z_][0-9A-Za-z_]*)\s*(=)
+    end: (?=;)|(?=\Z)
+    beginCaptures:
+      "1":
+        name: storage.type.operator.rhai
+      "2":
+        name: entity.name.type.other.rhai
+    patterns:
+      - include: "#types"
+  namespace-definition:
+    patterns:
+      - name: entity.name.namespace.rhai
+        match: "[A-Za-z_][0-9A-Za-z_]*"
+      - name: punctuation.separator.namespace.rhai
+        match: "::"
+  namespace-access:
+    match: ([A-Za-z_][0-9A-Za-z_]*)(::)
+    captures:
+      "1":
+        patterns:
+          - name: entity.name.namespace.rhai
+            match: "[A-Za-z_][0-9A-Za-z_]*"
+      "2":
+        patterns:
+          - name: punctuation.separator.namespace.rhai
+            match: "::"
+  let-ident:
+    patterns:
+      - name: variable.language.this.rhai
+        match: \bthis\b
+      - name: variable.other.readwrite.rhai
+        match: "[A-Za-z_][0-9A-Za-z_]*"
+
+  const-ident:
+    name: variable.other.constant.rhai
+    match: "[A-Za-z_][0-9A-Za-z_]*"
+  op:
+    patterns:
+      - name: keyword.operator.logical.rhai
+        match: |-
+          (?x)  !(?!=) 
+            | &&
+            | \|\|
+      - name: keyword.operator.assignment.rhai
+        match: (?x)  =(?![=>])
+      - name: keyword.operator.assignment.augmented.rhai
+        match: |-
+          (?x)  %=
+            | &=
+            | \*\*=
+            | (?<!\*)\*=
+            | \+=
+            | -=
+            | /= 
+            | \^=
+            | \|=
+            | <<=
+            | >>=
+      - name: keyword.operator.bitwise.rhai
+        match: |-
+          (?x)  <<
+            | >>
+            | & 
+            | \^
+            | \|
+      - name: keyword.operator.relational.rhai
+        match: |-
+          (?x)  <= |
+            >= |
+            <(?!-) |
+            (?<!-)>
+      - name: keyword.operator.comparison.rhai
+        match: |-
+          (?x)  ==(?!=) |
+            !=(?!=)
+      - name: keyword.operator.arithmetic.rhai
+        match: |-
+          (?x)  / |
+            % |
+            \*\* |
+            \*(?!\)) |
+            \+(?!\+) |
+            -(?![>-])
+      - name: keyword.operator.accessor.rhai punctuation.accessor.rhai
+        match: \.(?!\.)
+      - name: punctuation.separator.switch.case.rhai
+        match: =>
+      - name: invalid.illegal.operator.rhai
+        match: (\(\*|\*\)|\+\+|--|\.\.+|~|#(?!{)|@|\$(?!{)|->|<-|===|!==|\:=|\:\:<)
+  parameter-list-types:
+    # Parameter list but only containing types.
+    begin: \(
+    beginCaptures:
+      "0":
+        name: punctuation.definition.parameters.begin.rhai
+    end: \)
+    endCaptures:
+      "0":
+        name: punctuation.definition.parameters.end.rhai
+    patterns:
+      - include: "#types"
+      - name: punctuation.separator.parameter.function.rhai
+        match: \,
+  parameter-list:
+    begin: \||\(
+    beginCaptures:
+      "0":
+        name: punctuation.definition.parameters.begin.rhai
+    end: \||\)
+    endCaptures:
+      "0":
+        name: punctuation.definition.parameters.end.rhai
+    patterns:
+      - name: meta.type.annotation.rhai
+        match: (:\s*[^,]*)
+        captures:
+          "0":
+            patterns:
+              - include: "#types"
+      - name: variable.language.this.rhai
+        match: \bthis\b      
+      - name: variable.parameter.function.rhai
+        match: "[A-Za-z_][0-9A-Za-z_]*"
+      - name: punctuation.separator.parameter.function.rhai
+        match: \,
+  types:
+    patterns:
+      - name: meta.object.type.rhai
+        begin: "#\\{"
+        end: \}
+        patterns:
+          - include: "#comments"
+          - name: meta.field.declaration.rhai
+            begin: '([A-Za-z_][0-9A-Za-z_]*|([0-9]+)|("[^"]*")|(''[^'']*'')):'
+            end: (?=;|,|\})
+            beginCaptures:
+              "0":
+                name: meta.definition.property.rhai variable.object.property.rhai
+            patterns:
+              - include: "#comments"
+              - include: "#types"
+      - name: variable.language.this.rhai
+        match: \bthis\b
+      - name: storage.type.rhai
+        match: \bvoid\b          
+      - name: entity.name.type.primitive.rhai
+        match: \b(\(\)|array|map|bool|decimal|char|string|timestamp|Fn)\b
+      - name: entity.name.type.numeric.rhai
+        match: \b(u8|i8|u16|i16|u32|i32|u64|i64|f32|f64|decimal)\b
+      - name: entity.name.type.unknown.rhai
+        match: \?
+      - name: entity.name.type.other.rhai
+        match: "[A-Za-z_][0-9A-Za-z_]*"
+      - include: "#literals"
+
+  expressions:
+    patterns:
+      - include: "#comments"
+      - include: "#closure-expr"
+      - include: "#fn-expr"
+      - include: "#var-expr"
+      - include: "#block-expr"
+      - include: "#namespace-access"
+      - include: "#fn-call-expr"
+      - include: "#keywords"
+      - include: "#literals"
+      - include: "#let-ident"
+
+  var-expr:
+    patterns:
+      - name: meta.var.expr.rhai
+        begin: (let)\s*([A-Za-z_][0-9A-Za-z_]*)\s*(\:\s*[^=]*)?\s*(=)?\s*
+        beginCaptures:
+          "1":
+            patterns:
+              - name: storage.type.rhai
+                match: \blet\b
+          "2":
+            patterns:
+              - include: "#let-ident"
+          "3":
+            patterns:
+              - include: "#types"
+        end: (?=;)|(?=\})
+        patterns:
+          - include: "#expressions"
+      - name: meta.var.expr.rhai
+        begin: (const)\s*([A-Za-z_][0-9A-Za-z_]*)\s*(:\s*.*)?(=)\s*
+        beginCaptures:
+          "1":
+            patterns:
+              - name: storage.type.rhai
+                match: \bconst\b
+          "2":
+            patterns:
+              - include: "#const-ident"
+          "3":
+            patterns:
+              - include: "#types"
+        end: (?=;)|(?=\})
+        patterns:
+          - include: "#expressions"
+  fn-expr:
+    patterns:
+      - name: meta.function.rhai
+        begin: (fn)\s*([^\(]*)(\([^\)]*\))\s*(\:\s*[^{]*)?(?=\{)
+        beginCaptures:
+          "1":
+            name: storage.type.function.rhai
+          "2":
+            patterns:
+              - name: entity.name.function.rhai
+                match: "[A-Za-z_][0-9A-Za-z_]*"
+          "3":
+            patterns:
+              - include: "#parameter-list"
+          "4":
+            patterns:
+              - include: "#types"
+        end: (?=;)|(?=\})
+        patterns:
+          - include: "#expressions"
+  block-expr:
+    name: meta.block.rhai
+    begin: (?<!#)\{
+    beginCaptures:
+      "0":
+        name: punctuation.definition.block.rhai
+    end: \}
+    endCaptures:
+      "0":
+        name: punctuation.definition.block.rhai
+    patterns:
+      - include: "#expressions"
+  closure-expr:
+    name: meta.closure.rhai
+    begin: (\|[^\|]*\|)\s*(\:\s*[^{]*)?
+    beginCaptures:
+      "1":
+        patterns:
+          - include: "#parameter-list"
+      "2":
+        patterns:
+          - include: "#types"
+    end: (?=\})|(?=,)|(?=;)|(?=\))
+    endCaptures:
+      "0":
+        name: punctuation.definition.block.rhai
+    patterns:
+      - include: "#expressions"
+  fn-call-expr:
+    name: meta.function-call.rhai
+    begin: ([A-Za-z_][0-9A-Za-z_]*)\s*\(
+    end: \)
+    beginCaptures:
+      "1":
+        patterns:
+          - name: entity.name.function.rhai
+            match: "[A-Za-z_][0-9A-Za-z_]*"
+    patterns:
+      - include: "#expressions"
+  literals:
+    patterns:
+      - include: "#literal-bool"
+      - include: "#literal-number"
+      - include: "#literal-object"
+      - include: "#literal-string-template"
+      - include: "#literal-string"
+
+  literal-string-template:
+    patterns:
+      - name: string.interpolated.rhai
+        begin: "`"
+        beginCaptures:
+          "0":
+            name: punctuation.definition.string.begin.rhai
+        end: "`"
+        endCaptures:
+          "0":
+            name: punctuation.definition.string.end.rhai
+        patterns:
+          - name: meta.template.expression.rhai
+            begin: (?!<\\)\$\{
+            beginCaptures:
+              "0":
+                name: punctuation.definition.template-expression.begin.rhai
+            end: \}
+            endCaptures:
+              "0":
+                name: punctuation.definition.template-expression.end.rhai
+            patterns:
+              - include: "#expressions"
+          - include: "#str-content"
+
+  literal-string:
+    patterns:
+      - name: string.quoted.single.rhai
+        match: ('([^'\\]|\\([tnr'\\]|x\h{2}|u\h{4}|U\h{8}))')
+        patterns:
+          - match: \\([tnr'\\]|x\h{2}|u\h{4}|U\h{8})
+            name: constant.character.escape.rhai
+      - name: string.quoted.double.rhai
+        begin: (")
+        beginCaptures:
+          "1":
+            name: punctuation.definition.string.begin.rhai
+        end: (")
+        endCaptures:
+          "1":
+            name: punctuation.definition.string.end.rhai
+        patterns:
+          - include: "#str-content"
+          - name: invalid.illegal.newline.rhai
+            match: (?<!\\)\n
+          - name: constant.character.escape.newline.rhai punctuation.separator.continuation
+            match: \\\n
+
+  str-content:
+    patterns:
+      - name: constant.character.escape.rhai
+        match: \\(x[\da-fA-F]{2}|u[\da-fA-F]{4}|U[\da-fA-F]{8}|t|r|n|\\)
+      - name: invalid.illegal.escape.rhai
+        match: \\[^xuUtrn\\\n]
+
+  literal-object:
+    name: meta.object-literal.rhai
+    begin: "#\\{"
+    beginCaptures:
+      "0": { name: punctuation.definition.block.rhai }
+    end: \}
+    endCaptures:
+      "0": { name: punctuation.definition.block.rhai }
+    patterns:
+      - include: "#comments"
+      - include: "#object-field"
+  object-field:
+    name: meta.object.field.rhai
+    begin: "([^:]+)(:)"
+    beginCaptures:
+      "1":
+        name: meta.object-literal.key.rhai
+    end: (?=\})|(?=,)
+    patterns:
+      - include: "#expressions"
+
+  literal-number:
+    patterns:
+      - include: "#number-float"
+      - include: "#number-hex"
+      - include: "#number-oct"
+      - include: "#number-bin"
+      - include: "#number-dec"
+  number-dec:
+    name: constant.numeric.rhai
+    match: \b[1-9][_0-9]*\b
+  number-bin:
+    name: constant.numeric.rhai
+    match: \b0b[0-1][_0-1]*\b
+  number-oct:
+    name: constant.numeric.rhai
+    match: \b0o[0-7][0-7]*\b
+  number-hex:
+    name: constant.numeric.rhai
+    match: \b0x[0-9a-fA-F][_0-9a-fA-F]*\b
+  number-float:
+    name: constant.numeric.rhai
+    match: \b[0-9][0-9_]*(\.[0-9_]+)?([eE][+-]?[0-9_]+)?\b
+
+  literal-bool:
+    patterns:
+      - name: constant.language.boolean.true.rhai
+        match: \btrue\b
+      - name: constant.language.boolean.false.rhai
+        match: \bfalse\b
+
+  keywords:
+    patterns:
+      - name: storage.type.rhai
+        match: \b(const|let|static|fn|void)\b
+      - name: keyword.control.flow.rhai
+        match: \b(return)\b
+      - name: keyword.control.conditional.rhai
+        match: \b(if|else|switch)\b
+      - name: keyword.control.try-catch.rhai
+        match: \b(throw|try|catch)\b
+      - name: keyword.control.loop.rhai
+        match: \b(for|in|loop|do|while|until|break|continue)\b
+      - name: variable.language.this.rhai
+        match: \bthis\b
+      - name: keyword.control.import.rhai
+        match: \b(import|export|as)\b
+      - name: keyword.other.visibility.rhai
+        match: \b(private)\b
+  punctuation:
+    patterns:
+      - name: punctuation.terminator.statement.rhai
+        match: ";"
+      - name: meta.delimiter.comma.rhai
+        match: ","
+      - name: punctuation.separator.namespace-access.rhai
+        match: "::"

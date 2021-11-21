@@ -14,6 +14,7 @@ pub(crate) fn token_name(token: &str) -> &'static str {
         "#{" => "PUNCT_MAP_START",
         "{" => "PUNCT_BRACE_START",
         "}" => "PUNCT_BRACE_END",
+        "?" => "PUNCT_QUESTION_MARK",
         "+" => "OP_ADD",
         "-" => "OP_SUB",
         "*" => "OP_MUL",

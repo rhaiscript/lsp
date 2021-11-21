@@ -158,6 +158,10 @@ impl<'src> Context<'src> {
         self.statement_closed = v;
     }
 
+    pub fn slice(&self) -> &str {
+        self.lexer.slice()
+    }
+
     fn add_error_inner(&mut self, error: ParseErrorKind, eat: bool) {
         const MAX_SAME_ERROR: usize = 1;
 
@@ -177,22 +181,17 @@ impl<'src> Context<'src> {
 
         // Escape hatch in case of infinite loops or recursions.
         //
-        // If an error happens at least MAX_SAME_ERROR times,
+        // If an error happens at the same location at least MAX_SAME_ERROR times,
         // we will surely eat the current token.
-        //
-        // This does not defend against alternating errors though,
-        // if that happens we must check for position equality instead.
-        let same_error_count = self.errors.iter().rev().take_while(|e| err == **e).count();
+        let same_error_count =  self.errors.iter().rev().take_while(|e| err.range == e.range).count();
 
-        // Adding the same error is generally pointless.
-        if same_error_count == 0 {
-            self.errors.push(err);
-        }
+        self.errors.push(err);
 
-        let eat = eat || same_error_count >= MAX_SAME_ERROR;
+        let eat = eat || (same_error_count + 1) >= MAX_SAME_ERROR;
 
         if eat {
             self.eat();
         }
     }
+
 }

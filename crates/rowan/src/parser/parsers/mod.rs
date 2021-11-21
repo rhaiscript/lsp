@@ -102,17 +102,20 @@ macro_rules! expect_token_eat_error {
     };
 }
 
+pub mod def;
+pub mod ty;
+
 impl<'src> super::Parser<'src> {
-    /// Parse Rhai code with [`parse_file`], and finish the parser.
+    /// Parse Rhai code with [`parse_rhai`], and finish the parser.
     pub fn parse(mut self) -> super::Parse {
-        self.execute(parse_file);
+        self.execute(parse_rhai);
         self.finish()
     }
 }
 
 /// Parse a Rhai file.
 #[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
-pub fn parse_file(ctx: &mut Context) {
+pub fn parse_rhai(ctx: &mut Context) {
     ctx.start_node(RHAI);
     if let Some(SHEBANG) = ctx.token() {
         parse_shebang(ctx);
@@ -146,8 +149,8 @@ pub fn parse_shebang(ctx: &mut Context) {
 /// Parse a statement.
 #[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
 pub fn parse_stmt(ctx: &mut Context) {
-    let token = require_token!(ctx);
     ctx.start_node(STMT);
+    let token = require_token!(ctx in node);
     ctx.set_statement_closed(false);
 
     if token == T![";"] {
@@ -233,7 +236,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
                 }
             }
         }
-        T!["fn"] => {
+        T!["fn"] | T!["private"] => {
             parse_expr_fn(ctx);
             ctx.finish_node();
             return;
@@ -321,7 +324,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             parse_expr_try(ctx);
             ctx.finish_node();
             return;
-        },
+        }
         T!["{"] => {
             parse_expr_block(ctx);
             if let Some(t) = ctx.token() {
@@ -531,6 +534,10 @@ pub fn parse_expr_block(ctx: &mut Context) {
 #[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
 pub fn parse_expr_fn(ctx: &mut Context) {
     ctx.start_node(EXPR_FN);
+
+    if let Some(T!["private"]) = ctx.token() {
+        ctx.eat();
+    }
 
     expect_token_eat_error!(ctx in node, T!["fn"]);
     expect_token!(ctx in node, T!["ident"]);

@@ -1,0 +1,95 @@
+---
+source: crates/rowan/tests/smoke.rs
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+
+---
+RHAI_DEF@0..521
+  COMMENT_LINE@0..49 "// This file declares ..."
+  WHITESPACE@49..50 "\n"
+  COMMENT_LINE@50..52 "//"
+  WHITESPACE@52..53 "\n"
+  COMMENT_LINE@53..141 "// The contained defi ..."
+  WHITESPACE@141..142 "\n"
+  COMMENT_LINE@142..144 "//"
+  WHITESPACE@144..145 "\n"
+  COMMENT_LINE@145..229 "// The name of the mo ..."
+  WHITESPACE@229..230 "\n"
+  COMMENT_LINE@230..232 "//"
+  WHITESPACE@232..233 "\n"
+  COMMENT_LINE@233..272 "// Cannot contain ope ..."
+  WHITESPACE@272..273 "\n"
+  DEF_STMT@273..288
+    DEF_ITEM@273..287
+      DEF@273..287
+        DEF_MODULE@273..287
+          KW_MODULE@273..279 "module"
+          WHITESPACE@279..280 " "
+          LIT_STR@280..287 "\"hello\""
+    PUNCT_SEMI@287..288 ";"
+  WHITESPACE@288..290 "\n\n"
+  DEF_STMT@290..462
+    DEF_ITEM@290..461
+      DOC@290..305
+        COMMENT_LINE_DOC@290..305 "/// Says hello."
+      WHITESPACE@305..306 "\n"
+      DOC@306..309
+        COMMENT_LINE_DOC@306..309 "///"
+      WHITESPACE@309..310 "\n"
+      DOC@310..328
+        COMMENT_LINE_DOC@310..328 "/// Example usage:"
+      WHITESPACE@328..329 "\n"
+      DOC@329..340
+        COMMENT_LINE_DOC@329..340 "/// ```rhai"
+      WHITESPACE@340..341 "\n"
+      DOC@341..373
+        COMMENT_LINE_DOC@341..373 "/// import \"hello\" as ..."
+      WHITESPACE@373..374 "\n"
+      DOC@374..420
+        COMMENT_LINE_DOC@374..420 "/// greetings::hello( ..."
+      WHITESPACE@420..421 "\n"
+      DOC@421..428
+        COMMENT_LINE_DOC@421..428 "/// ```"
+      WHITESPACE@428..429 "\n"
+      DOC@429..432
+        COMMENT_LINE_DOC@429..432 "///"
+      WHITESPACE@432..433 "\n"
+      DEF@433..461
+        DEF_FN@433..461
+          KW_FN@433..435 "fn"
+          WHITESPACE@435..436 " "
+          IDENT@436..441 "hello"
+          TYPED_PARAM_LIST@441..455
+            PUNCT_PAREN_START@441..442 "("
+            TYPED_PARAM@442..454
+              IDENT@442..446 "name"
+              PUNCT_COLON@446..447 ":"
+              TYPE@447..454
+                WHITESPACE@447..448 " "
+                TYPE_IDENT@448..454
+                  IDENT@448..454 "string"
+            PUNCT_PAREN_END@454..455 ")"
+          PUNCT_COLON@455..456 ":"
+          TYPE@456..461
+            WHITESPACE@456..457 " "
+            TYPE_VOID@457..461
+              KW_VOID@457..461 "void"
+    PUNCT_SEMI@461..462 ";"
+  WHITESPACE@462..464 "\n\n"
+  DEF_STMT@464..520
+    DEF_ITEM@464..519
+      DOC@464..492
+        COMMENT_LINE_DOC@464..492 "/// A default name to ..."
+      WHITESPACE@492..493 "\n"
+      DEF@493..519
+        DEF_CONST@493..519
+          KW_CONST@493..498 "const"
+          WHITESPACE@498..499 " "
+          IDENT@499..511 "DEFAULT_NAME"
+          PUNCT_COLON@511..512 ":"
+          TYPE@512..519
+            WHITESPACE@512..513 " "
+            TYPE_IDENT@513..519
+              IDENT@513..519 "string"
+    PUNCT_SEMI@519..520 ";"
+  WHITESPACE@520..521 "\n"
+
