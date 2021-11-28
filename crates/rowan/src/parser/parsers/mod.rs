@@ -1114,7 +1114,8 @@ fn parse_lit(ctx: &mut Context) {
 
 // Binding powers based on C and python (**) operator precedence.
 impl SyntaxKind {
-    fn prefix_binding_power(self) -> Option<u8> {
+    #[must_use]
+    pub fn prefix_binding_power(self) -> Option<u8> {
         let bp = match self {
             T!["+"] | T!["-"] | T!["!"] => 24,
             _ => return None,
@@ -1123,7 +1124,8 @@ impl SyntaxKind {
         Some(bp)
     }
 
-    fn infix_binding_power(self) -> Option<(u8, u8)> {
+    #[must_use]
+    pub fn infix_binding_power(self) -> Option<(u8, u8)> {
         let bp = match self {
             T!["+="]
             | T!["="]
@@ -1155,7 +1157,8 @@ impl SyntaxKind {
         Some(bp)
     }
 
-    fn postfix_binding_power(self) -> Option<u8> {
+    #[must_use]
+    pub fn postfix_binding_power(self) -> Option<u8> {
         let bp = match self {
             T!["["] | T!["("] => 25,
             _ => return None,

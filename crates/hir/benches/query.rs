@@ -1,5 +1,4 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use itertools::Itertools;
 use pprof::criterion::{Output, PProfProfiler};
 use rhai_hir::{Hir, Module, Symbol};
 use rhai_rowan::parser::Parser;
@@ -36,7 +35,7 @@ fn bench(c: &mut Criterion) {
     let mut hir = Hir::new();
 
     for (name, syntax) in modules {
-        hir.add_module_from_syntax(&name, &syntax);
+        hir.add_source(&name, &syntax);
     }
 
     const MIN_SYMBOLS: usize = 10;

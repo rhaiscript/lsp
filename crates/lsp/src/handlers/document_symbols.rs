@@ -6,7 +6,7 @@ use crate::{
 };
 
 use super::*;
-use rhai_hir::{symbol::ObjectSymbol, Module, Scope, Type};
+use rhai_hir::{symbol::ObjectSymbol, Hir, Scope, Type};
 use rhai_rowan::{
     ast::{AstNode, ExprFn, Rhai},
     syntax::{SyntaxElement, SyntaxKind},
@@ -32,42 +32,40 @@ pub(crate) async fn document_symbols(
         None => return Ok(None),
     };
 
-    let module = match w.hir.get_module(p.text_document.uri.as_str()) {
-        Some(m) => m,
+    let source = match w.hir.source_for(&p.text_document.uri) {
+        Some(s) => s,
         None => return Ok(None),
     };
+
+    // TODO: include the source only instead of the entire module.
+    let root_scope = w.hir[w.hir[source].module].scope;
 
     Ok(Some(DocumentSymbolResponse::Nested(collect_symbols(
         &doc.mapper,
         &rhai,
-        module,
-        module.root_scope,
+        &w.hir,
+        root_scope,
     ))))
 }
 
-fn collect_symbols(
-    mapper: &Mapper,
-    rhai: &Rhai,
-    module: &Module,
-    scope: Scope,
-) -> Vec<DocumentSymbol> {
+fn collect_symbols(mapper: &Mapper, rhai: &Rhai, hir: &Hir, scope: Scope) -> Vec<DocumentSymbol> {
     let mut document_symbols = Vec::new();
 
-    let scope_symbols = module[scope]
+    let scope_symbols = hir[scope]
         .symbols
         .iter()
-        .map(|sym| (*sym, &module[*sym]))
+        .map(|sym| (*sym, &hir[*sym]))
         .chain(
-            module[scope]
+            hir[scope]
                 .hoisted_symbols
                 .iter()
-                .map(|sym| (*sym, &module[*sym])),
+                .map(|sym| (*sym, &hir[*sym])),
         );
 
     for (symbol, symbol_data) in scope_symbols {
         let syntax = symbol_data
-            .syntax
-            .and_then(|s| s.text_range)
+            .source
+            .text_range
             .map(|range| rhai.syntax().covering_element(range))
             .and_then(SyntaxElement::into_node);
 
@@ -95,13 +93,13 @@ fn collect_symbols(
                         .range(ident.text_range())
                         .unwrap_or_default()
                         .into_lsp(),
-                    detail: Some(signature_of(module, rhai, symbol)),
-                    children: Some(collect_symbols(mapper, rhai, module, f.scope)),
+                    detail: Some(signature_of(hir, rhai, symbol)),
+                    children: Some(collect_symbols(mapper, rhai, hir, f.scope)),
                     tags: None,
                 });
             }
             rhai_hir::symbol::SymbolKind::Block(block) => {
-                document_symbols.extend(collect_symbols(mapper, rhai, module, block.scope));
+                document_symbols.extend(collect_symbols(mapper, rhai, hir, block.scope));
             }
             rhai_hir::symbol::SymbolKind::Decl(decl) => {
                 let syntax = match syntax {
@@ -140,15 +138,15 @@ fn collect_symbols(
                     detail: None,
                     children: match decl
                         .value_scope
-                        .map(|s| &module[s])
-                        .and_then(|s| s.symbols.first().map(|s| &module[*s]))
+                        .map(|s| &hir[s])
+                        .and_then(|s| s.symbols.first().map(|s| &hir[*s]))
                     {
                         Some(v) => match &v.kind {
                             rhai_hir::symbol::SymbolKind::Closure(closure) => {
-                                match closure.expr.map(|s| &module[s]) {
+                                match closure.expr.map(|s| &hir[s]) {
                                     Some(exp) => match &exp.kind {
                                         rhai_hir::symbol::SymbolKind::Block(block) => {
-                                            Some(collect_symbols(mapper, rhai, module, block.scope))
+                                            Some(collect_symbols(mapper, rhai, hir, block.scope))
                                         }
                                         _ => None,
                                     },
@@ -156,7 +154,7 @@ fn collect_symbols(
                                 }
                             }
                             rhai_hir::symbol::SymbolKind::Object(object) => {
-                                Some(collect_object_fields(mapper, rhai, module, object))
+                                Some(collect_object_fields(mapper, rhai, hir, object))
                             }
                             _ => None,
                         },
@@ -175,18 +173,18 @@ fn collect_symbols(
 fn collect_object_fields(
     mapper: &Mapper,
     rhai: &Rhai,
-    module: &Module,
+    hir: &Hir,
     obj: &ObjectSymbol,
 ) -> Vec<DocumentSymbol> {
     obj.fields
         .iter()
         .filter_map(|(name, field)| {
-            let ident_range = match field.property_syntax.and_then(|s| s.text_range) {
+            let ident_range = match field.property_syntax.text_range {
                 Some(r) => r,
                 None => return None,
             };
 
-            let range = match field.field_syntax.and_then(|s| s.text_range) {
+            let range = match field.field_syntax.text_range {
                 Some(r) => r,
                 None => return None,
             };
@@ -198,13 +196,13 @@ fn collect_object_fields(
                 range: mapper.range(range).unwrap_or_default().into_lsp(),
                 selection_range: mapper.range(ident_range).unwrap_or_default().into_lsp(),
                 detail: None,
-                children: match field.value.map(|s| &module[s]) {
+                children: match field.value.map(|s| &hir[s]) {
                     Some(v) => match &v.kind {
                         rhai_hir::symbol::SymbolKind::Closure(closure) => {
-                            match closure.expr.map(|s| &module[s]) {
+                            match closure.expr.map(|s| &hir[s]) {
                                 Some(exp) => match &exp.kind {
                                     rhai_hir::symbol::SymbolKind::Block(block) => {
-                                        Some(collect_symbols(mapper, rhai, module, block.scope))
+                                        Some(collect_symbols(mapper, rhai, hir, block.scope))
                                     }
                                     _ => None,
                                 },
@@ -212,7 +210,7 @@ fn collect_object_fields(
                             }
                         }
                         rhai_hir::symbol::SymbolKind::Object(object) => {
-                            Some(collect_object_fields(mapper, rhai, module, object))
+                            Some(collect_object_fields(mapper, rhai, hir, object))
                         }
                         _ => None,
                     },

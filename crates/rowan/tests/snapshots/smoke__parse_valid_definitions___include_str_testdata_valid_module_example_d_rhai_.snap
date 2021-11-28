@@ -4,30 +4,29 @@ expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
 RHAI_DEF@0..434
-  COMMENT_LINE@0..66 "// This file declares ..."
-  WHITESPACE@66..67 "\n"
-  COMMENT_LINE@67..69 "//"
-  WHITESPACE@69..70 "\n"
-  COMMENT_LINE@70..173 "// The path to the rh ..."
-  WHITESPACE@173..174 "\n"
-  COMMENT_LINE@174..264 "// where `module-file ..."
-  WHITESPACE@264..265 "\n"
-  COMMENT_LINE@265..267 "//"
-  WHITESPACE@267..268 "\n"
-  COMMENT_LINE@268..338 "// The items defined  ..."
-  WHITESPACE@338..339 "\n"
-  COMMENT_LINE@339..341 "//"
-  WHITESPACE@341..342 "\n"
-  COMMENT_LINE@342..381 "// Cannot contain ope ..."
-  WHITESPACE@381..382 "\n"
-  DEF_STMT@382..408
-    DEF_ITEM@382..407
-      DEF@382..407
-        DEF_MODULE@382..407
-          KW_MODULE@382..388 "module"
-          WHITESPACE@388..389 " "
-          LIT_STR@389..407 "\"./module-example\""
-    PUNCT_SEMI@407..408 ";"
+  DEF_MODULE_DECL@0..407
+    COMMENT_LINE@0..66 "// This file declares ..."
+    WHITESPACE@66..67 "\n"
+    COMMENT_LINE@67..69 "//"
+    WHITESPACE@69..70 "\n"
+    COMMENT_LINE@70..173 "// The path to the rh ..."
+    WHITESPACE@173..174 "\n"
+    COMMENT_LINE@174..264 "// where `module-file ..."
+    WHITESPACE@264..265 "\n"
+    COMMENT_LINE@265..267 "//"
+    WHITESPACE@267..268 "\n"
+    COMMENT_LINE@268..338 "// The items defined  ..."
+    WHITESPACE@338..339 "\n"
+    COMMENT_LINE@339..341 "//"
+    WHITESPACE@341..342 "\n"
+    COMMENT_LINE@342..381 "// Cannot contain ope ..."
+    WHITESPACE@381..382 "\n"
+    DEF_MODULE@382..407
+      KW_MODULE@382..388 "module"
+      WHITESPACE@388..389 " "
+      LIT_STR@389..407 "\"./module-example\""
+  DEF_STMT@407..407
+  PUNCT_SEMI@407..408 ";"
   WHITESPACE@408..410 "\n\n"
   DEF_STMT@410..433
     DEF_ITEM@410..432

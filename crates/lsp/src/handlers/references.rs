@@ -24,10 +24,10 @@ pub(crate) async fn references(
         None => return Ok(None),
     };
 
-    let module = match w.hir.get_module(uri.as_str()) {
-        Some(m) => m,
-        None => return Ok(None),
-    };
+    // let module = match w.hir.get_module(uri.as_str()) {
+    //     Some(m) => m,
+    //     None => return Ok(None),
+    // };
 
     let elem = doc
         .parse
@@ -38,7 +38,8 @@ pub(crate) async fn references(
         return Ok(None);
     }
 
-    let target_symbol = module
+    let target_symbol = w
+        .hir
         .symbols()
         .find(|(_, symbol)| symbol.has_selection_range(elem.text_range()));
 
@@ -52,9 +53,9 @@ pub(crate) async fn references(
         let mut locations = references
             .iter()
             .filter_map(|&symbol| {
-                module[symbol]
-                    .syntax
-                    .and_then(|syntax| syntax.text_range)
+                w.hir[symbol]
+                    .source
+                    .text_range
                     .and_then(|range| doc.mapper.range(range).map(LspExt::into_lsp))
             })
             .map(|range: Range| Location {
@@ -65,8 +66,8 @@ pub(crate) async fn references(
 
         if p.context.include_declaration {
             if let Some(range) = data
-                .syntax
-                .and_then(|syntax| syntax.text_range)
+                .source
+                .text_range
                 .and_then(|range| doc.mapper.range(range).map(LspExt::into_lsp))
             {
                 locations.push(Location {

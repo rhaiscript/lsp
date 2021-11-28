@@ -17,8 +17,8 @@ pub mod hir;
 pub mod module;
 pub mod scope;
 pub mod symbol;
-pub mod syntax;
 pub mod ty;
+pub mod source;
 
 pub type IndexMap<K, V> = indexmap::IndexMap<K, V, ahash::RandomState>;
 pub type IndexSet<V> = indexmap::IndexSet<V, ahash::RandomState>;

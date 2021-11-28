@@ -1,10 +1,9 @@
 #![allow(dead_code)]
 use std::mem;
 
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Type {
+    Module,
     Int,
     Float,
     Bool,
@@ -23,6 +22,7 @@ pub enum Type {
 impl core::fmt::Display for Type {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Type::Module => f.write_str("module")?,
             Type::Int => f.write_str("int")?,
             Type::Float => f.write_str("float")?,
             Type::Bool => f.write_str("bool")?,
@@ -195,18 +195,18 @@ impl Default for Type {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Object {
     pub fields: Vec<(String, Type)>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Array {
     pub item_types: Box<Type>,
     pub known_items: Vec<Type>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Function {
     pub is_closure: bool,
     pub params: Vec<(String, Type)>,

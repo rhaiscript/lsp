@@ -1500,6 +1500,43 @@ impl AstNode for RhaiDef {
     }
     fn syntax(&self) -> SyntaxNode { self.0.clone() }
 }
+impl RhaiDef {
+    pub fn def_module_decl(&self) -> Option<DefModuleDecl> {
+        self.0
+            .children()
+            .filter_map(DefModuleDecl::cast)
+            .skip(0usize)
+            .next()
+    }
+    pub fn statements(&self) -> impl Iterator<Item = DefStmt> {
+        self.0.children().filter_map(DefStmt::cast)
+    }
+}
+#[derive(Debug, Clone)]
+pub struct DefModuleDecl(SyntaxNode);
+impl AstNode for DefModuleDecl {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool { syntax.kind() == DEF_MODULE_DECL }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> SyntaxNode { self.0.clone() }
+}
+impl DefModuleDecl {
+    pub fn docs(&self) -> impl Iterator<Item = Doc> { self.0.children().filter_map(Doc::cast) }
+    pub fn def_module(&self) -> Option<DefModule> {
+        self.0
+            .children()
+            .filter_map(DefModule::cast)
+            .skip(0usize)
+            .next()
+    }
+}
 #[derive(Debug, Clone)]
 pub struct DefStmt(SyntaxNode);
 impl AstNode for DefStmt {
@@ -1536,7 +1573,6 @@ impl DefItem {
 }
 #[derive(Debug, Clone)]
 pub enum Def {
-    Module(DefModule),
     Import(DefImport),
     Const(DefConst),
     Fn(DefFn),
@@ -1553,7 +1589,6 @@ impl AstNode for Def {
         }
         let first_child = syntax.first_child()?;
         match first_child.kind() {
-            DEF_MODULE => Some(Self::Module(DefModule::cast(first_child)?)),
             DEF_IMPORT => Some(Self::Import(DefImport::cast(first_child)?)),
             DEF_CONST => Some(Self::Const(DefConst::cast(first_child)?)),
             DEF_FN => Some(Self::Fn(DefFn::cast(first_child)?)),
@@ -1564,7 +1599,6 @@ impl AstNode for Def {
     }
     fn syntax(&self) -> SyntaxNode {
         match self {
-            Self::Module(t) => t.syntax().parent().unwrap(),
             Self::Import(t) => t.syntax().parent().unwrap(),
             Self::Const(t) => t.syntax().parent().unwrap(),
             Self::Fn(t) => t.syntax().parent().unwrap(),

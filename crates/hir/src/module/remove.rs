@@ -1,6 +1,34 @@
 use super::*;
 
 impl Module {
+    pub fn remove_source(&mut self, source: Source) {
+        self.sources.remove(source);
+
+        let source_symbols = self.symbols.iter().filter_map(|(symbol, symbol_data)| {
+            if symbol_data.source == source {
+                Some(symbol)
+            } else {
+                None
+            }
+        }).collect::<Vec<_>>();
+
+        for symbol in source_symbols {
+            self.remove_symbol(symbol);
+        }
+
+        let source_scopes = self.scopes.iter().filter_map(|(scope, scope_data)| {
+            if scope_data.source == source {
+                Some(scope)
+            } else {
+                None
+            }
+        }).collect::<Vec<_>>();
+
+        for scope in source_scopes {
+            self.remove_scope(scope);
+        }
+    }
+
     pub fn remove_scope(&mut self, scope: Scope) {
         if let Some(s) = self.scopes.remove(scope) {
             for symbol in s.symbols {

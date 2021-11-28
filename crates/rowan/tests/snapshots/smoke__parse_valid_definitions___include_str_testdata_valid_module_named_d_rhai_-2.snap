@@ -4,28 +4,27 @@ expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
 RHAI_DEF@0..521
-  COMMENT_LINE@0..49 "// This file declares ..."
-  WHITESPACE@49..50 "\n"
-  COMMENT_LINE@50..52 "//"
-  WHITESPACE@52..53 "\n"
-  COMMENT_LINE@53..141 "// The contained defi ..."
-  WHITESPACE@141..142 "\n"
-  COMMENT_LINE@142..144 "//"
-  WHITESPACE@144..145 "\n"
-  COMMENT_LINE@145..229 "// The name of the mo ..."
-  WHITESPACE@229..230 "\n"
-  COMMENT_LINE@230..232 "//"
-  WHITESPACE@232..233 "\n"
-  COMMENT_LINE@233..272 "// Cannot contain ope ..."
-  WHITESPACE@272..273 "\n"
-  DEF_STMT@273..288
-    DEF_ITEM@273..287
-      DEF@273..287
-        DEF_MODULE@273..287
-          KW_MODULE@273..279 "module"
-          WHITESPACE@279..280 " "
-          LIT_STR@280..287 "\"hello\""
-    PUNCT_SEMI@287..288 ";"
+  DEF_MODULE_DECL@0..287
+    COMMENT_LINE@0..49 "// This file declares ..."
+    WHITESPACE@49..50 "\n"
+    COMMENT_LINE@50..52 "//"
+    WHITESPACE@52..53 "\n"
+    COMMENT_LINE@53..141 "// The contained defi ..."
+    WHITESPACE@141..142 "\n"
+    COMMENT_LINE@142..144 "//"
+    WHITESPACE@144..145 "\n"
+    COMMENT_LINE@145..229 "// The name of the mo ..."
+    WHITESPACE@229..230 "\n"
+    COMMENT_LINE@230..232 "//"
+    WHITESPACE@232..233 "\n"
+    COMMENT_LINE@233..272 "// Cannot contain ope ..."
+    WHITESPACE@272..273 "\n"
+    DEF_MODULE@273..287
+      KW_MODULE@273..279 "module"
+      WHITESPACE@279..280 " "
+      LIT_STR@280..287 "\"hello\""
+  DEF_STMT@287..287
+  PUNCT_SEMI@287..288 ";"
   WHITESPACE@288..290 "\n\n"
   DEF_STMT@290..462
     DEF_ITEM@290..461

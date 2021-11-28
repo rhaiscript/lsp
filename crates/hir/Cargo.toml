@@ -11,14 +11,14 @@ enum-as-inner = "0.3.3"
 indexmap = { version = "1.7.0", features = ["serde"] }
 itertools = "0.10.1"
 rhai-rowan = { path = "../rowan" }
-serde = "1"
-serde_json = "1"
 slotmap = { version = "1.0.6", features = ["serde"] }
 static_assertions = "1.1.0"
 thiserror = "1.0.30"
 tracing = "0.1.29"
 strum_macros = "0.22.0"
 strsim = "0.10.0"
+url = "2.2.2"
+salsa = "0.16.1"
 
 [dev-dependencies]
 insta = "1.8.0"

@@ -13,8 +13,7 @@ pub(crate) async fn goto_declaration(
     let uri = p.text_document_position_params.text_document.uri;
     let pos = p.text_document_position_params.position;
 
-    goto_target(context, uri, pos)
-        .map(|result| result.map(GotoDeclarationResponse::Link))
+    goto_target(context, uri, pos).map(|result| result.map(GotoDeclarationResponse::Link))
 }
 
 // Technically the same, as goto_declaration, but a different function for consistency.
@@ -27,12 +26,11 @@ pub(crate) async fn goto_definition(
     let uri = p.text_document_position_params.text_document.uri;
     let pos = p.text_document_position_params.position;
 
-    goto_target(context, uri, pos)
-        .map(|result| result.map(GotoDefinitionResponse::Link))
+    goto_target(context, uri, pos).map(|result| result.map(GotoDefinitionResponse::Link))
 }
 
 fn goto_target(
-    mut context: Context<World>, 
+    mut context: Context<World>,
     uri: Url,
     pos: Position,
 ) -> Result<Option<Vec<LocationLink>>, Error> {
@@ -48,24 +46,24 @@ fn goto_target(
         None => return Ok(None),
     };
 
-    let module = match w.hir.get_module(uri.as_str()) {
-        Some(m) => m,
+    let source = match w.hir.source_for(&uri) {
+        Some(s) => s,
         None => return Ok(None),
     };
 
-    let target_symbol = module
-        .symbol_selection_at(offset, true)
-        .map(|s| (s, &module[s]));
+    let target_symbol = w
+        .hir
+        .symbol_selection_at(source, offset, true)
+        .map(|s| (s, &w.hir[s]));
 
     if let Some((_, data)) = target_symbol {
-        let origin_selection_range = data.selection_syntax.and_then(|s| {
-            s.text_range
-                .and_then(|range| doc.mapper.range(range).map(LspExt::into_lsp))
-        });
+        let origin_selection_range = data
+            .selection_or_text_range()
+            .and_then(|range| doc.mapper.range(range).map(LspExt::into_lsp));
         match &data.kind {
             rhai_hir::symbol::SymbolKind::Reference(r) => {
                 if let Some(ReferenceTarget::Symbol(target)) = &r.target {
-                    let target_data = &module[*target];
+                    let target_data = &w.hir[*target];
 
                     let target_range = match target_data
                         .text_range()

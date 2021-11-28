@@ -16,6 +16,8 @@ impl<'src> Parser<'src> {
 pub fn parse_rhai_def(ctx: &mut Context) {
     ctx.start_node(RHAI_DEF);
 
+    parse_def_module_decl(ctx);
+
     ctx.set_statement_closed(true);
     while ctx.token().is_some() {
         if !ctx.statement_closed() {
@@ -25,6 +27,26 @@ pub fn parse_rhai_def(ctx: &mut Context) {
         parse_def_stmt(ctx);
     }
     ctx.set_statement_closed(true);
+
+    ctx.finish_node();
+}
+
+
+#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+pub fn parse_def_module_decl(ctx: &mut Context) {
+    ctx.start_node(DEF_MODULE_DECL);
+
+    // Parse doc comments if any.
+    while matches!(
+        require_token!(ctx in node),
+        COMMENT_BLOCK_DOC | COMMENT_LINE_DOC
+    ) {
+        ctx.start_node(DOC);
+        ctx.eat();
+        ctx.finish_node();
+    }
+
+    parse_def_module(ctx);
 
     ctx.finish_node();
 }
@@ -79,7 +101,6 @@ pub fn parse_def(ctx: &mut Context) {
     let token = require_token!(ctx in node);
 
     match token {
-        T!["static"] | T!["module"] => parse_def_module(ctx),
         T!["import"] => parse_def_import(ctx),
         T!["const"] => parse_def_const(ctx),
         T!["let"] => parse_def_let(ctx),

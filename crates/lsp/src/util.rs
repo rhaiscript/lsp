@@ -1,17 +1,17 @@
-use rhai_hir::{Module, Symbol, Type};
+use rhai_hir::{Hir, Symbol, Type};
 use rhai_rowan::{
     ast::{AstNode, ExprFn, Rhai},
     syntax::SyntaxElement,
 };
 
-pub fn documentation_for(module: &Module, rhai: &Rhai, symbol: Symbol, signature: bool) -> String {
+pub fn documentation_for(hir: &Hir, rhai: &Rhai, symbol: Symbol, signature: bool) -> String {
     let sig = if signature {
-        signature_of(module, rhai, symbol).wrap_rhai_markdown()
+        signature_of(hir, rhai, symbol).wrap_rhai_markdown()
     } else {
         String::new()
     };
 
-    let sym_data = &module[symbol];
+    let sym_data = &hir[symbol];
 
     if let Some(docs) = sym_data.docs() {
         return format!(
@@ -29,12 +29,12 @@ pub fn documentation_for(module: &Module, rhai: &Rhai, symbol: Symbol, signature
 }
 
 /// Format signatures and definitions of symbols.
-pub fn signature_of(module: &Module, rhai: &Rhai, symbol: Symbol) -> String {
-    if !module.contains_symbol(symbol) {
+pub fn signature_of(hir: &Hir, rhai: &Rhai, symbol: Symbol) -> String {
+    if hir.symbol(symbol).is_none() {
         return String::new();
     }
 
-    let sym_data = &module[symbol];
+    let sym_data = &hir[symbol];
 
     match &sym_data.kind {
         rhai_hir::symbol::SymbolKind::Fn(f) => sym_data

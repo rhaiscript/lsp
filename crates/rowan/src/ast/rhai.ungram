@@ -186,7 +186,8 @@ PatIdent =
   'ident'
 
 RhaiDef =
-  DefStmt*
+  DefModuleDecl
+  statements:DefStmt*
 
 DefStmt =
   ';'
@@ -196,9 +197,15 @@ DefItem =
   Doc*
   Def
 
-Def =
+// Handled separately so that
+// module declarations are only valid at the beginning
+// of the files.
+DefModuleDecl =
+  Doc*
   DefModule
-| DefImport
+
+Def =
+  DefImport
 | DefConst
 | DefFn
 | DefOp
@@ -208,7 +215,7 @@ DefModule =
   'static'? 'module' ( 'ident' | 'lit_str' )?
 
 DefImport =
-  'import' 'lit_str' ('as' 'ident')?
+  'import' 'lit_str' ('as' alias:'ident')?
 
 DefConst =
   'const' 'ident' (':' ty:Type)?

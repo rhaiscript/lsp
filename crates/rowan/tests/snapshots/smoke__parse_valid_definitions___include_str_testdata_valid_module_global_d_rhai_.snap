@@ -3,26 +3,27 @@ source: crates/rowan/tests/smoke.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 
 ---
-RHAI_DEF@0..272
-  COMMENT_LINE@0..75 "// This module extend ..."
-  WHITESPACE@75..76 "\n"
-  COMMENT_LINE@76..147 "// Any module can be  ..."
-  WHITESPACE@147..148 "\n"
-  COMMENT_LINE@148..150 "//"
-  WHITESPACE@150..151 "\n"
-  COMMENT_LINE@151..209 "// All definitions ar ..."
-  WHITESPACE@209..210 "\n"
-  COMMENT_LINE@210..212 "//"
-  WHITESPACE@212..213 "\n"
-  COMMENT_LINE@213..252 "// Cannot contain ope ..."
-  WHITESPACE@252..253 "\n"
-  DEF_STMT@253..270
-    DEF_ITEM@253..269
-      DEF@253..269
-        DEF_MODULE@253..269
-          KW_MODULE@253..259 "module"
-          WHITESPACE@259..260 " "
-          IDENT@260..269 "my_module"
-    PUNCT_SEMI@269..270 ";"
-  WHITESPACE@270..272 "\n\n"
+RHAI_DEF@0..291
+  DEF_MODULE_DECL@0..288
+    COMMENT_LINE@0..87 "// This module extend ..."
+    WHITESPACE@87..88 "\n"
+    COMMENT_LINE@88..159 "// Any module can be  ..."
+    WHITESPACE@159..160 "\n"
+    COMMENT_LINE@160..162 "//"
+    WHITESPACE@162..163 "\n"
+    COMMENT_LINE@163..221 "// All definitions ar ..."
+    WHITESPACE@221..222 "\n"
+    COMMENT_LINE@222..224 "//"
+    WHITESPACE@224..225 "\n"
+    COMMENT_LINE@225..264 "// Cannot contain ope ..."
+    WHITESPACE@264..265 "\n"
+    DEF_MODULE@265..288
+      KW_STATIC@265..271 "static"
+      WHITESPACE@271..272 " "
+      KW_MODULE@272..278 "module"
+      WHITESPACE@278..279 " "
+      IDENT@279..288 "my_module"
+  DEF_STMT@288..288
+  PUNCT_SEMI@288..289 ";"
+  WHITESPACE@289..291 "\n\n"
 

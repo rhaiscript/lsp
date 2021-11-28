@@ -34,37 +34,7 @@ impl super::Stmt {
 impl super::Item {
     #[must_use]
     pub fn docs_content(&self) -> String {
-        let mut s = String::new();
-
-        for doc in self.docs() {
-            if let Some(token) = doc.token() {
-                match token.kind() {
-                    SyntaxKind::COMMENT_BLOCK_DOC => {
-                        s += token
-                            .text()
-                            .strip_prefix("/**")
-                            .unwrap_or_else(|| token.text())
-                            .strip_suffix("*/")
-                            .unwrap_or_else(|| token.text())
-                            .trim();
-                    }
-                    SyntaxKind::COMMENT_LINE_DOC => {
-                        let t = token
-                            .text()
-                            .strip_prefix("///")
-                            .unwrap_or_else(|| token.text());
-                        let t = t.strip_prefix(' ').unwrap_or(t);
-                        let t = t.trim_end();
-                        s += t;
-                        s += "\n";
-                    }
-                    _ => unreachable!(),
-                }
-            }
-        }
-
-        s.truncate(s.trim_end().len());
-        s
+        docs_to_string(self.docs())
     }
 }
 
@@ -212,4 +182,100 @@ impl super::ExprTry {
     pub fn catch_params(&self) -> Option<ParamList> {
         self.syntax().children().find_map(ParamList::cast)
     }
+}
+
+impl super::DefStmt {
+    pub fn item(&self) -> Option<super::DefItem> {
+        self.syntax().children().find_map(super::DefItem::cast)
+    }
+}
+
+impl super::DefImport {
+    #[must_use]
+    pub fn alias(&self) -> Option<SyntaxToken> {
+        self.syntax()
+            .children_with_tokens()
+            .filter_map(SyntaxElement::into_token)
+            .find(|el| el.kind() == T!["ident"])
+    }
+}
+
+impl super::DefItem {
+    #[must_use]
+    pub fn docs_content(&self) -> String {
+        docs_to_string(self.docs())
+    }
+}
+
+impl super::DefModuleDecl {
+    #[must_use]
+    pub fn docs_content(&self) -> String {
+        docs_to_string(self.docs())
+    }
+}
+
+impl super::DefModule {
+    #[must_use]
+    pub fn kw_static_token(&self) -> Option<SyntaxToken> {
+        self.syntax().children_with_tokens().find_map(|t| {
+            if t.kind() != T!["static"] {
+                return None;
+            }
+            t.into_token()
+        })
+    }
+
+    #[must_use]
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        self.syntax().children_with_tokens().find_map(|t| {
+            if t.kind() != T!["ident"] {
+                return None;
+            }
+            t.into_token()
+        })
+    }
+
+    #[must_use]
+    pub fn lit_str_token(&self) -> Option<SyntaxToken> {
+        self.syntax().children_with_tokens().find_map(|t| {
+            if t.kind() != T!["lit_str"] {
+                return None;
+            }
+            t.into_token()
+        })
+    }
+}
+
+fn docs_to_string(docs: impl Iterator<Item = super::Doc>) -> String {
+    let mut s = String::new();
+
+    for doc in docs {
+        if let Some(token) = doc.token() {
+            match token.kind() {
+                SyntaxKind::COMMENT_BLOCK_DOC => {
+                    s += token
+                        .text()
+                        .strip_prefix("/**")
+                        .unwrap_or_else(|| token.text())
+                        .strip_suffix("*/")
+                        .unwrap_or_else(|| token.text())
+                        .trim();
+                }
+                SyntaxKind::COMMENT_LINE_DOC => {
+                    let t = token
+                        .text()
+                        .strip_prefix("///")
+                        .unwrap_or_else(|| token.text());
+                    let t = t.strip_prefix(' ').unwrap_or(t);
+                    let t = t.trim_end();
+                    s += t;
+                    s += "\n";
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+
+    s.truncate(s.trim_end().len());
+    s
 }

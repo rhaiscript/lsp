@@ -27,9 +27,9 @@ pub async fn publish_diagnostics(mut context: Context<World>, uri: Url) {
 
     syntax_diagnostics(&mut diagnostics, &doc.parse, &doc.mapper);
 
-    if let Some(m) = w.hir.get_module(uri.as_str()) {
-        hir_diagnostics(&mut diagnostics, m, &doc.mapper);
-    };
+    // if let Some(m) = w.hir.get_module(uri.as_str()) {
+    //     hir_diagnostics(&mut diagnostics, m, &doc.mapper);
+    // };
 
     drop(w);
 
@@ -79,7 +79,6 @@ fn syntax_diagnostics(diagnostics: &mut Vec<Diagnostic>, parse: &Parse, mapper: 
 }
 
 fn hir_diagnostics(diagnostics: &mut Vec<Diagnostic>, module: &Module, mapper: &Mapper) {
-    // TODO: uncomment when proper resolution is implemented.
     // diagnostics.extend(
     //     module
     //         .collect_errors()

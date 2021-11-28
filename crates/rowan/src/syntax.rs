@@ -377,6 +377,7 @@ pub enum SyntaxKind {
     PAT_TUPLE,
     PAT_IDENT,
     RHAI_DEF,
+    DEF_MODULE_DECL,
     DEF_STMT,
     DEF_ITEM,
     DEF,

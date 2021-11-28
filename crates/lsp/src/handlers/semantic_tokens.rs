@@ -50,14 +50,13 @@ pub(crate) async fn semantic_tokens(
         None => return Err(Error::new("document not found")),
     };
 
-    let module = match w.hir.get_module(p.text_document.uri.as_str()) {
-        Some(m) => m,
+    let source = match w.hir.source_for(&p.text_document.uri) {
+        Some(s) => s,
         None => return Ok(None),
     };
-
     let mut builder = SemanticTokensBuilder::new(&doc.mapper);
 
-    for (_, symbol_data) in module.symbols() {
+    for (_, symbol_data) in w.hir.symbols().filter(|(_, s)| s.source.is_part_of(source)) {
         match &symbol_data.kind {
             rhai_hir::symbol::SymbolKind::Fn(_) => {
                 if let Some(range) = symbol_data.selection_range() {
@@ -81,7 +80,7 @@ pub(crate) async fn semantic_tokens(
                 if let (Some(range), Some(ReferenceTarget::Symbol(target))) =
                     (symbol_data.selection_range(), &r.target)
                 {
-                    match &module[*target].kind {
+                    match &w.hir[*target].kind {
                         rhai_hir::symbol::SymbolKind::Fn(_) => {
                             builder.add_token(range, SemanticTokenKind::Function, &[]);
                         }
