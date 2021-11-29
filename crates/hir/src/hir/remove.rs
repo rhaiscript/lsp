@@ -1,44 +1,55 @@
-use super::*;
+use crate::{
+    module::ModuleKind,
+    scope::Scope,
+    source::Source,
+    symbol::{ReferenceTarget, Symbol, SymbolData, SymbolKind},
+    Hir,
+};
 
-impl Module {
+impl Hir {
     pub fn remove_source(&mut self, source: Source) {
         self.sources.remove(source);
 
-        let source_symbols = self.symbols.iter().filter_map(|(symbol, symbol_data)| {
-            if symbol_data.source == source {
-                Some(symbol)
-            } else {
-                None
-            }
-        }).collect::<Vec<_>>();
+        let symbols_to_remove = self
+            .symbols
+            .iter()
+            .filter(|(_, symbol_data)| symbol_data.source.is(source))
+            .map(|(s, _)| s)
+            .collect::<Vec<_>>();
 
-        for symbol in source_symbols {
+        for symbol in symbols_to_remove {
             self.remove_symbol(symbol);
         }
 
-        let source_scopes = self.scopes.iter().filter_map(|(scope, scope_data)| {
-            if scope_data.source == source {
-                Some(scope)
-            } else {
-                None
-            }
-        }).collect::<Vec<_>>();
-
-        for scope in source_scopes {
-            self.remove_scope(scope);
-        }
+        self.modules.retain(|module, module_data| {
+            module_data.kind == ModuleKind::Static
+                || self
+                    .sources
+                    .iter()
+                    .any(|(_, source_data)| source_data.module == module)
+        });
     }
 
-    pub fn remove_scope(&mut self, scope: Scope) {
+    fn remove_scope(&mut self, scope: Scope) {
         if let Some(s) = self.scopes.remove(scope) {
             for symbol in s.symbols {
+                self.remove_symbol(symbol);
+            }
+
+            for symbol in s.hoisted_symbols {
                 self.remove_symbol(symbol);
             }
         }
     }
 
-    pub fn remove_symbol(&mut self, symbol: Symbol) {
+    fn remove_symbol(&mut self, symbol: Symbol) {
         if let Some(s) = self.symbols.remove(symbol) {
+            if self.scopes.contains_key(s.parent_scope) {
+                self.scope_mut(s.parent_scope).symbols.shift_remove(&symbol);
+                self.scope_mut(s.parent_scope)
+                    .hoisted_symbols
+                    .remove(&symbol);
+            }
             self.remove_symbol_data(s);
         }
     }
@@ -203,6 +214,9 @@ impl Module {
             SymbolKind::Try(t) => {
                 self.remove_scope(t.try_scope);
                 self.remove_scope(t.catch_scope);
+            }
+            SymbolKind::Op(_op) => {
+                // TODO
             }
         }
     }

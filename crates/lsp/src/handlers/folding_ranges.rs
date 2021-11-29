@@ -9,7 +9,7 @@ pub(crate) async fn folding_ranges(
 ) -> Result<Option<Vec<FoldingRange>>, Error> {
     let p = params.required()?;
 
-    let w = context.world().lock().unwrap();
+    let w = context.world().read();
 
     let doc = match w.documents.get(&p.text_document.uri) {
         Some(d) => d,

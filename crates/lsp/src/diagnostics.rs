@@ -2,7 +2,7 @@
 
 use lsp_async_stub::{Context, RequestWriter};
 use lsp_types::{notification, Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams, Url};
-use rhai_hir::Module;
+use rhai_hir::Hir;
 use rhai_rowan::parser::Parse;
 use tracing::error;
 
@@ -13,7 +13,7 @@ use crate::{
 };
 
 pub async fn publish_diagnostics(mut context: Context<World>, uri: Url) {
-    let w = context.world().lock().unwrap();
+    let w = context.world().read();
 
     let doc = match w.documents.get(&uri) {
         Some(d) => d.clone(),
@@ -27,9 +27,7 @@ pub async fn publish_diagnostics(mut context: Context<World>, uri: Url) {
 
     syntax_diagnostics(&mut diagnostics, &doc.parse, &doc.mapper);
 
-    // if let Some(m) = w.hir.get_module(uri.as_str()) {
-    //     hir_diagnostics(&mut diagnostics, m, &doc.mapper);
-    // };
+    hir_diagnostics(&mut diagnostics, &w.hir, &uri, &doc.mapper);
 
     drop(w);
 
@@ -78,7 +76,7 @@ fn syntax_diagnostics(diagnostics: &mut Vec<Diagnostic>, parse: &Parse, mapper: 
     }));
 }
 
-fn hir_diagnostics(diagnostics: &mut Vec<Diagnostic>, module: &Module, mapper: &Mapper) {
+fn hir_diagnostics(diagnostics: &mut Vec<Diagnostic>, hir: &Hir, url: &Url, mapper: &Mapper) {
     // diagnostics.extend(
     //     module
     //         .collect_errors()

@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use rhai_hir::{Hir, Symbol, Type};
 use rhai_rowan::{
     ast::{AstNode, ExprFn, Rhai},
@@ -91,5 +93,13 @@ pub trait RhaiStringExt {
 impl<T: AsRef<str>> RhaiStringExt for T {
     fn wrap_rhai_markdown(&self) -> String {
         format!("```rhai\n{}\n```", self.as_ref().trim_end())
+    }
+}
+
+pub fn pluralize(s: &str, count: usize) -> Cow<'_, str> {
+    if count == 1 {
+        Cow::Borrowed(s)
+    } else {
+        Cow::Owned(String::from(s) + "s")
     }
 }

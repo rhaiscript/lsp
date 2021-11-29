@@ -26,7 +26,7 @@ pub struct SourceInfo {
 
 impl SourceInfo {
     #[must_use]
-    pub fn is_part_of(&self, source: Source) -> bool {
+    pub fn is(&self, source: Source) -> bool {
         self.source.map_or(false, |s| s == source)
     }
 }

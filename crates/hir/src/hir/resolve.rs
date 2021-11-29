@@ -4,7 +4,23 @@ use crate::{
 };
 
 impl Hir {
+    pub fn clear_references(&mut self) {
+        let ref_symbols = self.symbols.iter_mut();
+
+        for (_, sym_data) in ref_symbols {
+            match &mut sym_data.kind {
+                SymbolKind::Fn(f) => f.references.clear(),
+                SymbolKind::Op(f) => f.references.clear(),
+                SymbolKind::Decl(d) => d.references.clear(),
+                SymbolKind::Reference(r) => r.target = None,
+                _ => {}
+            }
+        }
+    }
+
     pub fn resolve_references(&mut self) {
+        self.clear_references();
+
         let self_ptr = self as *mut Hir;
 
         let ref_symbols = self
@@ -16,8 +32,6 @@ impl Hir {
             });
 
         for (symbol, ref_kind) in ref_symbols {
-            ref_kind.target = None;
-
             // safety: This is safe because we only operate
             //  on separate elements (declarations and refs)
             //  and we don't touch the map itself.
@@ -36,15 +50,16 @@ impl Hir {
                     match &mut vis_symbol_data.kind {
                         SymbolKind::Fn(target) => {
                             target.references.insert(symbol);
+                            ref_kind.target = Some(ReferenceTarget::Symbol(vis_symbol));
+                            break;
                         }
                         SymbolKind::Decl(target) => {
                             target.references.insert(symbol);
+                            ref_kind.target = Some(ReferenceTarget::Symbol(vis_symbol));
+                            break;
                         }
-                        _ => unreachable!(),
+                        _ => {}
                     }
-
-                    ref_kind.target = Some(ReferenceTarget::Symbol(vis_symbol));
-                    break;
                 }
             }
         }

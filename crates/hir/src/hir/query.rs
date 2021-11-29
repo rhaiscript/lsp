@@ -29,7 +29,7 @@ impl Hir {
         inclusive: bool,
     ) -> Option<Symbol> {
         self.symbols()
-            .filter(|(_, d)| d.source.is_part_of(source))
+            .filter(|(_, d)| d.source.is(source))
             .filter_map(|(sym, d)| {
                 d.source.selection_text_range.and_then(|range| {
                     if (inclusive && range.contains_inclusive(offset)) || range.contains(offset) {
@@ -46,7 +46,7 @@ impl Hir {
     #[must_use]
     pub fn symbol_at(&self, source: Source, offset: TextSize, inclusive: bool) -> Option<Symbol> {
         self.symbols()
-            .filter(|(_, d)| d.source.is_part_of(source))
+            .filter(|(_, d)| d.source.is(source))
             .filter_map(|(sym, d)| {
                 d.source.text_range.and_then(|range| {
                     if (inclusive && range.contains_inclusive(offset)) || range.contains(offset) {
@@ -63,7 +63,7 @@ impl Hir {
     #[must_use]
     pub fn scope_at(&self, source: Source, offset: TextSize, inclusive: bool) -> Option<Scope> {
         self.scopes()
-            .filter(|(_, d)| d.source.is_part_of(source))
+            .filter(|(_, d)| d.source.is(source))
             .filter_map(|(sym, d)| {
                 d.source.text_range.and_then(|range| {
                     if (inclusive && range.contains_inclusive(offset)) || range.contains(offset) {
@@ -83,18 +83,9 @@ impl Hir {
     pub fn visible_symbols_from_symbol(&self, symbol: Symbol) -> VisibleSymbols<'_> {
         VisibleSymbols {
             hir: self,
-            last_symbol: Some(symbol),
-            scope_iter: Box::new(self.visible_scope_symbols_from(symbol)),
+            scope: self[symbol].parent_scope,
+            iter: Box::new(self.visible_scope_symbols_from(symbol)),
         }
-    }
-
-    /// Finds symbols by name, useful for debugging and tests.
-    pub fn symbols_by_name<'m>(&'m self, name: &'m str) -> impl Iterator<Item = Symbol> + 'm {
-        self.symbols()
-            .filter_map(move |(s, data)| match data.name() {
-                Some(n) if n == name => Some(s),
-                _ => None,
-            })
     }
 
     #[must_use]
@@ -102,51 +93,17 @@ impl Hir {
         &self,
         source: Source,
         offset: TextSize,
+        inclusive: bool,
     ) -> VisibleSymbols<'_> {
-        let scope = match self.scope_at(source, offset, false) {
+        let scope = match self.scope_at(source, offset, inclusive) {
             Some(s) => s,
             None => self[self[source].module].scope,
         };
 
-        let scope_data = &self[scope];
-
-        if let Some((index, symbol)) =
-            scope_data.symbols.iter().enumerate().rev().find(|(_, &s)| {
-                self[s]
-                    .text_range()
-                    .map_or(false, |range| range.end() <= offset)
-            })
-        {
-            return VisibleSymbols {
-                hir: self,
-                last_symbol: Some(*symbol),
-                scope_iter: Box::new(self.visible_scope_symbols_from_index(scope, index)),
-            };
-        }
-
-        if let Some(parent) = scope_data.parent {
-            match parent {
-                ScopeParent::Scope(parent_scope) => {
-                    return VisibleSymbols {
-                        hir: self,
-                        last_symbol: None,
-                        scope_iter: Box::new(self.scope_symbols(parent_scope)),
-                    }
-                }
-                ScopeParent::Symbol(parent_symbol) => {
-                    return VisibleSymbols {
-                        hir: self,
-                        last_symbol: Some(parent_symbol),
-                        scope_iter: Box::new(self.visible_scope_symbols_from(parent_symbol)),
-                    };
-                }
-            }
-        }
-
         VisibleSymbols {
             hir: self,
-            last_symbol: None,
-            scope_iter: Box::new(scope_data.hoisted_symbols.iter().copied()),
+            scope,
+            iter: Box::new(self.scope_symbols_from_offset(scope, offset)),
         }
     }
 
@@ -158,6 +115,27 @@ impl Hir {
             .iter()
             .rev()
             .copied()
+            .chain(scope_data.hoisted_symbols.iter().copied())
+    }
+
+    fn scope_symbols_from_offset(
+        &self,
+        scope: Scope,
+        offset: TextSize,
+    ) -> impl Iterator<Item = Symbol> + '_ {
+        let scope_data = &self[scope];
+
+        scope_data
+            .symbols
+            .iter()
+            .rev()
+            .copied()
+            .skip_while(move |&s| {
+                self[s]
+                    .source
+                    .text_range
+                    .map_or(false, |r| r.end() >= offset)
+            })
             .chain(scope_data.hoisted_symbols.iter().copied())
     }
 
@@ -179,7 +157,6 @@ impl Hir {
 
                 !after_symbol
             })
-            .filter(move |&&sym| matches!(&self[sym].kind, SymbolKind::Decl(_) | SymbolKind::Fn(_)))
             .copied()
             .chain(
                 scope_data
@@ -188,29 +165,6 @@ impl Hir {
                     .filter(move |s| **s != symbol)
                     .copied(),
             )
-    }
-
-    fn visible_scope_symbols_from_index(
-        &self,
-        scope: Scope,
-        index: usize,
-    ) -> impl Iterator<Item = Symbol> + '_ {
-        let scope_data = &self[scope];
-
-        scope_data
-            .symbols
-            .iter()
-            .enumerate()
-            .rev()
-            .skip_while(move |(i, _)| *i > index)
-            .filter_map(move |(_, &sym)| {
-                if matches!(&self[sym].kind, SymbolKind::Decl(_) | SymbolKind::Fn(_)) {
-                    Some(sym)
-                } else {
-                    None
-                }
-            })
-            .chain(scope_data.hoisted_symbols.iter().copied())
     }
 }
 
@@ -264,39 +218,34 @@ impl Hir {
     }
 }
 
-pub struct VisibleSymbols<'m> {
-    hir: &'m Hir,
-    last_symbol: Option<Symbol>,
-    scope_iter: Box<dyn Iterator<Item = Symbol> + 'm>,
+pub struct VisibleSymbols<'h> {
+    hir: &'h Hir,
+    scope: Scope,
+    iter: Box<dyn Iterator<Item = Symbol> + 'h>,
 }
 
-impl<'m> Iterator for VisibleSymbols<'m> {
+impl<'h> Iterator for VisibleSymbols<'h> {
     type Item = Symbol;
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.scope_iter.next() {
-            s @ Some(last_symbol) => {
-                self.last_symbol = Some(last_symbol);
-                s
-            }
-            None => match self
-                .last_symbol
-                .take()
-                .and_then(|symbol| self.hir[self.hir[symbol].parent_scope].parent)
-            {
-                Some(parent) => match parent {
-                    ScopeParent::Scope(parent_scope) => {
-                        self.scope_iter = Box::new(self.hir.scope_symbols(parent_scope));
-                        self.next()
-                    }
-                    ScopeParent::Symbol(parent_symbol) => {
-                        self.scope_iter =
-                            Box::new(self.hir.visible_scope_symbols_from(parent_symbol));
-                        self.next()
-                    }
-                },
-                None => None,
-            },
-        }
+        self.iter
+            .next()
+            .or_else(|| match self.hir[self.scope].parent {
+                Some(parent) => {
+                    match parent {
+                        ScopeParent::Scope(parent_scope) => {
+                            self.scope = parent_scope;
+                            self.iter = Box::new(self.hir.scope_symbols(parent_scope));
+                        }
+                        ScopeParent::Symbol(parent_symbol) => {
+                            self.scope = self.hir[parent_symbol].parent_scope;
+                            self.iter =
+                                Box::new(self.hir.visible_scope_symbols_from(parent_symbol));
+                        }
+                    };
+                    self.next()
+                }
+                _ => None,
+            })
     }
 }

@@ -7,7 +7,7 @@ pub(crate) async fn convert_offsets(
     params: Params<ConvertOffsetsParams>,
 ) -> Result<Option<ConvertOffsetsResult>, Error> {
     let p = params.required()?;
-    let w = context.world().lock().unwrap();
+    let w = context.world().read();
     let doc = match w.documents.get(&p.uri) {
         Some(d) => d,
         None => return Ok(None),

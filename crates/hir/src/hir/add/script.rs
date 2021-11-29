@@ -787,7 +787,7 @@ impl Hir {
                             })),
                         });
 
-                        scope.add_symbol(self, symbol, false);
+                        fn_scope.add_symbol(self, symbol, false);
                     }
                 }
 

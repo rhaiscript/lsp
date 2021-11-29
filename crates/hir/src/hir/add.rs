@@ -7,6 +7,10 @@ use rhai_rowan::ast::{AstNode, Rhai, RhaiDef};
 
 impl Hir {
     pub fn add_source(&mut self, url: &Url, syntax: &SyntaxNode) {
+        if let Some(s) = self.source_of(url) {
+            self.remove_source(s);
+        }
+
         if let Some(def) = Rhai::cast(syntax.clone()) {
             let source = self.sources.insert(SourceData {
                 kind: SourceKind::Def,
@@ -14,10 +18,10 @@ impl Hir {
                 module: Module::default(),
             });
 
-            let m = self.ensure_module(ModuleKind::Dynamic(url.clone()));
-            self.source_mut(source).module = m;
+            let module = self.ensure_module(ModuleKind::Dynamic(url.clone()));
+            self.source_mut(source).module = module;
 
-            self.add_script(source, self[m].scope, &def);
+            self.add_script(source, self[module].scope, &def);
         }
 
         if let Some(def) = RhaiDef::cast(syntax.clone()) {
@@ -26,6 +30,9 @@ impl Hir {
                 url: url.clone(),
                 module: Module::default(),
             });
+
+            // Here we don't know the module and the scope until
+            // we parse the actual definition file.
 
             self.add_def(source, &def);
         }
@@ -46,17 +53,18 @@ impl Hir {
     }
 
     fn ensure_module(&mut self, kind: ModuleKind) -> Module {
+        self.ensure_static_module();
         match &kind {
-            ModuleKind::Static => {
-                self.ensure_static_module();
-                self.static_module
-            }
+            ModuleKind::Static => self.static_module,
             _ => self
                 .modules
                 .iter()
                 .find_map(|(m, data)| if data.kind == kind { Some(m) } else { None })
                 .unwrap_or_else(|| {
-                    let scope = self.scopes.insert(ScopeData::default());
+                    let scope = self.scopes.insert(ScopeData {
+                        parent: Some(ScopeParent::Scope(self[self.static_module].scope)),
+                        ..ScopeData::default()
+                    });
                     self.modules.insert(ModuleData { kind, scope })
                 }),
         }

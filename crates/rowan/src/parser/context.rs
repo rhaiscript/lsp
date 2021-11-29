@@ -163,7 +163,7 @@ impl<'src> Context<'src> {
     }
 
     fn add_error_inner(&mut self, error: ParseErrorKind, eat: bool) {
-        const MAX_SAME_ERROR: usize = 1;
+        const MAX_SIMILAR_ERROR_COUNT: usize = 10;
 
         #[cfg(not(fuzzing))]
         {
@@ -181,13 +181,13 @@ impl<'src> Context<'src> {
 
         // Escape hatch in case of infinite loops or recursions.
         //
-        // If an error happens at the same location at least MAX_SAME_ERROR times,
+        // If an error happens at the same location at least MAX_SIMILAR_ERROR_COUNT times,
         // we will surely eat the current token.
         let same_error_count =  self.errors.iter().rev().take_while(|e| err.range == e.range).count();
 
         self.errors.push(err);
 
-        let eat = eat || (same_error_count + 1) >= MAX_SAME_ERROR;
+        let eat = eat || (same_error_count + 1) >= MAX_SIMILAR_ERROR_COUNT;
 
         if eat {
             self.eat();

@@ -38,3 +38,6 @@ pub(crate) use semantic_tokens::*;
 
 mod completion;
 pub(crate) use completion::*;
+
+mod workspace;
+pub(crate) use workspace::*;

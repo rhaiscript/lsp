@@ -75,33 +75,6 @@ macro_rules! expect_token {
     };
 }
 
-/// Same as [`expect_token`], but will also eat the current token on error.
-macro_rules! expect_token_eat_error {
-    ($ctx:ident in node, $($token:tt)*) => {
-        match $ctx.token() {
-            Some($($token)*) => {
-                $ctx.eat();
-            },
-            _ => {
-                $ctx.finish_node();
-                $ctx.eat_error(ParseErrorKind::ExpectedToken($($token)*));
-                return;
-            }
-        }
-    };
-    ($ctx:ident, $($token:tt)+) => {
-        match $ctx.token() {
-            Some(t) => match t {
-                $($token)* => {
-                    $ctx.eat();
-                },
-                _ => return $ctx.eat_error(ParseErrorKind::UnexpectedEof),
-            }
-            None => return $ctx.eat_error(ParseErrorKind::UnexpectedEof),
-        }
-    };
-}
-
 pub mod def;
 pub mod ty;
 
@@ -471,7 +444,7 @@ pub fn parse_expr_lit(ctx: &mut Context) {
 pub fn parse_expr_let(ctx: &mut Context) {
     ctx.start_node(EXPR_LET);
 
-    expect_token_eat_error!(ctx in node, T!["let"]);
+    expect_token!(ctx in node, T!["let"]);
     expect_token!(ctx in node, T!["ident"]);
 
     if !matches!(ctx.token(), Some(T!["="])) {
@@ -491,7 +464,7 @@ pub fn parse_expr_let(ctx: &mut Context) {
 pub fn parse_expr_const(ctx: &mut Context) {
     ctx.start_node(EXPR_CONST);
 
-    expect_token_eat_error!(ctx in node, T!["const"]);
+    expect_token!(ctx in node, T!["const"]);
     expect_token!(ctx in node, T!["ident"]);
     expect_token!(ctx in node, T!["="]);
 
@@ -505,7 +478,7 @@ pub fn parse_expr_const(ctx: &mut Context) {
 pub fn parse_expr_block(ctx: &mut Context) {
     ctx.start_node(EXPR_BLOCK);
 
-    expect_token_eat_error!(ctx in node, T!["{"]);
+    expect_token!(ctx in node, T!["{"]);
 
     ctx.set_statement_closed(true);
     loop {
@@ -539,7 +512,7 @@ pub fn parse_expr_fn(ctx: &mut Context) {
         ctx.eat();
     }
 
-    expect_token_eat_error!(ctx in node, T!["fn"]);
+    expect_token!(ctx in node, T!["fn"]);
     expect_token!(ctx in node, T!["ident"]);
 
     parse_param_list(ctx);
@@ -552,7 +525,7 @@ pub fn parse_expr_fn(ctx: &mut Context) {
 #[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
 pub fn parse_expr_paren(ctx: &mut Context) {
     ctx.start_node(EXPR_PAREN);
-    expect_token_eat_error!(ctx in node, T!["("]);
+    expect_token!(ctx in node, T!["("]);
 
     let token = require_token!(ctx in node);
 
@@ -574,7 +547,7 @@ pub fn parse_expr_paren(ctx: &mut Context) {
 pub fn parse_expr_array(ctx: &mut Context) {
     ctx.start_node(EXPR_ARRAY);
 
-    expect_token_eat_error!(ctx in node, T!["["]);
+    expect_token!(ctx in node, T!["["]);
 
     loop {
         let token = require_token!(ctx in node);
@@ -629,7 +602,7 @@ pub fn parse_expr_closure(ctx: &mut Context) {
 pub fn parse_expr_if(ctx: &mut Context) {
     ctx.start_node(EXPR_IF);
 
-    expect_token_eat_error!(ctx in node, T!["if"]);
+    expect_token!(ctx in node, T!["if"]);
 
     parse_expr_bp(ctx, 0);
     parse_expr_block(ctx);
@@ -654,7 +627,7 @@ pub fn parse_expr_if(ctx: &mut Context) {
 pub fn parse_expr_loop(ctx: &mut Context) {
     ctx.start_node(EXPR_LOOP);
 
-    expect_token_eat_error!(ctx in node, T!["loop"]);
+    expect_token!(ctx in node, T!["loop"]);
     parse_expr_block(ctx);
 
     ctx.finish_node();
@@ -664,7 +637,7 @@ pub fn parse_expr_loop(ctx: &mut Context) {
 pub fn parse_expr_for(ctx: &mut Context) {
     ctx.start_node(EXPR_FOR);
 
-    expect_token_eat_error!(ctx in node, T!["for"]);
+    expect_token!(ctx in node, T!["for"]);
     parse_pat(ctx);
     expect_token!(ctx in node, T!["in"]);
     parse_expr(ctx);
@@ -678,7 +651,7 @@ pub fn parse_expr_for(ctx: &mut Context) {
 pub fn parse_expr_while(ctx: &mut Context) {
     ctx.start_node(EXPR_WHILE);
 
-    expect_token_eat_error!(ctx in node, T!["while"]);
+    expect_token!(ctx in node, T!["while"]);
     parse_expr(ctx);
     parse_expr_block(ctx);
 
@@ -690,7 +663,7 @@ pub fn parse_expr_while(ctx: &mut Context) {
 pub fn parse_expr_break(ctx: &mut Context) {
     ctx.start_node(EXPR_BREAK);
 
-    expect_token_eat_error!(ctx in node, T!["break"]);
+    expect_token!(ctx in node, T!["break"]);
 
     if !matches!(ctx.token(), None | Some(T!["}"] | T![";"])) {
         parse_expr(ctx);
@@ -703,7 +676,7 @@ pub fn parse_expr_break(ctx: &mut Context) {
 #[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
 pub fn parse_expr_continue(ctx: &mut Context) {
     ctx.start_node(EXPR_CONTINUE);
-    expect_token_eat_error!(ctx in node, T!["continue"]);
+    expect_token!(ctx in node, T!["continue"]);
     ctx.finish_node();
 }
 
@@ -712,7 +685,7 @@ pub fn parse_expr_continue(ctx: &mut Context) {
 pub fn parse_expr_return(ctx: &mut Context) {
     ctx.start_node(EXPR_RETURN);
 
-    expect_token_eat_error!(ctx in node, T!["return"]);
+    expect_token!(ctx in node, T!["return"]);
 
     if !matches!(ctx.token(), None | Some(T!["}"] | T![";"])) {
         parse_expr(ctx);
@@ -726,7 +699,7 @@ pub fn parse_expr_return(ctx: &mut Context) {
 pub fn parse_expr_switch(ctx: &mut Context) {
     ctx.start_node(EXPR_SWITCH);
 
-    expect_token_eat_error!(ctx in node, T!["switch"]);
+    expect_token!(ctx in node, T!["switch"]);
     parse_expr(ctx);
     parse_switch_arm_list(ctx);
 
@@ -738,7 +711,7 @@ pub fn parse_expr_switch(ctx: &mut Context) {
 pub fn parse_expr_import(ctx: &mut Context) {
     ctx.start_node(EXPR_IMPORT);
 
-    expect_token_eat_error!(ctx in node, T!["import"]);
+    expect_token!(ctx in node, T!["import"]);
     parse_expr(ctx);
 
     if matches!(ctx.token(), Some(T!["as"])) {
@@ -754,7 +727,7 @@ pub fn parse_expr_import(ctx: &mut Context) {
 pub fn parse_expr_object(ctx: &mut Context) {
     ctx.start_node(EXPR_OBJECT);
 
-    expect_token_eat_error!(ctx in node, T!["#{"]);
+    expect_token!(ctx in node, T!["#{"]);
 
     loop {
         let token = require_token!(ctx in node);
@@ -790,7 +763,7 @@ pub fn parse_expr_object(ctx: &mut Context) {
 pub fn parse_expr_export(ctx: &mut Context) {
     ctx.start_node(EXPR_EXPORT);
 
-    expect_token_eat_error!(ctx in node, T!["export"]);
+    expect_token!(ctx in node, T!["export"]);
     parse_export_target(ctx);
 
     ctx.finish_node();
@@ -801,9 +774,9 @@ pub fn parse_expr_export(ctx: &mut Context) {
 pub fn parse_expr_try(ctx: &mut Context) {
     ctx.start_node(EXPR_TRY);
 
-    expect_token_eat_error!(ctx in node, T!["try"]);
+    expect_token!(ctx in node, T!["try"]);
     parse_expr_block(ctx);
-    expect_token_eat_error!(ctx in node, T!["catch"]);
+    expect_token!(ctx in node, T!["catch"]);
     let token = require_token!(ctx in node);
 
     if token == T!["("] {
@@ -943,7 +916,7 @@ fn parse_object_field(ctx: &mut Context) {
 fn parse_switch_arm_list(ctx: &mut Context) {
     ctx.start_node(SWITCH_ARM_LIST);
 
-    expect_token_eat_error!(ctx in node, T!["{"]);
+    expect_token!(ctx in node, T!["{"]);
 
     loop {
         let token = require_token!(ctx in node);
@@ -1053,7 +1026,7 @@ fn parse_param_list(ctx: &mut Context) {
 fn parse_param(ctx: &mut Context) {
     ctx.start_node(PARAM);
 
-    expect_token_eat_error!(ctx in node, T!["ident"]);
+    expect_token!(ctx in node, T!["ident"]);
 
     ctx.finish_node();
 }
@@ -1062,7 +1035,7 @@ fn parse_param(ctx: &mut Context) {
 fn parse_arg_list(ctx: &mut Context) {
     ctx.start_node(ARG_LIST);
 
-    expect_token_eat_error!(ctx in node, T!["("]);
+    expect_token!(ctx in node, T!["("]);
 
     loop {
         let token = require_token!(ctx in node);

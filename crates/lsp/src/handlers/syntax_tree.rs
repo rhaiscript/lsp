@@ -5,7 +5,7 @@ pub(crate) async fn syntax_tree(
     params: Params<SyntaxTreeParams>,
 ) -> Result<Option<SyntaxTreeResult>, Error> {
     let p = params.required()?;
-    let w = context.world().lock().unwrap();
+    let w = context.world().read();
     let doc = match w.documents.get(&p.uri) {
         Some(d) => d,
         None => return Ok(None),

@@ -1,11 +1,12 @@
 mod add;
-pub mod query;
-pub mod resolve;
+mod query;
+mod remove;
+mod resolve;
 
 use core::ops;
 
 use crate::{
-    module::{ModuleData, ModuleKind},
+    module::ModuleData,
     scope::ScopeData,
     source::{Source, SourceData},
     symbol::*,
@@ -75,7 +76,7 @@ impl Hir {
     }
 
     #[must_use]
-    pub fn source_for(&self, url: &Url) -> Option<Source> {
+    pub fn source_of(&self, url: &Url) -> Option<Source> {
         self.sources()
             .find_map(|(s, data)| if data.url == *url { Some(s) } else { None })
     }
@@ -96,24 +97,6 @@ impl Hir {
     fn source_mut(&mut self, source: Source) -> &mut SourceData {
         self.sources.get_mut(source).unwrap()
     }
-
-    // pub fn resolve_references(&mut self) {
-    //     for (_, m) in self.modules.iter_mut() {
-    //         m.resolve_references();
-    //     }
-    // }
-
-    // pub fn resolve_references_in_module(&mut self, name: &str) {
-    //     if let Some(m) = self.modules.get_mut(name) {
-    //         m.resolve_references();
-    //     }
-    // }
-
-    // pub fn infer_types(&mut self) {
-    //     for (_, m) in self.modules.iter_mut() {
-    //         m.infer_types();
-    //     }
-    // }
 }
 
 impl ops::Index<Scope> for Hir {

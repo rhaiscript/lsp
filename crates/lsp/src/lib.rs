@@ -8,18 +8,20 @@
     clippy::cast_possible_truncation,
     clippy::cast_lossless,
     clippy::module_name_repetitions,
-    clippy::single_match_else
+    clippy::single_match_else,
+    clippy::default_trait_access,
+    clippy::missing_errors_doc
 )]
 
 use lsp_async_stub::Server;
 use lsp_types::{notification, request, Url};
 use mapper::Mapper;
+use once_cell::sync::OnceCell;
+use parking_lot::RwLock;
 use rhai_hir::Hir;
 use rhai_rowan::parser::Parse;
-use std::{
-    collections::HashMap,
-    sync::{Arc, Mutex},
-};
+use std::{collections::HashMap, sync::Arc};
+use watcher::WorkspaceWatcher;
 
 #[cfg(not(target_arch = "wasm32"))]
 #[path = "external/native/mod.rs"]
@@ -32,9 +34,12 @@ pub mod external;
 mod diagnostics;
 mod handlers;
 
+pub mod config;
+mod documents;
 pub mod lsp_ext;
 pub mod mapper;
 mod util;
+pub mod watcher;
 
 #[derive(Debug, Clone)]
 pub struct Document {
@@ -46,9 +51,10 @@ pub struct Document {
 pub struct WorldState {
     documents: HashMap<Url, Document>,
     hir: Hir,
+    watcher: OnceCell<WorkspaceWatcher>,
 }
 
-pub type World = Arc<Mutex<WorldState>>;
+pub type World = Arc<RwLock<WorldState>>;
 
 #[must_use]
 pub fn create_server() -> Server<World> {
@@ -67,11 +73,11 @@ pub fn create_server() -> Server<World> {
         .on_request::<request::Completion, _>(handlers::completion)
         .on_notification::<notification::DidOpenTextDocument, _>(handlers::document_open)
         .on_notification::<notification::DidChangeTextDocument, _>(handlers::document_change)
-        .on_notification::<notification::DidCloseTextDocument, _>(handlers::document_close)
+        .on_notification::<notification::DidChangeWorkspaceFolders, _>(handlers::workspace_folders)
         .build()
 }
 
 #[must_use]
 pub fn create_world() -> World {
-    Arc::new(Mutex::new(WorldState::default()))
+    Arc::new(RwLock::new(WorldState::default()))
 }

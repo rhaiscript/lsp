@@ -16,7 +16,7 @@ pub(crate) async fn hover(
     let uri = p.text_document_position_params.text_document.uri;
     let pos = p.text_document_position_params.position;
 
-    let w = context.world().lock().unwrap();
+    let w = context.world().read();
 
     let doc = match w.documents.get(&uri) {
         Some(d) => d,
@@ -28,7 +28,7 @@ pub(crate) async fn hover(
         None => return Ok(None),
     };
 
-    let source = match w.hir.source_for(&uri) {
+    let source = match w.hir.source_of(&uri) {
         Some(s) => s,
         None => return Ok(None),
     };

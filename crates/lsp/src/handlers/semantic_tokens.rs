@@ -43,20 +43,20 @@ pub(crate) async fn semantic_tokens(
 ) -> Result<Option<SemanticTokensResult>, Error> {
     let p = params.required()?;
 
-    let w = context.world().lock().unwrap();
+    let w = context.world().read();
 
     let doc = match w.documents.get(&p.text_document.uri) {
         Some(d) => d,
         None => return Err(Error::new("document not found")),
     };
 
-    let source = match w.hir.source_for(&p.text_document.uri) {
+    let source = match w.hir.source_of(&p.text_document.uri) {
         Some(s) => s,
         None => return Ok(None),
     };
     let mut builder = SemanticTokensBuilder::new(&doc.mapper);
 
-    for (_, symbol_data) in w.hir.symbols().filter(|(_, s)| s.source.is_part_of(source)) {
+    for (_, symbol_data) in w.hir.symbols().filter(|(_, s)| s.source.is(source)) {
         match &symbol_data.kind {
             rhai_hir::symbol::SymbolKind::Fn(_) => {
                 if let Some(range) = symbol_data.selection_range() {

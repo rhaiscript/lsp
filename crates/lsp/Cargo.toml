@@ -23,9 +23,13 @@ tracing-subscriber = { version = "0.2.25", optional = true }
 clap = { version = "3.0.0-beta.5", optional = true }
 async-ctrlc = { version = "1.2.0", features = ["stream"], optional = true }
 atty = {version = "0.2.14", optional = true}
+notify = "5.0.0-pre.13"
+figment = { version = "0.10.6", features = ["toml"] }
+parking_lot = "0.11.2"
+walkdir = "2.3.2"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-tokio = { version = "1.12.0", features = ["rt-multi-thread"] }
+tokio = { version = "1.12.0", features = ["rt-multi-thread", "fs"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = { version = "0.2", features = [

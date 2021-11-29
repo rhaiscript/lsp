@@ -1,6 +1,5 @@
 use super::*;
-use crate::mapper::{LspExt, Mapper};
-use rhai_hir::{Hir, Symbol};
+use crate::{mapper::LspExt, util::pluralize};
 
 pub(crate) async fn code_lens(
     mut context: Context<World>,
@@ -8,14 +7,14 @@ pub(crate) async fn code_lens(
 ) -> Result<Option<Vec<CodeLens>>, Error> {
     let p = params.required()?;
 
-    let w = context.world().lock().unwrap();
+    let w = context.world().read();
 
     let doc = match w.documents.get(&p.text_document.uri) {
         Some(d) => d,
         None => return Err(Error::new("document not found")),
     };
 
-    let source = match w.hir.source_for(&p.text_document.uri) {
+    let source = match w.hir.source_of(&p.text_document.uri) {
         Some(s) => s,
         None => return Ok(None),
     };
@@ -23,8 +22,8 @@ pub(crate) async fn code_lens(
     Ok(Some(
         w.hir
             .symbols()
-            .filter(|(_, d)| d.source.is_part_of(source))
-            .filter_map(|(_, data)| {
+            .filter(|(_, d)| d.source.is(source))
+            .filter_map(|(sym, data)| {
                 let r = match &data.kind {
                     rhai_hir::symbol::SymbolKind::Fn(d) => data
                         .selection_or_text_range()
@@ -47,20 +46,21 @@ pub(crate) async fn code_lens(
                     None => return None,
                 };
 
+                let mut locations = Vec::new();
+                collect_references(&w, sym, false, &mut locations);
+
                 Some(CodeLens {
                     command: Some(Command {
-                        title: format!("{} references", references.len()),
+                        title: format!(
+                            "{} {}",
+                            references.len(),
+                            pluralize("reference", references.len())
+                        ),
                         command: "editor.action.showReferences".into(),
                         arguments: Some(vec![
                             serde_json::to_value(p.text_document.uri.as_str()).unwrap(),
                             serde_json::to_value(&range.start).unwrap(),
-                            serde_json::to_value(&collect_locations(
-                                &w.hir,
-                                references.iter().copied(),
-                                &doc.mapper,
-                                &p.text_document.uri,
-                            ))
-                            .unwrap(),
+                            serde_json::to_value(&locations).unwrap(),
                         ]),
                     }),
                     data: None,
@@ -69,24 +69,4 @@ pub(crate) async fn code_lens(
             })
             .collect(),
     ))
-}
-
-fn collect_locations(
-    hir: &Hir,
-    symbols: impl Iterator<Item = Symbol>,
-    mapper: &Mapper,
-    uri: &Url,
-) -> Vec<Location> {
-    symbols
-        .filter_map(|symbol| {
-            hir[symbol]
-                .source
-                .text_range
-                .and_then(|range| mapper.range(range).map(LspExt::into_lsp))
-        })
-        .map(|range: Range| Location {
-            uri: uri.clone(),
-            range,
-        })
-        .collect::<Vec<Location>>()
 }
