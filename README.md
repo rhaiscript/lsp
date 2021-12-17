@@ -1,6 +1,8 @@
 # Rhai LSP
 
-Rhai LSP Server and IDE support.
+Experimental Rhai LSP Server and IDE support.
+
+It's incomplete and not recommended for general use yet, everything can be subject to changes.
 
 ## Requirements
 
@@ -65,4 +67,4 @@ We can only go up from here. (although it is 3 times faster than a similar LALR 
 
 To profile the parser, run `cargo bench --bench parse -- --profile-time 5`.
 
-The flame graph outputs will can found in `target/criterion/profile` afterwards.
+The flame graph outputs can be found in `target/criterion/profile` afterwards.
