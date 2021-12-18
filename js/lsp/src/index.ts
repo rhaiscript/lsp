@@ -1,5 +1,6 @@
 // @ts-ignore
-import loadRhai from "../../../crates/lsp/Cargo.toml";
+// TODO(wasm)
+// import loadRhai from "../../../crates/lsp/Cargo.toml";
 
 declare const window: any;
 
@@ -102,16 +103,17 @@ export class RhaiLsp {
    * @param {Handlers} handlers Handlers required for the server.
    */
   public static async initialize(handlers: Handlers) {
-    if (typeof RhaiLsp.lsp === "undefined") {
-      if (typeof global === "undefined") {
-        window.__rhai__ = handlers;
-      } else {
-        (global as any).__rhai__ = handlers;
-      }
+    // TODO(wasm)
+    // if (typeof RhaiLsp.lsp === "undefined") {
+    //   if (typeof global === "undefined") {
+    //     window.__rhai__ = handlers;
+    //   } else {
+    //     (global as any).__rhai__ = handlers;
+    //   }
 
-      RhaiLsp.lsp = await loadRhai();
-      RhaiLsp.lsp.initialize();
-    }
+    //   RhaiLsp.lsp = await loadRhai();
+    //   RhaiLsp.lsp.initialize();
+    // }
 
     RhaiLsp.initializing = true;
     const t = new RhaiLsp();
