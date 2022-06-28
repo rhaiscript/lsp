@@ -199,6 +199,11 @@ pub enum SyntaxKind {
     #[token("^")]
     OP_BIT_XOR,
 
+    #[token("..")]
+    OP_RANGE,
+    #[token("..=")]
+    OP_RANGE_INCLUSIVE,
+
     #[token("=")]
     OP_ASSIGN,
     #[token("+=")]

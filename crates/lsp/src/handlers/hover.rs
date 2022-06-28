@@ -1,54 +1,52 @@
-use crate::{
-    mapper::{self, LspExt},
-    util::documentation_for,
-};
+use crate::{environment::Environment, utils::documentation_for, world::World};
+use lsp_async_stub::{rpc, util::LspExt, Context, Params};
+use lsp_types::{Hover, HoverContents, HoverParams, MarkupContent, MarkupKind, Range};
 use rhai_hir::{symbol::ReferenceTarget, Hir, Symbol};
-use rhai_rowan::ast::{AstNode, Rhai};
+use rhai_rowan::{syntax::SyntaxNode, TextSize};
 
-use super::*;
-
-pub(crate) async fn hover(
-    mut context: Context<World>,
+pub(crate) async fn hover<E: Environment>(
+    context: Context<World<E>>,
     params: Params<HoverParams>,
-) -> Result<Option<Hover>, Error> {
+) -> Result<Option<Hover>, rpc::Error> {
     let p = params.required()?;
 
     let uri = p.text_document_position_params.text_document.uri;
     let pos = p.text_document_position_params.position;
 
-    let w = context.world().read();
+    let workspaces = context.workspaces.read().await;
+    let ws = workspaces.by_document(&uri);
 
-    let doc = match w.documents.get(&uri) {
-        Some(d) => d,
-        None => return Err(Error::new("document not found")),
-    };
+    let doc = ws.document(&uri)?;
 
-    let offset = match doc.mapper.offset(mapper::Position::from_lsp(pos)) {
-        Some(p) => p,
+    let offset = match doc
+        .mapper
+        .offset(lsp_async_stub::util::Position::from_lsp(pos))
+    {
+        Some(p) => p + TextSize::from(1),
         None => return Ok(None),
     };
 
-    let source = match w.hir.source_of(&uri) {
+    let source = match ws.hir.source_of(&uri) {
         Some(s) => s,
         None => return Ok(None),
     };
 
-    let rhai = match Rhai::cast(doc.parse.clone_syntax()) {
-        Some(r) => r,
-        None => return Ok(None),
-    };
-
-    let target_symbol = w
+    let target_symbol = ws
         .hir
         .symbol_selection_at(source, offset, true)
-        .map(|s| (s, &w.hir[s]));
+        .map(|s| (s, &ws.hir[s]));
 
     if let Some((symbol, data)) = target_symbol {
         let highlight_range = data
             .selection_or_text_range()
             .and_then(|range| doc.mapper.range(range).map(LspExt::into_lsp));
 
-        return Ok(hover_for_symbol(&w.hir, &rhai, highlight_range, symbol));
+        return Ok(hover_for_symbol(
+            &ws.hir,
+            &doc.parse.clone_syntax(),
+            highlight_range,
+            symbol,
+        ));
     }
 
     Ok(None)
@@ -56,7 +54,7 @@ pub(crate) async fn hover(
 
 fn hover_for_symbol(
     hir: &Hir,
-    rhai: &Rhai,
+    root: &SyntaxNode,
     highlight_range: Option<Range>,
     symbol: Symbol,
 ) -> Option<Hover> {
@@ -65,14 +63,14 @@ fn hover_for_symbol(
             Some(Hover {
                 contents: HoverContents::Markup(MarkupContent {
                     kind: MarkupKind::Markdown,
-                    value: documentation_for(hir, rhai, symbol, true),
+                    value: documentation_for(hir, root, symbol, true),
                 }),
                 range: highlight_range,
             })
         }
         rhai_hir::symbol::SymbolKind::Reference(r) => match &r.target {
             Some(ReferenceTarget::Symbol(target)) => {
-                hover_for_symbol(hir, rhai, highlight_range, *target)
+                hover_for_symbol(hir, root, highlight_range, *target)
             }
             _ => None,
         },

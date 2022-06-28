@@ -1,29 +1,30 @@
 use crate::{
-    mapper::{self, LspExt},
-    WorldState,
+    environment::Environment,
+    world::{Workspace, World},
 };
-
-use super::*;
+use lsp_async_stub::{rpc, util::LspExt, Context, Params};
+use lsp_types::{Location, ReferenceParams};
 use rhai_hir::Symbol;
 use rhai_rowan::{syntax::SyntaxKind, TextRange, TextSize};
 
-pub(crate) async fn references(
-    mut context: Context<World>,
+pub(crate) async fn references<E: Environment>(
+    context: Context<World<E>>,
     params: Params<ReferenceParams>,
-) -> Result<Option<Vec<Location>>, Error> {
+) -> Result<Option<Vec<Location>>, rpc::Error> {
     let p = params.required()?;
-
-    let w = context.world().read();
 
     let uri = p.text_document_position.text_document.uri;
     let pos = p.text_document_position.position;
 
-    let doc = match w.documents.get(&uri) {
-        Some(d) => d,
-        None => return Err(Error::new("document not found")),
-    };
+    let workspaces = context.workspaces.read().await;
+    let ws = workspaces.by_document(&uri);
 
-    let offset = match doc.mapper.offset(mapper::Position::from_lsp(pos)) {
+    let doc = ws.document(&uri)?;
+
+    let offset = match doc
+        .mapper
+        .offset(lsp_async_stub::util::Position::from_lsp(pos))
+    {
         Some(p) => p + TextSize::from(1),
         None => return Ok(None),
     };
@@ -37,22 +38,22 @@ pub(crate) async fn references(
         return Ok(None);
     }
 
-    let target_symbol = w
+    let target_symbol = ws
         .hir
         .symbols()
         .find(|(_, symbol)| symbol.has_selection_range(elem.text_range()));
 
     if let Some((sym, _)) = target_symbol {
         let mut locations = Vec::new();
-        collect_references(&w, sym, p.context.include_declaration, &mut locations);
+        collect_references(ws, sym, p.context.include_declaration, &mut locations);
         return Ok(Some(locations));
     }
 
     Ok(None)
 }
 
-pub(crate) fn collect_references(
-    w: &WorldState,
+pub(crate) fn collect_references<E: Environment>(
+    w: &Workspace<E>,
     target_symbol: Symbol,
     include_declaration: bool,
     locations: &mut Vec<Location>,

@@ -1,9 +1,17 @@
+use super::*;
+use crate::{
+    module::{ModuleKind, STATIC_URL_SCHEME},
+    scope::ScopeParent,
+    source::SourceKind,
+    Type,
+};
+use rhai_rowan::{
+    ast::{AstNode, DefStmt, Rhai, RhaiDef},
+    parser::{parsers::def::parse_def_stmt, Parser},
+};
+
 mod def;
 mod script;
-
-use super::*;
-use crate::{module::ModuleKind, scope::ScopeParent, source::SourceKind, Type};
-use rhai_rowan::ast::{AstNode, Rhai, RhaiDef};
 
 impl Hir {
     pub fn add_source(&mut self, url: &Url, syntax: &SyntaxNode) {
@@ -11,52 +19,55 @@ impl Hir {
             self.remove_source(s);
         }
 
-        if let Some(def) = Rhai::cast(syntax.clone()) {
+        if let Some(rhai) = Rhai::cast(syntax.clone()) {
             let source = self.sources.insert(SourceData {
-                kind: SourceKind::Def,
+                kind: SourceKind::Script,
                 url: url.clone(),
-                module: Module::default(),
+                module: Module::null(),
             });
 
-            let module = self.ensure_module(ModuleKind::Dynamic(url.clone()));
-            self.source_mut(source).module = module;
-
-            self.add_script(source, self[module].scope, &def);
+            self.add_script(source, &rhai);
         }
 
         if let Some(def) = RhaiDef::cast(syntax.clone()) {
             let source = self.sources.insert(SourceData {
                 kind: SourceKind::Def,
                 url: url.clone(),
-                module: Module::default(),
+                module: Module::null(),
             });
-
-            // Here we don't know the module and the scope until
-            // we parse the actual definition file.
 
             self.add_def(source, &def);
         }
-
-        // TODO: error
     }
 }
 
 impl Hir {
-    fn ensure_static_module(&mut self) {
+    pub(crate) fn ensure_static_module(&mut self) {
         if self.static_module.is_null() {
             let scope = self.scopes.insert(ScopeData::default());
             self.static_module = self.modules.insert(ModuleData {
-                kind: ModuleKind::Static,
                 scope,
+                kind: ModuleKind::Static,
+                docs: String::new(),
             });
         }
     }
 
+    pub(crate) fn ensure_virtual_source(&mut self) {
+        if self.virtual_source.is_null() {
+            let source = self.sources.insert(SourceData {
+                url: "rhai-virtual:///".parse().unwrap(),
+                kind: SourceKind::Def,
+                module: self.static_module,
+            });
+            self.virtual_source = source;
+        }
+    }
+
     fn ensure_module(&mut self, kind: ModuleKind) -> Module {
-        self.ensure_static_module();
         match &kind {
             ModuleKind::Static => self.static_module,
-            _ => self
+            ModuleKind::Url(_) => self
                 .modules
                 .iter()
                 .find_map(|(m, data)| if data.kind == kind { Some(m) } else { None })
@@ -65,8 +76,41 @@ impl Hir {
                         parent: Some(ScopeParent::Scope(self[self.static_module].scope)),
                         ..ScopeData::default()
                     });
-                    self.modules.insert(ModuleData { kind, scope })
+                    self.modules.insert(ModuleData {
+                        scope,
+                        kind,
+                        docs: String::new(),
+                    })
                 }),
+        }
+    }
+
+    pub(crate) fn add_module_to_static_scope(&mut self, module: Module) {
+        match &self[module].kind {
+            ModuleKind::Static => {
+                tracing::debug!("cannot insert static module");
+            }
+            ModuleKind::Url(url) => {
+                if url.scheme() != STATIC_URL_SCHEME {
+                    return;
+                }
+
+                let name = match url.host_str() {
+                    Some(name) => name,
+                    _ => return,
+                };
+
+                let import_src = format!(r#"import "{url}" as {name}"#);
+
+                let mut parser = Parser::new(&import_src);
+                parser.execute(parse_def_stmt);
+
+                self.add_def_statement(
+                    self.virtual_source,
+                    self[self.static_module].scope,
+                    &DefStmt::cast(parser.finish().into_syntax()).unwrap(),
+                );
+            }
         }
     }
 }
@@ -89,7 +133,7 @@ impl Scope {
 
         sym_data.parent_scope = self;
 
-        tracing::debug!(
+        tracing::trace!(
             symbol_kind = Into::<&'static str>::into(&sym_data.kind),
             hoist,
             ?self,

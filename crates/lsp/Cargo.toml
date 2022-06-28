@@ -2,57 +2,43 @@
 name = "rhai-lsp"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[lib]
-crate-type = ["cdylib", "rlib"]
-
 [dependencies]
-tracing = "0.1.28"
-lsp-async-stub = { version = "0.3.3" }
-rhai-rowan = { path = "../rowan" }
-lsp-types = "0.90.0"
-once_cell = "1.8.0"
-futures = "0.3.17"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1.0.68"
-rhai-hir = { path = "../hir" }
-enum-iterator = "0.7.0"
-tracing-subscriber = { version = "0.2.25", optional = true }
-clap = { version = "=3.0.0-beta.5", optional = true }
-async-ctrlc = { version = "1.2.0", features = ["stream"], optional = true }
-atty = {version = "0.2.14", optional = true}
-notify = "5.0.0-pre.13"
-figment = { version = "0.10.6", features = ["toml"] }
-parking_lot = "0.11.2"
-walkdir = "2.3.2"
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-tokio = { version = "1.12.0", features = ["rt-multi-thread", "fs"] }
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = { version = "0.2", features = [
-    "serde-serialize",
+ahash = "0.7.6"
+anyhow = "1.0.58"
+arc-swap = "1.5.0"
+async-ctrlc = { version = "1.2.0", features = ["stream"] }
+async-trait = "0.1.56"
+az = "1.2.0"
+clap = { version = "3.2.6", features = ["derive"] }
+figment = "0.10.6"
+futures = "0.3.21"
+ignore = "0.4.18"
+indexmap = "1.9.1"
+itertools = "0.10.3"
+lsp-async-stub = { version = "0.6.0", features = ["tokio-stdio"] }
+lsp-types = "0.93.0"
+once_cell = "1.12.0"
+rhai-hir = { version = "0.1.0", path = "../hir" }
+rhai-rowan = { version = "0.1.0", path = "../rowan" }
+serde = { version = "1.0.137", features = ["derive"] }
+serde_json = "1.0.81"
+tokio = { version = "1.19.2", features = [
+    "rt",
+    "rt-multi-thread",
+    "sync",
+    "parking_lot",
+    "macros",
+    "fs",
 ] }
-wasm-bindgen-futures = { version = "0.4" }
-console_error_panic_hook = { version = "0.1" }
-js-sys = { version = "0.3" }
-tracing-wasm = { version = "0.2.0" }
-
-[features]
-default = []
-cli = [
-    "clap",
-    "lsp-async-stub/tokio-stdio",
-    "lsp-async-stub/tokio-tcp",
-    "async-ctrlc",
-    "tracing-subscriber",
-    "atty"
-]
-wasm-export = []
+toml = "0.5.9"
+tracing = "0.1.35"
+tracing-subscriber = { version = "0.3.11", features = ["env-filter"] }
+url = "2.2.2"
 
 [[bin]]
+path = "bin/rhai/main.rs"
 name = "rhai"
-path = "bin/rhai.rs"
-required-features = ["cli"]

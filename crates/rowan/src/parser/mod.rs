@@ -20,7 +20,7 @@ pub mod parsers;
 /// use rhai_rowan::parser::Parser;
 /// // Parse some Rhai code (file).
 /// let parser = Parser::new(r#"print("hello rhai!")"#);
-/// let parse = parser.parse();
+/// let parse = parser.parse_script();
 /// 
 /// assert!(parse.errors.is_empty());
 /// ```

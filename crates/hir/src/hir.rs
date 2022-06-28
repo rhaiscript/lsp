@@ -17,13 +17,29 @@ use rhai_rowan::syntax::SyntaxNode;
 use slotmap::{Key, SlotMap};
 use url::Url;
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Clone)]
 pub struct Hir {
     static_module: Module,
+    virtual_source: Source,
     modules: SlotMap<Module, ModuleData>,
     scopes: SlotMap<Scope, ScopeData>,
     symbols: SlotMap<Symbol, SymbolData>,
     sources: SlotMap<Source, SourceData>,
+}
+
+impl Default for Hir {
+    fn default() -> Self {
+        let mut this = Self {
+            static_module: Default::default(),
+            virtual_source: Default::default(),
+            modules: Default::default(),
+            scopes: Default::default(),
+            symbols: Default::default(),
+            sources: Default::default(),
+        };
+        this.prepare();
+        this
+    }
 }
 
 static_assertions::assert_impl_all!(Hir: Send, Sync);
@@ -41,7 +57,8 @@ impl Hir {
         self.scopes.clear();
         self.modules.clear();
         self.sources.clear();
-        self.static_module = Module::default();
+        self.static_module = Module::null();
+        self.prepare();
     }
 
     #[must_use]
@@ -60,6 +77,11 @@ impl Hir {
 
     pub fn scopes(&self) -> impl Iterator<Item = (Scope, &ScopeData)> {
         self.scopes.iter()
+    }
+
+    #[must_use]
+    pub const fn static_module(&self) -> Module {
+        self.static_module
     }
 
     #[must_use]
@@ -89,13 +111,18 @@ impl Hir {
         self.scopes.get_mut(scope).unwrap()
     }
 
+    fn source_mut(&mut self, source: Source) -> &mut SourceData {
+        self.sources.get_mut(source).unwrap()
+    }
+
     #[allow(dead_code)]
     fn module_mut(&mut self, module: Module) -> &mut ModuleData {
         self.modules.get_mut(module).unwrap()
     }
 
-    fn source_mut(&mut self, source: Source) -> &mut SourceData {
-        self.sources.get_mut(source).unwrap()
+    fn prepare(&mut self) {
+        self.ensure_static_module();
+        self.ensure_virtual_source();
     }
 }
 

@@ -47,6 +47,8 @@ pub(crate) fn token_name(token: &str) -> &'static str {
         "&&" => "OP_BOOL_AND",
         "||" => "OP_BOOL_OR",
         "!" => "OP_NOT",
+        ".." => "OP_RANGE",
+        "..=" => "OP_RANGE_INCLUSIVE",
         "this" => "KW_THIS",
         "let" => "KW_LET",
         "const" => "KW_CONST",

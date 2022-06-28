@@ -3,12 +3,12 @@ use crate::parser::ParseErrorKind;
 use crate::syntax::SyntaxKind::*;
 use crate::T;
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_type(ctx: &mut Context) {
     parse_type_bp(ctx, 0);
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_type_bp(ctx: &mut Context, min_bp: u8) {
     ctx.start_node(TYPE);
 
@@ -58,7 +58,7 @@ fn parse_type_bp(ctx: &mut Context, min_bp: u8) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_type_array(ctx: &mut Context) {
     ctx.start_node(TYPE_ARRAY);
     expect_token!(ctx in node, T!["["]);
@@ -67,22 +67,21 @@ fn parse_type_array(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_type_unknown(ctx: &mut Context) {
     ctx.start_node(TYPE_UNKNOWN);
     expect_token!(ctx in node, T!["?"]);
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_type_void(ctx: &mut Context) {
     ctx.start_node(TYPE_VOID);
     expect_token!(ctx in node, T!["void"]);
     ctx.finish_node();
 }
 
-
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_type_paren(ctx: &mut Context) {
     ctx.start_node(TYPE_PAREN);
     expect_token!(ctx in node, T!["("]);
@@ -91,14 +90,14 @@ fn parse_type_paren(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_type_ident(ctx: &mut Context) {
     ctx.start_node(TYPE_IDENT);
     expect_token!(ctx in node, T!["ident"]);
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_type_object(ctx: &mut Context) {
     ctx.start_node(TYPE_OBJECT);
     expect_token!(ctx in node, T!["#{"]);
@@ -131,7 +130,7 @@ fn parse_type_object(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_type_object_field(ctx: &mut Context) {
     ctx.start_node(TYPE_OBJECT_FIELD);
 

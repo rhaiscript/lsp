@@ -16,5 +16,6 @@ pub mod ast;
 pub mod parser;
 pub mod syntax;
 pub mod util;
+pub mod query;
 
 pub use rowan::{TextRange, TextSize};

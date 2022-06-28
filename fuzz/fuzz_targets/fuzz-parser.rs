@@ -6,6 +6,6 @@ extern crate libfuzzer_sys;
 
 fuzz_target!(|data: &[u8]| {
     if let Ok(s) = std::str::from_utf8(data) {
-        Parser::new(s).parse();
+        Parser::new(s).parse_script();
     }
 });

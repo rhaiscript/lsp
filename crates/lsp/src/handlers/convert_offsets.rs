@@ -1,17 +1,21 @@
-use crate::mapper::LspExt;
+use lsp_async_stub::{rpc, util::LspExt, Context, Params};
 
-use super::*;
+use crate::{
+    environment::Environment,
+    lsp_ext::request::{ConvertOffsetsParams, ConvertOffsetsResult},
+    world::World,
+};
 
-pub(crate) async fn convert_offsets(
-    mut context: Context<World>,
+pub(crate) async fn convert_offsets<E: Environment>(
+    context: Context<World<E>>,
     params: Params<ConvertOffsetsParams>,
-) -> Result<Option<ConvertOffsetsResult>, Error> {
+) -> Result<Option<ConvertOffsetsResult>, rpc::Error> {
     let p = params.required()?;
-    let w = context.world().read();
-    let doc = match w.documents.get(&p.uri) {
-        Some(d) => d,
-        None => return Ok(None),
-    };
+    let workspaces = context.workspaces.read().await;
+    let ws = workspaces.by_document(&p.uri);
+
+    let doc = ws.document(&p.uri)?;
+
     Ok(Some(ConvertOffsetsResult {
         positions: p.positions.map(|offsets| {
             offsets

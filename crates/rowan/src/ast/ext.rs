@@ -3,7 +3,7 @@
 //! These can be gradually turned into code generation if similar
 //! repetitive patterns are found and the effort is worth it.
 
-use super::{AstNode, Expr, ObjectField, Param, ParamList, SwitchArm};
+use super::{AstNode, Expr, ObjectField, Param, ParamList, SwitchArm, TypedParam};
 use super::{ExprBlock, ExprIf, T};
 use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
 
@@ -44,11 +44,35 @@ impl super::ParamList {
     }
 }
 
+impl super::TypedParamList {
+    pub fn params(&self) -> impl Iterator<Item = TypedParam> {
+        self.syntax().descendants().filter_map(TypedParam::cast)
+    }
+}
+
 impl super::Path {
     pub fn segments(&self) -> impl Iterator<Item = SyntaxToken> {
         self.syntax()
             .descendants_with_tokens()
+            .filter(|t| {
+                t.kind() != SyntaxKind::PUNCT_COLON2
+                    && t.kind() != SyntaxKind::WHITESPACE
+                    && t.kind() != SyntaxKind::COMMENT_BLOCK
+                    && t.kind() != SyntaxKind::COMMENT_LINE
+            })
             .filter_map(SyntaxElement::into_token)
+    }
+}
+
+impl super::ExprFn {
+    #[must_use]
+    pub fn kw_private_token(&self) -> Option<SyntaxToken> {
+        self.syntax().children_with_tokens().find_map(|t| {
+            if t.kind() != SyntaxKind::KW_PRIVATE {
+                return None;
+            }
+            t.into_token()
+        })
     }
 }
 
