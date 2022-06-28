@@ -1,15 +1,21 @@
-use super::*;
+use lsp_async_stub::{rpc, Context, Params};
 
-pub(crate) async fn syntax_tree(
-    mut context: Context<World>,
+use crate::{
+    environment::Environment,
+    lsp_ext::request::{SyntaxTreeParams, SyntaxTreeResult},
+    world::World,
+};
+
+pub(crate) async fn syntax_tree<E: Environment>(
+    context: Context<World<E>>,
     params: Params<SyntaxTreeParams>,
-) -> Result<Option<SyntaxTreeResult>, Error> {
+) -> Result<Option<SyntaxTreeResult>, rpc::Error> {
     let p = params.required()?;
-    let w = context.world().read();
-    let doc = match w.documents.get(&p.uri) {
-        Some(d) => d,
-        None => return Ok(None),
-    };
+    let workspaces = context.workspaces.read().await;
+    let ws = workspaces.by_document(&p.uri);
+
+    let doc = ws.document(&p.uri)?;
+
     let syntax = doc.parse.clone().into_syntax();
     Ok(Some(SyntaxTreeResult {
         text: format!("{:#?}", &syntax),

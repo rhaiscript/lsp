@@ -1,54 +1,59 @@
 #![allow(deprecated)]
 
-use crate::{
-    mapper::{LspExt, Mapper},
-    util::signature_of,
+use crate::{environment::Environment, utils::signature_of, world::World};
+use lsp_async_stub::{
+    rpc,
+    util::{LspExt, Mapper},
+    Context, Params,
 };
-
-use super::*;
-use rhai_hir::{symbol::ObjectSymbol, Hir, Scope, Type, source::Source};
+use lsp_types::{DocumentSymbol, DocumentSymbolParams, DocumentSymbolResponse, SymbolKind};
+use rhai_hir::{source::Source, symbol::ObjectSymbol, Hir, Scope, Type};
 use rhai_rowan::{
-    ast::{AstNode, ExprFn, Rhai},
-    syntax::{SyntaxElement, SyntaxKind},
+    ast::{AstNode, ExprFn},
+    syntax::{SyntaxElement, SyntaxKind, SyntaxNode},
 };
 
-pub(crate) async fn document_symbols(
-    mut context: Context<World>,
+pub(crate) async fn document_symbols<E: Environment>(
+    context: Context<World<E>>,
     params: Params<DocumentSymbolParams>,
-) -> Result<Option<DocumentSymbolResponse>, Error> {
+) -> Result<Option<DocumentSymbolResponse>, rpc::Error> {
     let p = params.required()?;
 
-    let w = context.world().read();
+    let workspaces = context.workspaces.read().await;
+    let ws = workspaces.by_document(&p.text_document.uri);
 
-    let doc = match w.documents.get(&p.text_document.uri) {
-        Some(d) => d,
-        None => return Ok(None),
-    };
+    let doc = ws.document(&p.text_document.uri)?;
 
     let syntax = doc.parse.clone().into_syntax();
 
-    let rhai = match Rhai::cast(syntax) {
-        Some(r) => r,
-        None => return Ok(None),
-    };
-
-    let source = match w.hir.source_of(&p.text_document.uri) {
+    let source = match ws.hir.source_of(&p.text_document.uri) {
         Some(s) => s,
         None => return Ok(None),
     };
 
-    let root_scope = w.hir[w.hir[source].module].scope;
+    let module = match ws.hir.module_by_url(&ws.hir[source].url) {
+        Some(m) => m,
+        None => return Ok(None),
+    };
+
+    let root_scope = ws.hir[module].scope;
 
     Ok(Some(DocumentSymbolResponse::Nested(collect_symbols(
         &doc.mapper,
-        &rhai,
-        &w.hir,
+        &syntax,
+        &ws.hir,
         root_scope,
-        source
+        source,
     ))))
 }
 
-fn collect_symbols(mapper: &Mapper, rhai: &Rhai, hir: &Hir, scope: Scope, source: Source) -> Vec<DocumentSymbol> {
+fn collect_symbols(
+    mapper: &Mapper,
+    root: &SyntaxNode,
+    hir: &Hir,
+    scope: Scope,
+    source: Source,
+) -> Vec<DocumentSymbol> {
     let mut document_symbols = Vec::new();
 
     let scope_symbols = hir[scope]
@@ -70,7 +75,7 @@ fn collect_symbols(mapper: &Mapper, rhai: &Rhai, hir: &Hir, scope: Scope, source
         let syntax = symbol_data
             .source
             .text_range
-            .map(|range| rhai.syntax().covering_element(range))
+            .map(|range| root.covering_element(range))
             .and_then(SyntaxElement::into_node);
 
         match &symbol_data.kind {
@@ -87,7 +92,7 @@ fn collect_symbols(mapper: &Mapper, rhai: &Rhai, hir: &Hir, scope: Scope, source
 
                 document_symbols.push(DocumentSymbol {
                     deprecated: None,
-                    kind: SymbolKind::Function,
+                    kind: SymbolKind::FUNCTION,
                     name: ident.to_string(),
                     range: mapper
                         .range(expr.syntax().text_range())
@@ -97,13 +102,13 @@ fn collect_symbols(mapper: &Mapper, rhai: &Rhai, hir: &Hir, scope: Scope, source
                         .range(ident.text_range())
                         .unwrap_or_default()
                         .into_lsp(),
-                    detail: Some(signature_of(hir, rhai, symbol)),
-                    children: Some(collect_symbols(mapper, rhai, hir, f.scope, source)),
+                    detail: Some(signature_of(hir, root, symbol)),
+                    children: Some(collect_symbols(mapper, root, hir, f.scope, source)),
                     tags: None,
                 });
             }
             rhai_hir::symbol::SymbolKind::Block(block) => {
-                document_symbols.extend(collect_symbols(mapper, rhai, hir, block.scope, source));
+                document_symbols.extend(collect_symbols(mapper, root, hir, block.scope, source));
             }
             rhai_hir::symbol::SymbolKind::Decl(decl) => {
                 let syntax = match syntax {
@@ -124,11 +129,11 @@ fn collect_symbols(mapper: &Mapper, rhai: &Rhai, hir: &Hir, scope: Scope, source
                 document_symbols.push(DocumentSymbol {
                     deprecated: None,
                     kind: if matches!(&decl.ty, Type::Object(_)) {
-                        SymbolKind::Object
+                        SymbolKind::OBJECT
                     } else if decl.is_const {
-                        SymbolKind::Constant
+                        SymbolKind::CONSTANT
                     } else {
-                        SymbolKind::Variable
+                        SymbolKind::VARIABLE
                     },
                     name: ident.to_string(),
                     range: mapper
@@ -149,16 +154,16 @@ fn collect_symbols(mapper: &Mapper, rhai: &Rhai, hir: &Hir, scope: Scope, source
                             rhai_hir::symbol::SymbolKind::Closure(closure) => {
                                 match closure.expr.map(|s| &hir[s]) {
                                     Some(exp) => match &exp.kind {
-                                        rhai_hir::symbol::SymbolKind::Block(block) => {
-                                            Some(collect_symbols(mapper, rhai, hir, block.scope, source))
-                                        }
+                                        rhai_hir::symbol::SymbolKind::Block(block) => Some(
+                                            collect_symbols(mapper, root, hir, block.scope, source),
+                                        ),
                                         _ => None,
                                     },
                                     None => None,
                                 }
                             }
                             rhai_hir::symbol::SymbolKind::Object(object) => {
-                                Some(collect_object_fields(mapper, rhai, hir, object, source))
+                                Some(collect_object_fields(mapper, root, hir, object, source))
                             }
                             _ => None,
                         },
@@ -176,7 +181,7 @@ fn collect_symbols(mapper: &Mapper, rhai: &Rhai, hir: &Hir, scope: Scope, source
 
 fn collect_object_fields(
     mapper: &Mapper,
-    rhai: &Rhai,
+    root: &SyntaxNode,
     hir: &Hir,
     obj: &ObjectSymbol,
     source: Source,
@@ -196,7 +201,7 @@ fn collect_object_fields(
 
             Some(DocumentSymbol {
                 deprecated: None,
-                kind: SymbolKind::Property,
+                kind: SymbolKind::PROPERTY,
                 name: name.to_string(),
                 range: mapper.range(range).unwrap_or_default().into_lsp(),
                 selection_range: mapper.range(ident_range).unwrap_or_default().into_lsp(),
@@ -206,16 +211,16 @@ fn collect_object_fields(
                         rhai_hir::symbol::SymbolKind::Closure(closure) => {
                             match closure.expr.map(|s| &hir[s]) {
                                 Some(exp) => match &exp.kind {
-                                    rhai_hir::symbol::SymbolKind::Block(block) => {
-                                        Some(collect_symbols(mapper, rhai, hir, block.scope, source))
-                                    }
+                                    rhai_hir::symbol::SymbolKind::Block(block) => Some(
+                                        collect_symbols(mapper, root, hir, block.scope, source),
+                                    ),
                                     _ => None,
                                 },
                                 None => None,
                             }
                         }
                         rhai_hir::symbol::SymbolKind::Object(object) => {
-                            Some(collect_object_fields(mapper, rhai, hir, object, source))
+                            Some(collect_object_fields(mapper, root, hir, object, source))
                         }
                         _ => None,
                     },

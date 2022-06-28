@@ -1,5 +1,4 @@
 use crate::{
-    module::ModuleKind,
     scope::Scope,
     source::Source,
     symbol::{ReferenceTarget, Symbol, SymbolData, SymbolKind},
@@ -20,14 +19,6 @@ impl Hir {
         for symbol in symbols_to_remove {
             self.remove_symbol(symbol);
         }
-
-        self.modules.retain(|module, module_data| {
-            module_data.kind == ModuleKind::Static
-                || self
-                    .sources
-                    .iter()
-                    .any(|(_, source_data)| source_data.module == module)
-        });
     }
 
     fn remove_scope(&mut self, scope: Scope) {

@@ -1,4 +1,7 @@
-use crate::parser::{parsers::parse_expr, Parse, Parser};
+use crate::parser::{
+    parsers::{def::parse_def_header, parse_expr},
+    Parse, Parser,
+};
 use rowan::{TextRange, TextSize};
 use thiserror::Error;
 
@@ -78,6 +81,15 @@ pub fn parse_interpolated(s: &str) -> Interpolated {
     }
 
     Interpolated { segments }
+}
+
+/// Determine whether the given source is a definition file or not.
+///
+/// Definitions should begin with the `module` keyword, only preceded by comments.
+pub fn is_rhai_def(source: &str) -> bool {
+    let mut parser = Parser::new(source);
+    parser.execute(parse_def_header);
+    parser.finish().errors.is_empty()
 }
 
 #[must_use]
@@ -218,4 +230,17 @@ pub fn unescape(s: &str, termination_char: char) -> (String, Vec<EscapeError>) {
 pub enum EscapeError {
     #[error("malformed escape sequence `{0}`")]
     MalformedEscapeSequence(String, TextRange),
+}
+
+/// Replaces the text `$$` and returns its index.
+///
+/// Used for tests internally.
+#[must_use]
+#[allow(clippy::missing_panics_doc)]
+pub fn src_cursor_offset(src: &str) -> (TextSize, String) {
+    let offset = src.find("$$").unwrap();
+    (
+        TextSize::from(u32::try_from(offset).unwrap()),
+        src.replace("$$", ""),
+    )
 }

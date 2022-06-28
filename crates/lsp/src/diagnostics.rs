@@ -1,74 +1,107 @@
-#![allow(clippy::module_name_repetitions)]
-
-use lsp_async_stub::{Context, RequestWriter};
+use crate::{
+    environment::Environment,
+    world::{Document, World},
+};
+use lsp_async_stub::{util::LspExt, Context, RequestWriter};
 use lsp_types::{notification, Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams, Url};
 use rhai_hir::Hir;
-use rhai_rowan::parser::Parse;
-use tracing::error;
 
-use crate::{
-    external::spawn,
-    mapper::{LspExt, Mapper},
-    World,
-};
+pub(crate) async fn publish_all_diagnostics<E: Environment>(context: Context<World<E>>) {
+    let workspaces = context.workspaces.read().await;
 
-pub async fn publish_diagnostics(mut context: Context<World>, uri: Url) {
-    let w = context.world().read();
+    for doc_url in workspaces
+        .iter()
+        .flat_map(|(_, ws)| ws.documents.keys().cloned())
+    {
+        context
+            .env
+            .clone()
+            .spawn_local(publish_diagnostics(context.clone(), doc_url));
+    }
+}
 
-    let doc = match w.documents.get(&uri) {
-        Some(d) => d.clone(),
-        None => {
-            // Doesn't exist anymore
-            return;
-        }
+#[tracing::instrument(skip_all)]
+pub(crate) async fn publish_diagnostics<E: Environment>(
+    mut context: Context<World<E>>,
+    document_url: Url,
+) {
+    let mut diags = Vec::new();
+
+    let workspaces = context.workspaces.read().await;
+    let ws = workspaces.by_document(&document_url);
+
+    let doc = match ws.documents.get(&document_url) {
+        Some(doc) => doc,
+        None => return,
     };
 
-    let mut diagnostics = Vec::new();
+    collect_syntax_errors(doc, &mut diags);
+    drop(workspaces);
 
-    syntax_diagnostics(&mut diagnostics, &doc.parse, &doc.mapper);
+    context
+        .write_notification::<notification::PublishDiagnostics, _>(Some(PublishDiagnosticsParams {
+            uri: document_url.clone(),
+            diagnostics: diags.clone(),
+            version: None,
+        }))
+        .await
+        .unwrap_or_else(|err| tracing::error!("{err}"));
 
-    hir_diagnostics(&mut diagnostics, &w.hir, &uri, &doc.mapper);
+    if !diags.is_empty() {
+        return;
+    }
 
-    drop(w);
+    let workspaces = context.workspaces.read().await;
+    let ws = workspaces.by_document(&document_url);
 
-    // FIXME: why is another `spawn` required here?
-    //  the compiler complains about the future not being Sync otherwise,
-    //  but I don't see why.
-    spawn(async move {
+    let doc = match ws.documents.get(&document_url) {
+        Some(doc) => doc,
+        None => return,
+    };
+
+    collect_hir_errors(&document_url, doc, &ws.hir, &mut diags);
+    drop(workspaces);
+
+    context.clone().env.spawn_local(async move {
         context
             .write_notification::<notification::PublishDiagnostics, _>(Some(
                 PublishDiagnosticsParams {
-                    uri: uri.clone(),
-                    diagnostics,
+                    uri: document_url.clone(),
+                    diagnostics: diags.clone(),
                     version: None,
                 },
             ))
             .await
-            .unwrap_or_else(|error| error!(%error));
+            .unwrap_or_else(|err| tracing::error!("{err}"));
     });
 }
 
-pub async fn clear_diagnostics(mut context: Context<World>, uri: Url) {
+#[tracing::instrument(skip_all)]
+pub(crate) async fn clear_diagnostics<E: Environment>(
+    mut context: Context<World<E>>,
+    document_url: Url,
+) {
     context
         .write_notification::<notification::PublishDiagnostics, _>(Some(PublishDiagnosticsParams {
-            uri,
+            uri: document_url,
             diagnostics: Vec::new(),
             version: None,
         }))
         .await
-        .unwrap_or_else(|error| error!(%error));
+        .unwrap_or_else(|err| tracing::error!("{}", err));
 }
 
-fn syntax_diagnostics(diagnostics: &mut Vec<Diagnostic>, parse: &Parse, mapper: &Mapper) {
-    diagnostics.extend(parse.errors.iter().map(|e| {
-        let range = mapper.range(e.range).unwrap_or_default().into_lsp();
+#[tracing::instrument(skip_all)]
+fn collect_syntax_errors(doc: &Document, diags: &mut Vec<Diagnostic>) {
+    diags.extend(doc.parse.errors.iter().map(|e| {
+        let range = doc.mapper.range(e.range).unwrap_or_default().into_lsp();
         Diagnostic {
             range,
-            severity: Some(DiagnosticSeverity::Error),
+            severity: Some(DiagnosticSeverity::ERROR),
             code: None,
             code_description: None,
             source: Some("Rhai".into()),
-            message: format!("{}", e),
+            message: e.kind.to_string(),
             related_information: None,
             tags: None,
             data: None,
@@ -76,28 +109,26 @@ fn syntax_diagnostics(diagnostics: &mut Vec<Diagnostic>, parse: &Parse, mapper: 
     }));
 }
 
-fn hir_diagnostics(diagnostics: &mut Vec<Diagnostic>, hir: &Hir, url: &Url, mapper: &Mapper) {
-    // diagnostics.extend(
-    //     module
-    //         .collect_errors()
-    //         .iter()
-    //         .filter(|e| e.text_range.is_some())
-    //         .map(|e| {
-    //             let range = mapper
-    //                 .range(e.text_range.unwrap())
-    //                 .unwrap_or_default()
-    //                 .into_lsp();
-    //             Diagnostic {
-    //                 range,
-    //                 severity: Some(DiagnosticSeverity::Error),
-    //                 code: None,
-    //                 code_description: None,
-    //                 source: Some("Rhai".into()),
-    //                 message: format!("{}", e),
-    //                 related_information: None,
-    //                 tags: None,
-    //                 data: None,
-    //             }
-    //         }),
-    // );
+#[tracing::instrument(skip_all)]
+fn collect_hir_errors(uri: &Url, doc: &Document, hir: &Hir, diags: &mut Vec<Diagnostic>) {
+    if let Some(source) = hir.source_by_url(uri) {
+        diags.extend(hir.errors_for_source(source).into_iter().map(|e| {
+            let range = doc
+                .mapper
+                .range(e.text_range.unwrap_or_default())
+                .unwrap_or_default()
+                .into_lsp();
+            Diagnostic {
+                range,
+                severity: Some(DiagnosticSeverity::ERROR),
+                code: None,
+                code_description: None,
+                source: Some("Rhai".into()),
+                message: e.kind.to_string(),
+                related_information: None,
+                tags: None,
+                data: None,
+            }
+        }));
+    }
 }

@@ -3,7 +3,7 @@ use pprof::criterion::{Output, PProfProfiler};
 use rhai_rowan::parser::{Parse, Parser};
 
 fn parse(src: &str) -> Parse {
-    Parser::new(src).parse()
+    Parser::new(src).parse_script()
 }
 
 fn bench(c: &mut Criterion) {

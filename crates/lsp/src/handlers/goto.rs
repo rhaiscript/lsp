@@ -1,60 +1,58 @@
-use crate::mapper::{self, LspExt};
+use crate::{environment::Environment, world::World};
 
-use super::*;
-use lsp_types::request::{GotoDeclarationParams, GotoDeclarationResponse};
+use lsp_async_stub::{rpc, Context, Params, util::LspExt};
+use lsp_types::{request::{GotoDeclarationParams, GotoDeclarationResponse}, Url, Position, LocationLink, GotoDefinitionParams, GotoDefinitionResponse};
 use rhai_hir::symbol::ReferenceTarget;
 
-pub(crate) async fn goto_declaration(
-    context: Context<World>,
+pub(crate) async fn goto_declaration<E: Environment>(
+    context: Context<World<E>>,
     params: Params<GotoDeclarationParams>,
-) -> Result<Option<GotoDeclarationResponse>, Error> {
+) -> Result<Option<GotoDeclarationResponse>, rpc::Error> {
     let p = params.required()?;
 
     let uri = p.text_document_position_params.text_document.uri;
     let pos = p.text_document_position_params.position;
 
-    goto_target(context, uri, pos).map(|result| result.map(GotoDeclarationResponse::Link))
+    goto_target(context, uri, pos).await.map(|result| result.map(GotoDeclarationResponse::Link))
 }
 
 // Technically the same, as goto_declaration, but a different function for consistency.
-pub(crate) async fn goto_definition(
-    context: Context<World>,
+pub(crate) async fn goto_definition<E: Environment>(
+    context: Context<World<E>>,
     params: Params<GotoDefinitionParams>,
-) -> Result<Option<GotoDefinitionResponse>, Error> {
+) -> Result<Option<GotoDefinitionResponse>, rpc::Error> {
     let p = params.required()?;
 
     let uri = p.text_document_position_params.text_document.uri;
     let pos = p.text_document_position_params.position;
 
-    goto_target(context, uri, pos).map(|result| result.map(GotoDefinitionResponse::Link))
+    goto_target(context, uri, pos).await.map(|result| result.map(GotoDefinitionResponse::Link))
 }
 
-fn goto_target(
-    mut context: Context<World>,
+async fn goto_target<E: Environment>(
+    context: Context<World<E>>,
     uri: Url,
     pos: Position,
-) -> Result<Option<Vec<LocationLink>>, Error> {
-    let w = context.world().read();
+) -> Result<Option<Vec<LocationLink>>, rpc::Error> {
+    let workspaces = context.workspaces.read().await;
+    let ws = workspaces.by_document(&uri);
 
-    let doc = match w.documents.get(&uri) {
-        Some(d) => d,
-        None => return Err(Error::new("document not found")),
-    };
+    let doc = ws.document(&uri)?;
 
-    let offset = match doc.mapper.offset(mapper::Position::from_lsp(pos)) {
+    let offset = match doc.mapper.offset(lsp_async_stub::util::Position::from_lsp(pos)) {
         Some(p) => p,
         None => return Ok(None),
     };
 
-    let source = match w.hir.source_of(&uri) {
+    let source = match ws.hir.source_of(&uri) {
         Some(s) => s,
         None => return Ok(None),
     };
 
-    let target_symbol = w
+    let target_symbol = ws
         .hir
         .symbol_selection_at(source, offset, true)
-        .map(|s| (s, &w.hir[s]));
+        .map(|s| (s, &ws.hir[s]));
 
     if let Some((_, data)) = target_symbol {
         let origin_selection_range = data
@@ -63,16 +61,16 @@ fn goto_target(
         match &data.kind {
             rhai_hir::symbol::SymbolKind::Reference(r) => {
                 if let Some(ReferenceTarget::Symbol(target)) = &r.target {
-                    let target_data = &w.hir[*target];
+                    let target_data = &ws.hir[*target];
 
                     let target_source = match target_data.source.source {
                         Some(s) => s,
                         None => return Ok(None),
                     };
 
-                    let target_source_data = &w.hir[target_source];
+                    let target_source_data = &ws.hir[target_source];
 
-                    let target_document = match w.documents.get(&target_source_data.url) {
+                    let target_document = match ws.documents.get(&target_source_data.url) {
                         Some(d) => d,
                         None => return Ok(None),
                     };
@@ -95,7 +93,7 @@ fn goto_target(
                         target_uri: target_data
                             .source
                             .source
-                            .map_or(uri, |s| w.hir[s].url.clone()),
+                            .map_or(uri, |s| ws.hir[s].url.clone()),
                         target_range,
                         target_selection_range,
                     }]));

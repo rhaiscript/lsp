@@ -1,20 +1,24 @@
-use crate::mapper::{LspExt, Mapper};
+use crate::{environment::Environment, world::World};
 
-use super::*;
+use az::SaturatingAs;
+use lsp_async_stub::{
+    rpc,
+    util::{LspExt, Mapper},
+    Context, Params,
+};
+use lsp_types::{FoldingRange, FoldingRangeKind, FoldingRangeParams, Range};
 use rhai_rowan::syntax::{SyntaxElement, SyntaxKind::*, SyntaxNode};
 
-pub(crate) async fn folding_ranges(
-    mut context: Context<World>,
+pub(crate) async fn folding_ranges<E: Environment>(
+    context: Context<World<E>>,
     params: Params<FoldingRangeParams>,
-) -> Result<Option<Vec<FoldingRange>>, Error> {
+) -> Result<Option<Vec<FoldingRange>>, rpc::Error> {
     let p = params.required()?;
 
-    let w = context.world().read();
+    let workspaces = context.workspaces.read().await;
+    let ws = workspaces.by_document(&p.text_document.uri);
 
-    let doc = match w.documents.get(&p.text_document.uri) {
-        Some(d) => d,
-        None => return Ok(None),
-    };
+    let doc = ws.document(&p.text_document.uri)?;
 
     let syntax = doc.parse.clone().into_syntax();
 
@@ -24,8 +28,8 @@ pub(crate) async fn folding_ranges(
             .filter_map(|d| match d.kind() {
                 EXPR_BLOCK | EXPR_OBJECT | COMMENT_BLOCK_DOC | COMMENT_BLOCK => {
                     doc.mapper.range(d.text_range()).map(|range| FoldingRange {
-                        start_line: range.start.line as u32,
-                        end_line: range.end.line as u32,
+                        start_line: range.start.line.saturating_as(),
+                        end_line: range.end.line.saturating_as(),
                         kind: match d.kind() {
                             COMMENT_BLOCK_DOC | COMMENT_BLOCK => Some(FoldingRangeKind::Comment),
                             _ => None,

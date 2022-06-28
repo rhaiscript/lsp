@@ -1,4 +1,5 @@
 use super::Context;
+use crate::parser::parsers::parse_expr;
 use crate::parser::{Parse, ParseErrorKind, Parser};
 use crate::syntax::SyntaxKind::*;
 use crate::T;
@@ -10,9 +11,31 @@ impl<'src> Parser<'src> {
         self.finish()
     }
 }
+ 
+/// Parse the beginning of a rhai definition file.
+///
+/// It is used to determine if a given source should
+/// be parsed as a definition file.
+pub(crate) fn parse_def_header(ctx: &mut Context) {
+    ctx.start_node(DEF_MODULE_DECL);
+
+    // Parse doc comments if any.
+    while matches!(
+        require_token!(ctx in node),
+        COMMENT_BLOCK_DOC | COMMENT_LINE_DOC
+    ) {
+        ctx.start_node(DOC);
+        ctx.eat();
+        ctx.finish_node();
+    }
+
+    expect_token!(ctx in node, T!["module"]);
+
+    ctx.finish_node();
+}
 
 /// Parse a Rhai definition file.
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_rhai_def(ctx: &mut Context) {
     ctx.start_node(RHAI_DEF);
 
@@ -31,8 +54,7 @@ pub fn parse_rhai_def(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_module_decl(ctx: &mut Context) {
     ctx.start_node(DEF_MODULE_DECL);
 
@@ -51,7 +73,7 @@ pub fn parse_def_module_decl(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_stmt(ctx: &mut Context) {
     ctx.start_node(DEF_STMT);
     let token = require_token!(ctx in node);
@@ -75,7 +97,7 @@ pub fn parse_def_stmt(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_item(ctx: &mut Context) {
     ctx.start_node(DEF_ITEM);
 
@@ -94,7 +116,7 @@ pub fn parse_def_item(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def(ctx: &mut Context) {
     ctx.start_node(DEF);
 
@@ -115,20 +137,14 @@ pub fn parse_def(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_module(ctx: &mut Context) {
     ctx.start_node(DEF_MODULE);
-
-    let token = require_token!(ctx in node);
-
-    if let T!["static"] = token {
-        ctx.eat();
-    }
 
     expect_token!(ctx in node, T!["module"]);
 
     match ctx.token() {
-        Some(T!["ident"] | T!["lit_str"]) => {
+        Some(T!["ident"] | T!["lit_str"] | T!["static"]) => {
             ctx.eat();
         }
         _ => {}
@@ -137,27 +153,22 @@ pub fn parse_def_module(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_import(ctx: &mut Context) {
     ctx.start_node(DEF_IMPORT);
 
     expect_token!(ctx in node, T!["import"]);
-    expect_token!(ctx in node, T!["lit_str"]);
+    parse_expr(ctx);
 
-    match ctx.token() {
-        Some(T!["as"]) => {
-            ctx.eat();
-            expect_token!(ctx in node, T!["ident"]);
-        }
-        _ => {
-            ctx.add_error(ParseErrorKind::UnexpectedToken);
-        }
+    if matches!(ctx.token(), Some(T!["as"])) {
+        ctx.eat();
+        expect_token!(ctx in node, T!["ident"]);
     }
 
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_const(ctx: &mut Context) {
     ctx.start_node(DEF_CONST);
 
@@ -172,7 +183,7 @@ pub fn parse_def_const(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_let(ctx: &mut Context) {
     ctx.start_node(DEF_LET);
 
@@ -187,7 +198,7 @@ pub fn parse_def_let(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_fn(ctx: &mut Context) {
     ctx.start_node(DEF_FN);
 
@@ -221,7 +232,7 @@ pub fn parse_def_fn(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_op(ctx: &mut Context) {
     ctx.start_node(DEF_OP);
 
@@ -260,7 +271,7 @@ pub fn parse_def_op(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 pub fn parse_def_type(ctx: &mut Context) {
     ctx.start_node(DEF_TYPE);
 
@@ -281,7 +292,7 @@ pub fn parse_def_type(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_typed_param_list(ctx: &mut Context) {
     ctx.start_node(TYPED_PARAM_LIST);
 
@@ -337,7 +348,7 @@ fn parse_typed_param_list(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_typed_param(ctx: &mut Context) {
     ctx.start_node(TYPED_PARAM);
 
@@ -349,7 +360,7 @@ fn parse_typed_param(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(level = "trace", skip(ctx)))]
+#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
 fn parse_type_list(ctx: &mut Context) {
     ctx.start_node(TYPE_LIST);
 

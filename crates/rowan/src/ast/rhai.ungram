@@ -76,10 +76,11 @@ ExprBlock =
 ExprUnary =
   op:('+' | '-' | '!') Expr
 
-ExprBinary =
+ExprBinary = 
   lhs:Expr
   op:(
-    '||' | '&&'
+    '..' | '..='
+  | '||' | '&&'
   | '==' | '!=' | '<=' | '>=' | '<' | '>'
   | '+' | '*' | '**' | '-' | '/' | '%' | '<<' | '>>' | '^' | '|' | '&'
   | '=' | '+=' | '/=' | '*=' | '**=' | '%=' | '>>=' | '<<=' | '-=' | '|=' | '&=' | '^='
@@ -212,10 +213,10 @@ Def =
 | DefType
 
 DefModule =
-  'static'? 'module' ( 'ident' | 'lit_str' )?
+  'module' ( 'ident' | 'lit_str' | 'static' )?
 
 DefImport =
-  'import' 'lit_str' ('as' alias:'ident')?
+  'import' Expr ('as' 'ident')?
 
 DefConst =
   'const' 'ident' (':' ty:Type)?
