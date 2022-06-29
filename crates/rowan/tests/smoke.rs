@@ -38,4 +38,6 @@ fn parse_valid(name: &str, src: &str) {
             insta::assert_snapshot!(format!("{:#?}", parse.into_syntax()));
         }
     );
+
+    rhai::Engine::new().set_max_expr_depths(0, 0).compile(src).unwrap();
 }
