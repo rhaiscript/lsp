@@ -11,20 +11,20 @@ mod context;
 pub mod parsers;
 
 /// A flexible parser.
-/// 
+///
 /// Parsing happens via given parser functions (also found in [`parsers`]).
-/// 
+///
 /// # Example Uses
-/// 
+///
 /// ```
 /// use rhai_rowan::parser::Parser;
 /// // Parse some Rhai code (file).
 /// let parser = Parser::new(r#"print("hello rhai!")"#);
 /// let parse = parser.parse_script();
-/// 
+///
 /// assert!(parse.errors.is_empty());
 /// ```
-/// 
+///
 /// ```
 /// use rhai_rowan::parser::Parser;
 /// use rhai_rowan::parser::parsers::parse_expr;
@@ -33,7 +33,7 @@ pub mod parsers;
 /// let mut parser = Parser::new(r#"print("hello rhai!")"#);
 /// parser.execute(parse_expr);
 /// let parse = parser.finish();
-/// 
+///
 /// assert!(parse.errors.is_empty());
 /// ```
 pub struct Parser<'src> {
@@ -50,9 +50,9 @@ impl<'src> Parser<'src> {
     }
 
     /// Finish parsing.
-    /// 
+    ///
     /// # Panics
-    /// 
+    ///
     /// If no parser function was called,
     /// or a parser was left in an invalid state (bug).
     #[must_use]

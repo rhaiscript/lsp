@@ -37,5 +37,5 @@ pub enum ErrorKind {
         similar_name: Option<String>,
         reference_symbol: Symbol,
         reference_range: Option<TextRange>,
-    }
+    },
 }

@@ -1,4 +1,7 @@
-use crate::{world::{World, DEFAULT_WORKSPACE_URL}, environment::Environment};
+use crate::{
+    environment::Environment,
+    world::{World, DEFAULT_WORKSPACE_URL},
+};
 use anyhow::Context as AnyhowContext;
 use lsp_async_stub::{Context, Params, RequestWriter};
 use lsp_types::{

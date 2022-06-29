@@ -1,7 +1,10 @@
 use crate::{environment::Environment, world::World};
 
-use lsp_async_stub::{rpc, Context, Params, util::LspExt};
-use lsp_types::{request::{GotoDeclarationParams, GotoDeclarationResponse}, Url, Position, LocationLink, GotoDefinitionParams, GotoDefinitionResponse};
+use lsp_async_stub::{rpc, util::LspExt, Context, Params};
+use lsp_types::{
+    request::{GotoDeclarationParams, GotoDeclarationResponse},
+    GotoDefinitionParams, GotoDefinitionResponse, LocationLink, Position, Url,
+};
 use rhai_hir::symbol::ReferenceTarget;
 
 pub(crate) async fn goto_declaration<E: Environment>(
@@ -13,7 +16,9 @@ pub(crate) async fn goto_declaration<E: Environment>(
     let uri = p.text_document_position_params.text_document.uri;
     let pos = p.text_document_position_params.position;
 
-    goto_target(context, uri, pos).await.map(|result| result.map(GotoDeclarationResponse::Link))
+    goto_target(context, uri, pos)
+        .await
+        .map(|result| result.map(GotoDeclarationResponse::Link))
 }
 
 // Technically the same, as goto_declaration, but a different function for consistency.
@@ -26,7 +31,9 @@ pub(crate) async fn goto_definition<E: Environment>(
     let uri = p.text_document_position_params.text_document.uri;
     let pos = p.text_document_position_params.position;
 
-    goto_target(context, uri, pos).await.map(|result| result.map(GotoDefinitionResponse::Link))
+    goto_target(context, uri, pos)
+        .await
+        .map(|result| result.map(GotoDefinitionResponse::Link))
 }
 
 async fn goto_target<E: Environment>(
@@ -39,7 +46,10 @@ async fn goto_target<E: Environment>(
 
     let doc = ws.document(&uri)?;
 
-    let offset = match doc.mapper.offset(lsp_async_stub::util::Position::from_lsp(pos)) {
+    let offset = match doc
+        .mapper
+        .offset(lsp_async_stub::util::Position::from_lsp(pos))
+    {
         Some(p) => p,
         None => return Ok(None),
     };

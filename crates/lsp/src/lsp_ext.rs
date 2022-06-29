@@ -31,7 +31,7 @@ pub mod request {
     pub struct ConvertOffsetsParams {
         pub uri: Url,
         pub ranges: Option<Vec<rhai_rowan::TextRange>>,
-        pub positions: Option<Vec<rhai_rowan::TextSize>>
+        pub positions: Option<Vec<rhai_rowan::TextSize>>,
     }
 
     #[derive(Serialize, Deserialize)]

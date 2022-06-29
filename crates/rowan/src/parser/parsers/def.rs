@@ -11,7 +11,7 @@ impl<'src> Parser<'src> {
         self.finish()
     }
 }
- 
+
 /// Parse the beginning of a rhai definition file.
 ///
 /// It is used to determine if a given source should

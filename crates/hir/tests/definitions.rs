@@ -112,4 +112,3 @@ fn print();
 
     assert!(hir.errors().is_empty());
 }
-

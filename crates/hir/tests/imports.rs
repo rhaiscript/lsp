@@ -72,7 +72,6 @@ import "./foo.rhai" as foo;
 
 "#;
 
-
     let mut hir = Hir::new();
 
     hir.add_source(
@@ -84,4 +83,3 @@ import "./foo.rhai" as foo;
 
     assert_eq!(hir.missing_modules().len(), 1);
 }
-

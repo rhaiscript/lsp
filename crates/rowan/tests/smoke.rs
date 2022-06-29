@@ -39,5 +39,8 @@ fn parse_valid(name: &str, src: &str) {
         }
     );
 
-    rhai::Engine::new().set_max_expr_depths(0, 0).compile(src).unwrap();
+    rhai::Engine::new()
+        .set_max_expr_depths(0, 0)
+        .compile(src)
+        .unwrap();
 }

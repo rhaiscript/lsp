@@ -1,7 +1,9 @@
 //! This file was generated from ungrammar, do not touch it!
 /// A macro for using tokens in a more humanly way, e.g. `T!["="]`.
-# [macro_export] macro_rules ! T { ["lit_int"] => { $ crate :: syntax :: SyntaxKind :: LIT_INT } ; ["lit_float"] => { $ crate :: syntax :: SyntaxKind :: LIT_FLOAT } ; ["lit_str"] => { $ crate :: syntax :: SyntaxKind :: LIT_STR } ; ["lit_bool"] => { $ crate :: syntax :: SyntaxKind :: LIT_BOOL } ; ["lit_char"] => { $ crate :: syntax :: SyntaxKind :: LIT_CHAR } ; ["ident"] => { $ crate :: syntax :: SyntaxKind :: IDENT } ; ["::"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON2 } ; ["shebang"] => { $ crate :: syntax :: SyntaxKind :: SHEBANG } ; ["comment_line_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_LINE_DOC } ; ["comment_block_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_BLOCK_DOC } ; [";"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_SEMI } ; ["let"] => { $ crate :: syntax :: SyntaxKind :: KW_LET } ; ["="] => { $ crate :: syntax :: SyntaxKind :: OP_ASSIGN } ; ["const"] => { $ crate :: syntax :: SyntaxKind :: KW_CONST } ; ["{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_START } ; ["}"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_END } ; ["+"] => { $ crate :: syntax :: SyntaxKind :: OP_ADD } ; ["-"] => { $ crate :: syntax :: SyntaxKind :: OP_SUB } ; ["!"] => { $ crate :: syntax :: SyntaxKind :: OP_NOT } ; [".."] => { $ crate :: syntax :: SyntaxKind :: OP_RANGE } ; ["..="] => { $ crate :: syntax :: SyntaxKind :: OP_RANGE_INCLUSIVE } ; ["||"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_OR } ; ["&&"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_AND } ; ["=="] => { $ crate :: syntax :: SyntaxKind :: OP_EQ } ; ["!="] => { $ crate :: syntax :: SyntaxKind :: OP_NOT_EQ } ; ["<="] => { $ crate :: syntax :: SyntaxKind :: OP_LT_EQ } ; [">="] => { $ crate :: syntax :: SyntaxKind :: OP_GT_EQ } ; ["<"] => { $ crate :: syntax :: SyntaxKind :: OP_LT } ; [">"] => { $ crate :: syntax :: SyntaxKind :: OP_GT } ; ["*"] => { $ crate :: syntax :: SyntaxKind :: OP_MUL } ; ["**"] => { $ crate :: syntax :: SyntaxKind :: OP_POW } ; ["/"] => { $ crate :: syntax :: SyntaxKind :: OP_DIV } ; ["%"] => { $ crate :: syntax :: SyntaxKind :: OP_MOD } ; ["<<"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT } ; [">>"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT } ; ["^"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_XOR } ; ["|"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_OR } ; ["&"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_AND } ; ["+="] => { $ crate :: syntax :: SyntaxKind :: OP_ADD_ASSIGN } ; ["/="] => { $ crate :: syntax :: SyntaxKind :: OP_DIV_ASSIGN } ; ["*="] => { $ crate :: syntax :: SyntaxKind :: OP_MUL_ASSIGN } ; ["**="] => { $ crate :: syntax :: SyntaxKind :: OP_POW_ASSIGN } ; ["%="] => { $ crate :: syntax :: SyntaxKind :: OP_MOD_ASSIGN } ; [">>="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT_ASSIGN } ; ["<<="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT_ASSIGN } ; ["-="] => { $ crate :: syntax :: SyntaxKind :: OP_SUB_ASSIGN } ; ["|="] => { $ crate :: syntax :: SyntaxKind :: OP_OR_ASSIGN } ; ["&="] => { $ crate :: syntax :: SyntaxKind :: OP_AND_ASSIGN } ; ["^="] => { $ crate :: syntax :: SyntaxKind :: OP_XOR_ASSIGN } ; ["."] => { $ crate :: syntax :: SyntaxKind :: PUNCT_DOT } ; ["("] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_START } ; [")"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_END } ; ["["] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_START } ; [","] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COMMA } ; ["]"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_END } ; ["#{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_MAP_START } ; [":"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON } ; ["if"] => { $ crate :: syntax :: SyntaxKind :: KW_IF } ; ["else"] => { $ crate :: syntax :: SyntaxKind :: KW_ELSE } ; ["loop"] => { $ crate :: syntax :: SyntaxKind :: KW_LOOP } ; ["for"] => { $ crate :: syntax :: SyntaxKind :: KW_FOR } ; ["in"] => { $ crate :: syntax :: SyntaxKind :: KW_IN } ; ["while"] => { $ crate :: syntax :: SyntaxKind :: KW_WHILE } ; ["break"] => { $ crate :: syntax :: SyntaxKind :: KW_BREAK } ; ["continue"] => { $ crate :: syntax :: SyntaxKind :: KW_CONTINUE } ; ["switch"] => { $ crate :: syntax :: SyntaxKind :: KW_SWITCH } ; ["_"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_UNDERSCORE } ; ["=>"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_ARROW_FAT } ; ["return"] => { $ crate :: syntax :: SyntaxKind :: KW_RETURN } ; ["private"] => { $ crate :: syntax :: SyntaxKind :: KW_PRIVATE } ; ["fn"] => { $ crate :: syntax :: SyntaxKind :: KW_FN } ; ["import"] => { $ crate :: syntax :: SyntaxKind :: KW_IMPORT } ; ["as"] => { $ crate :: syntax :: SyntaxKind :: KW_AS } ; ["export"] => { $ crate :: syntax :: SyntaxKind :: KW_EXPORT } ; ["try"] => { $ crate :: syntax :: SyntaxKind :: KW_TRY } ; ["catch"] => { $ crate :: syntax :: SyntaxKind :: KW_CATCH } ; ["module"] => { $ crate :: syntax :: SyntaxKind :: KW_MODULE } ; ["static"] => { $ crate :: syntax :: SyntaxKind :: KW_STATIC } ; ["void"] => { $ crate :: syntax :: SyntaxKind :: KW_VOID } ; ["?"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_QUESTION_MARK } ; } pub use T ;
-use crate::syntax::{SyntaxNode, SyntaxToken, SyntaxKind::*};
+#[macro_export]
+macro_rules ! T { ["lit_int"] => { $ crate :: syntax :: SyntaxKind :: LIT_INT } ; ["lit_float"] => { $ crate :: syntax :: SyntaxKind :: LIT_FLOAT } ; ["lit_str"] => { $ crate :: syntax :: SyntaxKind :: LIT_STR } ; ["lit_bool"] => { $ crate :: syntax :: SyntaxKind :: LIT_BOOL } ; ["lit_char"] => { $ crate :: syntax :: SyntaxKind :: LIT_CHAR } ; ["ident"] => { $ crate :: syntax :: SyntaxKind :: IDENT } ; ["::"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON2 } ; ["shebang"] => { $ crate :: syntax :: SyntaxKind :: SHEBANG } ; ["comment_line_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_LINE_DOC } ; ["comment_block_doc"] => { $ crate :: syntax :: SyntaxKind :: COMMENT_BLOCK_DOC } ; [";"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_SEMI } ; ["let"] => { $ crate :: syntax :: SyntaxKind :: KW_LET } ; ["="] => { $ crate :: syntax :: SyntaxKind :: OP_ASSIGN } ; ["const"] => { $ crate :: syntax :: SyntaxKind :: KW_CONST } ; ["{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_START } ; ["}"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACE_END } ; ["+"] => { $ crate :: syntax :: SyntaxKind :: OP_ADD } ; ["-"] => { $ crate :: syntax :: SyntaxKind :: OP_SUB } ; ["!"] => { $ crate :: syntax :: SyntaxKind :: OP_NOT } ; [".."] => { $ crate :: syntax :: SyntaxKind :: OP_RANGE } ; ["..="] => { $ crate :: syntax :: SyntaxKind :: OP_RANGE_INCLUSIVE } ; ["||"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_OR } ; ["&&"] => { $ crate :: syntax :: SyntaxKind :: OP_BOOL_AND } ; ["=="] => { $ crate :: syntax :: SyntaxKind :: OP_EQ } ; ["!="] => { $ crate :: syntax :: SyntaxKind :: OP_NOT_EQ } ; ["<="] => { $ crate :: syntax :: SyntaxKind :: OP_LT_EQ } ; [">="] => { $ crate :: syntax :: SyntaxKind :: OP_GT_EQ } ; ["<"] => { $ crate :: syntax :: SyntaxKind :: OP_LT } ; [">"] => { $ crate :: syntax :: SyntaxKind :: OP_GT } ; ["*"] => { $ crate :: syntax :: SyntaxKind :: OP_MUL } ; ["**"] => { $ crate :: syntax :: SyntaxKind :: OP_POW } ; ["/"] => { $ crate :: syntax :: SyntaxKind :: OP_DIV } ; ["%"] => { $ crate :: syntax :: SyntaxKind :: OP_MOD } ; ["<<"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT } ; [">>"] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT } ; ["^"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_XOR } ; ["|"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_OR } ; ["&"] => { $ crate :: syntax :: SyntaxKind :: OP_BIT_AND } ; ["+="] => { $ crate :: syntax :: SyntaxKind :: OP_ADD_ASSIGN } ; ["/="] => { $ crate :: syntax :: SyntaxKind :: OP_DIV_ASSIGN } ; ["*="] => { $ crate :: syntax :: SyntaxKind :: OP_MUL_ASSIGN } ; ["**="] => { $ crate :: syntax :: SyntaxKind :: OP_POW_ASSIGN } ; ["%="] => { $ crate :: syntax :: SyntaxKind :: OP_MOD_ASSIGN } ; [">>="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_RIGHT_ASSIGN } ; ["<<="] => { $ crate :: syntax :: SyntaxKind :: OP_SHIFT_LEFT_ASSIGN } ; ["-="] => { $ crate :: syntax :: SyntaxKind :: OP_SUB_ASSIGN } ; ["|="] => { $ crate :: syntax :: SyntaxKind :: OP_OR_ASSIGN } ; ["&="] => { $ crate :: syntax :: SyntaxKind :: OP_AND_ASSIGN } ; ["^="] => { $ crate :: syntax :: SyntaxKind :: OP_XOR_ASSIGN } ; ["."] => { $ crate :: syntax :: SyntaxKind :: PUNCT_DOT } ; ["("] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_START } ; [")"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_PAREN_END } ; ["["] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_START } ; [","] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COMMA } ; ["]"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_BRACKET_END } ; ["#{"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_MAP_START } ; [":"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_COLON } ; ["if"] => { $ crate :: syntax :: SyntaxKind :: KW_IF } ; ["else"] => { $ crate :: syntax :: SyntaxKind :: KW_ELSE } ; ["loop"] => { $ crate :: syntax :: SyntaxKind :: KW_LOOP } ; ["for"] => { $ crate :: syntax :: SyntaxKind :: KW_FOR } ; ["in"] => { $ crate :: syntax :: SyntaxKind :: KW_IN } ; ["while"] => { $ crate :: syntax :: SyntaxKind :: KW_WHILE } ; ["break"] => { $ crate :: syntax :: SyntaxKind :: KW_BREAK } ; ["continue"] => { $ crate :: syntax :: SyntaxKind :: KW_CONTINUE } ; ["switch"] => { $ crate :: syntax :: SyntaxKind :: KW_SWITCH } ; ["_"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_UNDERSCORE } ; ["=>"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_ARROW_FAT } ; ["return"] => { $ crate :: syntax :: SyntaxKind :: KW_RETURN } ; ["private"] => { $ crate :: syntax :: SyntaxKind :: KW_PRIVATE } ; ["fn"] => { $ crate :: syntax :: SyntaxKind :: KW_FN } ; ["import"] => { $ crate :: syntax :: SyntaxKind :: KW_IMPORT } ; ["as"] => { $ crate :: syntax :: SyntaxKind :: KW_AS } ; ["export"] => { $ crate :: syntax :: SyntaxKind :: KW_EXPORT } ; ["try"] => { $ crate :: syntax :: SyntaxKind :: KW_TRY } ; ["catch"] => { $ crate :: syntax :: SyntaxKind :: KW_CATCH } ; ["module"] => { $ crate :: syntax :: SyntaxKind :: KW_MODULE } ; ["static"] => { $ crate :: syntax :: SyntaxKind :: KW_STATIC } ; ["void"] => { $ crate :: syntax :: SyntaxKind :: KW_VOID } ; ["?"] => { $ crate :: syntax :: SyntaxKind :: PUNCT_QUESTION_MARK } ; }
+use crate::syntax::{SyntaxKind::*, SyntaxNode, SyntaxToken};
+pub use T;
 pub trait AstNode: Sized {
     fn can_cast(syntax: &SyntaxNode) -> bool;
     fn cast(syntax: SyntaxNode) -> Option<Self>;
@@ -39,7 +41,11 @@ impl AstNode for Path {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -68,7 +74,11 @@ impl AstNode for Rhai {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -88,7 +98,11 @@ impl AstNode for Stmt {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -103,7 +117,11 @@ impl AstNode for Item {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -250,7 +268,11 @@ impl AstNode for ExprIdent {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -270,7 +292,11 @@ impl AstNode for ExprPath {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -290,7 +316,11 @@ impl AstNode for ExprLit {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -310,7 +340,11 @@ impl AstNode for ExprLet {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -351,7 +385,11 @@ impl AstNode for ExprConst {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -407,7 +445,11 @@ impl AstNode for ExprBlock {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -451,7 +493,11 @@ impl AstNode for ExprUnary {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -471,7 +517,11 @@ impl AstNode for ExprBinary {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -494,7 +544,11 @@ impl AstNode for ExprParen {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -538,7 +592,11 @@ impl AstNode for ExprArray {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -579,7 +637,11 @@ impl AstNode for ExprIndex {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -626,7 +688,11 @@ impl AstNode for ExprObject {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -667,7 +733,11 @@ impl AstNode for ExprCall {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -678,7 +748,11 @@ impl ExprCall {
         self.0.children().filter_map(Expr::cast).skip(0usize).next()
     }
     pub fn arg_list(&self) -> Option<ArgList> {
-        self.0.children().filter_map(ArgList::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ArgList::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -690,7 +764,11 @@ impl AstNode for ExprClosure {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -698,7 +776,11 @@ impl AstNode for ExprClosure {
 }
 impl ExprClosure {
     pub fn param_list(&self) -> Option<ParamList> {
-        self.0.children().filter_map(ParamList::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ParamList::cast)
+            .skip(0usize)
+            .next()
     }
     pub fn body(&self) -> Option<Expr> {
         self.0.children().filter_map(Expr::cast).skip(0usize).next()
@@ -713,7 +795,11 @@ impl AstNode for ExprIf {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -736,7 +822,11 @@ impl ExprIf {
         self.0.children().filter_map(Expr::cast).skip(0usize).next()
     }
     pub fn then_branch(&self) -> Option<ExprBlock> {
-        self.0.children().filter_map(ExprBlock::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -748,7 +838,11 @@ impl AstNode for ExprLoop {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -768,7 +862,11 @@ impl ExprLoop {
             .next()
     }
     pub fn loop_body(&self) -> Option<ExprBlock> {
-        self.0.children().filter_map(ExprBlock::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -780,7 +878,11 @@ impl AstNode for ExprFor {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -818,7 +920,11 @@ impl ExprFor {
         self.0.children().filter_map(Expr::cast).skip(0usize).next()
     }
     pub fn loop_body(&self) -> Option<ExprBlock> {
-        self.0.children().filter_map(ExprBlock::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -830,7 +936,11 @@ impl AstNode for ExprWhile {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -853,7 +963,11 @@ impl ExprWhile {
         self.0.children().filter_map(Expr::cast).skip(0usize).next()
     }
     pub fn loop_body(&self) -> Option<ExprBlock> {
-        self.0.children().filter_map(ExprBlock::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -865,7 +979,11 @@ impl AstNode for ExprBreak {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -894,7 +1012,11 @@ impl AstNode for ExprContinue {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -914,7 +1036,11 @@ impl AstNode for ExprSwitch {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -937,7 +1063,11 @@ impl ExprSwitch {
         self.0.children().filter_map(Expr::cast).skip(0usize).next()
     }
     pub fn switch_arm_list(&self) -> Option<SwitchArmList> {
-        self.0.children().filter_map(SwitchArmList::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(SwitchArmList::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -949,7 +1079,11 @@ impl AstNode for ExprReturn {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -978,7 +1112,11 @@ impl AstNode for ExprFn {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1010,10 +1148,18 @@ impl ExprFn {
             .next()
     }
     pub fn param_list(&self) -> Option<ParamList> {
-        self.0.children().filter_map(ParamList::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ParamList::cast)
+            .skip(0usize)
+            .next()
     }
     pub fn body(&self) -> Option<ExprBlock> {
-        self.0.children().filter_map(ExprBlock::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1025,7 +1171,11 @@ impl AstNode for ExprExport {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1045,7 +1195,11 @@ impl ExprExport {
             .next()
     }
     pub fn export_target(&self) -> Option<ExportTarget> {
-        self.0.children().filter_map(ExportTarget::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ExportTarget::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1057,7 +1211,11 @@ impl AstNode for ExprImport {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1089,7 +1247,11 @@ impl AstNode for ExprTry {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1109,7 +1271,11 @@ impl ExprTry {
             .next()
     }
     pub fn try_block(&self) -> Option<ExprBlock> {
-        self.0.children().filter_map(ExprBlock::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(0usize)
+            .next()
     }
     pub fn kw_catch_token(&self) -> Option<SyntaxToken> {
         self.0
@@ -1124,7 +1290,11 @@ impl ExprTry {
             .next()
     }
     pub fn catch_block(&self) -> Option<ExprBlock> {
-        self.0.children().filter_map(ExprBlock::cast).skip(1usize).next()
+        self.0
+            .children()
+            .filter_map(ExprBlock::cast)
+            .skip(1usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1136,7 +1306,11 @@ impl AstNode for ObjectField {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1168,7 +1342,11 @@ impl AstNode for ArgList {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1209,7 +1387,11 @@ impl AstNode for ParamList {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1224,7 +1406,11 @@ impl AstNode for Param {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1273,7 +1459,11 @@ impl AstNode for SwitchArmList {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1314,7 +1504,11 @@ impl AstNode for SwitchArm {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1346,7 +1540,11 @@ impl AstNode for SwitchArmCondition {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1410,7 +1608,11 @@ impl AstNode for ExportIdent {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1439,7 +1641,11 @@ impl AstNode for PatTuple {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1480,7 +1686,11 @@ impl AstNode for PatIdent {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1500,7 +1710,11 @@ impl AstNode for RhaiDef {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1508,7 +1722,11 @@ impl AstNode for RhaiDef {
 }
 impl RhaiDef {
     pub fn def_module_decl(&self) -> Option<DefModuleDecl> {
-        self.0.children().filter_map(DefModuleDecl::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(DefModuleDecl::cast)
+            .skip(0usize)
+            .next()
     }
     pub fn statements(&self) -> impl Iterator<Item = DefStmt> {
         self.0.children().filter_map(DefStmt::cast)
@@ -1523,7 +1741,11 @@ impl AstNode for DefModuleDecl {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1534,7 +1756,11 @@ impl DefModuleDecl {
         self.0.children().filter_map(Doc::cast)
     }
     pub fn def_module(&self) -> Option<DefModule> {
-        self.0.children().filter_map(DefModule::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(DefModule::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1546,7 +1772,11 @@ impl AstNode for DefStmt {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1561,7 +1791,11 @@ impl AstNode for DefItem {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1622,7 +1856,11 @@ impl AstNode for DefModule {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1651,7 +1889,11 @@ impl AstNode for DefImport {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1683,7 +1925,11 @@ impl AstNode for DefConst {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1724,7 +1970,11 @@ impl AstNode for DefFn {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1756,7 +2006,11 @@ impl DefFn {
             .next()
     }
     pub fn typed_param_list(&self) -> Option<TypedParamList> {
-        self.0.children().filter_map(TypedParamList::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(TypedParamList::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1768,7 +2022,11 @@ impl AstNode for DefOp {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1788,7 +2046,11 @@ impl DefOp {
             .next()
     }
     pub fn type_list(&self) -> Option<TypeList> {
-        self.0.children().filter_map(TypeList::cast).skip(0usize).next()
+        self.0
+            .children()
+            .filter_map(TypeList::cast)
+            .skip(0usize)
+            .next()
     }
 }
 #[derive(Debug, Clone)]
@@ -1800,7 +2062,11 @@ impl AstNode for DefType {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1897,7 +2163,11 @@ impl AstNode for DefLet {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1938,7 +2208,11 @@ impl AstNode for TypeList {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -1979,7 +2253,11 @@ impl AstNode for TypedParamList {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2020,7 +2298,11 @@ impl AstNode for TypeIdent {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2040,7 +2322,11 @@ impl AstNode for TypeLit {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2060,7 +2346,11 @@ impl AstNode for TypeObject {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2101,7 +2391,11 @@ impl AstNode for TypeVoid {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2121,7 +2415,11 @@ impl AstNode for TypeArray {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2165,7 +2463,11 @@ impl AstNode for TypeUnknown {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2185,7 +2487,11 @@ impl AstNode for TypeObjectField {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2220,7 +2526,11 @@ impl AstNode for TypedParam {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2264,7 +2574,11 @@ impl AstNode for TypeUnion {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
@@ -2299,7 +2613,11 @@ impl AstNode for TypeParen {
     }
     #[inline]
     fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+        if Self::can_cast(&syntax) {
+            Some(Self(syntax))
+        } else {
+            None
+        }
     }
     fn syntax(&self) -> SyntaxNode {
         self.0.clone()
