@@ -1,0 +1,74 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..112
+  COMMENT_LINE@0..41 "// This script runs a ..."
+  WHITESPACE@41..43 "\n\n"
+  STMT@43..78
+    ITEM@43..77
+      EXPR@43..77
+        EXPR_CALL@43..77
+          EXPR@43..48
+            EXPR_IDENT@43..48
+              IDENT@43..48 "print"
+          ARG_LIST@48..77
+            PUNCT_PAREN_START@48..49 "("
+            EXPR@49..76
+              EXPR_LIT@49..76
+                LIT@49..76
+                  LIT_STR@49..76 "\"The result should be ..."
+            PUNCT_PAREN_END@76..77 ")"
+    PUNCT_SEMI@77..78 ";"
+  WHITESPACE@78..80 "\n\n"
+  STMT@80..100
+    ITEM@80..99
+      EXPR@80..99
+        EXPR_LET@80..99
+          KW_LET@80..83 "let"
+          WHITESPACE@83..84 " "
+          IDENT@84..85 "x"
+          WHITESPACE@85..86 " "
+          OP_ASSIGN@86..87 "="
+          EXPR@87..99
+            EXPR_BINARY@87..99
+              EXPR@87..91
+                WHITESPACE@87..88 " "
+                EXPR_LIT@88..90
+                  LIT@88..90
+                    LIT_INT@88..90 "12"
+                WHITESPACE@90..91 " "
+              OP_ADD@91..92 "+"
+              EXPR@92..99
+                EXPR_BINARY@92..99
+                  EXPR@92..96
+                    WHITESPACE@92..93 " "
+                    EXPR_LIT@93..95
+                      LIT@93..95
+                        LIT_INT@93..95 "34"
+                    WHITESPACE@95..96 " "
+                  OP_MUL@96..97 "*"
+                  EXPR@97..99
+                    WHITESPACE@97..98 " "
+                    EXPR_LIT@98..99
+                      LIT@98..99
+                        LIT_INT@98..99 "5"
+    PUNCT_SEMI@99..100 ";"
+  WHITESPACE@100..102 "\n\n"
+  STMT@102..111
+    ITEM@102..110
+      EXPR@102..110
+        EXPR_CALL@102..110
+          EXPR@102..107
+            EXPR_IDENT@102..107
+              IDENT@102..107 "print"
+          ARG_LIST@107..110
+            PUNCT_PAREN_START@107..108 "("
+            EXPR@108..109
+              EXPR_IDENT@108..109
+                IDENT@108..109 "x"
+            PUNCT_PAREN_END@109..110 ")"
+    PUNCT_SEMI@110..111 ";"
+  WHITESPACE@111..112 "\n"
+

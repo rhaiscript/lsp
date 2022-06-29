@@ -1,0 +1,41 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..116
+  COMMENT_LINE@0..54 "// This script import ..."
+  WHITESPACE@54..56 "\n\n"
+  STMT@56..75
+    ITEM@56..74
+      EXPR@56..74
+        EXPR_IMPORT@56..74
+          KW_IMPORT@56..62 "import"
+          EXPR@62..70
+            WHITESPACE@62..63 " "
+            EXPR_LIT@63..69
+              LIT@63..69
+                LIT_STR@63..69 "\"loop\""
+            WHITESPACE@69..70 " "
+          KW_AS@70..72 "as"
+          WHITESPACE@72..73 " "
+          IDENT@73..74 "x"
+    PUNCT_SEMI@74..75 ";"
+  WHITESPACE@75..77 "\n\n"
+  STMT@77..115
+    ITEM@77..114
+      EXPR@77..114
+        EXPR_CALL@77..114
+          EXPR@77..82
+            EXPR_IDENT@77..82
+              IDENT@77..82 "print"
+          ARG_LIST@82..114
+            PUNCT_PAREN_START@82..83 "("
+            EXPR@83..113
+              EXPR_LIT@83..113
+                LIT@83..113
+                  LIT_STR@83..113 "`Module test! foo = $ ..."
+            PUNCT_PAREN_END@113..114 ")"
+    PUNCT_SEMI@114..115 ";"
+  WHITESPACE@115..116 "\n"
+

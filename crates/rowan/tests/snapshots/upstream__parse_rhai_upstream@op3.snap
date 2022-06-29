@@ -1,0 +1,78 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..114
+  COMMENT_LINE@0..41 "// This script runs a ..."
+  WHITESPACE@41..43 "\n\n"
+  STMT@43..78
+    ITEM@43..77
+      EXPR@43..77
+        EXPR_CALL@43..77
+          EXPR@43..48
+            EXPR_IDENT@43..48
+              IDENT@43..48 "print"
+          ARG_LIST@48..77
+            PUNCT_PAREN_START@48..49 "("
+            EXPR@49..76
+              EXPR_LIT@49..76
+                LIT@49..76
+                  LIT_STR@49..76 "\"The result should be ..."
+            PUNCT_PAREN_END@76..77 ")"
+    PUNCT_SEMI@77..78 ";"
+  WHITESPACE@78..80 "\n\n"
+  STMT@80..102
+    ITEM@80..101
+      EXPR@80..101
+        EXPR_LET@80..101
+          KW_LET@80..83 "let"
+          WHITESPACE@83..84 " "
+          IDENT@84..85 "x"
+          WHITESPACE@85..86 " "
+          OP_ASSIGN@86..87 "="
+          EXPR@87..101
+            EXPR_BINARY@87..101
+              EXPR@87..98
+                WHITESPACE@87..88 " "
+                EXPR_PAREN@88..97
+                  PUNCT_PAREN_START@88..89 "("
+                  EXPR@89..96
+                    EXPR_BINARY@89..96
+                      EXPR@89..92
+                        EXPR_LIT@89..91
+                          LIT@89..91
+                            LIT_INT@89..91 "12"
+                        WHITESPACE@91..92 " "
+                      OP_ADD@92..93 "+"
+                      EXPR@93..96
+                        WHITESPACE@93..94 " "
+                        EXPR_LIT@94..96
+                          LIT@94..96
+                            LIT_INT@94..96 "34"
+                  PUNCT_PAREN_END@96..97 ")"
+                WHITESPACE@97..98 " "
+              OP_MUL@98..99 "*"
+              EXPR@99..101
+                WHITESPACE@99..100 " "
+                EXPR_LIT@100..101
+                  LIT@100..101
+                    LIT_INT@100..101 "5"
+    PUNCT_SEMI@101..102 ";"
+  WHITESPACE@102..104 "\n\n"
+  STMT@104..113
+    ITEM@104..112
+      EXPR@104..112
+        EXPR_CALL@104..112
+          EXPR@104..109
+            EXPR_IDENT@104..109
+              IDENT@104..109 "print"
+          ARG_LIST@109..112
+            PUNCT_PAREN_START@109..110 "("
+            EXPR@110..111
+              EXPR_IDENT@110..111
+                IDENT@110..111 "x"
+            PUNCT_PAREN_END@111..112 ")"
+    PUNCT_SEMI@112..113 ";"
+  WHITESPACE@113..114 "\n"
+

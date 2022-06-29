@@ -1,0 +1,117 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..236
+  COMMENT_LINE@0..83 "// This script runs 1 ..."
+  WHITESPACE@83..85 "\n\n"
+  STMT@85..107
+    ITEM@85..106
+      EXPR@85..106
+        EXPR_LET@85..106
+          KW_LET@85..88 "let"
+          WHITESPACE@88..89 " "
+          IDENT@89..92 "now"
+          WHITESPACE@92..93 " "
+          OP_ASSIGN@93..94 "="
+          EXPR@94..106
+            EXPR_CALL@94..106
+              EXPR@94..104
+                WHITESPACE@94..95 " "
+                EXPR_IDENT@95..104
+                  IDENT@95..104 "timestamp"
+              ARG_LIST@104..106
+                PUNCT_PAREN_START@104..105 "("
+                PUNCT_PAREN_END@105..106 ")"
+    PUNCT_SEMI@106..107 ";"
+  WHITESPACE@107..108 "\n"
+  STMT@108..126
+    ITEM@108..125
+      EXPR@108..125
+        EXPR_LET@108..125
+          KW_LET@108..111 "let"
+          WHITESPACE@111..112 " "
+          IDENT@112..113 "x"
+          WHITESPACE@113..114 " "
+          OP_ASSIGN@114..115 "="
+          EXPR@115..125
+            WHITESPACE@115..116 " "
+            EXPR_LIT@116..125
+              LIT@116..125
+                LIT_INT@116..125 "1_000_000"
+    PUNCT_SEMI@125..126 ";"
+  WHITESPACE@126..128 "\n\n"
+  STMT@128..150
+    ITEM@128..149
+      EXPR@128..149
+        EXPR_CALL@128..149
+          EXPR@128..133
+            EXPR_IDENT@128..133
+              IDENT@128..133 "print"
+          ARG_LIST@133..149
+            PUNCT_PAREN_START@133..134 "("
+            EXPR@134..148
+              EXPR_LIT@134..148
+                LIT@134..148
+                  LIT_STR@134..148 "\"Ready... Go!\""
+            PUNCT_PAREN_END@148..149 ")"
+    PUNCT_SEMI@149..150 ";"
+  WHITESPACE@150..152 "\n\n"
+  STMT@152..181
+    ITEM@152..179
+      EXPR@152..179
+        EXPR_WHILE@152..179
+          KW_WHILE@152..157 "while"
+          EXPR@157..164
+            EXPR_BINARY@157..164
+              EXPR@157..160
+                WHITESPACE@157..158 " "
+                EXPR_IDENT@158..160
+                  IDENT@158..159 "x"
+                  WHITESPACE@159..160 " "
+              OP_GT@160..161 ">"
+              EXPR@161..164
+                WHITESPACE@161..162 " "
+                EXPR_LIT@162..163
+                  LIT@162..163
+                    LIT_INT@162..163 "0"
+                WHITESPACE@163..164 " "
+          EXPR_BLOCK@164..179
+            PUNCT_BRACE_START@164..165 "{"
+            WHITESPACE@165..170 "\n    "
+            STMT@170..177
+              ITEM@170..176
+                EXPR@170..176
+                  EXPR_BINARY@170..176
+                    EXPR@170..172
+                      EXPR_IDENT@170..172
+                        IDENT@170..171 "x"
+                        WHITESPACE@171..172 " "
+                    OP_SUB_ASSIGN@172..174 "-="
+                    EXPR@174..176
+                      WHITESPACE@174..175 " "
+                      EXPR_LIT@175..176
+                        LIT@175..176
+                          LIT_INT@175..176 "1"
+              PUNCT_SEMI@176..177 ";"
+            WHITESPACE@177..178 "\n"
+            PUNCT_BRACE_END@178..179 "}"
+    WHITESPACE@179..181 "\n\n"
+  STMT@181..235
+    ITEM@181..234
+      EXPR@181..234
+        EXPR_CALL@181..234
+          EXPR@181..186
+            EXPR_IDENT@181..186
+              IDENT@181..186 "print"
+          ARG_LIST@186..234
+            PUNCT_PAREN_START@186..187 "("
+            EXPR@187..233
+              EXPR_LIT@187..233
+                LIT@187..233
+                  LIT_STR@187..233 "`Finished. Run time = ..."
+            PUNCT_PAREN_END@233..234 ")"
+    PUNCT_SEMI@234..235 ";"
+  WHITESPACE@235..236 "\n"
+

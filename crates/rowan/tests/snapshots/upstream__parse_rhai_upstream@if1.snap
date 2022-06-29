@@ -1,0 +1,192 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..308
+  COMMENT_LINE@0..34 "// This script runs i ..."
+  WHITESPACE@34..36 "\n\n"
+  STMT@36..47
+    ITEM@36..46
+      EXPR@36..46
+        EXPR_LET@36..46
+          KW_LET@36..39 "let"
+          WHITESPACE@39..40 " "
+          IDENT@40..41 "a"
+          WHITESPACE@41..42 " "
+          OP_ASSIGN@42..43 "="
+          EXPR@43..46
+            WHITESPACE@43..44 " "
+            EXPR_LIT@44..46
+              LIT@44..46
+                LIT_INT@44..46 "42"
+    PUNCT_SEMI@46..47 ";"
+  WHITESPACE@47..48 "\n"
+  STMT@48..60
+    ITEM@48..59
+      EXPR@48..59
+        EXPR_LET@48..59
+          KW_LET@48..51 "let"
+          WHITESPACE@51..52 " "
+          IDENT@52..53 "b"
+          WHITESPACE@53..54 " "
+          OP_ASSIGN@54..55 "="
+          EXPR@55..59
+            WHITESPACE@55..56 " "
+            EXPR_LIT@56..59
+              LIT@56..59
+                LIT_INT@56..59 "123"
+    PUNCT_SEMI@59..60 ";"
+  WHITESPACE@60..61 "\n"
+  STMT@61..73
+    ITEM@61..72
+      EXPR@61..72
+        EXPR_LET@61..72
+          KW_LET@61..64 "let"
+          WHITESPACE@64..65 " "
+          IDENT@65..66 "x"
+          WHITESPACE@66..67 " "
+          OP_ASSIGN@67..68 "="
+          EXPR@68..72
+            WHITESPACE@68..69 " "
+            EXPR_LIT@69..72
+              LIT@69..72
+                LIT_INT@69..72 "999"
+    PUNCT_SEMI@72..73 ";"
+  WHITESPACE@73..75 "\n\n"
+  STMT@75..308
+    ITEM@75..308
+      EXPR@75..308
+        EXPR_IF@75..307
+          KW_IF@75..77 "if"
+          EXPR@77..84
+            EXPR_BINARY@77..84
+              EXPR@77..80
+                WHITESPACE@77..78 " "
+                EXPR_IDENT@78..80
+                  IDENT@78..79 "a"
+                  WHITESPACE@79..80 " "
+              OP_GT@80..81 ">"
+              EXPR@81..84
+                WHITESPACE@81..82 " "
+                EXPR_IDENT@82..84
+                  IDENT@82..83 "b"
+                  WHITESPACE@83..84 " "
+          EXPR_BLOCK@84..113
+            PUNCT_BRACE_START@84..85 "{"
+            WHITESPACE@85..90 "\n    "
+            STMT@90..111
+              ITEM@90..110
+                EXPR@90..110
+                  EXPR_CALL@90..110
+                    EXPR@90..95
+                      EXPR_IDENT@90..95
+                        IDENT@90..95 "print"
+                    ARG_LIST@95..110
+                      PUNCT_PAREN_START@95..96 "("
+                      EXPR@96..109
+                        EXPR_LIT@96..109
+                          LIT@96..109
+                            LIT_STR@96..109 "\"Oops! a > b\""
+                      PUNCT_PAREN_END@109..110 ")"
+              PUNCT_SEMI@110..111 ";"
+            WHITESPACE@111..112 "\n"
+            PUNCT_BRACE_END@112..113 "}"
+          WHITESPACE@113..114 " "
+          KW_ELSE@114..118 "else"
+          WHITESPACE@118..119 " "
+          EXPR_IF@119..307
+            KW_IF@119..121 "if"
+            EXPR@121..128
+              EXPR_BINARY@121..128
+                EXPR@121..124
+                  WHITESPACE@121..122 " "
+                  EXPR_IDENT@122..124
+                    IDENT@122..123 "a"
+                    WHITESPACE@123..124 " "
+                OP_LT@124..125 "<"
+                EXPR@125..128
+                  WHITESPACE@125..126 " "
+                  EXPR_IDENT@126..128
+                    IDENT@126..127 "b"
+                    WHITESPACE@127..128 " "
+            EXPR_BLOCK@128..271
+              PUNCT_BRACE_START@128..129 "{"
+              WHITESPACE@129..134 "\n    "
+              STMT@134..164
+                ITEM@134..163
+                  EXPR@134..163
+                    EXPR_CALL@134..163
+                      EXPR@134..139
+                        EXPR_IDENT@134..139
+                          IDENT@134..139 "print"
+                      ARG_LIST@139..163
+                        PUNCT_PAREN_START@139..140 "("
+                        EXPR@140..162
+                          EXPR_LIT@140..162
+                            LIT@140..162
+                              LIT_STR@140..162 "\"a < b, x should be 0\""
+                        PUNCT_PAREN_END@162..163 ")"
+                PUNCT_SEMI@163..164 ";"
+              WHITESPACE@164..170 "\n\n    "
+              STMT@170..180
+                ITEM@170..179
+                  EXPR@170..179
+                    EXPR_LET@170..179
+                      KW_LET@170..173 "let"
+                      WHITESPACE@173..174 " "
+                      IDENT@174..175 "x"
+                      WHITESPACE@175..176 " "
+                      OP_ASSIGN@176..177 "="
+                      EXPR@177..179
+                        WHITESPACE@177..178 " "
+                        EXPR_LIT@178..179
+                          LIT@178..179
+                            LIT_INT@178..179 "0"
+                PUNCT_SEMI@179..180 ";"
+              WHITESPACE@180..190 "          "
+              COMMENT_LINE@190..227 "// <- this 'x' shadow ..."
+              WHITESPACE@227..232 "\n    "
+              STMT@232..241
+                ITEM@232..240
+                  EXPR@232..240
+                    EXPR_CALL@232..240
+                      EXPR@232..237
+                        EXPR_IDENT@232..237
+                          IDENT@232..237 "print"
+                      ARG_LIST@237..240
+                        PUNCT_PAREN_START@237..238 "("
+                        EXPR@238..239
+                          EXPR_IDENT@238..239
+                            IDENT@238..239 "x"
+                        PUNCT_PAREN_END@239..240 ")"
+                PUNCT_SEMI@240..241 ";"
+              WHITESPACE@241..252 "           "
+              COMMENT_LINE@252..269 "// should print 0"
+              WHITESPACE@269..270 "\n"
+              PUNCT_BRACE_END@270..271 "}"
+            WHITESPACE@271..272 " "
+            KW_ELSE@272..276 "else"
+            WHITESPACE@276..277 " "
+            EXPR_BLOCK@277..307
+              PUNCT_BRACE_START@277..278 "{"
+              WHITESPACE@278..283 "\n    "
+              STMT@283..305
+                ITEM@283..304
+                  EXPR@283..304
+                    EXPR_CALL@283..304
+                      EXPR@283..288
+                        EXPR_IDENT@283..288
+                          IDENT@283..288 "print"
+                      ARG_LIST@288..304
+                        PUNCT_PAREN_START@288..289 "("
+                        EXPR@289..303
+                          EXPR_LIT@289..303
+                            LIT@289..303
+                              LIT_STR@289..303 "\"Oops! a == b\""
+                        PUNCT_PAREN_END@303..304 ")"
+                PUNCT_SEMI@304..305 ";"
+              WHITESPACE@305..306 "\n"
+              PUNCT_BRACE_END@306..307 "}"
+        WHITESPACE@307..308 "\n"
+

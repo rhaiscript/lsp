@@ -1,0 +1,2841 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..5234
+  COMMENT_LINE@0..45 "// This script tests  ..."
+  WHITESPACE@45..47 "\n\n"
+  STMT@47..69
+    ITEM@47..68
+      EXPR@47..68
+        EXPR_CALL@47..68
+          EXPR@47..52
+            EXPR_IDENT@47..52
+              IDENT@47..52 "print"
+          ARG_LIST@52..68
+            PUNCT_PAREN_START@52..53 "("
+            EXPR@53..67
+              EXPR_LIT@53..67
+                LIT@53..67
+                  LIT_STR@53..67 "\"Ready... Go!\""
+            PUNCT_PAREN_END@67..68 ")"
+    PUNCT_SEMI@68..69 ";"
+  WHITESPACE@69..71 "\n\n"
+  STMT@71..93
+    ITEM@71..92
+      EXPR@71..92
+        EXPR_LET@71..92
+          KW_LET@71..74 "let"
+          WHITESPACE@74..75 " "
+          IDENT@75..78 "now"
+          WHITESPACE@78..79 " "
+          OP_ASSIGN@79..80 "="
+          EXPR@80..92
+            EXPR_CALL@80..92
+              EXPR@80..90
+                WHITESPACE@80..81 " "
+                EXPR_IDENT@81..90
+                  IDENT@81..90 "timestamp"
+              ARG_LIST@90..92
+                PUNCT_PAREN_START@90..91 "("
+                PUNCT_PAREN_END@91..92 ")"
+    PUNCT_SEMI@92..93 ";"
+  WHITESPACE@93..95 "\n\n"
+  STMT@95..156
+    ITEM@95..155
+      EXPR@95..155
+        EXPR_LET@95..155
+          KW_LET@95..98 "let"
+          WHITESPACE@98..99 " "
+          IDENT@99..106 "adverbs"
+          WHITESPACE@106..107 " "
+          OP_ASSIGN@107..108 "="
+          EXPR@108..155
+            WHITESPACE@108..109 " "
+            EXPR_ARRAY@109..155
+              PUNCT_BRACKET_START@109..110 "["
+              WHITESPACE@110..111 " "
+              EXPR@111..123
+                EXPR_LIT@111..123
+                  LIT@111..123
+                    LIT_STR@111..123 "\"moderately\""
+              PUNCT_COMMA@123..124 ","
+              WHITESPACE@124..125 " "
+              EXPR@125..133
+                EXPR_LIT@125..133
+                  LIT@125..133
+                    LIT_STR@125..133 "\"really\""
+              PUNCT_COMMA@133..134 ","
+              WHITESPACE@134..135 " "
+              EXPR@135..145
+                EXPR_LIT@135..145
+                  LIT@135..145
+                    LIT_STR@135..145 "\"slightly\""
+              PUNCT_COMMA@145..146 ","
+              WHITESPACE@146..147 " "
+              EXPR@147..154
+                EXPR_LIT@147..153
+                  LIT@147..153
+                    LIT_STR@147..153 "\"very\""
+                WHITESPACE@153..154 " "
+              PUNCT_BRACKET_END@154..155 "]"
+    PUNCT_SEMI@155..156 ";"
+  WHITESPACE@156..158 "\n\n"
+  STMT@158..2540
+    ITEM@158..2539
+      EXPR@158..2539
+        EXPR_LET@158..2539
+          KW_LET@158..161 "let"
+          WHITESPACE@161..162 " "
+          IDENT@162..172 "adjectives"
+          WHITESPACE@172..173 " "
+          OP_ASSIGN@173..174 "="
+          EXPR@174..2539
+            WHITESPACE@174..175 " "
+            EXPR_ARRAY@175..2539
+              PUNCT_BRACKET_START@175..176 "["
+              WHITESPACE@176..181 "\n    "
+              EXPR@181..192
+                EXPR_LIT@181..192
+                  LIT@181..192
+                    LIT_STR@181..192 "\"abandoned\""
+              PUNCT_COMMA@192..193 ","
+              WHITESPACE@193..194 " "
+              EXPR@194..200
+                EXPR_LIT@194..200
+                  LIT@194..200
+                    LIT_STR@194..200 "\"able\""
+              PUNCT_COMMA@200..201 ","
+              WHITESPACE@201..202 " "
+              EXPR@202..212
+                EXPR_LIT@202..212
+                  LIT@202..212
+                    LIT_STR@202..212 "\"absolute\""
+              PUNCT_COMMA@212..213 ","
+              WHITESPACE@213..214 " "
+              EXPR@214..224
+                EXPR_LIT@214..224
+                  LIT@214..224
+                    LIT_STR@214..224 "\"academic\""
+              PUNCT_COMMA@224..225 ","
+              WHITESPACE@225..226 " "
+              EXPR@226..238
+                EXPR_LIT@226..238
+                  LIT@226..238
+                    LIT_STR@226..238 "\"acceptable\""
+              PUNCT_COMMA@238..239 ","
+              WHITESPACE@239..240 " "
+              EXPR@240..251
+                EXPR_LIT@240..251
+                  LIT@240..251
+                    LIT_STR@240..251 "\"acclaimed\""
+              PUNCT_COMMA@251..252 ","
+              WHITESPACE@252..257 "\n    "
+              EXPR@257..271
+                EXPR_LIT@257..271
+                  LIT@257..271
+                    LIT_STR@257..271 "\"accomplished\""
+              PUNCT_COMMA@271..272 ","
+              WHITESPACE@272..273 " "
+              EXPR@273..283
+                EXPR_LIT@273..283
+                  LIT@273..283
+                    LIT_STR@273..283 "\"accurate\""
+              PUNCT_COMMA@283..284 ","
+              WHITESPACE@284..285 " "
+              EXPR@285..293
+                EXPR_LIT@285..293
+                  LIT@285..293
+                    LIT_STR@285..293 "\"aching\""
+              PUNCT_COMMA@293..294 ","
+              WHITESPACE@294..295 " "
+              EXPR@295..303
+                EXPR_LIT@295..303
+                  LIT@295..303
+                    LIT_STR@295..303 "\"acidic\""
+              PUNCT_COMMA@303..304 ","
+              WHITESPACE@304..305 " "
+              EXPR@305..316
+                EXPR_LIT@305..316
+                  LIT@305..316
+                    LIT_STR@305..316 "\"acrobatic\""
+              PUNCT_COMMA@316..317 ","
+              WHITESPACE@317..318 " "
+              EXPR@318..326
+                EXPR_LIT@318..326
+                  LIT@318..326
+                    LIT_STR@318..326 "\"active\""
+              PUNCT_COMMA@326..327 ","
+              WHITESPACE@327..332 "\n    "
+              EXPR@332..340
+                EXPR_LIT@332..340
+                  LIT@332..340
+                    LIT_STR@332..340 "\"actual\""
+              PUNCT_COMMA@340..341 ","
+              WHITESPACE@341..342 " "
+              EXPR@342..349
+                EXPR_LIT@342..349
+                  LIT@342..349
+                    LIT_STR@342..349 "\"adept\""
+              PUNCT_COMMA@349..350 ","
+              WHITESPACE@350..351 " "
+              EXPR@351..362
+                EXPR_LIT@351..362
+                  LIT@351..362
+                    LIT_STR@351..362 "\"admirable\""
+              PUNCT_COMMA@362..363 ","
+              WHITESPACE@363..364 " "
+              EXPR@364..373
+                EXPR_LIT@364..373
+                  LIT@364..373
+                    LIT_STR@364..373 "\"admired\""
+              PUNCT_COMMA@373..374 ","
+              WHITESPACE@374..375 " "
+              EXPR@375..387
+                EXPR_LIT@375..387
+                  LIT@375..387
+                    LIT_STR@375..387 "\"adolescent\""
+              PUNCT_COMMA@387..388 ","
+              WHITESPACE@388..389 " "
+              EXPR@389..399
+                EXPR_LIT@389..399
+                  LIT@389..399
+                    LIT_STR@389..399 "\"adorable\""
+              PUNCT_COMMA@399..400 ","
+              WHITESPACE@400..401 " "
+              EXPR@401..409
+                EXPR_LIT@401..409
+                  LIT@401..409
+                    LIT_STR@401..409 "\"adored\""
+              PUNCT_COMMA@409..410 ","
+              WHITESPACE@410..415 "\n    "
+              EXPR@415..425
+                EXPR_LIT@415..425
+                  LIT@415..425
+                    LIT_STR@415..425 "\"advanced\""
+              PUNCT_COMMA@425..426 ","
+              WHITESPACE@426..427 " "
+              EXPR@427..440
+                EXPR_LIT@427..440
+                  LIT@427..440
+                    LIT_STR@427..440 "\"adventurous\""
+              PUNCT_COMMA@440..441 ","
+              WHITESPACE@441..442 " "
+              EXPR@442..456
+                EXPR_LIT@442..456
+                  LIT@442..456
+                    LIT_STR@442..456 "\"affectionate\""
+              PUNCT_COMMA@456..457 ","
+              WHITESPACE@457..458 " "
+              EXPR@458..466
+                EXPR_LIT@458..466
+                  LIT@458..466
+                    LIT_STR@458..466 "\"afraid\""
+              PUNCT_COMMA@466..467 ","
+              WHITESPACE@467..468 " "
+              EXPR@468..474
+                EXPR_LIT@468..474
+                  LIT@468..474
+                    LIT_STR@468..474 "\"aged\""
+              PUNCT_COMMA@474..475 ","
+              WHITESPACE@475..476 " "
+              EXPR@476..489
+                EXPR_LIT@476..489
+                  LIT@476..489
+                    LIT_STR@476..489 "\"aggravating\""
+              PUNCT_COMMA@489..490 ","
+              WHITESPACE@490..495 "\n    "
+              EXPR@495..507
+                EXPR_LIT@495..507
+                  LIT@495..507
+                    LIT_STR@495..507 "\"aggressive\""
+              PUNCT_COMMA@507..508 ","
+              WHITESPACE@508..509 " "
+              EXPR@509..516
+                EXPR_LIT@509..516
+                  LIT@509..516
+                    LIT_STR@509..516 "\"agile\""
+              PUNCT_COMMA@516..517 ","
+              WHITESPACE@517..518 " "
+              EXPR@518..528
+                EXPR_LIT@518..528
+                  LIT@518..528
+                    LIT_STR@518..528 "\"agitated\""
+              PUNCT_COMMA@528..529 ","
+              WHITESPACE@529..530 " "
+              EXPR@530..541
+                EXPR_LIT@530..541
+                  LIT@530..541
+                    LIT_STR@530..541 "\"agonizing\""
+              PUNCT_COMMA@541..542 ","
+              WHITESPACE@542..543 " "
+              EXPR@543..554
+                EXPR_LIT@543..554
+                  LIT@543..554
+                    LIT_STR@543..554 "\"agreeable\""
+              PUNCT_COMMA@554..555 ","
+              WHITESPACE@555..556 " "
+              EXPR@556..562
+                EXPR_LIT@556..562
+                  LIT@556..562
+                    LIT_STR@556..562 "\"ajar\""
+              PUNCT_COMMA@562..563 ","
+              WHITESPACE@563..568 "\n    "
+              EXPR@568..577
+                EXPR_LIT@568..577
+                  LIT@568..577
+                    LIT_STR@568..577 "\"alarmed\""
+              PUNCT_COMMA@577..578 ","
+              WHITESPACE@578..579 " "
+              EXPR@579..589
+                EXPR_LIT@579..589
+                  LIT@579..589
+                    LIT_STR@579..589 "\"alarming\""
+              PUNCT_COMMA@589..590 ","
+              WHITESPACE@590..591 " "
+              EXPR@591..598
+                EXPR_LIT@591..598
+                  LIT@591..598
+                    LIT_STR@591..598 "\"alert\""
+              PUNCT_COMMA@598..599 ","
+              WHITESPACE@599..600 " "
+              EXPR@600..611
+                EXPR_LIT@600..611
+                  LIT@600..611
+                    LIT_STR@600..611 "\"alienated\""
+              PUNCT_COMMA@611..612 ","
+              WHITESPACE@612..613 " "
+              EXPR@613..620
+                EXPR_LIT@613..620
+                  LIT@613..620
+                    LIT_STR@613..620 "\"alive\""
+              PUNCT_COMMA@620..621 ","
+              WHITESPACE@621..622 " "
+              EXPR@622..627
+                EXPR_LIT@622..627
+                  LIT@622..627
+                    LIT_STR@622..627 "\"all\""
+              PUNCT_COMMA@627..628 ","
+              WHITESPACE@628..629 " "
+              EXPR@629..641
+                EXPR_LIT@629..641
+                  LIT@629..641
+                    LIT_STR@629..641 "\"altruistic\""
+              PUNCT_COMMA@641..642 ","
+              WHITESPACE@642..647 "\n    "
+              EXPR@647..656
+                EXPR_LIT@647..656
+                  LIT@647..656
+                    LIT_STR@647..656 "\"amazing\""
+              PUNCT_COMMA@656..657 ","
+              WHITESPACE@657..658 " "
+              EXPR@658..669
+                EXPR_LIT@658..669
+                  LIT@658..669
+                    LIT_STR@658..669 "\"ambitious\""
+              PUNCT_COMMA@669..670 ","
+              WHITESPACE@670..671 " "
+              EXPR@671..678
+                EXPR_LIT@671..678
+                  LIT@671..678
+                    LIT_STR@671..678 "\"ample\""
+              PUNCT_COMMA@678..679 ","
+              WHITESPACE@679..680 " "
+              EXPR@680..688
+                EXPR_LIT@680..688
+                  LIT@680..688
+                    LIT_STR@680..688 "\"amused\""
+              PUNCT_COMMA@688..689 ","
+              WHITESPACE@689..690 " "
+              EXPR@690..699
+                EXPR_LIT@690..699
+                  LIT@690..699
+                    LIT_STR@690..699 "\"amusing\""
+              PUNCT_COMMA@699..700 ","
+              WHITESPACE@700..701 " "
+              EXPR@701..711
+                EXPR_LIT@701..711
+                  LIT@701..711
+                    LIT_STR@701..711 "\"anchored\""
+              PUNCT_COMMA@711..712 ","
+              WHITESPACE@712..713 " "
+              EXPR@713..722
+                EXPR_LIT@713..722
+                  LIT@713..722
+                    LIT_STR@713..722 "\"ancient\""
+              PUNCT_COMMA@722..723 ","
+              WHITESPACE@723..728 "\n    "
+              EXPR@728..737
+                EXPR_LIT@728..737
+                  LIT@728..737
+                    LIT_STR@728..737 "\"angelic\""
+              PUNCT_COMMA@737..738 ","
+              WHITESPACE@738..739 " "
+              EXPR@739..746
+                EXPR_LIT@739..746
+                  LIT@739..746
+                    LIT_STR@739..746 "\"angry\""
+              PUNCT_COMMA@746..747 ","
+              WHITESPACE@747..748 " "
+              EXPR@748..759
+                EXPR_LIT@748..759
+                  LIT@748..759
+                    LIT_STR@748..759 "\"anguished\""
+              PUNCT_COMMA@759..760 ","
+              WHITESPACE@760..761 " "
+              EXPR@761..771
+                EXPR_LIT@761..771
+                  LIT@761..771
+                    LIT_STR@761..771 "\"animated\""
+              PUNCT_COMMA@771..772 ","
+              WHITESPACE@772..773 " "
+              EXPR@773..781
+                EXPR_LIT@773..781
+                  LIT@773..781
+                    LIT_STR@773..781 "\"annual\""
+              PUNCT_COMMA@781..782 ","
+              WHITESPACE@782..783 " "
+              EXPR@783..792
+                EXPR_LIT@783..792
+                  LIT@783..792
+                    LIT_STR@783..792 "\"another\""
+              PUNCT_COMMA@792..793 ","
+              WHITESPACE@793..794 " "
+              EXPR@794..803
+                EXPR_LIT@794..803
+                  LIT@794..803
+                    LIT_STR@794..803 "\"antique\""
+              PUNCT_COMMA@803..804 ","
+              WHITESPACE@804..809 "\n    "
+              EXPR@809..818
+                EXPR_LIT@809..818
+                  LIT@809..818
+                    LIT_STR@809..818 "\"anxious\""
+              PUNCT_COMMA@818..819 ","
+              WHITESPACE@819..820 " "
+              EXPR@820..825
+                EXPR_LIT@820..825
+                  LIT@820..825
+                    LIT_STR@820..825 "\"any\""
+              PUNCT_COMMA@825..826 ","
+              WHITESPACE@826..827 " "
+              EXPR@827..841
+                EXPR_LIT@827..841
+                  LIT@827..841
+                    LIT_STR@827..841 "\"apprehensive\""
+              PUNCT_COMMA@841..842 ","
+              WHITESPACE@842..843 " "
+              EXPR@843..856
+                EXPR_LIT@843..856
+                  LIT@843..856
+                    LIT_STR@843..856 "\"appropriate\""
+              PUNCT_COMMA@856..857 ","
+              WHITESPACE@857..858 " "
+              EXPR@858..863
+                EXPR_LIT@858..863
+                  LIT@858..863
+                    LIT_STR@858..863 "\"apt\""
+              PUNCT_COMMA@863..864 ","
+              WHITESPACE@864..865 " "
+              EXPR@865..873
+                EXPR_LIT@865..873
+                  LIT@865..873
+                    LIT_STR@865..873 "\"arctic\""
+              PUNCT_COMMA@873..874 ","
+              WHITESPACE@874..875 " "
+              EXPR@875..881
+                EXPR_LIT@875..881
+                  LIT@875..881
+                    LIT_STR@875..881 "\"arid\""
+              PUNCT_COMMA@881..882 ","
+              WHITESPACE@882..887 "\n    "
+              EXPR@887..897
+                EXPR_LIT@887..897
+                  LIT@887..897
+                    LIT_STR@887..897 "\"aromatic\""
+              PUNCT_COMMA@897..898 ","
+              WHITESPACE@898..899 " "
+              EXPR@899..909
+                EXPR_LIT@899..909
+                  LIT@899..909
+                    LIT_STR@899..909 "\"artistic\""
+              PUNCT_COMMA@909..910 ","
+              WHITESPACE@910..911 " "
+              EXPR@911..920
+                EXPR_LIT@911..920
+                  LIT@911..920
+                    LIT_STR@911..920 "\"ashamed\""
+              PUNCT_COMMA@920..921 ","
+              WHITESPACE@921..922 " "
+              EXPR@922..931
+                EXPR_LIT@922..931
+                  LIT@922..931
+                    LIT_STR@922..931 "\"assured\""
+              PUNCT_COMMA@931..932 ","
+              WHITESPACE@932..933 " "
+              EXPR@933..946
+                EXPR_LIT@933..946
+                  LIT@933..946
+                    LIT_STR@933..946 "\"astonishing\""
+              PUNCT_COMMA@946..947 ","
+              WHITESPACE@947..948 " "
+              EXPR@948..958
+                EXPR_LIT@948..958
+                  LIT@948..958
+                    LIT_STR@948..958 "\"athletic\""
+              PUNCT_COMMA@958..959 ","
+              WHITESPACE@959..964 "\n    "
+              EXPR@964..974
+                EXPR_LIT@964..974
+                  LIT@964..974
+                    LIT_STR@964..974 "\"attached\""
+              PUNCT_COMMA@974..975 ","
+              WHITESPACE@975..976 " "
+              EXPR@976..987
+                EXPR_LIT@976..987
+                  LIT@976..987
+                    LIT_STR@976..987 "\"attentive\""
+              PUNCT_COMMA@987..988 ","
+              WHITESPACE@988..989 " "
+              EXPR@989..1001
+                EXPR_LIT@989..1001
+                  LIT@989..1001
+                    LIT_STR@989..1001 "\"attractive\""
+              PUNCT_COMMA@1001..1002 ","
+              WHITESPACE@1002..1003 " "
+              EXPR@1003..1012
+                EXPR_LIT@1003..1012
+                  LIT@1003..1012
+                    LIT_STR@1003..1012 "\"austere\""
+              PUNCT_COMMA@1012..1013 ","
+              WHITESPACE@1013..1014 " "
+              EXPR@1014..1025
+                EXPR_LIT@1014..1025
+                  LIT@1014..1025
+                    LIT_STR@1014..1025 "\"authentic\""
+              PUNCT_COMMA@1025..1026 ","
+              WHITESPACE@1026..1027 " "
+              EXPR@1027..1039
+                EXPR_LIT@1027..1039
+                  LIT@1027..1039
+                    LIT_STR@1027..1039 "\"authorized\""
+              PUNCT_COMMA@1039..1040 ","
+              WHITESPACE@1040..1045 "\n    "
+              EXPR@1045..1056
+                EXPR_LIT@1045..1056
+                  LIT@1045..1056
+                    LIT_STR@1045..1056 "\"automatic\""
+              PUNCT_COMMA@1056..1057 ","
+              WHITESPACE@1057..1058 " "
+              EXPR@1058..1070
+                EXPR_LIT@1058..1070
+                  LIT@1058..1070
+                    LIT_STR@1058..1070 "\"avaricious\""
+              PUNCT_COMMA@1070..1071 ","
+              WHITESPACE@1071..1072 " "
+              EXPR@1072..1081
+                EXPR_LIT@1072..1081
+                  LIT@1072..1081
+                    LIT_STR@1072..1081 "\"average\""
+              PUNCT_COMMA@1081..1082 ","
+              WHITESPACE@1082..1083 " "
+              EXPR@1083..1090
+                EXPR_LIT@1083..1090
+                  LIT@1083..1090
+                    LIT_STR@1083..1090 "\"aware\""
+              PUNCT_COMMA@1090..1091 ","
+              WHITESPACE@1091..1092 " "
+              EXPR@1092..1101
+                EXPR_LIT@1092..1101
+                  LIT@1092..1101
+                    LIT_STR@1092..1101 "\"awesome\""
+              PUNCT_COMMA@1101..1102 ","
+              WHITESPACE@1102..1103 " "
+              EXPR@1103..1110
+                EXPR_LIT@1103..1110
+                  LIT@1103..1110
+                    LIT_STR@1103..1110 "\"awful\""
+              PUNCT_COMMA@1110..1111 ","
+              WHITESPACE@1111..1112 " "
+              EXPR@1112..1121
+                EXPR_LIT@1112..1121
+                  LIT@1112..1121
+                    LIT_STR@1112..1121 "\"awkward\""
+              PUNCT_COMMA@1121..1122 ","
+              WHITESPACE@1122..1127 "\n    "
+              EXPR@1127..1136
+                EXPR_LIT@1127..1136
+                  LIT@1127..1136
+                    LIT_STR@1127..1136 "\"babyish\""
+              PUNCT_COMMA@1136..1137 ","
+              WHITESPACE@1137..1138 " "
+              EXPR@1138..1144
+                EXPR_LIT@1138..1144
+                  LIT@1138..1144
+                    LIT_STR@1138..1144 "\"back\""
+              PUNCT_COMMA@1144..1145 ","
+              WHITESPACE@1145..1146 " "
+              EXPR@1146..1151
+                EXPR_LIT@1146..1151
+                  LIT@1146..1151
+                    LIT_STR@1146..1151 "\"bad\""
+              PUNCT_COMMA@1151..1152 ","
+              WHITESPACE@1152..1153 " "
+              EXPR@1153..1160
+                EXPR_LIT@1153..1160
+                  LIT@1153..1160
+                    LIT_STR@1153..1160 "\"baggy\""
+              PUNCT_COMMA@1160..1161 ","
+              WHITESPACE@1161..1162 " "
+              EXPR@1162..1168
+                EXPR_LIT@1162..1168
+                  LIT@1162..1168
+                    LIT_STR@1162..1168 "\"bare\""
+              PUNCT_COMMA@1168..1169 ","
+              WHITESPACE@1169..1170 " "
+              EXPR@1170..1178
+                EXPR_LIT@1170..1178
+                  LIT@1170..1178
+                    LIT_STR@1170..1178 "\"barren\""
+              PUNCT_COMMA@1178..1179 ","
+              WHITESPACE@1179..1180 " "
+              EXPR@1180..1187
+                EXPR_LIT@1180..1187
+                  LIT@1180..1187
+                    LIT_STR@1180..1187 "\"basic\""
+              PUNCT_COMMA@1187..1188 ","
+              WHITESPACE@1188..1189 " "
+              EXPR@1189..1200
+                EXPR_LIT@1189..1200
+                  LIT@1189..1200
+                    LIT_STR@1189..1200 "\"beautiful\""
+              PUNCT_COMMA@1200..1201 ","
+              WHITESPACE@1201..1206 "\n    "
+              EXPR@1206..1215
+                EXPR_LIT@1206..1215
+                  LIT@1206..1215
+                    LIT_STR@1206..1215 "\"belated\""
+              PUNCT_COMMA@1215..1216 ","
+              WHITESPACE@1216..1217 " "
+              EXPR@1217..1226
+                EXPR_LIT@1217..1226
+                  LIT@1217..1226
+                    LIT_STR@1217..1226 "\"beloved\""
+              PUNCT_COMMA@1226..1227 ","
+              WHITESPACE@1227..1228 " "
+              EXPR@1228..1240
+                EXPR_LIT@1228..1240
+                  LIT@1228..1240
+                    LIT_STR@1228..1240 "\"beneficial\""
+              PUNCT_COMMA@1240..1241 ","
+              WHITESPACE@1241..1242 " "
+              EXPR@1242..1248
+                EXPR_LIT@1242..1248
+                  LIT@1242..1248
+                    LIT_STR@1242..1248 "\"best\""
+              PUNCT_COMMA@1248..1249 ","
+              WHITESPACE@1249..1250 " "
+              EXPR@1250..1258
+                EXPR_LIT@1250..1258
+                  LIT@1250..1258
+                    LIT_STR@1250..1258 "\"better\""
+              PUNCT_COMMA@1258..1259 ","
+              WHITESPACE@1259..1260 " "
+              EXPR@1260..1271
+                EXPR_LIT@1260..1271
+                  LIT@1260..1271
+                    LIT_STR@1260..1271 "\"bewitched\""
+              PUNCT_COMMA@1271..1272 ","
+              WHITESPACE@1272..1273 " "
+              EXPR@1273..1278
+                EXPR_LIT@1273..1278
+                  LIT@1273..1278
+                    LIT_STR@1273..1278 "\"big\""
+              PUNCT_COMMA@1278..1279 ","
+              WHITESPACE@1279..1284 "\n    "
+              EXPR@1284..1297
+                EXPR_LIT@1284..1297
+                  LIT@1284..1297
+                    LIT_STR@1284..1297 "\"big-hearted\""
+              PUNCT_COMMA@1297..1298 ","
+              WHITESPACE@1298..1299 " "
+              EXPR@1299..1314
+                EXPR_LIT@1299..1314
+                  LIT@1299..1314
+                    LIT_STR@1299..1314 "\"biodegradable\""
+              PUNCT_COMMA@1314..1315 ","
+              WHITESPACE@1315..1316 " "
+              EXPR@1316..1328
+                EXPR_LIT@1316..1328
+                  LIT@1316..1328
+                    LIT_STR@1316..1328 "\"bite-sized\""
+              PUNCT_COMMA@1328..1329 ","
+              WHITESPACE@1329..1330 " "
+              EXPR@1330..1338
+                EXPR_LIT@1330..1338
+                  LIT@1330..1338
+                    LIT_STR@1330..1338 "\"bitter\""
+              PUNCT_COMMA@1338..1339 ","
+              WHITESPACE@1339..1340 " "
+              EXPR@1340..1347
+                EXPR_LIT@1340..1347
+                  LIT@1340..1347
+                    LIT_STR@1340..1347 "\"black\""
+              PUNCT_COMMA@1347..1348 ","
+              WHITESPACE@1348..1353 "\n    "
+              EXPR@1353..1370
+                EXPR_LIT@1353..1370
+                  LIT@1353..1370
+                    LIT_STR@1353..1370 "\"black-and-white\""
+              PUNCT_COMMA@1370..1371 ","
+              WHITESPACE@1371..1372 " "
+              EXPR@1372..1379
+                EXPR_LIT@1372..1379
+                  LIT@1372..1379
+                    LIT_STR@1372..1379 "\"bland\""
+              PUNCT_COMMA@1379..1380 ","
+              WHITESPACE@1380..1381 " "
+              EXPR@1381..1388
+                EXPR_LIT@1381..1388
+                  LIT@1381..1388
+                    LIT_STR@1381..1388 "\"blank\""
+              PUNCT_COMMA@1388..1389 ","
+              WHITESPACE@1389..1390 " "
+              EXPR@1390..1399
+                EXPR_LIT@1390..1399
+                  LIT@1390..1399
+                    LIT_STR@1390..1399 "\"blaring\""
+              PUNCT_COMMA@1399..1400 ","
+              WHITESPACE@1400..1401 " "
+              EXPR@1401..1408
+                EXPR_LIT@1401..1408
+                  LIT@1401..1408
+                    LIT_STR@1401..1408 "\"bleak\""
+              PUNCT_COMMA@1408..1409 ","
+              WHITESPACE@1409..1410 " "
+              EXPR@1410..1417
+                EXPR_LIT@1410..1417
+                  LIT@1410..1417
+                    LIT_STR@1410..1417 "\"blind\""
+              PUNCT_COMMA@1417..1418 ","
+              WHITESPACE@1418..1419 " "
+              EXPR@1419..1429
+                EXPR_LIT@1419..1429
+                  LIT@1419..1429
+                    LIT_STR@1419..1429 "\"blissful\""
+              PUNCT_COMMA@1429..1430 ","
+              WHITESPACE@1430..1435 "\n    "
+              EXPR@1435..1442
+                EXPR_LIT@1435..1442
+                  LIT@1435..1442
+                    LIT_STR@1435..1442 "\"blond\""
+              PUNCT_COMMA@1442..1443 ","
+              WHITESPACE@1443..1444 " "
+              EXPR@1444..1450
+                EXPR_LIT@1444..1450
+                  LIT@1444..1450
+                    LIT_STR@1444..1450 "\"blue\""
+              PUNCT_COMMA@1450..1451 ","
+              WHITESPACE@1451..1452 " "
+              EXPR@1452..1462
+                EXPR_LIT@1452..1462
+                  LIT@1452..1462
+                    LIT_STR@1452..1462 "\"blushing\""
+              PUNCT_COMMA@1462..1463 ","
+              WHITESPACE@1463..1464 " "
+              EXPR@1464..1471
+                EXPR_LIT@1464..1471
+                  LIT@1464..1471
+                    LIT_STR@1464..1471 "\"bogus\""
+              PUNCT_COMMA@1471..1472 ","
+              WHITESPACE@1472..1473 " "
+              EXPR@1473..1482
+                EXPR_LIT@1473..1482
+                  LIT@1473..1482
+                    LIT_STR@1473..1482 "\"boiling\""
+              PUNCT_COMMA@1482..1483 ","
+              WHITESPACE@1483..1484 " "
+              EXPR@1484..1490
+                EXPR_LIT@1484..1490
+                  LIT@1484..1490
+                    LIT_STR@1484..1490 "\"bold\""
+              PUNCT_COMMA@1490..1491 ","
+              WHITESPACE@1491..1492 " "
+              EXPR@1492..1498
+                EXPR_LIT@1492..1498
+                  LIT@1492..1498
+                    LIT_STR@1492..1498 "\"bony\""
+              PUNCT_COMMA@1498..1499 ","
+              WHITESPACE@1499..1500 " "
+              EXPR@1500..1508
+                EXPR_LIT@1500..1508
+                  LIT@1500..1508
+                    LIT_STR@1500..1508 "\"boring\""
+              PUNCT_COMMA@1508..1509 ","
+              WHITESPACE@1509..1514 "\n    "
+              EXPR@1514..1521
+                EXPR_LIT@1514..1521
+                  LIT@1514..1521
+                    LIT_STR@1514..1521 "\"bossy\""
+              PUNCT_COMMA@1521..1522 ","
+              WHITESPACE@1522..1523 " "
+              EXPR@1523..1529
+                EXPR_LIT@1523..1529
+                  LIT@1523..1529
+                    LIT_STR@1523..1529 "\"both\""
+              PUNCT_COMMA@1529..1530 ","
+              WHITESPACE@1530..1531 " "
+              EXPR@1531..1539
+                EXPR_LIT@1531..1539
+                  LIT@1531..1539
+                    LIT_STR@1531..1539 "\"bouncy\""
+              PUNCT_COMMA@1539..1540 ","
+              WHITESPACE@1540..1541 " "
+              EXPR@1541..1552
+                EXPR_LIT@1541..1552
+                  LIT@1541..1552
+                    LIT_STR@1541..1552 "\"bountiful\""
+              PUNCT_COMMA@1552..1553 ","
+              WHITESPACE@1553..1554 " "
+              EXPR@1554..1561
+                EXPR_LIT@1554..1561
+                  LIT@1554..1561
+                    LIT_STR@1554..1561 "\"bowed\""
+              PUNCT_COMMA@1561..1562 ","
+              WHITESPACE@1562..1563 " "
+              EXPR@1563..1570
+                EXPR_LIT@1563..1570
+                  LIT@1563..1570
+                    LIT_STR@1563..1570 "\"brave\""
+              PUNCT_COMMA@1570..1571 ","
+              WHITESPACE@1571..1572 " "
+              EXPR@1572..1583
+                EXPR_LIT@1572..1583
+                  LIT@1572..1583
+                    LIT_STR@1572..1583 "\"breakable\""
+              PUNCT_COMMA@1583..1584 ","
+              WHITESPACE@1584..1589 "\n    "
+              EXPR@1589..1596
+                EXPR_LIT@1589..1596
+                  LIT@1589..1596
+                    LIT_STR@1589..1596 "\"brief\""
+              PUNCT_COMMA@1596..1597 ","
+              WHITESPACE@1597..1598 " "
+              EXPR@1598..1606
+                EXPR_LIT@1598..1606
+                  LIT@1598..1606
+                    LIT_STR@1598..1606 "\"bright\""
+              PUNCT_COMMA@1606..1607 ","
+              WHITESPACE@1607..1608 " "
+              EXPR@1608..1619
+                EXPR_LIT@1608..1619
+                  LIT@1608..1619
+                    LIT_STR@1608..1619 "\"brilliant\""
+              PUNCT_COMMA@1619..1620 ","
+              WHITESPACE@1620..1621 " "
+              EXPR@1621..1628
+                EXPR_LIT@1621..1628
+                  LIT@1621..1628
+                    LIT_STR@1621..1628 "\"brisk\""
+              PUNCT_COMMA@1628..1629 ","
+              WHITESPACE@1629..1630 " "
+              EXPR@1630..1638
+                EXPR_LIT@1630..1638
+                  LIT@1630..1638
+                    LIT_STR@1630..1638 "\"broken\""
+              PUNCT_COMMA@1638..1639 ","
+              WHITESPACE@1639..1640 " "
+              EXPR@1640..1648
+                EXPR_LIT@1640..1648
+                  LIT@1640..1648
+                    LIT_STR@1640..1648 "\"bronze\""
+              PUNCT_COMMA@1648..1649 ","
+              WHITESPACE@1649..1650 " "
+              EXPR@1650..1657
+                EXPR_LIT@1650..1657
+                  LIT@1650..1657
+                    LIT_STR@1650..1657 "\"brown\""
+              PUNCT_COMMA@1657..1658 ","
+              WHITESPACE@1658..1663 "\n    "
+              EXPR@1663..1672
+                EXPR_LIT@1663..1672
+                  LIT@1663..1672
+                    LIT_STR@1663..1672 "\"bruised\""
+              PUNCT_COMMA@1672..1673 ","
+              WHITESPACE@1673..1674 " "
+              EXPR@1674..1682
+                EXPR_LIT@1674..1682
+                  LIT@1674..1682
+                    LIT_STR@1674..1682 "\"bubbly\""
+              PUNCT_COMMA@1682..1683 ","
+              WHITESPACE@1683..1684 " "
+              EXPR@1684..1691
+                EXPR_LIT@1684..1691
+                  LIT@1684..1691
+                    LIT_STR@1684..1691 "\"bulky\""
+              PUNCT_COMMA@1691..1692 ","
+              WHITESPACE@1692..1693 " "
+              EXPR@1693..1700
+                EXPR_LIT@1693..1700
+                  LIT@1693..1700
+                    LIT_STR@1693..1700 "\"bumpy\""
+              PUNCT_COMMA@1700..1701 ","
+              WHITESPACE@1701..1702 " "
+              EXPR@1702..1711
+                EXPR_LIT@1702..1711
+                  LIT@1702..1711
+                    LIT_STR@1702..1711 "\"buoyant\""
+              PUNCT_COMMA@1711..1712 ","
+              WHITESPACE@1712..1713 " "
+              EXPR@1713..1725
+                EXPR_LIT@1713..1725
+                  LIT@1713..1725
+                    LIT_STR@1713..1725 "\"burdensome\""
+              PUNCT_COMMA@1725..1726 ","
+              WHITESPACE@1726..1727 " "
+              EXPR@1727..1734
+                EXPR_LIT@1727..1734
+                  LIT@1727..1734
+                    LIT_STR@1727..1734 "\"burly\""
+              PUNCT_COMMA@1734..1735 ","
+              WHITESPACE@1735..1740 "\n    "
+              EXPR@1740..1750
+                EXPR_LIT@1740..1750
+                  LIT@1740..1750
+                    LIT_STR@1740..1750 "\"bustling\""
+              PUNCT_COMMA@1750..1751 ","
+              WHITESPACE@1751..1752 " "
+              EXPR@1752..1758
+                EXPR_LIT@1752..1758
+                  LIT@1752..1758
+                    LIT_STR@1752..1758 "\"busy\""
+              PUNCT_COMMA@1758..1759 ","
+              WHITESPACE@1759..1760 " "
+              EXPR@1760..1769
+                EXPR_LIT@1760..1769
+                  LIT@1760..1769
+                    LIT_STR@1760..1769 "\"buttery\""
+              PUNCT_COMMA@1769..1770 ","
+              WHITESPACE@1770..1771 " "
+              EXPR@1771..1780
+                EXPR_LIT@1771..1780
+                  LIT@1771..1780
+                    LIT_STR@1771..1780 "\"buzzing\""
+              PUNCT_COMMA@1780..1781 ","
+              WHITESPACE@1781..1782 " "
+              EXPR@1782..1795
+                EXPR_LIT@1782..1795
+                  LIT@1782..1795
+                    LIT_STR@1782..1795 "\"calculating\""
+              PUNCT_COMMA@1795..1796 ","
+              WHITESPACE@1796..1797 " "
+              EXPR@1797..1803
+                EXPR_LIT@1797..1803
+                  LIT@1797..1803
+                    LIT_STR@1797..1803 "\"calm\""
+              PUNCT_COMMA@1803..1804 ","
+              WHITESPACE@1804..1805 " "
+              EXPR@1805..1813
+                EXPR_LIT@1805..1813
+                  LIT@1805..1813
+                    LIT_STR@1805..1813 "\"candid\""
+              PUNCT_COMMA@1813..1814 ","
+              WHITESPACE@1814..1819 "\n    "
+              EXPR@1819..1827
+                EXPR_LIT@1819..1827
+                  LIT@1819..1827
+                    LIT_STR@1819..1827 "\"canine\""
+              PUNCT_COMMA@1827..1828 ","
+              WHITESPACE@1828..1829 " "
+              EXPR@1829..1838
+                EXPR_LIT@1829..1838
+                  LIT@1829..1838
+                    LIT_STR@1829..1838 "\"capital\""
+              PUNCT_COMMA@1838..1839 ","
+              WHITESPACE@1839..1840 " "
+              EXPR@1840..1850
+                EXPR_LIT@1840..1850
+                  LIT@1840..1850
+                    LIT_STR@1840..1850 "\"carefree\""
+              PUNCT_COMMA@1850..1851 ","
+              WHITESPACE@1851..1852 " "
+              EXPR@1852..1861
+                EXPR_LIT@1852..1861
+                  LIT@1852..1861
+                    LIT_STR@1852..1861 "\"careful\""
+              PUNCT_COMMA@1861..1862 ","
+              WHITESPACE@1862..1863 " "
+              EXPR@1863..1873
+                EXPR_LIT@1863..1873
+                  LIT@1863..1873
+                    LIT_STR@1863..1873 "\"careless\""
+              PUNCT_COMMA@1873..1874 ","
+              WHITESPACE@1874..1875 " "
+              EXPR@1875..1883
+                EXPR_LIT@1875..1883
+                  LIT@1875..1883
+                    LIT_STR@1875..1883 "\"caring\""
+              PUNCT_COMMA@1883..1884 ","
+              WHITESPACE@1884..1885 " "
+              EXPR@1885..1895
+                EXPR_LIT@1885..1895
+                  LIT@1885..1895
+                    LIT_STR@1885..1895 "\"cautious\""
+              PUNCT_COMMA@1895..1896 ","
+              WHITESPACE@1896..1901 "\n    "
+              EXPR@1901..1912
+                EXPR_LIT@1901..1912
+                  LIT@1901..1912
+                    LIT_STR@1901..1912 "\"cavernous\""
+              PUNCT_COMMA@1912..1913 ","
+              WHITESPACE@1913..1914 " "
+              EXPR@1914..1926
+                EXPR_LIT@1914..1926
+                  LIT@1914..1926
+                    LIT_STR@1914..1926 "\"celebrated\""
+              PUNCT_COMMA@1926..1927 ","
+              WHITESPACE@1927..1928 " "
+              EXPR@1928..1938
+                EXPR_LIT@1928..1938
+                  LIT@1928..1938
+                    LIT_STR@1928..1938 "\"charming\""
+              PUNCT_COMMA@1938..1939 ","
+              WHITESPACE@1939..1940 " "
+              EXPR@1940..1947
+                EXPR_LIT@1940..1947
+                  LIT@1940..1947
+                    LIT_STR@1940..1947 "\"cheap\""
+              PUNCT_COMMA@1947..1948 ","
+              WHITESPACE@1948..1949 " "
+              EXPR@1949..1959
+                EXPR_LIT@1949..1959
+                  LIT@1949..1959
+                    LIT_STR@1949..1959 "\"cheerful\""
+              PUNCT_COMMA@1959..1960 ","
+              WHITESPACE@1960..1961 " "
+              EXPR@1961..1969
+                EXPR_LIT@1961..1969
+                  LIT@1961..1969
+                    LIT_STR@1961..1969 "\"cheery\""
+              PUNCT_COMMA@1969..1970 ","
+              WHITESPACE@1970..1971 " "
+              EXPR@1971..1978
+                EXPR_LIT@1971..1978
+                  LIT@1971..1978
+                    LIT_STR@1971..1978 "\"chief\""
+              PUNCT_COMMA@1978..1979 ","
+              WHITESPACE@1979..1984 "\n    "
+              EXPR@1984..1992
+                EXPR_LIT@1984..1992
+                  LIT@1984..1992
+                    LIT_STR@1984..1992 "\"chilly\""
+              PUNCT_COMMA@1992..1993 ","
+              WHITESPACE@1993..1994 " "
+              EXPR@1994..2002
+                EXPR_LIT@1994..2002
+                  LIT@1994..2002
+                    LIT_STR@1994..2002 "\"chubby\""
+              PUNCT_COMMA@2002..2003 ","
+              WHITESPACE@2003..2004 " "
+              EXPR@2004..2014
+                EXPR_LIT@2004..2014
+                  LIT@2004..2014
+                    LIT_STR@2004..2014 "\"circular\""
+              PUNCT_COMMA@2014..2015 ","
+              WHITESPACE@2015..2016 " "
+              EXPR@2016..2025
+                EXPR_LIT@2016..2025
+                  LIT@2016..2025
+                    LIT_STR@2016..2025 "\"classic\""
+              PUNCT_COMMA@2025..2026 ","
+              WHITESPACE@2026..2027 " "
+              EXPR@2027..2034
+                EXPR_LIT@2027..2034
+                  LIT@2027..2034
+                    LIT_STR@2027..2034 "\"clean\""
+              PUNCT_COMMA@2034..2035 ","
+              WHITESPACE@2035..2036 " "
+              EXPR@2036..2043
+                EXPR_LIT@2036..2043
+                  LIT@2036..2043
+                    LIT_STR@2036..2043 "\"clear\""
+              PUNCT_COMMA@2043..2044 ","
+              WHITESPACE@2044..2045 " "
+              EXPR@2045..2056
+                EXPR_LIT@2045..2056
+                  LIT@2045..2056
+                    LIT_STR@2045..2056 "\"clear-cut\""
+              PUNCT_COMMA@2056..2057 ","
+              WHITESPACE@2057..2062 "\n    "
+              EXPR@2062..2070
+                EXPR_LIT@2062..2070
+                  LIT@2062..2070
+                    LIT_STR@2062..2070 "\"clever\""
+              PUNCT_COMMA@2070..2071 ","
+              WHITESPACE@2071..2072 " "
+              EXPR@2072..2079
+                EXPR_LIT@2072..2079
+                  LIT@2072..2079
+                    LIT_STR@2072..2079 "\"close\""
+              PUNCT_COMMA@2079..2080 ","
+              WHITESPACE@2080..2081 " "
+              EXPR@2081..2089
+                EXPR_LIT@2081..2089
+                  LIT@2081..2089
+                    LIT_STR@2081..2089 "\"closed\""
+              PUNCT_COMMA@2089..2090 ","
+              WHITESPACE@2090..2091 " "
+              EXPR@2091..2099
+                EXPR_LIT@2091..2099
+                  LIT@2091..2099
+                    LIT_STR@2091..2099 "\"cloudy\""
+              PUNCT_COMMA@2099..2100 ","
+              WHITESPACE@2100..2101 " "
+              EXPR@2101..2111
+                EXPR_LIT@2101..2111
+                  LIT@2101..2111
+                    LIT_STR@2101..2111 "\"clueless\""
+              PUNCT_COMMA@2111..2112 ","
+              WHITESPACE@2112..2113 " "
+              EXPR@2113..2121
+                EXPR_LIT@2113..2121
+                  LIT@2113..2121
+                    LIT_STR@2113..2121 "\"clumsy\""
+              PUNCT_COMMA@2121..2122 ","
+              WHITESPACE@2122..2123 " "
+              EXPR@2123..2134
+                EXPR_LIT@2123..2134
+                  LIT@2123..2134
+                    LIT_STR@2123..2134 "\"cluttered\""
+              PUNCT_COMMA@2134..2135 ","
+              WHITESPACE@2135..2140 "\n    "
+              EXPR@2140..2148
+                EXPR_LIT@2140..2148
+                  LIT@2140..2148
+                    LIT_STR@2140..2148 "\"coarse\""
+              PUNCT_COMMA@2148..2149 ","
+              WHITESPACE@2149..2150 " "
+              EXPR@2150..2156
+                EXPR_LIT@2150..2156
+                  LIT@2150..2156
+                    LIT_STR@2150..2156 "\"cold\""
+              PUNCT_COMMA@2156..2157 ","
+              WHITESPACE@2157..2158 " "
+              EXPR@2158..2168
+                EXPR_LIT@2158..2168
+                  LIT@2158..2168
+                    LIT_STR@2158..2168 "\"colorful\""
+              PUNCT_COMMA@2168..2169 ","
+              WHITESPACE@2169..2170 " "
+              EXPR@2170..2181
+                EXPR_LIT@2170..2181
+                  LIT@2170..2181
+                    LIT_STR@2170..2181 "\"colorless\""
+              PUNCT_COMMA@2181..2182 ","
+              WHITESPACE@2182..2183 " "
+              EXPR@2183..2193
+                EXPR_LIT@2183..2193
+                  LIT@2183..2193
+                    LIT_STR@2183..2193 "\"colossal\""
+              PUNCT_COMMA@2193..2194 ","
+              WHITESPACE@2194..2195 " "
+              EXPR@2195..2208
+                EXPR_LIT@2195..2208
+                  LIT@2195..2208
+                    LIT_STR@2195..2208 "\"comfortable\""
+              PUNCT_COMMA@2208..2209 ","
+              WHITESPACE@2209..2214 "\n    "
+              EXPR@2214..2222
+                EXPR_LIT@2214..2222
+                  LIT@2214..2222
+                    LIT_STR@2214..2222 "\"common\""
+              PUNCT_COMMA@2222..2223 ","
+              WHITESPACE@2223..2224 " "
+              EXPR@2224..2239
+                EXPR_LIT@2224..2239
+                  LIT@2224..2239
+                    LIT_STR@2224..2239 "\"compassionate\""
+              PUNCT_COMMA@2239..2240 ","
+              WHITESPACE@2240..2241 " "
+              EXPR@2241..2252
+                EXPR_LIT@2241..2252
+                  LIT@2241..2252
+                    LIT_STR@2241..2252 "\"competent\""
+              PUNCT_COMMA@2252..2253 ","
+              WHITESPACE@2253..2254 " "
+              EXPR@2254..2264
+                EXPR_LIT@2254..2264
+                  LIT@2254..2264
+                    LIT_STR@2254..2264 "\"complete\""
+              PUNCT_COMMA@2264..2265 ","
+              WHITESPACE@2265..2266 " "
+              EXPR@2266..2275
+                EXPR_LIT@2266..2275
+                  LIT@2266..2275
+                    LIT_STR@2266..2275 "\"complex\""
+              PUNCT_COMMA@2275..2276 ","
+              WHITESPACE@2276..2277 " "
+              EXPR@2277..2290
+                EXPR_LIT@2277..2290
+                  LIT@2277..2290
+                    LIT_STR@2277..2290 "\"complicated\""
+              PUNCT_COMMA@2290..2291 ","
+              WHITESPACE@2291..2296 "\n    "
+              EXPR@2296..2306
+                EXPR_LIT@2296..2306
+                  LIT@2296..2306
+                    LIT_STR@2296..2306 "\"composed\""
+              PUNCT_COMMA@2306..2307 ","
+              WHITESPACE@2307..2308 " "
+              EXPR@2308..2319
+                EXPR_LIT@2308..2319
+                  LIT@2308..2319
+                    LIT_STR@2308..2319 "\"concerned\""
+              PUNCT_COMMA@2319..2320 ","
+              WHITESPACE@2320..2321 " "
+              EXPR@2321..2331
+                EXPR_LIT@2321..2331
+                  LIT@2321..2331
+                    LIT_STR@2321..2331 "\"concrete\""
+              PUNCT_COMMA@2331..2332 ","
+              WHITESPACE@2332..2333 " "
+              EXPR@2333..2343
+                EXPR_LIT@2333..2343
+                  LIT@2333..2343
+                    LIT_STR@2333..2343 "\"confused\""
+              PUNCT_COMMA@2343..2344 ","
+              WHITESPACE@2344..2345 " "
+              EXPR@2345..2356
+                EXPR_LIT@2345..2356
+                  LIT@2345..2356
+                    LIT_STR@2345..2356 "\"conscious\""
+              PUNCT_COMMA@2356..2357 ","
+              WHITESPACE@2357..2358 " "
+              EXPR@2358..2371
+                EXPR_LIT@2358..2371
+                  LIT@2358..2371
+                    LIT_STR@2358..2371 "\"considerate\""
+              PUNCT_COMMA@2371..2372 ","
+              WHITESPACE@2372..2377 "\n    "
+              EXPR@2377..2387
+                EXPR_LIT@2377..2387
+                  LIT@2377..2387
+                    LIT_STR@2377..2387 "\"constant\""
+              PUNCT_COMMA@2387..2388 ","
+              WHITESPACE@2388..2389 " "
+              EXPR@2389..2398
+                EXPR_LIT@2389..2398
+                  LIT@2389..2398
+                    LIT_STR@2389..2398 "\"content\""
+              PUNCT_COMMA@2398..2399 ","
+              WHITESPACE@2399..2400 " "
+              EXPR@2400..2414
+                EXPR_LIT@2400..2414
+                  LIT@2400..2414
+                    LIT_STR@2400..2414 "\"conventional\""
+              PUNCT_COMMA@2414..2415 ","
+              WHITESPACE@2415..2416 " "
+              EXPR@2416..2424
+                EXPR_LIT@2416..2424
+                  LIT@2416..2424
+                    LIT_STR@2416..2424 "\"cooked\""
+              PUNCT_COMMA@2424..2425 ","
+              WHITESPACE@2425..2426 " "
+              EXPR@2426..2432
+                EXPR_LIT@2426..2432
+                  LIT@2426..2432
+                    LIT_STR@2426..2432 "\"cool\""
+              PUNCT_COMMA@2432..2433 ","
+              WHITESPACE@2433..2434 " "
+              EXPR@2434..2447
+                EXPR_LIT@2434..2447
+                  LIT@2434..2447
+                    LIT_STR@2434..2447 "\"cooperative\""
+              PUNCT_COMMA@2447..2448 ","
+              WHITESPACE@2448..2453 "\n    "
+              EXPR@2453..2466
+                EXPR_LIT@2453..2466
+                  LIT@2453..2466
+                    LIT_STR@2453..2466 "\"coordinated\""
+              PUNCT_COMMA@2466..2467 ","
+              WHITESPACE@2467..2468 " "
+              EXPR@2468..2475
+                EXPR_LIT@2468..2475
+                  LIT@2468..2475
+                    LIT_STR@2468..2475 "\"corny\""
+              PUNCT_COMMA@2475..2476 ","
+              WHITESPACE@2476..2477 " "
+              EXPR@2477..2486
+                EXPR_LIT@2477..2486
+                  LIT@2477..2486
+                    LIT_STR@2477..2486 "\"corrupt\""
+              PUNCT_COMMA@2486..2487 ","
+              WHITESPACE@2487..2488 " "
+              EXPR@2488..2496
+                EXPR_LIT@2488..2496
+                  LIT@2488..2496
+                    LIT_STR@2488..2496 "\"costly\""
+              PUNCT_COMMA@2496..2497 ","
+              WHITESPACE@2497..2498 " "
+              EXPR@2498..2510
+                EXPR_LIT@2498..2510
+                  LIT@2498..2510
+                    LIT_STR@2498..2510 "\"courageous\""
+              PUNCT_COMMA@2510..2511 ","
+              WHITESPACE@2511..2512 " "
+              EXPR@2512..2523
+                EXPR_LIT@2512..2523
+                  LIT@2512..2523
+                    LIT_STR@2512..2523 "\"courteous\""
+              PUNCT_COMMA@2523..2524 ","
+              WHITESPACE@2524..2529 "\n    "
+              EXPR@2529..2538
+                EXPR_LIT@2529..2537
+                  LIT@2529..2537
+                    LIT_STR@2529..2537 "\"crafty\""
+                WHITESPACE@2537..2538 "\n"
+              PUNCT_BRACKET_END@2538..2539 "]"
+    PUNCT_SEMI@2539..2540 ";"
+  WHITESPACE@2540..2542 "\n\n"
+  STMT@2542..4794
+    ITEM@2542..4793
+      EXPR@2542..4793
+        EXPR_LET@2542..4793
+          KW_LET@2542..2545 "let"
+          WHITESPACE@2545..2546 " "
+          IDENT@2546..2553 "animals"
+          WHITESPACE@2553..2554 " "
+          OP_ASSIGN@2554..2555 "="
+          EXPR@2555..4793
+            WHITESPACE@2555..2556 " "
+            EXPR_ARRAY@2556..4793
+              PUNCT_BRACKET_START@2556..2557 "["
+              WHITESPACE@2557..2562 "\n    "
+              EXPR@2562..2572
+                EXPR_LIT@2562..2572
+                  LIT@2562..2572
+                    LIT_STR@2562..2572 "\"aardvark\""
+              PUNCT_COMMA@2572..2573 ","
+              WHITESPACE@2573..2574 " "
+              EXPR@2574..2591
+                EXPR_LIT@2574..2591
+                  LIT@2574..2591
+                    LIT_STR@2574..2591 "\"african buffalo\""
+              PUNCT_COMMA@2591..2592 ","
+              WHITESPACE@2592..2593 " "
+              EXPR@2593..2604
+                EXPR_LIT@2593..2604
+                  LIT@2593..2604
+                    LIT_STR@2593..2604 "\"albatross\""
+              PUNCT_COMMA@2604..2605 ","
+              WHITESPACE@2605..2606 " "
+              EXPR@2606..2617
+                EXPR_LIT@2606..2617
+                  LIT@2606..2617
+                    LIT_STR@2606..2617 "\"alligator\""
+              PUNCT_COMMA@2617..2618 ","
+              WHITESPACE@2618..2619 " "
+              EXPR@2619..2627
+                EXPR_LIT@2619..2627
+                  LIT@2619..2627
+                    LIT_STR@2619..2627 "\"alpaca\""
+              PUNCT_COMMA@2627..2628 ","
+              WHITESPACE@2628..2629 " "
+              EXPR@2629..2634
+                EXPR_LIT@2629..2634
+                  LIT@2629..2634
+                    LIT_STR@2629..2634 "\"ant\""
+              PUNCT_COMMA@2634..2635 ","
+              WHITESPACE@2635..2640 "\n    "
+              EXPR@2640..2650
+                EXPR_LIT@2640..2650
+                  LIT@2640..2650
+                    LIT_STR@2640..2650 "\"anteater\""
+              PUNCT_COMMA@2650..2651 ","
+              WHITESPACE@2651..2652 " "
+              EXPR@2652..2662
+                EXPR_LIT@2652..2662
+                  LIT@2652..2662
+                    LIT_STR@2652..2662 "\"antelope\""
+              PUNCT_COMMA@2662..2663 ","
+              WHITESPACE@2663..2664 " "
+              EXPR@2664..2669
+                EXPR_LIT@2664..2669
+                  LIT@2664..2669
+                    LIT_STR@2664..2669 "\"ape\""
+              PUNCT_COMMA@2669..2670 ","
+              WHITESPACE@2670..2671 " "
+              EXPR@2671..2682
+                EXPR_LIT@2671..2682
+                  LIT@2671..2682
+                    LIT_STR@2671..2682 "\"armadillo\""
+              PUNCT_COMMA@2682..2683 ","
+              WHITESPACE@2683..2684 " "
+              EXPR@2684..2692
+                EXPR_LIT@2684..2692
+                  LIT@2684..2692
+                    LIT_STR@2684..2692 "\"baboon\""
+              PUNCT_COMMA@2692..2693 ","
+              WHITESPACE@2693..2694 " "
+              EXPR@2694..2702
+                EXPR_LIT@2694..2702
+                  LIT@2694..2702
+                    LIT_STR@2694..2702 "\"badger\""
+              PUNCT_COMMA@2702..2703 ","
+              WHITESPACE@2703..2704 " "
+              EXPR@2704..2715
+                EXPR_LIT@2704..2715
+                  LIT@2704..2715
+                    LIT_STR@2704..2715 "\"barracuda\""
+              PUNCT_COMMA@2715..2716 ","
+              WHITESPACE@2716..2721 "\n    "
+              EXPR@2721..2726
+                EXPR_LIT@2721..2726
+                  LIT@2721..2726
+                    LIT_STR@2721..2726 "\"bat\""
+              PUNCT_COMMA@2726..2727 ","
+              WHITESPACE@2727..2728 " "
+              EXPR@2728..2734
+                EXPR_LIT@2728..2734
+                  LIT@2728..2734
+                    LIT_STR@2728..2734 "\"bear\""
+              PUNCT_COMMA@2734..2735 ","
+              WHITESPACE@2735..2736 " "
+              EXPR@2736..2744
+                EXPR_LIT@2736..2744
+                  LIT@2736..2744
+                    LIT_STR@2736..2744 "\"beaver\""
+              PUNCT_COMMA@2744..2745 ","
+              WHITESPACE@2745..2746 " "
+              EXPR@2746..2751
+                EXPR_LIT@2746..2751
+                  LIT@2746..2751
+                    LIT_STR@2746..2751 "\"bee\""
+              PUNCT_COMMA@2751..2752 ","
+              WHITESPACE@2752..2753 " "
+              EXPR@2753..2760
+                EXPR_LIT@2753..2760
+                  LIT@2753..2760
+                    LIT_STR@2753..2760 "\"bison\""
+              PUNCT_COMMA@2760..2761 ","
+              WHITESPACE@2761..2762 " "
+              EXPR@2762..2777
+                EXPR_LIT@2762..2777
+                  LIT@2762..2777
+                    LIT_STR@2762..2777 "\"black panther\""
+              PUNCT_COMMA@2777..2778 ","
+              WHITESPACE@2778..2779 " "
+              EXPR@2779..2789
+                EXPR_LIT@2779..2789
+                  LIT@2779..2789
+                    LIT_STR@2779..2789 "\"blue jay\""
+              PUNCT_COMMA@2789..2790 ","
+              WHITESPACE@2790..2791 " "
+              EXPR@2791..2797
+                EXPR_LIT@2791..2797
+                  LIT@2791..2797
+                    LIT_STR@2791..2797 "\"boar\""
+              PUNCT_COMMA@2797..2798 ","
+              WHITESPACE@2798..2803 "\n    "
+              EXPR@2803..2814
+                EXPR_LIT@2803..2814
+                  LIT@2803..2814
+                    LIT_STR@2803..2814 "\"butterfly\""
+              PUNCT_COMMA@2814..2815 ","
+              WHITESPACE@2815..2816 " "
+              EXPR@2816..2823
+                EXPR_LIT@2816..2823
+                  LIT@2816..2823
+                    LIT_STR@2816..2823 "\"camel\""
+              PUNCT_COMMA@2823..2824 ","
+              WHITESPACE@2824..2825 " "
+              EXPR@2825..2835
+                EXPR_LIT@2825..2835
+                  LIT@2825..2835
+                    LIT_STR@2825..2835 "\"capybara\""
+              PUNCT_COMMA@2835..2836 ","
+              WHITESPACE@2836..2837 " "
+              EXPR@2837..2848
+                EXPR_LIT@2837..2848
+                  LIT@2837..2848
+                    LIT_STR@2837..2848 "\"carduelis\""
+              PUNCT_COMMA@2848..2849 ","
+              WHITESPACE@2849..2850 " "
+              EXPR@2850..2859
+                EXPR_LIT@2850..2859
+                  LIT@2850..2859
+                    LIT_STR@2850..2859 "\"caribou\""
+              PUNCT_COMMA@2859..2860 ","
+              WHITESPACE@2860..2861 " "
+              EXPR@2861..2872
+                EXPR_LIT@2861..2872
+                  LIT@2861..2872
+                    LIT_STR@2861..2872 "\"cassowary\""
+              PUNCT_COMMA@2872..2873 ","
+              WHITESPACE@2873..2874 " "
+              EXPR@2874..2879
+                EXPR_LIT@2874..2879
+                  LIT@2874..2879
+                    LIT_STR@2874..2879 "\"cat\""
+              PUNCT_COMMA@2879..2880 ","
+              WHITESPACE@2880..2885 "\n    "
+              EXPR@2885..2898
+                EXPR_LIT@2885..2898
+                  LIT@2885..2898
+                    LIT_STR@2885..2898 "\"caterpillar\""
+              PUNCT_COMMA@2898..2899 ","
+              WHITESPACE@2899..2900 " "
+              EXPR@2900..2908
+                EXPR_LIT@2900..2908
+                  LIT@2900..2908
+                    LIT_STR@2900..2908 "\"cattle\""
+              PUNCT_COMMA@2908..2909 ","
+              WHITESPACE@2909..2910 " "
+              EXPR@2910..2919
+                EXPR_LIT@2910..2919
+                  LIT@2910..2919
+                    LIT_STR@2910..2919 "\"chamois\""
+              PUNCT_COMMA@2919..2920 ","
+              WHITESPACE@2920..2921 " "
+              EXPR@2921..2930
+                EXPR_LIT@2921..2930
+                  LIT@2921..2930
+                    LIT_STR@2921..2930 "\"cheetah\""
+              PUNCT_COMMA@2930..2931 ","
+              WHITESPACE@2931..2932 " "
+              EXPR@2932..2941
+                EXPR_LIT@2932..2941
+                  LIT@2932..2941
+                    LIT_STR@2932..2941 "\"chicken\""
+              PUNCT_COMMA@2941..2942 ","
+              WHITESPACE@2942..2943 " "
+              EXPR@2943..2955
+                EXPR_LIT@2943..2955
+                  LIT@2943..2955
+                    LIT_STR@2943..2955 "\"chimpanzee\""
+              PUNCT_COMMA@2955..2956 ","
+              WHITESPACE@2956..2961 "\n    "
+              EXPR@2961..2973
+                EXPR_LIT@2961..2973
+                  LIT@2961..2973
+                    LIT_STR@2961..2973 "\"chinchilla\""
+              PUNCT_COMMA@2973..2974 ","
+              WHITESPACE@2974..2975 " "
+              EXPR@2975..2983
+                EXPR_LIT@2975..2983
+                  LIT@2975..2983
+                    LIT_STR@2975..2983 "\"chough\""
+              PUNCT_COMMA@2983..2984 ","
+              WHITESPACE@2984..2985 " "
+              EXPR@2985..2991
+                EXPR_LIT@2985..2991
+                  LIT@2985..2991
+                    LIT_STR@2985..2991 "\"clam\""
+              PUNCT_COMMA@2991..2992 ","
+              WHITESPACE@2992..2993 " "
+              EXPR@2993..3000
+                EXPR_LIT@2993..3000
+                  LIT@2993..3000
+                    LIT_STR@2993..3000 "\"cobra\""
+              PUNCT_COMMA@3000..3001 ","
+              WHITESPACE@3001..3002 " "
+              EXPR@3002..3013
+                EXPR_LIT@3002..3013
+                  LIT@3002..3013
+                    LIT_STR@3002..3013 "\"cockroach\""
+              PUNCT_COMMA@3013..3014 ","
+              WHITESPACE@3014..3015 " "
+              EXPR@3015..3020
+                EXPR_LIT@3015..3020
+                  LIT@3015..3020
+                    LIT_STR@3015..3020 "\"cod\""
+              PUNCT_COMMA@3020..3021 ","
+              WHITESPACE@3021..3022 " "
+              EXPR@3022..3033
+                EXPR_LIT@3022..3033
+                  LIT@3022..3033
+                    LIT_STR@3022..3033 "\"cormorant\""
+              PUNCT_COMMA@3033..3034 ","
+              WHITESPACE@3034..3039 "\n    "
+              EXPR@3039..3047
+                EXPR_LIT@3039..3047
+                  LIT@3039..3047
+                    LIT_STR@3039..3047 "\"coyote\""
+              PUNCT_COMMA@3047..3048 ","
+              WHITESPACE@3048..3049 " "
+              EXPR@3049..3055
+                EXPR_LIT@3049..3055
+                  LIT@3049..3055
+                    LIT_STR@3049..3055 "\"crab\""
+              PUNCT_COMMA@3055..3056 ","
+              WHITESPACE@3056..3057 " "
+              EXPR@3057..3064
+                EXPR_LIT@3057..3064
+                  LIT@3057..3064
+                    LIT_STR@3057..3064 "\"crane\""
+              PUNCT_COMMA@3064..3065 ","
+              WHITESPACE@3065..3066 " "
+              EXPR@3066..3077
+                EXPR_LIT@3066..3077
+                  LIT@3066..3077
+                    LIT_STR@3066..3077 "\"crocodile\""
+              PUNCT_COMMA@3077..3078 ","
+              WHITESPACE@3078..3079 " "
+              EXPR@3079..3085
+                EXPR_LIT@3079..3085
+                  LIT@3079..3085
+                    LIT_STR@3079..3085 "\"crow\""
+              PUNCT_COMMA@3085..3086 ","
+              WHITESPACE@3086..3087 " "
+              EXPR@3087..3095
+                EXPR_LIT@3087..3095
+                  LIT@3087..3095
+                    LIT_STR@3087..3095 "\"curlew\""
+              PUNCT_COMMA@3095..3096 ","
+              WHITESPACE@3096..3097 " "
+              EXPR@3097..3103
+                EXPR_LIT@3097..3103
+                  LIT@3097..3103
+                    LIT_STR@3097..3103 "\"deer\""
+              PUNCT_COMMA@3103..3104 ","
+              WHITESPACE@3104..3105 " "
+              EXPR@3105..3115
+                EXPR_LIT@3105..3115
+                  LIT@3105..3115
+                    LIT_STR@3105..3115 "\"dinosaur\""
+              PUNCT_COMMA@3115..3116 ","
+              WHITESPACE@3116..3121 "\n    "
+              EXPR@3121..3126
+                EXPR_LIT@3121..3126
+                  LIT@3121..3126
+                    LIT_STR@3121..3126 "\"dog\""
+              PUNCT_COMMA@3126..3127 ","
+              WHITESPACE@3127..3128 " "
+              EXPR@3128..3137
+                EXPR_LIT@3128..3137
+                  LIT@3128..3137
+                    LIT_STR@3128..3137 "\"dolphin\""
+              PUNCT_COMMA@3137..3138 ","
+              WHITESPACE@3138..3139 " "
+              EXPR@3139..3153
+                EXPR_LIT@3139..3153
+                  LIT@3139..3153
+                    LIT_STR@3139..3153 "\"domestic pig\""
+              PUNCT_COMMA@3153..3154 ","
+              WHITESPACE@3154..3155 " "
+              EXPR@3155..3163
+                EXPR_LIT@3155..3163
+                  LIT@3155..3163
+                    LIT_STR@3155..3163 "\"donkey\""
+              PUNCT_COMMA@3163..3164 ","
+              WHITESPACE@3164..3165 " "
+              EXPR@3165..3175
+                EXPR_LIT@3165..3175
+                  LIT@3165..3175
+                    LIT_STR@3165..3175 "\"dotterel\""
+              PUNCT_COMMA@3175..3176 ","
+              WHITESPACE@3176..3177 " "
+              EXPR@3177..3183
+                EXPR_LIT@3177..3183
+                  LIT@3177..3183
+                    LIT_STR@3177..3183 "\"dove\""
+              PUNCT_COMMA@3183..3184 ","
+              WHITESPACE@3184..3185 " "
+              EXPR@3185..3196
+                EXPR_LIT@3185..3196
+                  LIT@3185..3196
+                    LIT_STR@3185..3196 "\"dragonfly\""
+              PUNCT_COMMA@3196..3197 ","
+              WHITESPACE@3197..3202 "\n    "
+              EXPR@3202..3208
+                EXPR_LIT@3202..3208
+                  LIT@3202..3208
+                    LIT_STR@3202..3208 "\"duck\""
+              PUNCT_COMMA@3208..3209 ","
+              WHITESPACE@3209..3210 " "
+              EXPR@3210..3218
+                EXPR_LIT@3210..3218
+                  LIT@3210..3218
+                    LIT_STR@3210..3218 "\"dugong\""
+              PUNCT_COMMA@3218..3219 ","
+              WHITESPACE@3219..3220 " "
+              EXPR@3220..3228
+                EXPR_LIT@3220..3228
+                  LIT@3220..3228
+                    LIT_STR@3220..3228 "\"dunlin\""
+              PUNCT_COMMA@3228..3229 ","
+              WHITESPACE@3229..3230 " "
+              EXPR@3230..3237
+                EXPR_LIT@3230..3237
+                  LIT@3230..3237
+                    LIT_STR@3230..3237 "\"eagle\""
+              PUNCT_COMMA@3237..3238 ","
+              WHITESPACE@3238..3239 " "
+              EXPR@3239..3248
+                EXPR_LIT@3239..3248
+                  LIT@3239..3248
+                    LIT_STR@3239..3248 "\"echidna\""
+              PUNCT_COMMA@3248..3249 ","
+              WHITESPACE@3249..3250 " "
+              EXPR@3250..3255
+                EXPR_LIT@3250..3255
+                  LIT@3250..3255
+                    LIT_STR@3250..3255 "\"eel\""
+              PUNCT_COMMA@3255..3256 ","
+              WHITESPACE@3256..3257 " "
+              EXPR@3257..3272
+                EXPR_LIT@3257..3272
+                  LIT@3257..3272
+                    LIT_STR@3257..3272 "\"elephant seal\""
+              PUNCT_COMMA@3272..3273 ","
+              WHITESPACE@3273..3278 "\n    "
+              EXPR@3278..3288
+                EXPR_LIT@3278..3288
+                  LIT@3278..3288
+                    LIT_STR@3278..3288 "\"elephant\""
+              PUNCT_COMMA@3288..3289 ","
+              WHITESPACE@3289..3290 " "
+              EXPR@3290..3295
+                EXPR_LIT@3290..3295
+                  LIT@3290..3295
+                    LIT_STR@3290..3295 "\"elk\""
+              PUNCT_COMMA@3295..3296 ","
+              WHITESPACE@3296..3297 " "
+              EXPR@3297..3302
+                EXPR_LIT@3297..3302
+                  LIT@3297..3302
+                    LIT_STR@3297..3302 "\"emu\""
+              PUNCT_COMMA@3302..3303 ","
+              WHITESPACE@3303..3304 " "
+              EXPR@3304..3312
+                EXPR_LIT@3304..3312
+                  LIT@3304..3312
+                    LIT_STR@3304..3312 "\"falcon\""
+              PUNCT_COMMA@3312..3313 ","
+              WHITESPACE@3313..3314 " "
+              EXPR@3314..3322
+                EXPR_LIT@3314..3322
+                  LIT@3314..3322
+                    LIT_STR@3314..3322 "\"ferret\""
+              PUNCT_COMMA@3322..3323 ","
+              WHITESPACE@3323..3324 " "
+              EXPR@3324..3331
+                EXPR_LIT@3324..3331
+                  LIT@3324..3331
+                    LIT_STR@3324..3331 "\"finch\""
+              PUNCT_COMMA@3331..3332 ","
+              WHITESPACE@3332..3333 " "
+              EXPR@3333..3339
+                EXPR_LIT@3333..3339
+                  LIT@3333..3339
+                    LIT_STR@3333..3339 "\"fish\""
+              PUNCT_COMMA@3339..3340 ","
+              WHITESPACE@3340..3341 " "
+              EXPR@3341..3351
+                EXPR_LIT@3341..3351
+                  LIT@3341..3351
+                    LIT_STR@3341..3351 "\"flamingo\""
+              PUNCT_COMMA@3351..3352 ","
+              WHITESPACE@3352..3357 "\n    "
+              EXPR@3357..3362
+                EXPR_LIT@3357..3362
+                  LIT@3357..3362
+                    LIT_STR@3357..3362 "\"fly\""
+              PUNCT_COMMA@3362..3363 ","
+              WHITESPACE@3363..3364 " "
+              EXPR@3364..3369
+                EXPR_LIT@3364..3369
+                  LIT@3364..3369
+                    LIT_STR@3364..3369 "\"fox\""
+              PUNCT_COMMA@3369..3370 ","
+              WHITESPACE@3370..3371 " "
+              EXPR@3371..3377
+                EXPR_LIT@3371..3377
+                  LIT@3371..3377
+                    LIT_STR@3371..3377 "\"frog\""
+              PUNCT_COMMA@3377..3378 ","
+              WHITESPACE@3378..3379 " "
+              EXPR@3379..3385
+                EXPR_LIT@3379..3385
+                  LIT@3379..3385
+                    LIT_STR@3379..3385 "\"gaur\""
+              PUNCT_COMMA@3385..3386 ","
+              WHITESPACE@3386..3387 " "
+              EXPR@3387..3396
+                EXPR_LIT@3387..3396
+                  LIT@3387..3396
+                    LIT_STR@3387..3396 "\"gazelle\""
+              PUNCT_COMMA@3396..3397 ","
+              WHITESPACE@3397..3398 " "
+              EXPR@3398..3406
+                EXPR_LIT@3398..3406
+                  LIT@3398..3406
+                    LIT_STR@3398..3406 "\"gerbil\""
+              PUNCT_COMMA@3406..3407 ","
+              WHITESPACE@3407..3408 " "
+              EXPR@3408..3421
+                EXPR_LIT@3408..3421
+                  LIT@3408..3421
+                    LIT_STR@3408..3421 "\"giant panda\""
+              PUNCT_COMMA@3421..3422 ","
+              WHITESPACE@3422..3423 " "
+              EXPR@3423..3432
+                EXPR_LIT@3423..3432
+                  LIT@3423..3432
+                    LIT_STR@3423..3432 "\"giraffe\""
+              PUNCT_COMMA@3432..3433 ","
+              WHITESPACE@3433..3438 "\n    "
+              EXPR@3438..3444
+                EXPR_LIT@3438..3444
+                  LIT@3438..3444
+                    LIT_STR@3438..3444 "\"gnat\""
+              PUNCT_COMMA@3444..3445 ","
+              WHITESPACE@3445..3446 " "
+              EXPR@3446..3452
+                EXPR_LIT@3446..3452
+                  LIT@3446..3452
+                    LIT_STR@3446..3452 "\"goat\""
+              PUNCT_COMMA@3452..3453 ","
+              WHITESPACE@3453..3454 " "
+              EXPR@3454..3464
+                EXPR_LIT@3454..3464
+                  LIT@3454..3464
+                    LIT_STR@3454..3464 "\"goldfish\""
+              PUNCT_COMMA@3464..3465 ","
+              WHITESPACE@3465..3466 " "
+              EXPR@3466..3473
+                EXPR_LIT@3466..3473
+                  LIT@3466..3473
+                    LIT_STR@3466..3473 "\"goose\""
+              PUNCT_COMMA@3473..3474 ","
+              WHITESPACE@3474..3475 " "
+              EXPR@3475..3484
+                EXPR_LIT@3475..3484
+                  LIT@3475..3484
+                    LIT_STR@3475..3484 "\"gorilla\""
+              PUNCT_COMMA@3484..3485 ","
+              WHITESPACE@3485..3486 " "
+              EXPR@3486..3495
+                EXPR_LIT@3486..3495
+                  LIT@3486..3495
+                    LIT_STR@3486..3495 "\"goshawk\""
+              PUNCT_COMMA@3495..3496 ","
+              WHITESPACE@3496..3497 " "
+              EXPR@3497..3510
+                EXPR_LIT@3497..3510
+                  LIT@3497..3510
+                    LIT_STR@3497..3510 "\"grasshopper\""
+              PUNCT_COMMA@3510..3511 ","
+              WHITESPACE@3511..3516 "\n    "
+              EXPR@3516..3524
+                EXPR_LIT@3516..3524
+                  LIT@3516..3524
+                    LIT_STR@3516..3524 "\"grouse\""
+              PUNCT_COMMA@3524..3525 ","
+              WHITESPACE@3525..3526 " "
+              EXPR@3526..3535
+                EXPR_LIT@3526..3535
+                  LIT@3526..3535
+                    LIT_STR@3526..3535 "\"guanaco\""
+              PUNCT_COMMA@3535..3536 ","
+              WHITESPACE@3536..3537 " "
+              EXPR@3537..3550
+                EXPR_LIT@3537..3550
+                  LIT@3537..3550
+                    LIT_STR@3537..3550 "\"guinea fowl\""
+              PUNCT_COMMA@3550..3551 ","
+              WHITESPACE@3551..3552 " "
+              EXPR@3552..3564
+                EXPR_LIT@3552..3564
+                  LIT@3552..3564
+                    LIT_STR@3552..3564 "\"guinea pig\""
+              PUNCT_COMMA@3564..3565 ","
+              WHITESPACE@3565..3566 " "
+              EXPR@3566..3572
+                EXPR_LIT@3566..3572
+                  LIT@3566..3572
+                    LIT_STR@3566..3572 "\"gull\""
+              PUNCT_COMMA@3572..3573 ","
+              WHITESPACE@3573..3574 " "
+              EXPR@3574..3583
+                EXPR_LIT@3574..3583
+                  LIT@3574..3583
+                    LIT_STR@3574..3583 "\"hamster\""
+              PUNCT_COMMA@3583..3584 ","
+              WHITESPACE@3584..3585 " "
+              EXPR@3585..3591
+                EXPR_LIT@3585..3591
+                  LIT@3585..3591
+                    LIT_STR@3585..3591 "\"hare\""
+              PUNCT_COMMA@3591..3592 ","
+              WHITESPACE@3592..3597 "\n    "
+              EXPR@3597..3603
+                EXPR_LIT@3597..3603
+                  LIT@3597..3603
+                    LIT_STR@3597..3603 "\"hawk\""
+              PUNCT_COMMA@3603..3604 ","
+              WHITESPACE@3604..3605 " "
+              EXPR@3605..3615
+                EXPR_LIT@3605..3615
+                  LIT@3605..3615
+                    LIT_STR@3605..3615 "\"hedgehog\""
+              PUNCT_COMMA@3615..3616 ","
+              WHITESPACE@3616..3617 " "
+              EXPR@3617..3624
+                EXPR_LIT@3617..3624
+                  LIT@3617..3624
+                    LIT_STR@3617..3624 "\"heron\""
+              PUNCT_COMMA@3624..3625 ","
+              WHITESPACE@3625..3626 " "
+              EXPR@3626..3635
+                EXPR_LIT@3626..3635
+                  LIT@3626..3635
+                    LIT_STR@3626..3635 "\"herring\""
+              PUNCT_COMMA@3635..3636 ","
+              WHITESPACE@3636..3637 " "
+              EXPR@3637..3651
+                EXPR_LIT@3637..3651
+                  LIT@3637..3651
+                    LIT_STR@3637..3651 "\"hippopotamus\""
+              PUNCT_COMMA@3651..3652 ","
+              WHITESPACE@3652..3653 " "
+              EXPR@3653..3661
+                EXPR_LIT@3653..3661
+                  LIT@3653..3661
+                    LIT_STR@3653..3661 "\"hornet\""
+              PUNCT_COMMA@3661..3662 ","
+              WHITESPACE@3662..3663 " "
+              EXPR@3663..3670
+                EXPR_LIT@3663..3670
+                  LIT@3663..3670
+                    LIT_STR@3663..3670 "\"horse\""
+              PUNCT_COMMA@3670..3671 ","
+              WHITESPACE@3671..3676 "\n    "
+              EXPR@3676..3683
+                EXPR_LIT@3676..3683
+                  LIT@3676..3683
+                    LIT_STR@3676..3683 "\"human\""
+              PUNCT_COMMA@3683..3684 ","
+              WHITESPACE@3684..3685 " "
+              EXPR@3685..3698
+                EXPR_LIT@3685..3698
+                  LIT@3685..3698
+                    LIT_STR@3685..3698 "\"hummingbird\""
+              PUNCT_COMMA@3698..3699 ","
+              WHITESPACE@3699..3700 " "
+              EXPR@3700..3707
+                EXPR_LIT@3700..3707
+                  LIT@3700..3707
+                    LIT_STR@3700..3707 "\"hyena\""
+              PUNCT_COMMA@3707..3708 ","
+              WHITESPACE@3708..3709 " "
+              EXPR@3709..3715
+                EXPR_LIT@3709..3715
+                  LIT@3709..3715
+                    LIT_STR@3709..3715 "\"ibex\""
+              PUNCT_COMMA@3715..3716 ","
+              WHITESPACE@3716..3717 " "
+              EXPR@3717..3723
+                EXPR_LIT@3717..3723
+                  LIT@3717..3723
+                    LIT_STR@3717..3723 "\"ibis\""
+              PUNCT_COMMA@3723..3724 ","
+              WHITESPACE@3724..3725 " "
+              EXPR@3725..3733
+                EXPR_LIT@3725..3733
+                  LIT@3725..3733
+                    LIT_STR@3725..3733 "\"jackal\""
+              PUNCT_COMMA@3733..3734 ","
+              WHITESPACE@3734..3735 " "
+              EXPR@3735..3743
+                EXPR_LIT@3735..3743
+                  LIT@3735..3743
+                    LIT_STR@3735..3743 "\"jaguar\""
+              PUNCT_COMMA@3743..3744 ","
+              WHITESPACE@3744..3745 " "
+              EXPR@3745..3750
+                EXPR_LIT@3745..3750
+                  LIT@3745..3750
+                    LIT_STR@3745..3750 "\"jay\""
+              PUNCT_COMMA@3750..3751 ","
+              WHITESPACE@3751..3756 "\n    "
+              EXPR@3756..3767
+                EXPR_LIT@3756..3767
+                  LIT@3756..3767
+                    LIT_STR@3756..3767 "\"jellyfish\""
+              PUNCT_COMMA@3767..3768 ","
+              WHITESPACE@3768..3769 " "
+              EXPR@3769..3779
+                EXPR_LIT@3769..3779
+                  LIT@3769..3779
+                    LIT_STR@3769..3779 "\"kangaroo\""
+              PUNCT_COMMA@3779..3780 ","
+              WHITESPACE@3780..3781 " "
+              EXPR@3781..3793
+                EXPR_LIT@3781..3793
+                  LIT@3781..3793
+                    LIT_STR@3781..3793 "\"kingfisher\""
+              PUNCT_COMMA@3793..3794 ","
+              WHITESPACE@3794..3795 " "
+              EXPR@3795..3802
+                EXPR_LIT@3795..3802
+                  LIT@3795..3802
+                    LIT_STR@3795..3802 "\"koala\""
+              PUNCT_COMMA@3802..3803 ","
+              WHITESPACE@3803..3804 " "
+              EXPR@3804..3819
+                EXPR_LIT@3804..3819
+                  LIT@3804..3819
+                    LIT_STR@3804..3819 "\"komodo dragon\""
+              PUNCT_COMMA@3819..3820 ","
+              WHITESPACE@3820..3821 " "
+              EXPR@3821..3832
+                EXPR_LIT@3821..3832
+                  LIT@3821..3832
+                    LIT_STR@3821..3832 "\"kookabura\""
+              PUNCT_COMMA@3832..3833 ","
+              WHITESPACE@3833..3838 "\n    "
+              EXPR@3838..3847
+                EXPR_LIT@3838..3847
+                  LIT@3838..3847
+                    LIT_STR@3838..3847 "\"kouprey\""
+              PUNCT_COMMA@3847..3848 ","
+              WHITESPACE@3848..3849 " "
+              EXPR@3849..3855
+                EXPR_LIT@3849..3855
+                  LIT@3849..3855
+                    LIT_STR@3849..3855 "\"kudu\""
+              PUNCT_COMMA@3855..3856 ","
+              WHITESPACE@3856..3857 " "
+              EXPR@3857..3866
+                EXPR_LIT@3857..3866
+                  LIT@3857..3866
+                    LIT_STR@3857..3866 "\"lapwing\""
+              PUNCT_COMMA@3866..3867 ","
+              WHITESPACE@3867..3868 " "
+              EXPR@3868..3874
+                EXPR_LIT@3868..3874
+                  LIT@3868..3874
+                    LIT_STR@3868..3874 "\"lark\""
+              PUNCT_COMMA@3874..3875 ","
+              WHITESPACE@3875..3876 " "
+              EXPR@3876..3883
+                EXPR_LIT@3876..3883
+                  LIT@3876..3883
+                    LIT_STR@3876..3883 "\"lemur\""
+              PUNCT_COMMA@3883..3884 ","
+              WHITESPACE@3884..3885 " "
+              EXPR@3885..3894
+                EXPR_LIT@3885..3894
+                  LIT@3885..3894
+                    LIT_STR@3885..3894 "\"leopard\""
+              PUNCT_COMMA@3894..3895 ","
+              WHITESPACE@3895..3896 " "
+              EXPR@3896..3902
+                EXPR_LIT@3896..3902
+                  LIT@3896..3902
+                    LIT_STR@3896..3902 "\"lion\""
+              PUNCT_COMMA@3902..3903 ","
+              WHITESPACE@3903..3904 " "
+              EXPR@3904..3911
+                EXPR_LIT@3904..3911
+                  LIT@3904..3911
+                    LIT_STR@3904..3911 "\"llama\""
+              PUNCT_COMMA@3911..3912 ","
+              WHITESPACE@3912..3917 "\n    "
+              EXPR@3917..3926
+                EXPR_LIT@3917..3926
+                  LIT@3917..3926
+                    LIT_STR@3917..3926 "\"lobster\""
+              PUNCT_COMMA@3926..3927 ","
+              WHITESPACE@3927..3928 " "
+              EXPR@3928..3936
+                EXPR_LIT@3928..3936
+                  LIT@3928..3936
+                    LIT_STR@3928..3936 "\"locust\""
+              PUNCT_COMMA@3936..3937 ","
+              WHITESPACE@3937..3938 " "
+              EXPR@3938..3945
+                EXPR_LIT@3938..3945
+                  LIT@3938..3945
+                    LIT_STR@3938..3945 "\"loris\""
+              PUNCT_COMMA@3945..3946 ","
+              WHITESPACE@3946..3947 " "
+              EXPR@3947..3954
+                EXPR_LIT@3947..3954
+                  LIT@3947..3954
+                    LIT_STR@3947..3954 "\"louse\""
+              PUNCT_COMMA@3954..3955 ","
+              WHITESPACE@3955..3956 " "
+              EXPR@3956..3966
+                EXPR_LIT@3956..3966
+                  LIT@3956..3966
+                    LIT_STR@3956..3966 "\"lyrebird\""
+              PUNCT_COMMA@3966..3967 ","
+              WHITESPACE@3967..3968 " "
+              EXPR@3968..3976
+                EXPR_LIT@3968..3976
+                  LIT@3968..3976
+                    LIT_STR@3968..3976 "\"magpie\""
+              PUNCT_COMMA@3976..3977 ","
+              WHITESPACE@3977..3978 " "
+              EXPR@3978..3987
+                EXPR_LIT@3978..3987
+                  LIT@3978..3987
+                    LIT_STR@3978..3987 "\"mallard\""
+              PUNCT_COMMA@3987..3988 ","
+              WHITESPACE@3988..3993 "\n    "
+              EXPR@3993..4002
+                EXPR_LIT@3993..4002
+                  LIT@3993..4002
+                    LIT_STR@3993..4002 "\"manatee\""
+              PUNCT_COMMA@4002..4003 ","
+              WHITESPACE@4003..4004 " "
+              EXPR@4004..4014
+                EXPR_LIT@4004..4014
+                  LIT@4004..4014
+                    LIT_STR@4004..4014 "\"mandrill\""
+              PUNCT_COMMA@4014..4015 ","
+              WHITESPACE@4015..4016 " "
+              EXPR@4016..4024
+                EXPR_LIT@4016..4024
+                  LIT@4016..4024
+                    LIT_STR@4016..4024 "\"mantis\""
+              PUNCT_COMMA@4024..4025 ","
+              WHITESPACE@4025..4026 " "
+              EXPR@4026..4034
+                EXPR_LIT@4026..4034
+                  LIT@4026..4034
+                    LIT_STR@4026..4034 "\"marten\""
+              PUNCT_COMMA@4034..4035 ","
+              WHITESPACE@4035..4036 " "
+              EXPR@4036..4045
+                EXPR_LIT@4036..4045
+                  LIT@4036..4045
+                    LIT_STR@4036..4045 "\"meerkat\""
+              PUNCT_COMMA@4045..4046 ","
+              WHITESPACE@4046..4047 " "
+              EXPR@4047..4053
+                EXPR_LIT@4047..4053
+                  LIT@4047..4053
+                    LIT_STR@4047..4053 "\"mink\""
+              PUNCT_COMMA@4053..4054 ","
+              WHITESPACE@4054..4055 " "
+              EXPR@4055..4061
+                EXPR_LIT@4055..4061
+                  LIT@4055..4061
+                    LIT_STR@4055..4061 "\"mole\""
+              PUNCT_COMMA@4061..4062 ","
+              WHITESPACE@4062..4067 "\n    "
+              EXPR@4067..4077
+                EXPR_LIT@4067..4077
+                  LIT@4067..4077
+                    LIT_STR@4067..4077 "\"mongoose\""
+              PUNCT_COMMA@4077..4078 ","
+              WHITESPACE@4078..4079 " "
+              EXPR@4079..4087
+                EXPR_LIT@4079..4087
+                  LIT@4079..4087
+                    LIT_STR@4079..4087 "\"monkey\""
+              PUNCT_COMMA@4087..4088 ","
+              WHITESPACE@4088..4089 " "
+              EXPR@4089..4096
+                EXPR_LIT@4089..4096
+                  LIT@4089..4096
+                    LIT_STR@4089..4096 "\"moose\""
+              PUNCT_COMMA@4096..4097 ","
+              WHITESPACE@4097..4098 " "
+              EXPR@4098..4108
+                EXPR_LIT@4098..4108
+                  LIT@4098..4108
+                    LIT_STR@4098..4108 "\"mosquito\""
+              PUNCT_COMMA@4108..4109 ","
+              WHITESPACE@4109..4110 " "
+              EXPR@4110..4117
+                EXPR_LIT@4110..4117
+                  LIT@4110..4117
+                    LIT_STR@4110..4117 "\"mouse\""
+              PUNCT_COMMA@4117..4118 ","
+              WHITESPACE@4118..4119 " "
+              EXPR@4119..4125
+                EXPR_LIT@4119..4125
+                  LIT@4119..4125
+                    LIT_STR@4119..4125 "\"mule\""
+              PUNCT_COMMA@4125..4126 ","
+              WHITESPACE@4126..4127 " "
+              EXPR@4127..4136
+                EXPR_LIT@4127..4136
+                  LIT@4127..4136
+                    LIT_STR@4127..4136 "\"narwhal\""
+              PUNCT_COMMA@4136..4137 ","
+              WHITESPACE@4137..4138 " "
+              EXPR@4138..4144
+                EXPR_LIT@4138..4144
+                  LIT@4138..4144
+                    LIT_STR@4138..4144 "\"newt\""
+              PUNCT_COMMA@4144..4145 ","
+              WHITESPACE@4145..4150 "\n    "
+              EXPR@4150..4163
+                EXPR_LIT@4150..4163
+                  LIT@4150..4163
+                    LIT_STR@4150..4163 "\"nightingale\""
+              PUNCT_COMMA@4163..4164 ","
+              WHITESPACE@4164..4165 " "
+              EXPR@4165..4174
+                EXPR_LIT@4165..4174
+                  LIT@4165..4174
+                    LIT_STR@4165..4174 "\"octopus\""
+              PUNCT_COMMA@4174..4175 ","
+              WHITESPACE@4175..4176 " "
+              EXPR@4176..4183
+                EXPR_LIT@4176..4183
+                  LIT@4176..4183
+                    LIT_STR@4176..4183 "\"okapi\""
+              PUNCT_COMMA@4183..4184 ","
+              WHITESPACE@4184..4185 " "
+              EXPR@4185..4194
+                EXPR_LIT@4185..4194
+                  LIT@4185..4194
+                    LIT_STR@4185..4194 "\"opossum\""
+              PUNCT_COMMA@4194..4195 ","
+              WHITESPACE@4195..4196 " "
+              EXPR@4196..4202
+                EXPR_LIT@4196..4202
+                  LIT@4196..4202
+                    LIT_STR@4196..4202 "\"oryx\""
+              PUNCT_COMMA@4202..4203 ","
+              WHITESPACE@4203..4204 " "
+              EXPR@4204..4213
+                EXPR_LIT@4204..4213
+                  LIT@4204..4213
+                    LIT_STR@4204..4213 "\"ostrich\""
+              PUNCT_COMMA@4213..4214 ","
+              WHITESPACE@4214..4215 " "
+              EXPR@4215..4222
+                EXPR_LIT@4215..4222
+                  LIT@4215..4222
+                    LIT_STR@4215..4222 "\"otter\""
+              PUNCT_COMMA@4222..4223 ","
+              WHITESPACE@4223..4228 "\n    "
+              EXPR@4228..4233
+                EXPR_LIT@4228..4233
+                  LIT@4228..4233
+                    LIT_STR@4228..4233 "\"owl\""
+              PUNCT_COMMA@4233..4234 ","
+              WHITESPACE@4234..4235 " "
+              EXPR@4235..4243
+                EXPR_LIT@4235..4243
+                  LIT@4235..4243
+                    LIT_STR@4235..4243 "\"oyster\""
+              PUNCT_COMMA@4243..4244 ","
+              WHITESPACE@4244..4245 " "
+              EXPR@4245..4253
+                EXPR_LIT@4245..4253
+                  LIT@4245..4253
+                    LIT_STR@4245..4253 "\"parrot\""
+              PUNCT_COMMA@4253..4254 ","
+              WHITESPACE@4254..4255 " "
+              EXPR@4255..4266
+                EXPR_LIT@4255..4266
+                  LIT@4255..4266
+                    LIT_STR@4255..4266 "\"partridge\""
+              PUNCT_COMMA@4266..4267 ","
+              WHITESPACE@4267..4268 " "
+              EXPR@4268..4277
+                EXPR_LIT@4268..4277
+                  LIT@4268..4277
+                    LIT_STR@4268..4277 "\"peafowl\""
+              PUNCT_COMMA@4277..4278 ","
+              WHITESPACE@4278..4279 " "
+              EXPR@4279..4288
+                EXPR_LIT@4279..4288
+                  LIT@4279..4288
+                    LIT_STR@4279..4288 "\"pelican\""
+              PUNCT_COMMA@4288..4289 ","
+              WHITESPACE@4289..4290 " "
+              EXPR@4290..4299
+                EXPR_LIT@4290..4299
+                  LIT@4290..4299
+                    LIT_STR@4290..4299 "\"penguin\""
+              PUNCT_COMMA@4299..4300 ","
+              WHITESPACE@4300..4305 "\n    "
+              EXPR@4305..4315
+                EXPR_LIT@4305..4315
+                  LIT@4305..4315
+                    LIT_STR@4305..4315 "\"pheasant\""
+              PUNCT_COMMA@4315..4316 ","
+              WHITESPACE@4316..4317 " "
+              EXPR@4317..4325
+                EXPR_LIT@4317..4325
+                  LIT@4317..4325
+                    LIT_STR@4317..4325 "\"pigeon\""
+              PUNCT_COMMA@4325..4326 ","
+              WHITESPACE@4326..4327 " "
+              EXPR@4327..4337
+                EXPR_LIT@4327..4337
+                  LIT@4327..4337
+                    LIT_STR@4327..4337 "\"pinniped\""
+              PUNCT_COMMA@4337..4338 ","
+              WHITESPACE@4338..4339 " "
+              EXPR@4339..4351
+                EXPR_LIT@4339..4351
+                  LIT@4339..4351
+                    LIT_STR@4339..4351 "\"polar bear\""
+              PUNCT_COMMA@4351..4352 ","
+              WHITESPACE@4352..4353 " "
+              EXPR@4353..4359
+                EXPR_LIT@4353..4359
+                  LIT@4353..4359
+                    LIT_STR@4353..4359 "\"pony\""
+              PUNCT_COMMA@4359..4360 ","
+              WHITESPACE@4360..4361 " "
+              EXPR@4361..4372
+                EXPR_LIT@4361..4372
+                  LIT@4361..4372
+                    LIT_STR@4361..4372 "\"porcupine\""
+              PUNCT_COMMA@4372..4373 ","
+              WHITESPACE@4373..4378 "\n    "
+              EXPR@4378..4388
+                EXPR_LIT@4378..4388
+                  LIT@4378..4388
+                    LIT_STR@4378..4388 "\"porpoise\""
+              PUNCT_COMMA@4388..4389 ","
+              WHITESPACE@4389..4390 " "
+              EXPR@4390..4403
+                EXPR_LIT@4390..4403
+                  LIT@4390..4403
+                    LIT_STR@4390..4403 "\"prairie dog\""
+              PUNCT_COMMA@4403..4404 ","
+              WHITESPACE@4404..4405 " "
+              EXPR@4405..4412
+                EXPR_LIT@4405..4412
+                  LIT@4405..4412
+                    LIT_STR@4405..4412 "\"quail\""
+              PUNCT_COMMA@4412..4413 ","
+              WHITESPACE@4413..4414 " "
+              EXPR@4414..4422
+                EXPR_LIT@4414..4422
+                  LIT@4414..4422
+                    LIT_STR@4414..4422 "\"quelea\""
+              PUNCT_COMMA@4422..4423 ","
+              WHITESPACE@4423..4424 " "
+              EXPR@4424..4433
+                EXPR_LIT@4424..4433
+                  LIT@4424..4433
+                    LIT_STR@4424..4433 "\"quetzal\""
+              PUNCT_COMMA@4433..4434 ","
+              WHITESPACE@4434..4435 " "
+              EXPR@4435..4443
+                EXPR_LIT@4435..4443
+                  LIT@4435..4443
+                    LIT_STR@4435..4443 "\"rabbit\""
+              PUNCT_COMMA@4443..4444 ","
+              WHITESPACE@4444..4445 " "
+              EXPR@4445..4454
+                EXPR_LIT@4445..4454
+                  LIT@4445..4454
+                    LIT_STR@4445..4454 "\"raccoon\""
+              PUNCT_COMMA@4454..4455 ","
+              WHITESPACE@4455..4460 "\n    "
+              EXPR@4460..4465
+                EXPR_LIT@4460..4465
+                  LIT@4460..4465
+                    LIT_STR@4460..4465 "\"ram\""
+              PUNCT_COMMA@4465..4466 ","
+              WHITESPACE@4466..4467 " "
+              EXPR@4467..4472
+                EXPR_LIT@4467..4472
+                  LIT@4467..4472
+                    LIT_STR@4467..4472 "\"rat\""
+              PUNCT_COMMA@4472..4473 ","
+              WHITESPACE@4473..4474 " "
+              EXPR@4474..4481
+                EXPR_LIT@4474..4481
+                  LIT@4474..4481
+                    LIT_STR@4474..4481 "\"raven\""
+              PUNCT_COMMA@4481..4482 ","
+              WHITESPACE@4482..4483 " "
+              EXPR@4483..4493
+                EXPR_LIT@4483..4493
+                  LIT@4483..4493
+                    LIT_STR@4483..4493 "\"red deer\""
+              PUNCT_COMMA@4493..4494 ","
+              WHITESPACE@4494..4495 " "
+              EXPR@4495..4506
+                EXPR_LIT@4495..4506
+                  LIT@4495..4506
+                    LIT_STR@4495..4506 "\"red panda\""
+              PUNCT_COMMA@4506..4507 ","
+              WHITESPACE@4507..4508 " "
+              EXPR@4508..4518
+                EXPR_LIT@4508..4518
+                  LIT@4508..4518
+                    LIT_STR@4508..4518 "\"reindeer\""
+              PUNCT_COMMA@4518..4519 ","
+              WHITESPACE@4519..4520 " "
+              EXPR@4520..4532
+                EXPR_LIT@4520..4532
+                  LIT@4520..4532
+                    LIT_STR@4520..4532 "\"rhinoceros\""
+              PUNCT_COMMA@4532..4533 ","
+              WHITESPACE@4533..4538 "\n    "
+              EXPR@4538..4544
+                EXPR_LIT@4538..4544
+                  LIT@4538..4544
+                    LIT_STR@4538..4544 "\"rook\""
+              PUNCT_COMMA@4544..4545 ","
+              WHITESPACE@4545..4546 " "
+              EXPR@4546..4558
+                EXPR_LIT@4546..4558
+                  LIT@4546..4558
+                    LIT_STR@4546..4558 "\"salamander\""
+              PUNCT_COMMA@4558..4559 ","
+              WHITESPACE@4559..4560 " "
+              EXPR@4560..4568
+                EXPR_LIT@4560..4568
+                  LIT@4560..4568
+                    LIT_STR@4560..4568 "\"salmon\""
+              PUNCT_COMMA@4568..4569 ","
+              WHITESPACE@4569..4570 " "
+              EXPR@4570..4583
+                EXPR_LIT@4570..4583
+                  LIT@4570..4583
+                    LIT_STR@4570..4583 "\"sand dollar\""
+              PUNCT_COMMA@4583..4584 ","
+              WHITESPACE@4584..4585 " "
+              EXPR@4585..4596
+                EXPR_LIT@4585..4596
+                  LIT@4585..4596
+                    LIT_STR@4585..4596 "\"sandpiper\""
+              PUNCT_COMMA@4596..4597 ","
+              WHITESPACE@4597..4598 " "
+              EXPR@4598..4607
+                EXPR_LIT@4598..4607
+                  LIT@4598..4607
+                    LIT_STR@4598..4607 "\"sardine\""
+              PUNCT_COMMA@4607..4608 ","
+              WHITESPACE@4608..4613 "\n    "
+              EXPR@4613..4623
+                EXPR_LIT@4613..4623
+                  LIT@4613..4623
+                    LIT_STR@4613..4623 "\"scorpion\""
+              PUNCT_COMMA@4623..4624 ","
+              WHITESPACE@4624..4625 " "
+              EXPR@4625..4635
+                EXPR_LIT@4625..4635
+                  LIT@4625..4635
+                    LIT_STR@4625..4635 "\"sea lion\""
+              PUNCT_COMMA@4635..4636 ","
+              WHITESPACE@4636..4637 " "
+              EXPR@4637..4649
+                EXPR_LIT@4637..4649
+                  LIT@4637..4649
+                    LIT_STR@4637..4649 "\"sea urchin\""
+              PUNCT_COMMA@4649..4650 ","
+              WHITESPACE@4650..4651 " "
+              EXPR@4651..4661
+                EXPR_LIT@4651..4661
+                  LIT@4651..4661
+                    LIT_STR@4651..4661 "\"seahorse\""
+              PUNCT_COMMA@4661..4662 ","
+              WHITESPACE@4662..4663 " "
+              EXPR@4663..4670
+                EXPR_LIT@4663..4670
+                  LIT@4663..4670
+                    LIT_STR@4663..4670 "\"shark\""
+              PUNCT_COMMA@4670..4671 ","
+              WHITESPACE@4671..4672 " "
+              EXPR@4672..4679
+                EXPR_LIT@4672..4679
+                  LIT@4672..4679
+                    LIT_STR@4672..4679 "\"sheep\""
+              PUNCT_COMMA@4679..4680 ","
+              WHITESPACE@4680..4681 " "
+              EXPR@4681..4688
+                EXPR_LIT@4681..4688
+                  LIT@4681..4688
+                    LIT_STR@4681..4688 "\"shrew\""
+              PUNCT_COMMA@4688..4689 ","
+              WHITESPACE@4689..4694 "\n    "
+              EXPR@4694..4701
+                EXPR_LIT@4694..4701
+                  LIT@4694..4701
+                    LIT_STR@4694..4701 "\"skunk\""
+              PUNCT_COMMA@4701..4702 ","
+              WHITESPACE@4702..4703 " "
+              EXPR@4703..4710
+                EXPR_LIT@4703..4710
+                  LIT@4703..4710
+                    LIT_STR@4703..4710 "\"snail\""
+              PUNCT_COMMA@4710..4711 ","
+              WHITESPACE@4711..4712 " "
+              EXPR@4712..4719
+                EXPR_LIT@4712..4719
+                  LIT@4712..4719
+                    LIT_STR@4712..4719 "\"snake\""
+              PUNCT_COMMA@4719..4720 ","
+              WHITESPACE@4720..4721 " "
+              EXPR@4721..4730
+                EXPR_LIT@4721..4730
+                  LIT@4721..4730
+                    LIT_STR@4721..4730 "\"sparrow\""
+              PUNCT_COMMA@4730..4731 ","
+              WHITESPACE@4731..4732 " "
+              EXPR@4732..4740
+                EXPR_LIT@4732..4740
+                  LIT@4732..4740
+                    LIT_STR@4732..4740 "\"spider\""
+              PUNCT_COMMA@4740..4741 ","
+              WHITESPACE@4741..4742 " "
+              EXPR@4742..4753
+                EXPR_LIT@4742..4753
+                  LIT@4742..4753
+                    LIT_STR@4742..4753 "\"spoonbill\""
+              PUNCT_COMMA@4753..4754 ","
+              WHITESPACE@4754..4755 " "
+              EXPR@4755..4762
+                EXPR_LIT@4755..4762
+                  LIT@4755..4762
+                    LIT_STR@4755..4762 "\"squid\""
+              PUNCT_COMMA@4762..4763 ","
+              WHITESPACE@4763..4768 "\n    "
+              EXPR@4768..4777
+                EXPR_LIT@4768..4777
+                  LIT@4768..4777
+                    LIT_STR@4768..4777 "\"wallaby\""
+              PUNCT_COMMA@4777..4778 ","
+              WHITESPACE@4778..4779 " "
+              EXPR@4779..4792
+                EXPR_LIT@4779..4791
+                  LIT@4779..4791
+                    LIT_STR@4779..4791 "\"wildebeest\""
+                WHITESPACE@4791..4792 "\n"
+              PUNCT_BRACKET_END@4792..4793 "]"
+    PUNCT_SEMI@4793..4794 ";"
+  WHITESPACE@4794..4796 "\n\n"
+  STMT@4796..4810
+    ITEM@4796..4809
+      EXPR@4796..4809
+        EXPR_LET@4796..4809
+          KW_LET@4796..4799 "let"
+          WHITESPACE@4799..4800 " "
+          IDENT@4800..4804 "keys"
+          WHITESPACE@4804..4805 " "
+          OP_ASSIGN@4805..4806 "="
+          EXPR@4806..4809
+            WHITESPACE@4806..4807 " "
+            EXPR_ARRAY@4807..4809
+              PUNCT_BRACKET_START@4807..4808 "["
+              PUNCT_BRACKET_END@4808..4809 "]"
+    PUNCT_SEMI@4809..4810 ";"
+  WHITESPACE@4810..4812 "\n\n"
+  STMT@4812..4979
+    ITEM@4812..4977
+      EXPR@4812..4977
+        EXPR_FOR@4812..4977
+          KW_FOR@4812..4815 "for"
+          PAT@4815..4822
+            WHITESPACE@4815..4816 " "
+            PAT_IDENT@4816..4822
+              IDENT@4816..4822 "animal"
+          WHITESPACE@4822..4823 " "
+          KW_IN@4823..4825 "in"
+          EXPR@4825..4834
+            WHITESPACE@4825..4826 " "
+            EXPR_IDENT@4826..4834
+              IDENT@4826..4833 "animals"
+              WHITESPACE@4833..4834 " "
+          EXPR_BLOCK@4834..4977
+            PUNCT_BRACE_START@4834..4835 "{"
+            WHITESPACE@4835..4840 "\n    "
+            STMT@4840..4976
+              ITEM@4840..4975
+                EXPR@4840..4975
+                  EXPR_FOR@4840..4975
+                    KW_FOR@4840..4843 "for"
+                    PAT@4843..4853
+                      WHITESPACE@4843..4844 " "
+                      PAT_IDENT@4844..4853
+                        IDENT@4844..4853 "adjective"
+                    WHITESPACE@4853..4854 " "
+                    KW_IN@4854..4856 "in"
+                    EXPR@4856..4868
+                      WHITESPACE@4856..4857 " "
+                      EXPR_IDENT@4857..4868
+                        IDENT@4857..4867 "adjectives"
+                        WHITESPACE@4867..4868 " "
+                    EXPR_BLOCK@4868..4975
+                      PUNCT_BRACE_START@4868..4869 "{"
+                      WHITESPACE@4869..4878 "\n        "
+                      STMT@4878..4974
+                        ITEM@4878..4969
+                          EXPR@4878..4969
+                            EXPR_FOR@4878..4969
+                              KW_FOR@4878..4881 "for"
+                              PAT@4881..4888
+                                WHITESPACE@4881..4882 " "
+                                PAT_IDENT@4882..4888
+                                  IDENT@4882..4888 "adverb"
+                              WHITESPACE@4888..4889 " "
+                              KW_IN@4889..4891 "in"
+                              EXPR@4891..4900
+                                WHITESPACE@4891..4892 " "
+                                EXPR_IDENT@4892..4900
+                                  IDENT@4892..4899 "adverbs"
+                                  WHITESPACE@4899..4900 " "
+                              EXPR_BLOCK@4900..4969
+                                PUNCT_BRACE_START@4900..4901 "{"
+                                WHITESPACE@4901..4914 "\n            "
+                                STMT@4914..4968
+                                  ITEM@4914..4968
+                                    EXPR@4914..4968
+                                      EXPR_CALL@4914..4959
+                                        EXPR@4914..4923
+                                          EXPR_BINARY@4914..4923
+                                            EXPR@4914..4918
+                                              EXPR_IDENT@4914..4918
+                                                IDENT@4914..4918 "keys"
+                                            PUNCT_DOT@4918..4919 "."
+                                            EXPR@4919..4923
+                                              EXPR_IDENT@4919..4923
+                                                IDENT@4919..4923 "push"
+                                        ARG_LIST@4923..4959
+                                          PUNCT_PAREN_START@4923..4924 "("
+                                          EXPR@4924..4958
+                                            EXPR_LIT@4924..4958
+                                              LIT@4924..4958
+                                                LIT_STR@4924..4958 "`${adverb} ${adjectiv ..."
+                                          PUNCT_PAREN_END@4958..4959 ")"
+                                      WHITESPACE@4959..4968 "\n        "
+                                PUNCT_BRACE_END@4968..4969 "}"
+                        WHITESPACE@4969..4974 "\n    "
+                      PUNCT_BRACE_END@4974..4975 "}"
+              WHITESPACE@4975..4976 "\n"
+            PUNCT_BRACE_END@4976..4977 "}"
+    WHITESPACE@4977..4979 "\n\n"
+  STMT@4979..4993
+    ITEM@4979..4992
+      EXPR@4979..4992
+        EXPR_LET@4979..4992
+          KW_LET@4979..4982 "let"
+          WHITESPACE@4982..4983 " "
+          IDENT@4983..4986 "map"
+          WHITESPACE@4986..4987 " "
+          OP_ASSIGN@4987..4988 "="
+          EXPR@4988..4992
+            WHITESPACE@4988..4989 " "
+            EXPR_OBJECT@4989..4992
+              PUNCT_MAP_START@4989..4991 "#{"
+              PUNCT_BRACE_END@4991..4992 "}"
+    PUNCT_SEMI@4992..4993 ";"
+  WHITESPACE@4993..4995 "\n\n"
+  STMT@4995..5005
+    ITEM@4995..5004
+      EXPR@4995..5004
+        EXPR_LET@4995..5004
+          KW_LET@4995..4998 "let"
+          WHITESPACE@4998..4999 " "
+          IDENT@4999..5000 "i"
+          WHITESPACE@5000..5001 " "
+          OP_ASSIGN@5001..5002 "="
+          EXPR@5002..5004
+            WHITESPACE@5002..5003 " "
+            EXPR_LIT@5003..5004
+              LIT@5003..5004
+                LIT_INT@5003..5004 "0"
+    PUNCT_SEMI@5004..5005 ";"
+  WHITESPACE@5005..5007 "\n\n"
+  STMT@5007..5058
+    ITEM@5007..5056
+      EXPR@5007..5056
+        EXPR_FOR@5007..5056
+          KW_FOR@5007..5010 "for"
+          PAT@5010..5014
+            WHITESPACE@5010..5011 " "
+            PAT_IDENT@5011..5014
+              IDENT@5011..5014 "key"
+          WHITESPACE@5014..5015 " "
+          KW_IN@5015..5017 "in"
+          EXPR@5017..5023
+            WHITESPACE@5017..5018 " "
+            EXPR_IDENT@5018..5023
+              IDENT@5018..5022 "keys"
+              WHITESPACE@5022..5023 " "
+          EXPR_BLOCK@5023..5056
+            PUNCT_BRACE_START@5023..5024 "{"
+            WHITESPACE@5024..5029 "\n    "
+            STMT@5029..5042
+              ITEM@5029..5041
+                EXPR@5029..5041
+                  EXPR_BINARY@5029..5041
+                    EXPR@5029..5038
+                      EXPR_INDEX@5029..5037
+                        EXPR@5029..5032
+                          EXPR_IDENT@5029..5032
+                            IDENT@5029..5032 "map"
+                        PUNCT_BRACKET_START@5032..5033 "["
+                        EXPR@5033..5036
+                          EXPR_IDENT@5033..5036
+                            IDENT@5033..5036 "key"
+                        PUNCT_BRACKET_END@5036..5037 "]"
+                      WHITESPACE@5037..5038 " "
+                    OP_ASSIGN@5038..5039 "="
+                    EXPR@5039..5041
+                      WHITESPACE@5039..5040 " "
+                      EXPR_IDENT@5040..5041
+                        IDENT@5040..5041 "i"
+              PUNCT_SEMI@5041..5042 ";"
+            WHITESPACE@5042..5047 "\n    "
+            STMT@5047..5054
+              ITEM@5047..5053
+                EXPR@5047..5053
+                  EXPR_BINARY@5047..5053
+                    EXPR@5047..5049
+                      EXPR_IDENT@5047..5049
+                        IDENT@5047..5048 "i"
+                        WHITESPACE@5048..5049 " "
+                    OP_ADD_ASSIGN@5049..5051 "+="
+                    EXPR@5051..5053
+                      WHITESPACE@5051..5052 " "
+                      EXPR_LIT@5052..5053
+                        LIT@5052..5053
+                          LIT_INT@5052..5053 "1"
+              PUNCT_SEMI@5053..5054 ";"
+            WHITESPACE@5054..5055 "\n"
+            PUNCT_BRACE_END@5055..5056 "}"
+    WHITESPACE@5056..5058 "\n\n"
+  STMT@5058..5070
+    ITEM@5058..5069
+      EXPR@5058..5069
+        EXPR_LET@5058..5069
+          KW_LET@5058..5061 "let"
+          WHITESPACE@5061..5062 " "
+          IDENT@5062..5065 "sum"
+          WHITESPACE@5065..5066 " "
+          OP_ASSIGN@5066..5067 "="
+          EXPR@5067..5069
+            WHITESPACE@5067..5068 " "
+            EXPR_LIT@5068..5069
+              LIT@5068..5069
+                LIT_INT@5068..5069 "0"
+    PUNCT_SEMI@5069..5070 ";"
+  WHITESPACE@5070..5072 "\n\n"
+  STMT@5072..5114
+    ITEM@5072..5112
+      EXPR@5072..5112
+        EXPR_FOR@5072..5112
+          KW_FOR@5072..5075 "for"
+          PAT@5075..5079
+            WHITESPACE@5075..5076 " "
+            PAT_IDENT@5076..5079
+              IDENT@5076..5079 "key"
+          WHITESPACE@5079..5080 " "
+          KW_IN@5080..5082 "in"
+          EXPR@5082..5088
+            WHITESPACE@5082..5083 " "
+            EXPR_IDENT@5083..5088
+              IDENT@5083..5087 "keys"
+              WHITESPACE@5087..5088 " "
+          EXPR_BLOCK@5088..5112
+            PUNCT_BRACE_START@5088..5089 "{"
+            WHITESPACE@5089..5094 "\n    "
+            STMT@5094..5110
+              ITEM@5094..5109
+                EXPR@5094..5109
+                  EXPR_BINARY@5094..5109
+                    EXPR@5094..5098
+                      EXPR_IDENT@5094..5098
+                        IDENT@5094..5097 "sum"
+                        WHITESPACE@5097..5098 " "
+                    OP_ADD_ASSIGN@5098..5100 "+="
+                    EXPR@5100..5109
+                      EXPR_INDEX@5100..5109
+                        EXPR@5100..5104
+                          WHITESPACE@5100..5101 " "
+                          EXPR_IDENT@5101..5104
+                            IDENT@5101..5104 "map"
+                        PUNCT_BRACKET_START@5104..5105 "["
+                        EXPR@5105..5108
+                          EXPR_IDENT@5105..5108
+                            IDENT@5105..5108 "key"
+                        PUNCT_BRACKET_END@5108..5109 "]"
+              PUNCT_SEMI@5109..5110 ";"
+            WHITESPACE@5110..5111 "\n"
+            PUNCT_BRACE_END@5111..5112 "}"
+    WHITESPACE@5112..5114 "\n\n"
+  STMT@5114..5156
+    ITEM@5114..5154
+      EXPR@5114..5154
+        EXPR_FOR@5114..5154
+          KW_FOR@5114..5117 "for"
+          PAT@5117..5121
+            WHITESPACE@5117..5118 " "
+            PAT_IDENT@5118..5121
+              IDENT@5118..5121 "key"
+          WHITESPACE@5121..5122 " "
+          KW_IN@5122..5124 "in"
+          EXPR@5124..5130
+            WHITESPACE@5124..5125 " "
+            EXPR_IDENT@5125..5130
+              IDENT@5125..5129 "keys"
+              WHITESPACE@5129..5130 " "
+          EXPR_BLOCK@5130..5154
+            PUNCT_BRACE_START@5130..5131 "{"
+            WHITESPACE@5131..5136 "\n    "
+            STMT@5136..5152
+              ITEM@5136..5151
+                EXPR@5136..5151
+                  EXPR_CALL@5136..5151
+                    EXPR@5136..5146
+                      EXPR_BINARY@5136..5146
+                        EXPR@5136..5139
+                          EXPR_IDENT@5136..5139
+                            IDENT@5136..5139 "map"
+                        PUNCT_DOT@5139..5140 "."
+                        EXPR@5140..5146
+                          EXPR_IDENT@5140..5146
+                            IDENT@5140..5146 "remove"
+                    ARG_LIST@5146..5151
+                      PUNCT_PAREN_START@5146..5147 "("
+                      EXPR@5147..5150
+                        EXPR_IDENT@5147..5150
+                          IDENT@5147..5150 "key"
+                      PUNCT_PAREN_END@5150..5151 ")"
+              PUNCT_SEMI@5151..5152 ";"
+            WHITESPACE@5152..5153 "\n"
+            PUNCT_BRACE_END@5153..5154 "}"
+    WHITESPACE@5154..5156 "\n\n"
+  STMT@5156..5178
+    ITEM@5156..5177
+      EXPR@5156..5177
+        EXPR_CALL@5156..5177
+          EXPR@5156..5161
+            EXPR_IDENT@5156..5161
+              IDENT@5156..5161 "print"
+          ARG_LIST@5161..5177
+            PUNCT_PAREN_START@5161..5162 "("
+            EXPR@5162..5176
+              EXPR_LIT@5162..5176
+                LIT@5162..5176
+                  LIT_STR@5162..5176 "`Sum = ${sum}`"
+            PUNCT_PAREN_END@5176..5177 ")"
+    PUNCT_SEMI@5177..5178 ";"
+  WHITESPACE@5178..5179 "\n"
+  STMT@5179..5233
+    ITEM@5179..5232
+      EXPR@5179..5232
+        EXPR_CALL@5179..5232
+          EXPR@5179..5184
+            EXPR_IDENT@5179..5184
+              IDENT@5179..5184 "print"
+          ARG_LIST@5184..5232
+            PUNCT_PAREN_START@5184..5185 "("
+            EXPR@5185..5231
+              EXPR_LIT@5185..5231
+                LIT@5185..5231
+                  LIT_STR@5185..5231 "`Finished. Run time = ..."
+            PUNCT_PAREN_END@5231..5232 ")"
+    PUNCT_SEMI@5232..5233 ";"
+  WHITESPACE@5233..5234 "\n"
+
