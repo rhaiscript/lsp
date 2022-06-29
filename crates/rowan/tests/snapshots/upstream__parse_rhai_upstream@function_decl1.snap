@@ -1,0 +1,73 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..149
+  COMMENT_LINE@0..47 "// This script define ..."
+  WHITESPACE@47..49 "\n\n"
+  STMT@49..81
+    ITEM@49..79
+      EXPR@49..79
+        EXPR_FN@49..79
+          KW_FN@49..51 "fn"
+          WHITESPACE@51..52 " "
+          IDENT@52..59 "call_me"
+          PARAM_LIST@59..61
+            PUNCT_PAREN_START@59..60 "("
+            PUNCT_PAREN_END@60..61 ")"
+          EXPR_BLOCK@61..79
+            WHITESPACE@61..62 " "
+            PUNCT_BRACE_START@62..63 "{"
+            WHITESPACE@63..68 "\n    "
+            STMT@68..77
+              ITEM@68..76
+                EXPR@68..76
+                  EXPR_RETURN@68..76
+                    KW_RETURN@68..74 "return"
+                    WHITESPACE@74..75 " "
+                    EXPR@75..76
+                      EXPR_LIT@75..76
+                        LIT@75..76
+                          LIT_INT@75..76 "3"
+              PUNCT_SEMI@76..77 ";"
+            WHITESPACE@77..78 "\n"
+            PUNCT_BRACE_END@78..79 "}"
+    WHITESPACE@79..81 "\n\n"
+  STMT@81..104
+    ITEM@81..103
+      EXPR@81..103
+        EXPR_LET@81..103
+          KW_LET@81..84 "let"
+          WHITESPACE@84..85 " "
+          IDENT@85..91 "result"
+          WHITESPACE@91..92 " "
+          OP_ASSIGN@92..93 "="
+          EXPR@93..103
+            EXPR_CALL@93..103
+              EXPR@93..101
+                WHITESPACE@93..94 " "
+                EXPR_IDENT@94..101
+                  IDENT@94..101 "call_me"
+              ARG_LIST@101..103
+                PUNCT_PAREN_START@101..102 "("
+                PUNCT_PAREN_END@102..103 ")"
+    PUNCT_SEMI@103..104 ";"
+  WHITESPACE@104..106 "\n\n"
+  STMT@106..148
+    ITEM@106..147
+      EXPR@106..147
+        EXPR_CALL@106..147
+          EXPR@106..111
+            EXPR_IDENT@106..111
+              IDENT@106..111 "print"
+          ARG_LIST@111..147
+            PUNCT_PAREN_START@111..112 "("
+            EXPR@112..146
+              EXPR_LIT@112..146
+                LIT@112..146
+                  LIT_STR@112..146 "`call_me() should be  ..."
+            PUNCT_PAREN_END@146..147 ")"
+    PUNCT_SEMI@147..148 ";"
+  WHITESPACE@148..149 "\n"
+

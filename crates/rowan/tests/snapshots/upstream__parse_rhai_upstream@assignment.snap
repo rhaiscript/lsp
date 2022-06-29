@@ -1,0 +1,41 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..100
+  COMMENT_LINE@0..54 "// This script contai ..."
+  WHITESPACE@54..56 "\n\n"
+  STMT@56..67
+    ITEM@56..66
+      EXPR@56..66
+        EXPR_LET@56..66
+          KW_LET@56..59 "let"
+          WHITESPACE@59..60 " "
+          IDENT@60..61 "x"
+          WHITESPACE@61..62 " "
+          OP_ASSIGN@62..63 "="
+          EXPR@63..66
+            WHITESPACE@63..64 " "
+            EXPR_LIT@64..66
+              LIT@64..66
+                LIT_INT@64..66 "78"
+    PUNCT_SEMI@66..67 ";"
+  WHITESPACE@67..69 "\n\n"
+  STMT@69..99
+    ITEM@69..98
+      EXPR@69..98
+        EXPR_CALL@69..98
+          EXPR@69..74
+            EXPR_IDENT@69..74
+              IDENT@69..74 "print"
+          ARG_LIST@74..98
+            PUNCT_PAREN_START@74..75 "("
+            EXPR@75..97
+              EXPR_LIT@75..97
+                LIT@75..97
+                  LIT_STR@75..97 "`x should be 78: ${x}`"
+            PUNCT_PAREN_END@97..98 ")"
+    PUNCT_SEMI@98..99 ";"
+  WHITESPACE@99..100 "\n"
+

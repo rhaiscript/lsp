@@ -1,0 +1,78 @@
+---
+source: crates/rowan/tests/smoke.rs
+assertion_line: 13
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..103
+  SHEBANG@0..17 "#!/bin/echo hello"
+  WHITESPACE@17..19 "\n\n"
+  COMMENT_LINE@19..28 "// It's a"
+  WHITESPACE@28..29 "\n"
+  STMT@29..41
+    ITEM@29..40
+      EXPR@29..40
+        EXPR_LET@29..40
+          KW_LET@29..32 "let"
+          WHITESPACE@32..33 " "
+          IDENT@33..34 "a"
+          WHITESPACE@34..35 " "
+          OP_ASSIGN@35..36 "="
+          EXPR@36..40
+            WHITESPACE@36..37 " "
+            EXPR_LIT@37..40
+              LIT@37..40
+                LIT_STR@37..40 "\"0\""
+    PUNCT_SEMI@40..41 ";"
+  WHITESPACE@41..43 "\n\n"
+  STMT@43..64
+    ITEM@43..63
+      DOC@43..53
+        COMMENT_LINE_DOC@43..53 "/// It's b"
+      WHITESPACE@53..54 "\n"
+      EXPR@54..63
+        EXPR_LET@54..63
+          KW_LET@54..57 "let"
+          WHITESPACE@57..58 " "
+          IDENT@58..59 "b"
+          WHITESPACE@59..60 " "
+          OP_ASSIGN@60..61 "="
+          EXPR@61..63
+            WHITESPACE@61..62 " "
+            EXPR_IDENT@62..63
+              IDENT@62..63 "a"
+    PUNCT_SEMI@63..64 ";"
+  WHITESPACE@64..66 "\n\n"
+  STMT@66..78
+    ITEM@66..77
+      EXPR@66..77
+        EXPR_CONST@66..77
+          KW_CONST@66..71 "const"
+          WHITESPACE@71..72 " "
+          IDENT@72..73 "c"
+          WHITESPACE@73..74 " "
+          OP_ASSIGN@74..75 "="
+          EXPR@75..77
+            WHITESPACE@75..76 " "
+            EXPR_IDENT@76..77
+              IDENT@76..77 "b"
+    PUNCT_SEMI@77..78 ";"
+  WHITESPACE@78..79 " "
+  COMMENT_BLOCK@79..84 "/* */"
+  WHITESPACE@84..86 "\n\n"
+  STMT@86..102
+    ITEM@86..101
+      EXPR@86..101
+        EXPR_CONST@86..101
+          KW_CONST@86..91 "const"
+          WHITESPACE@91..92 " "
+          IDENT@92..97 "ident"
+          WHITESPACE@97..98 " "
+          OP_ASSIGN@98..99 "="
+          EXPR@99..101
+            WHITESPACE@99..100 " "
+            EXPR_LIT@100..101
+              LIT@100..101
+                LIT_INT@100..101 "2"
+    PUNCT_SEMI@101..102 ";"
+  WHITESPACE@102..103 "\n"
+

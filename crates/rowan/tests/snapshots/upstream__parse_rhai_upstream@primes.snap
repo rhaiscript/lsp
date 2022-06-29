@@ -1,0 +1,393 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..734
+  COMMENT_LINE@0..73 "// This script uses t ..."
+  WHITESPACE@73..75 "\n\n"
+  STMT@75..97
+    ITEM@75..96
+      EXPR@75..96
+        EXPR_LET@75..96
+          KW_LET@75..78 "let"
+          WHITESPACE@78..79 " "
+          IDENT@79..82 "now"
+          WHITESPACE@82..83 " "
+          OP_ASSIGN@83..84 "="
+          EXPR@84..96
+            EXPR_CALL@84..96
+              EXPR@84..94
+                WHITESPACE@84..85 " "
+                EXPR_IDENT@85..94
+                  IDENT@85..94 "timestamp"
+              ARG_LIST@94..96
+                PUNCT_PAREN_START@94..95 "("
+                PUNCT_PAREN_END@95..96 ")"
+    PUNCT_SEMI@96..97 ";"
+  WHITESPACE@97..99 "\n\n"
+  STMT@99..137
+    ITEM@99..136
+      EXPR@99..136
+        EXPR_CONST@99..136
+          KW_CONST@99..104 "const"
+          WHITESPACE@104..105 " "
+          IDENT@105..124 "MAX_NUMBER_TO_CHECK"
+          WHITESPACE@124..125 " "
+          OP_ASSIGN@125..126 "="
+          EXPR@126..136
+            WHITESPACE@126..127 " "
+            EXPR_LIT@127..136
+              LIT@127..136
+                LIT_INT@127..136 "1_000_000"
+    PUNCT_SEMI@136..137 ";"
+  WHITESPACE@137..142 "     "
+  COMMENT_LINE@142..166 "// 9592 primes <= 100000"
+  WHITESPACE@166..168 "\n\n"
+  STMT@168..188
+    ITEM@168..187
+      EXPR@168..187
+        EXPR_LET@168..187
+          KW_LET@168..171 "let"
+          WHITESPACE@171..172 " "
+          IDENT@172..182 "prime_mask"
+          WHITESPACE@182..183 " "
+          OP_ASSIGN@183..184 "="
+          EXPR@184..187
+            WHITESPACE@184..185 " "
+            EXPR_ARRAY@185..187
+              PUNCT_BRACKET_START@185..186 "["
+              PUNCT_BRACKET_END@186..187 "]"
+    PUNCT_SEMI@187..188 ";"
+  WHITESPACE@188..189 "\n"
+  STMT@189..235
+    ITEM@189..234
+      EXPR@189..234
+        EXPR_CALL@189..234
+          EXPR@189..203
+            EXPR_BINARY@189..203
+              EXPR@189..199
+                EXPR_IDENT@189..199
+                  IDENT@189..199 "prime_mask"
+              PUNCT_DOT@199..200 "."
+              EXPR@200..203
+                EXPR_IDENT@200..203
+                  IDENT@200..203 "pad"
+          ARG_LIST@203..234
+            PUNCT_PAREN_START@203..204 "("
+            EXPR@204..227
+              EXPR_BINARY@204..227
+                EXPR@204..224
+                  EXPR_IDENT@204..224
+                    IDENT@204..223 "MAX_NUMBER_TO_CHECK"
+                    WHITESPACE@223..224 " "
+                OP_ADD@224..225 "+"
+                EXPR@225..227
+                  WHITESPACE@225..226 " "
+                  EXPR_LIT@226..227
+                    LIT@226..227
+                      LIT_INT@226..227 "1"
+            PUNCT_COMMA@227..228 ","
+            WHITESPACE@228..229 " "
+            EXPR@229..233
+              EXPR_LIT@229..233
+                LIT@229..233
+                  LIT_BOOL@229..233 "true"
+            PUNCT_PAREN_END@233..234 ")"
+    PUNCT_SEMI@234..235 ";"
+  WHITESPACE@235..237 "\n\n"
+  STMT@237..259
+    ITEM@237..258
+      EXPR@237..258
+        EXPR_BINARY@237..258
+          EXPR@237..251
+            EXPR_INDEX@237..250
+              EXPR@237..247
+                EXPR_IDENT@237..247
+                  IDENT@237..247 "prime_mask"
+              PUNCT_BRACKET_START@247..248 "["
+              EXPR@248..249
+                EXPR_LIT@248..249
+                  LIT@248..249
+                    LIT_INT@248..249 "0"
+              PUNCT_BRACKET_END@249..250 "]"
+            WHITESPACE@250..251 " "
+          OP_ASSIGN@251..252 "="
+          EXPR@252..258
+            WHITESPACE@252..253 " "
+            EXPR_LIT@253..258
+              LIT@253..258
+                LIT_BOOL@253..258 "false"
+    PUNCT_SEMI@258..259 ";"
+  WHITESPACE@259..260 "\n"
+  STMT@260..282
+    ITEM@260..281
+      EXPR@260..281
+        EXPR_BINARY@260..281
+          EXPR@260..274
+            EXPR_INDEX@260..273
+              EXPR@260..270
+                EXPR_IDENT@260..270
+                  IDENT@260..270 "prime_mask"
+              PUNCT_BRACKET_START@270..271 "["
+              EXPR@271..272
+                EXPR_LIT@271..272
+                  LIT@271..272
+                    LIT_INT@271..272 "1"
+              PUNCT_BRACKET_END@272..273 "]"
+            WHITESPACE@273..274 " "
+          OP_ASSIGN@274..275 "="
+          EXPR@275..281
+            WHITESPACE@275..276 " "
+            EXPR_LIT@276..281
+              LIT@276..281
+                LIT_BOOL@276..281 "false"
+    PUNCT_SEMI@281..282 ";"
+  WHITESPACE@282..284 "\n\n"
+  STMT@284..311
+    ITEM@284..310
+      EXPR@284..310
+        EXPR_LET@284..310
+          KW_LET@284..287 "let"
+          WHITESPACE@287..288 " "
+          IDENT@288..306 "total_primes_found"
+          WHITESPACE@306..307 " "
+          OP_ASSIGN@307..308 "="
+          EXPR@308..310
+            WHITESPACE@308..309 " "
+            EXPR_LIT@309..310
+              LIT@309..310
+                LIT_INT@309..310 "0"
+    PUNCT_SEMI@310..311 ";"
+  WHITESPACE@311..313 "\n\n"
+  STMT@313..528
+    ITEM@313..526
+      EXPR@313..526
+        EXPR_FOR@313..526
+          KW_FOR@313..316 "for"
+          PAT@316..318
+            WHITESPACE@316..317 " "
+            PAT_IDENT@317..318
+              IDENT@317..318 "p"
+          WHITESPACE@318..319 " "
+          KW_IN@319..321 "in"
+          EXPR@321..346
+            EXPR_BINARY@321..346
+              EXPR@321..323
+                WHITESPACE@321..322 " "
+                EXPR_LIT@322..323
+                  LIT@322..323
+                    LIT_INT@322..323 "2"
+              OP_RANGE_INCLUSIVE@323..326 "..="
+              EXPR@326..346
+                EXPR_IDENT@326..346
+                  IDENT@326..345 "MAX_NUMBER_TO_CHECK"
+                  WHITESPACE@345..346 " "
+          EXPR_BLOCK@346..526
+            PUNCT_BRACE_START@346..347 "{"
+            WHITESPACE@347..352 "\n    "
+            STMT@352..406
+              ITEM@352..406
+                EXPR@352..406
+                  EXPR_IF@352..406
+                    KW_IF@352..354 "if"
+                    EXPR@354..370
+                      EXPR_UNARY@354..370
+                        WHITESPACE@354..355 " "
+                        OP_NOT@355..356 "!"
+                        EXPR@356..370
+                          EXPR_INDEX@356..369
+                            EXPR@356..366
+                              EXPR_IDENT@356..366
+                                IDENT@356..366 "prime_mask"
+                            PUNCT_BRACKET_START@366..367 "["
+                            EXPR@367..368
+                              EXPR_IDENT@367..368
+                                IDENT@367..368 "p"
+                            PUNCT_BRACKET_END@368..369 "]"
+                          WHITESPACE@369..370 " "
+                    EXPR_BLOCK@370..383
+                      PUNCT_BRACE_START@370..371 "{"
+                      WHITESPACE@371..372 " "
+                      STMT@372..381
+                        ITEM@372..380
+                          EXPR@372..380
+                            EXPR_CONTINUE@372..380
+                              KW_CONTINUE@372..380 "continue"
+                        PUNCT_SEMI@380..381 ";"
+                      WHITESPACE@381..382 " "
+                      PUNCT_BRACE_END@382..383 "}"
+                    WHITESPACE@383..389 "\n\n    "
+                    COMMENT_LINE@389..400 "//print(p);"
+                    WHITESPACE@400..406 "\n\n    "
+            STMT@406..430
+              ITEM@406..429
+                EXPR@406..429
+                  EXPR_BINARY@406..429
+                    EXPR@406..425
+                      EXPR_IDENT@406..425
+                        IDENT@406..424 "total_primes_found"
+                        WHITESPACE@424..425 " "
+                    OP_ADD_ASSIGN@425..427 "+="
+                    EXPR@427..429
+                      WHITESPACE@427..428 " "
+                      EXPR_LIT@428..429
+                        LIT@428..429
+                          LIT_INT@428..429 "1"
+              PUNCT_SEMI@429..430 ";"
+            WHITESPACE@430..436 "\n\n    "
+            STMT@436..525
+              ITEM@436..524
+                EXPR@436..524
+                  EXPR_FOR@436..524
+                    KW_FOR@436..439 "for"
+                    PAT@439..441
+                      WHITESPACE@439..440 " "
+                      PAT_IDENT@440..441
+                        IDENT@440..441 "i"
+                    WHITESPACE@441..442 " "
+                    KW_IN@442..444 "in"
+                    EXPR@444..486
+                      EXPR_CALL@444..485
+                        EXPR@444..450
+                          WHITESPACE@444..445 " "
+                          EXPR_IDENT@445..450
+                            IDENT@445..450 "range"
+                        ARG_LIST@450..485
+                          PUNCT_PAREN_START@450..451 "("
+                          EXPR@451..456
+                            EXPR_BINARY@451..456
+                              EXPR@451..453
+                                EXPR_LIT@451..452
+                                  LIT@451..452
+                                    LIT_INT@451..452 "2"
+                                WHITESPACE@452..453 " "
+                              OP_MUL@453..454 "*"
+                              EXPR@454..456
+                                WHITESPACE@454..455 " "
+                                EXPR_IDENT@455..456
+                                  IDENT@455..456 "p"
+                          PUNCT_COMMA@456..457 ","
+                          WHITESPACE@457..458 " "
+                          EXPR@458..481
+                            EXPR_BINARY@458..481
+                              EXPR@458..478
+                                EXPR_IDENT@458..478
+                                  IDENT@458..477 "MAX_NUMBER_TO_CHECK"
+                                  WHITESPACE@477..478 " "
+                              OP_ADD@478..479 "+"
+                              EXPR@479..481
+                                WHITESPACE@479..480 " "
+                                EXPR_LIT@480..481
+                                  LIT@480..481
+                                    LIT_INT@480..481 "1"
+                          PUNCT_COMMA@481..482 ","
+                          WHITESPACE@482..483 " "
+                          EXPR@483..484
+                            EXPR_IDENT@483..484
+                              IDENT@483..484 "p"
+                          PUNCT_PAREN_END@484..485 ")"
+                      WHITESPACE@485..486 " "
+                    EXPR_BLOCK@486..524
+                      PUNCT_BRACE_START@486..487 "{"
+                      WHITESPACE@487..496 "\n        "
+                      STMT@496..518
+                        ITEM@496..517
+                          EXPR@496..517
+                            EXPR_BINARY@496..517
+                              EXPR@496..510
+                                EXPR_INDEX@496..509
+                                  EXPR@496..506
+                                    EXPR_IDENT@496..506
+                                      IDENT@496..506 "prime_mask"
+                                  PUNCT_BRACKET_START@506..507 "["
+                                  EXPR@507..508
+                                    EXPR_IDENT@507..508
+                                      IDENT@507..508 "i"
+                                  PUNCT_BRACKET_END@508..509 "]"
+                                WHITESPACE@509..510 " "
+                              OP_ASSIGN@510..511 "="
+                              EXPR@511..517
+                                WHITESPACE@511..512 " "
+                                EXPR_LIT@512..517
+                                  LIT@512..517
+                                    LIT_BOOL@512..517 "false"
+                        PUNCT_SEMI@517..518 ";"
+                      WHITESPACE@518..523 "\n    "
+                      PUNCT_BRACE_END@523..524 "}"
+              WHITESPACE@524..525 "\n"
+            PUNCT_BRACE_END@525..526 "}"
+    WHITESPACE@526..528 "\n\n"
+  STMT@528..598
+    ITEM@528..597
+      EXPR@528..597
+        EXPR_CALL@528..597
+          EXPR@528..533
+            EXPR_IDENT@528..533
+              IDENT@528..533 "print"
+          ARG_LIST@533..597
+            PUNCT_PAREN_START@533..534 "("
+            EXPR@534..596
+              EXPR_LIT@534..596
+                LIT@534..596
+                  LIT_STR@534..596 "`Total ${total_primes ..."
+            PUNCT_PAREN_END@596..597 ")"
+    PUNCT_SEMI@597..598 ";"
+  WHITESPACE@598..599 "\n"
+  STMT@599..643
+    ITEM@599..642
+      EXPR@599..642
+        EXPR_CALL@599..642
+          EXPR@599..604
+            EXPR_IDENT@599..604
+              IDENT@599..604 "print"
+          ARG_LIST@604..642
+            PUNCT_PAREN_START@604..605 "("
+            EXPR@605..641
+              EXPR_LIT@605..641
+                LIT@605..641
+                  LIT_STR@605..641 "`Run time = ${now.ela ..."
+            PUNCT_PAREN_END@641..642 ")"
+    PUNCT_SEMI@642..643 ";"
+  WHITESPACE@643..645 "\n\n"
+  STMT@645..734
+    ITEM@645..734
+      EXPR@645..734
+        EXPR_IF@645..734
+          KW_IF@645..647 "if"
+          EXPR@647..677
+            EXPR_BINARY@647..677
+              EXPR@647..667
+                WHITESPACE@647..648 " "
+                EXPR_IDENT@648..667
+                  IDENT@648..666 "total_primes_found"
+                  WHITESPACE@666..667 " "
+              OP_NOT_EQ@667..669 "!="
+              EXPR@669..677
+                WHITESPACE@669..670 " "
+                EXPR_LIT@670..676
+                  LIT@670..676
+                    LIT_INT@670..676 "78_498"
+                WHITESPACE@676..677 " "
+          EXPR_BLOCK@677..733
+            PUNCT_BRACE_START@677..678 "{"
+            WHITESPACE@678..683 "\n    "
+            STMT@683..731
+              ITEM@683..730
+                EXPR@683..730
+                  EXPR_CALL@683..730
+                    EXPR@683..688
+                      EXPR_IDENT@683..688
+                        IDENT@683..688 "print"
+                    ARG_LIST@688..730
+                      PUNCT_PAREN_START@688..689 "("
+                      EXPR@689..729
+                        EXPR_LIT@689..729
+                          LIT@689..729
+                            LIT_STR@689..729 "\"The answer is WRONG! ..."
+                      PUNCT_PAREN_END@729..730 ")"
+              PUNCT_SEMI@730..731 ";"
+            WHITESPACE@731..732 "\n"
+            PUNCT_BRACE_END@732..733 "}"
+          WHITESPACE@733..734 "\n"
+

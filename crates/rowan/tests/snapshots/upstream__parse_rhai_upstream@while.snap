@@ -1,0 +1,80 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..90
+  COMMENT_LINE@0..33 "// This script runs a ..."
+  WHITESPACE@33..35 "\n\n"
+  STMT@35..46
+    ITEM@35..45
+      EXPR@35..45
+        EXPR_LET@35..45
+          KW_LET@35..38 "let"
+          WHITESPACE@38..39 " "
+          IDENT@39..40 "x"
+          WHITESPACE@40..41 " "
+          OP_ASSIGN@41..42 "="
+          EXPR@42..45
+            WHITESPACE@42..43 " "
+            EXPR_LIT@43..45
+              LIT@43..45
+                LIT_INT@43..45 "10"
+    PUNCT_SEMI@45..46 ";"
+  WHITESPACE@46..48 "\n\n"
+  STMT@48..90
+    ITEM@48..89
+      EXPR@48..89
+        EXPR_WHILE@48..89
+          KW_WHILE@48..53 "while"
+          EXPR@53..60
+            EXPR_BINARY@53..60
+              EXPR@53..56
+                WHITESPACE@53..54 " "
+                EXPR_IDENT@54..56
+                  IDENT@54..55 "x"
+                  WHITESPACE@55..56 " "
+              OP_GT@56..57 ">"
+              EXPR@57..60
+                WHITESPACE@57..58 " "
+                EXPR_LIT@58..59
+                  LIT@58..59
+                    LIT_INT@58..59 "0"
+                WHITESPACE@59..60 " "
+          EXPR_BLOCK@60..89
+            PUNCT_BRACE_START@60..61 "{"
+            WHITESPACE@61..66 "\n    "
+            STMT@66..75
+              ITEM@66..74
+                EXPR@66..74
+                  EXPR_CALL@66..74
+                    EXPR@66..71
+                      EXPR_IDENT@66..71
+                        IDENT@66..71 "print"
+                    ARG_LIST@71..74
+                      PUNCT_PAREN_START@71..72 "("
+                      EXPR@72..73
+                        EXPR_IDENT@72..73
+                          IDENT@72..73 "x"
+                      PUNCT_PAREN_END@73..74 ")"
+              PUNCT_SEMI@74..75 ";"
+            WHITESPACE@75..80 "\n    "
+            STMT@80..87
+              ITEM@80..86
+                EXPR@80..86
+                  EXPR_BINARY@80..86
+                    EXPR@80..82
+                      EXPR_IDENT@80..82
+                        IDENT@80..81 "x"
+                        WHITESPACE@81..82 " "
+                    OP_SUB_ASSIGN@82..84 "-="
+                    EXPR@84..86
+                      WHITESPACE@84..85 " "
+                      EXPR_LIT@85..86
+                        LIT@85..86
+                          LIT_INT@85..86 "1"
+              PUNCT_SEMI@86..87 ";"
+            WHITESPACE@87..88 "\n"
+            PUNCT_BRACE_END@88..89 "}"
+    WHITESPACE@89..90 "\n"
+

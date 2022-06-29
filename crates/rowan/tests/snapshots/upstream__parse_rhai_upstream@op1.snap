@@ -1,0 +1,50 @@
+---
+source: crates/rowan/tests/upstream.rs
+assertion_line: 36
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..94
+  COMMENT_LINE@0..40 "// This script runs a ..."
+  WHITESPACE@40..42 "\n\n"
+  STMT@42..76
+    ITEM@42..75
+      EXPR@42..75
+        EXPR_CALL@42..75
+          EXPR@42..47
+            EXPR_IDENT@42..47
+              IDENT@42..47 "print"
+          ARG_LIST@47..75
+            PUNCT_PAREN_START@47..48 "("
+            EXPR@48..74
+              EXPR_LIT@48..74
+                LIT@48..74
+                  LIT_STR@48..74 "\"The result should be ..."
+            PUNCT_PAREN_END@74..75 ")"
+    PUNCT_SEMI@75..76 ";"
+  WHITESPACE@76..78 "\n\n"
+  STMT@78..93
+    ITEM@78..92
+      EXPR@78..92
+        EXPR_CALL@78..92
+          EXPR@78..83
+            EXPR_IDENT@78..83
+              IDENT@78..83 "print"
+          ARG_LIST@83..92
+            PUNCT_PAREN_START@83..84 "("
+            EXPR@84..91
+              EXPR_BINARY@84..91
+                EXPR@84..87
+                  EXPR_LIT@84..86
+                    LIT@84..86
+                      LIT_INT@84..86 "34"
+                  WHITESPACE@86..87 " "
+                OP_ADD@87..88 "+"
+                EXPR@88..91
+                  WHITESPACE@88..89 " "
+                  EXPR_LIT@89..91
+                    LIT@89..91
+                      LIT_INT@89..91 "12"
+            PUNCT_PAREN_END@91..92 ")"
+    PUNCT_SEMI@92..93 ";"
+  WHITESPACE@93..94 "\n"
+
