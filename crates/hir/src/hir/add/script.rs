@@ -259,6 +259,7 @@ impl Hir {
                                         .unwrap_or(text);
 
                                     Value::Char(
+                                        // FIXME: this allocates a string.
                                         unescape(text, '\'').0.chars().next().unwrap_or('💩'),
                                     )
                                 }

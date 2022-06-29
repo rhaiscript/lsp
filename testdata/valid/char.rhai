@@ -1,1 +1,2 @@
-let this_is_a_char = '';
+let val = 'a';
+let val = '\n';
