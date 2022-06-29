@@ -1,3 +1,0 @@
-[submodule "rhai"]
-	path = rhai
-	url = git@github.com:tamasfe/rhai.git
