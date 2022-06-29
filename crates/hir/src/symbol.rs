@@ -74,7 +74,7 @@ impl SymbolData {
         match &self.kind {
             SymbolKind::Reference(r) => r.target,
             SymbolKind::Decl(d) => d.target,
-            _ => None
+            _ => None,
         }
     }
 }
@@ -743,7 +743,14 @@ pub struct ReturnSymbol {
 #[derive(Debug, Default, Clone)]
 pub struct SwitchSymbol {
     pub target: Option<Symbol>,
-    pub arms: Vec<(Option<Symbol>, Option<Symbol>)>,
+    pub arms: Vec<SwitchArm>,
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct SwitchArm {
+    pub pat_expr: Option<Symbol>,
+    pub condition_expr: Option<Symbol>,
+    pub value_expr: Option<Symbol>,
 }
 
 #[derive(Debug, Default, Clone)]

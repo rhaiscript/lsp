@@ -3,7 +3,9 @@
 //! These can be gradually turned into code generation if similar
 //! repetitive patterns are found and the effort is worth it.
 
-use super::{AstNode, Expr, ObjectField, Param, ParamList, SwitchArm, TypedParam};
+use super::{
+    AstNode, Expr, ObjectField, Param, ParamList, SwitchArm, SwitchArmCondition, TypedParam,
+};
 use super::{ExprBlock, ExprIf, T};
 use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
 
@@ -173,6 +175,10 @@ impl super::SwitchArm {
             .next()
             .and_then(SyntaxElement::into_token)
             .and_then(|s| if s.kind() == T!["_"] { Some(s) } else { None })
+    }
+
+    pub fn condition(&self) -> Option<SwitchArmCondition> {
+        self.syntax().children().find_map(SwitchArmCondition::cast)
     }
 
     #[must_use]

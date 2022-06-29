@@ -1,6 +1,6 @@
 ---
-source: crates/rowan/tests/upstream.rs
-assertion_line: 36
+source: crates/rowan/tests/smoke.rs
+assertion_line: 37
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..199

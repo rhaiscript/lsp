@@ -1,7 +1,7 @@
 use crate::{
     scope::Scope,
     source::Source,
-    symbol::{ReferenceTarget, Symbol, SymbolData, SymbolKind},
+    symbol::{ReferenceTarget, SwitchArm, Symbol, SymbolData, SymbolKind},
     Hir,
 };
 
@@ -177,12 +177,21 @@ impl Hir {
                 }
             }
             SymbolKind::Switch(switch) => {
-                for (pat, val) in switch.arms {
-                    if let Some(s) = pat {
+                for SwitchArm {
+                    pat_expr,
+                    condition_expr,
+                    value_expr,
+                } in switch.arms
+                {
+                    if let Some(s) = pat_expr {
                         self.remove_symbol(s);
                     }
 
-                    if let Some(s) = val {
+                    if let Some(s) = condition_expr {
+                        self.remove_symbol(s);
+                    }
+
+                    if let Some(s) = value_expr {
                         self.remove_symbol(s);
                     }
                 }

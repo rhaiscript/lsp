@@ -259,6 +259,7 @@ impl Hir {
                                         .unwrap_or(text);
 
                                     Value::Char(
+                                        // FIXME: this allocates a string.
                                         unescape(text, '\'').0.chars().next().unwrap_or('💩'),
                                     )
                                 }
@@ -790,6 +791,7 @@ impl Hir {
                         arm_list
                             .arms()
                             .map(|arm| {
+                                let condition = None;
                                 let mut left = None;
                                 let mut right = None;
 
@@ -806,6 +808,10 @@ impl Hir {
                                     }));
                                 }
 
+                                if let Some(expr) = arm.condition().and_then(|c| c.expr()) {
+                                    left = self.add_expression(source, scope, false, expr);
+                                }
+
                                 if let Some(expr) = arm.pattern_expr() {
                                     left = self.add_expression(source, scope, false, expr);
                                 }
@@ -814,7 +820,11 @@ impl Hir {
                                     right = self.add_expression(source, scope, false, expr);
                                 }
 
-                                (left, right)
+                                SwitchArm {
+                                    pat_expr: left,
+                                    condition_expr: condition,
+                                    value_expr: right,
+                                }
                             })
                             .collect()
                     })

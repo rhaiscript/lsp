@@ -1338,6 +1338,38 @@ impl SwitchArm {
     }
 }
 #[derive(Debug, Clone)]
+pub struct SwitchArmCondition(SyntaxNode);
+impl AstNode for SwitchArmCondition {
+    #[inline]
+    fn can_cast(syntax: &SyntaxNode) -> bool {
+        syntax.kind() == SWITCH_ARM_CONDITION
+    }
+    #[inline]
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(&syntax) { Some(Self(syntax)) } else { None }
+    }
+    fn syntax(&self) -> SyntaxNode {
+        self.0.clone()
+    }
+}
+impl SwitchArmCondition {
+    pub fn kw_if_token(&self) -> Option<SyntaxToken> {
+        self.0
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != KW_IF {
+                    return None;
+                }
+                t.into_token()
+            })
+            .skip(0usize)
+            .next()
+    }
+    pub fn expr(&self) -> Option<Expr> {
+        self.0.children().filter_map(Expr::cast).skip(0usize).next()
+    }
+}
+#[derive(Debug, Clone)]
 pub enum ExportTarget {
     ExprLet(ExprLet),
     ExprConst(ExprConst),

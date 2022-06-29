@@ -35,7 +35,7 @@ pub(crate) fn parse_def_header(ctx: &mut Context) {
 }
 
 /// Parse a Rhai definition file.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_rhai_def(ctx: &mut Context) {
     ctx.start_node(RHAI_DEF);
 
@@ -54,7 +54,7 @@ pub fn parse_rhai_def(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_module_decl(ctx: &mut Context) {
     ctx.start_node(DEF_MODULE_DECL);
 
@@ -73,7 +73,7 @@ pub fn parse_def_module_decl(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_stmt(ctx: &mut Context) {
     ctx.start_node(DEF_STMT);
     let token = require_token!(ctx in node);
@@ -97,7 +97,7 @@ pub fn parse_def_stmt(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_item(ctx: &mut Context) {
     ctx.start_node(DEF_ITEM);
 
@@ -116,7 +116,7 @@ pub fn parse_def_item(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def(ctx: &mut Context) {
     ctx.start_node(DEF);
 
@@ -137,7 +137,7 @@ pub fn parse_def(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_module(ctx: &mut Context) {
     ctx.start_node(DEF_MODULE);
 
@@ -153,7 +153,7 @@ pub fn parse_def_module(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_import(ctx: &mut Context) {
     ctx.start_node(DEF_IMPORT);
 
@@ -168,7 +168,7 @@ pub fn parse_def_import(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_const(ctx: &mut Context) {
     ctx.start_node(DEF_CONST);
 
@@ -183,7 +183,7 @@ pub fn parse_def_const(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_let(ctx: &mut Context) {
     ctx.start_node(DEF_LET);
 
@@ -198,7 +198,7 @@ pub fn parse_def_let(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_fn(ctx: &mut Context) {
     ctx.start_node(DEF_FN);
 
@@ -232,7 +232,7 @@ pub fn parse_def_fn(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_op(ctx: &mut Context) {
     ctx.start_node(DEF_OP);
 
@@ -271,7 +271,7 @@ pub fn parse_def_op(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_def_type(ctx: &mut Context) {
     ctx.start_node(DEF_TYPE);
 
@@ -292,7 +292,7 @@ pub fn parse_def_type(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_typed_param_list(ctx: &mut Context) {
     ctx.start_node(TYPED_PARAM_LIST);
 
@@ -348,7 +348,7 @@ fn parse_typed_param_list(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_typed_param(ctx: &mut Context) {
     ctx.start_node(TYPED_PARAM);
 
@@ -360,7 +360,7 @@ fn parse_typed_param(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_type_list(ctx: &mut Context) {
     ctx.start_node(TYPE_LIST);
 

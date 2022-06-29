@@ -377,6 +377,7 @@ pub enum SyntaxKind {
     PAT,
     SWITCH_ARM_LIST,
     SWITCH_ARM,
+    SWITCH_ARM_CONDITION,
     EXPORT_TARGET,
     EXPORT_IDENT,
     PAT_TUPLE,

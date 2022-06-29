@@ -87,7 +87,7 @@ impl<'src> super::Parser<'src> {
 }
 
 /// Parse a Rhai file.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_rhai(ctx: &mut Context) {
     ctx.start_node(RHAI);
     if let Some(SHEBANG) = ctx.token() {
@@ -108,7 +108,7 @@ pub fn parse_rhai(ctx: &mut Context) {
 }
 
 /// Parse a shebang like `#!something`, typically at the start of files.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_shebang(ctx: &mut Context) {
     let token = require_token!(ctx);
 
@@ -120,7 +120,7 @@ pub fn parse_shebang(ctx: &mut Context) {
 }
 
 /// Parse a statement.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_stmt(ctx: &mut Context) {
     ctx.start_node(STMT);
     let token = require_token!(ctx in node);
@@ -145,7 +145,7 @@ pub fn parse_stmt(ctx: &mut Context) {
 }
 
 /// Parse an item.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_item(ctx: &mut Context) {
     ctx.start_node(ITEM);
 
@@ -165,7 +165,7 @@ pub fn parse_item(ctx: &mut Context) {
 }
 
 /// Parse an expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr(ctx: &mut Context) {
     parse_expr_bp(ctx, 0);
 }
@@ -174,7 +174,7 @@ pub fn parse_expr(ctx: &mut Context) {
 ///
 /// `min_bp` is the current minimum binding power
 /// in the expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
     ctx.start_node(EXPR);
 
@@ -341,6 +341,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
                 T![";"] | T![","] | T!["{"] | T!["}"] | T![")"] | T!["]"] | T!["=>"] | T!["as"],
             )
             | None => break,
+            Some(T!["if"]) if ctx.switch_pat_expr() => break,
             Some(t) => t,
         };
 
@@ -402,7 +403,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
 }
 
 /// Parse a path such as `a::b` or an identifier.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_path_or_ident(ctx: &mut Context) {
     let start = ctx.checkpoint();
 
@@ -432,7 +433,7 @@ pub fn parse_expr_path_or_ident(ctx: &mut Context) {
 }
 
 /// Parse a literal expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_lit(ctx: &mut Context) {
     ctx.start_node(EXPR_LIT);
     parse_lit(ctx);
@@ -440,7 +441,7 @@ pub fn parse_expr_lit(ctx: &mut Context) {
 }
 
 /// Parse a `let` expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_let(ctx: &mut Context) {
     ctx.start_node(EXPR_LET);
 
@@ -460,7 +461,7 @@ pub fn parse_expr_let(ctx: &mut Context) {
 }
 
 /// Parse a `const` expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_const(ctx: &mut Context) {
     ctx.start_node(EXPR_CONST);
 
@@ -474,7 +475,7 @@ pub fn parse_expr_const(ctx: &mut Context) {
 }
 
 /// Parse a block expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_block(ctx: &mut Context) {
     ctx.start_node(EXPR_BLOCK);
 
@@ -504,7 +505,7 @@ pub fn parse_expr_block(ctx: &mut Context) {
 }
 
 /// Parse a `fn` expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_fn(ctx: &mut Context) {
     ctx.start_node(EXPR_FN);
 
@@ -522,7 +523,7 @@ pub fn parse_expr_fn(ctx: &mut Context) {
 }
 
 /// Parse a parenthesized expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_paren(ctx: &mut Context) {
     ctx.start_node(EXPR_PAREN);
     expect_token!(ctx in node, T!["("]);
@@ -543,7 +544,7 @@ pub fn parse_expr_paren(ctx: &mut Context) {
 }
 
 /// Parse an array expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_array(ctx: &mut Context) {
     ctx.start_node(EXPR_ARRAY);
 
@@ -579,7 +580,7 @@ pub fn parse_expr_array(ctx: &mut Context) {
 }
 
 /// Parse a closure expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_closure(ctx: &mut Context) {
     ctx.start_node(EXPR_CLOSURE);
 
@@ -598,7 +599,7 @@ pub fn parse_expr_closure(ctx: &mut Context) {
 }
 
 /// Parse an "if" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_if(ctx: &mut Context) {
     ctx.start_node(EXPR_IF);
 
@@ -623,7 +624,7 @@ pub fn parse_expr_if(ctx: &mut Context) {
 }
 
 /// Parse a "loop" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_loop(ctx: &mut Context) {
     ctx.start_node(EXPR_LOOP);
 
@@ -633,7 +634,7 @@ pub fn parse_expr_loop(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_for(ctx: &mut Context) {
     ctx.start_node(EXPR_FOR);
 
@@ -647,7 +648,7 @@ pub fn parse_expr_for(ctx: &mut Context) {
 }
 
 /// Parse a "while" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_while(ctx: &mut Context) {
     ctx.start_node(EXPR_WHILE);
 
@@ -659,7 +660,7 @@ pub fn parse_expr_while(ctx: &mut Context) {
 }
 
 /// Parse a "break" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_break(ctx: &mut Context) {
     ctx.start_node(EXPR_BREAK);
 
@@ -673,7 +674,7 @@ pub fn parse_expr_break(ctx: &mut Context) {
 }
 
 /// Parse a "continue" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_continue(ctx: &mut Context) {
     ctx.start_node(EXPR_CONTINUE);
     expect_token!(ctx in node, T!["continue"]);
@@ -681,7 +682,7 @@ pub fn parse_expr_continue(ctx: &mut Context) {
 }
 
 /// Parse a "return" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_return(ctx: &mut Context) {
     ctx.start_node(EXPR_RETURN);
 
@@ -695,7 +696,7 @@ pub fn parse_expr_return(ctx: &mut Context) {
 }
 
 /// Parse a "switch" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_switch(ctx: &mut Context) {
     ctx.start_node(EXPR_SWITCH);
 
@@ -707,7 +708,7 @@ pub fn parse_expr_switch(ctx: &mut Context) {
 }
 
 /// Parse an "import" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_import(ctx: &mut Context) {
     ctx.start_node(EXPR_IMPORT);
 
@@ -723,7 +724,7 @@ pub fn parse_expr_import(ctx: &mut Context) {
 }
 
 /// Parse an object literal expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_object(ctx: &mut Context) {
     ctx.start_node(EXPR_OBJECT);
 
@@ -759,7 +760,7 @@ pub fn parse_expr_object(ctx: &mut Context) {
 }
 
 /// Parse an "export" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_export(ctx: &mut Context) {
     ctx.start_node(EXPR_EXPORT);
 
@@ -770,7 +771,7 @@ pub fn parse_expr_export(ctx: &mut Context) {
 }
 
 /// Parse a "try" expression.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_try(ctx: &mut Context) {
     ctx.start_node(EXPR_TRY);
 
@@ -788,7 +789,7 @@ pub fn parse_expr_try(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_export_target(ctx: &mut Context) {
     ctx.start_node(EXPORT_TARGET);
 
@@ -804,7 +805,7 @@ fn parse_export_target(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_export_ident(ctx: &mut Context) {
     ctx.start_node(EXPORT_IDENT);
 
@@ -820,7 +821,7 @@ fn parse_export_ident(ctx: &mut Context) {
 }
 
 /// Parse a pattern.
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_pat(ctx: &mut Context) {
     ctx.start_node(PAT);
 
@@ -837,7 +838,7 @@ pub fn parse_pat(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_pat_ident(ctx: &mut Context) {
     ctx.start_node(PAT_IDENT);
 
@@ -846,7 +847,7 @@ fn parse_pat_ident(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_pat_tuple(ctx: &mut Context) {
     ctx.start_node(PAT_TUPLE);
 
@@ -891,7 +892,7 @@ fn parse_pat_tuple(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_object_field(ctx: &mut Context) {
     ctx.start_node(OBJECT_FIELD);
 
@@ -912,7 +913,7 @@ fn parse_object_field(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_switch_arm_list(ctx: &mut Context) {
     ctx.start_node(SWITCH_ARM_LIST);
 
@@ -947,7 +948,7 @@ fn parse_switch_arm_list(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_switch_arm(ctx: &mut Context) {
     ctx.start_node(SWITCH_ARM);
 
@@ -956,7 +957,15 @@ fn parse_switch_arm(ctx: &mut Context) {
     if matches!(token, T!["_"]) {
         ctx.eat();
     } else {
+        ctx.set_switch_pat_expr(true);
         parse_expr(ctx);
+        ctx.set_switch_pat_expr(false);
+    }
+
+    let token = require_token!(ctx in node);
+
+    if matches!(token, T!["if"]) {
+        parse_switch_arm_condition(ctx);
     }
 
     expect_token!(ctx in node, T!["=>"]);
@@ -966,7 +975,17 @@ fn parse_switch_arm(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
+fn parse_switch_arm_condition(ctx: &mut Context) {
+    ctx.start_node(SWITCH_ARM_CONDITION);
+
+    expect_token!(ctx in node, T!["if"]);
+    parse_expr(ctx);
+
+    ctx.finish_node();
+}
+
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_param_list(ctx: &mut Context) {
     ctx.start_node(PARAM_LIST);
 
@@ -1022,7 +1041,7 @@ fn parse_param_list(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_param(ctx: &mut Context) {
     ctx.start_node(PARAM);
 
@@ -1031,7 +1050,7 @@ fn parse_param(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_arg_list(ctx: &mut Context) {
     ctx.start_node(ARG_LIST);
 
@@ -1066,7 +1085,7 @@ fn parse_arg_list(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_lit(ctx: &mut Context) {
     ctx.start_node(LIT);
     let token = require_token!(ctx in node);
