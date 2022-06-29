@@ -562,12 +562,21 @@ fn collect_symbol_scope_iters<'h>(
                 collect_symbol_scope_iters(hir, iters, sym);
             }
 
-            for (pat, arm) in &sym.arms {
-                if let Some(sym) = *pat {
+            for SwitchArm {
+                pat_expr,
+                condition_expr,
+                value_expr,
+            } in &sym.arms
+            {
+                if let Some(sym) = *pat_expr {
                     collect_symbol_scope_iters(hir, iters, sym);
                 }
 
-                if let Some(sym) = *arm {
+                if let Some(sym) = *condition_expr {
+                    collect_symbol_scope_iters(hir, iters, sym);
+                }
+
+                if let Some(sym) = *value_expr {
                     collect_symbol_scope_iters(hir, iters, sym);
                 }
             }

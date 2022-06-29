@@ -1,0 +1,331 @@
+---
+source: crates/rowan/tests/smoke.rs
+assertion_line: 38
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..779
+  COMMENT_LINE@0..53 "// This script runs a ..."
+  WHITESPACE@53..55 "\n\n"
+  STMT@55..123
+    ITEM@55..122
+      EXPR@55..122
+        EXPR_LET@55..122
+          KW_LET@55..58 "let"
+          WHITESPACE@58..59 " "
+          IDENT@59..62 "arr"
+          WHITESPACE@62..63 " "
+          OP_ASSIGN@63..64 "="
+          EXPR@64..122
+            WHITESPACE@64..65 " "
+            EXPR_ARRAY@65..122
+              PUNCT_BRACKET_START@65..66 "["
+              EXPR@66..68
+                EXPR_LIT@66..68
+                  LIT@66..68
+                    LIT_INT@66..68 "42"
+              PUNCT_COMMA@68..69 ","
+              WHITESPACE@69..70 " "
+              EXPR@70..77
+                EXPR_LIT@70..77
+                  LIT@70..77
+                    LIT_FLOAT@70..77 "123.456"
+              PUNCT_COMMA@77..78 ","
+              WHITESPACE@78..79 " "
+              EXPR@79..86
+                EXPR_LIT@79..86
+                  LIT@79..86
+                    LIT_STR@79..86 "\"hello\""
+              PUNCT_COMMA@86..87 ","
+              WHITESPACE@87..88 " "
+              EXPR@88..92
+                EXPR_LIT@88..92
+                  LIT@88..92
+                    LIT_BOOL@88..92 "true"
+              PUNCT_COMMA@92..93 ","
+              WHITESPACE@93..94 " "
+              EXPR@94..99
+                EXPR_LIT@94..99
+                  LIT@94..99
+                    LIT_STR@94..99 "\"hey\""
+              PUNCT_COMMA@99..100 ","
+              WHITESPACE@100..101 " "
+              EXPR@101..104
+                EXPR_LIT@101..104
+                  LIT@101..104
+                    LIT_CHAR@101..104 "'x'"
+              PUNCT_COMMA@104..105 ","
+              WHITESPACE@105..106 " "
+              EXPR@106..109
+                EXPR_LIT@106..109
+                  LIT@106..109
+                    LIT_INT@106..109 "999"
+              PUNCT_COMMA@109..110 ","
+              WHITESPACE@110..111 " "
+              EXPR@111..112
+                EXPR_LIT@111..112
+                  LIT@111..112
+                    LIT_INT@111..112 "1"
+              PUNCT_COMMA@112..113 ","
+              WHITESPACE@113..114 " "
+              EXPR@114..115
+                EXPR_LIT@114..115
+                  LIT@114..115
+                    LIT_INT@114..115 "2"
+              PUNCT_COMMA@115..116 ","
+              WHITESPACE@116..117 " "
+              EXPR@117..118
+                EXPR_LIT@117..118
+                  LIT@117..118
+                    LIT_INT@117..118 "3"
+              PUNCT_COMMA@118..119 ","
+              WHITESPACE@119..120 " "
+              EXPR@120..121
+                EXPR_LIT@120..121
+                  LIT@120..121
+                    LIT_INT@120..121 "4"
+              PUNCT_BRACKET_END@121..122 "]"
+    PUNCT_SEMI@122..123 ";"
+  WHITESPACE@123..125 "\n\n"
+  STMT@125..779
+    ITEM@125..778
+      EXPR@125..778
+        EXPR_FOR@125..778
+          KW_FOR@125..128 "for"
+          PAT@128..133
+            WHITESPACE@128..129 " "
+            PAT_IDENT@129..133
+              IDENT@129..133 "item"
+          WHITESPACE@133..134 " "
+          KW_IN@134..136 "in"
+          EXPR@136..141
+            WHITESPACE@136..137 " "
+            EXPR_IDENT@137..141
+              IDENT@137..140 "arr"
+              WHITESPACE@140..141 " "
+          EXPR_BLOCK@141..778
+            PUNCT_BRACE_START@141..142 "{"
+            WHITESPACE@142..147 "\n    "
+            STMT@147..777
+              ITEM@147..777
+                EXPR@147..777
+                  EXPR_SWITCH@147..776
+                    KW_SWITCH@147..153 "switch"
+                    EXPR@153..159
+                      WHITESPACE@153..154 " "
+                      EXPR_IDENT@154..159
+                        IDENT@154..158 "item"
+                        WHITESPACE@158..159 " "
+                    SWITCH_ARM_LIST@159..776
+                      PUNCT_BRACE_START@159..160 "{"
+                      WHITESPACE@160..169 "\n        "
+                      COMMENT_LINE@169..192 "// Match single integer"
+                      WHITESPACE@192..201 "\n        "
+                      SWITCH_ARM@201..227
+                        EXPR@201..204
+                          EXPR_LIT@201..203
+                            LIT@201..203
+                              LIT_INT@201..203 "42"
+                          WHITESPACE@203..204 " "
+                        PUNCT_ARROW_FAT@204..206 "=>"
+                        EXPR@206..227
+                          EXPR_CALL@206..227
+                            EXPR@206..212
+                              WHITESPACE@206..207 " "
+                              EXPR_IDENT@207..212
+                                IDENT@207..212 "print"
+                            ARG_LIST@212..227
+                              PUNCT_PAREN_START@212..213 "("
+                              EXPR@213..226
+                                EXPR_LIT@213..226
+                                  LIT@213..226
+                                    LIT_STR@213..226 "\"The Answer!\""
+                              PUNCT_PAREN_END@226..227 ")"
+                      PUNCT_COMMA@227..228 ","
+                      WHITESPACE@228..237 "\n        "
+                      COMMENT_LINE@237..274 "// Match single float ..."
+                      WHITESPACE@274..283 "\n        "
+                      SWITCH_ARM@283..328
+                        EXPR@283..291
+                          EXPR_LIT@283..290
+                            LIT@283..290
+                              LIT_FLOAT@283..290 "123.456"
+                          WHITESPACE@290..291 " "
+                        PUNCT_ARROW_FAT@291..293 "=>"
+                        EXPR@293..328
+                          EXPR_CALL@293..328
+                            EXPR@293..299
+                              WHITESPACE@293..294 " "
+                              EXPR_IDENT@294..299
+                                IDENT@294..299 "print"
+                            ARG_LIST@299..328
+                              PUNCT_PAREN_START@299..300 "("
+                              EXPR@300..327
+                                EXPR_LIT@300..327
+                                  LIT@300..327
+                                    LIT_STR@300..327 "`Floating point... ${ ..."
+                              PUNCT_PAREN_END@327..328 ")"
+                      PUNCT_COMMA@328..329 ","
+                      WHITESPACE@329..338 "\n        "
+                      COMMENT_LINE@338..360 "// Match single string"
+                      WHITESPACE@360..369 "\n        "
+                      SWITCH_ARM@369..403
+                        EXPR@369..377
+                          EXPR_LIT@369..376
+                            LIT@369..376
+                              LIT_STR@369..376 "\"hello\""
+                          WHITESPACE@376..377 " "
+                        PUNCT_ARROW_FAT@377..379 "=>"
+                        EXPR@379..403
+                          EXPR_CALL@379..403
+                            EXPR@379..385
+                              WHITESPACE@379..380 " "
+                              EXPR_IDENT@380..385
+                                IDENT@380..385 "print"
+                            ARG_LIST@385..403
+                              PUNCT_PAREN_START@385..386 "("
+                              EXPR@386..402
+                                EXPR_LIT@386..402
+                                  LIT@386..402
+                                    LIT_STR@386..402 "`${item} world!`"
+                              PUNCT_PAREN_END@402..403 ")"
+                      PUNCT_COMMA@403..404 ","
+                      WHITESPACE@404..413 "\n        "
+                      COMMENT_LINE@413..437 "// Match another integer"
+                      WHITESPACE@437..446 "\n        "
+                      SWITCH_ARM@446..478
+                        EXPR@446..450
+                          EXPR_LIT@446..449
+                            LIT@446..449
+                              LIT_INT@446..449 "999"
+                          WHITESPACE@449..450 " "
+                        PUNCT_ARROW_FAT@450..452 "=>"
+                        EXPR@452..478
+                          EXPR_CALL@452..478
+                            EXPR@452..458
+                              WHITESPACE@452..453 " "
+                              EXPR_IDENT@453..458
+                                IDENT@453..458 "print"
+                            ARG_LIST@458..478
+                              PUNCT_PAREN_START@458..459 "("
+                              EXPR@459..477
+                                EXPR_LIT@459..477
+                                  LIT@459..477
+                                    LIT_STR@459..477 "`Got 999: ${item}`"
+                              PUNCT_PAREN_END@477..478 ")"
+                      PUNCT_COMMA@478..479 ","
+                      WHITESPACE@479..488 "\n        "
+                      COMMENT_LINE@488..517 "// Match range with c ..."
+                      WHITESPACE@517..526 "\n        "
+                      SWITCH_ARM@526..590
+                        EXPR@526..533
+                          EXPR_BINARY@526..533
+                            EXPR@526..527
+                              EXPR_LIT@526..527
+                                LIT@526..527
+                                  LIT_INT@526..527 "0"
+                            OP_RANGE@527..529 ".."
+                            EXPR@529..533
+                              EXPR_LIT@529..532
+                                LIT@529..532
+                                  LIT_INT@529..532 "100"
+                              WHITESPACE@532..533 " "
+                        SWITCH_ARM_CONDITION@533..550
+                          KW_IF@533..535 "if"
+                          EXPR@535..550
+                            EXPR_BINARY@535..550
+                              EXPR@535..545
+                                EXPR_BINARY@535..545
+                                  EXPR@535..541
+                                    WHITESPACE@535..536 " "
+                                    EXPR_IDENT@536..541
+                                      IDENT@536..540 "item"
+                                      WHITESPACE@540..541 " "
+                                  OP_MOD@541..542 "%"
+                                  EXPR@542..545
+                                    WHITESPACE@542..543 " "
+                                    EXPR_LIT@543..544
+                                      LIT@543..544
+                                        LIT_INT@543..544 "2"
+                                    WHITESPACE@544..545 " "
+                              OP_EQ@545..547 "=="
+                              EXPR@547..550
+                                WHITESPACE@547..548 " "
+                                EXPR_LIT@548..549
+                                  LIT@548..549
+                                    LIT_INT@548..549 "0"
+                                WHITESPACE@549..550 " "
+                        PUNCT_ARROW_FAT@550..552 "=>"
+                        EXPR@552..590
+                          EXPR_CALL@552..590
+                            EXPR@552..558
+                              WHITESPACE@552..553 " "
+                              EXPR_IDENT@553..558
+                                IDENT@553..558 "print"
+                            ARG_LIST@558..590
+                              PUNCT_PAREN_START@558..559 "("
+                              EXPR@559..589
+                                EXPR_LIT@559..589
+                                  LIT@559..589
+                                    LIT_STR@559..589 "`A small even number: ..."
+                              PUNCT_PAREN_END@589..590 ")"
+                      PUNCT_COMMA@590..591 ","
+                      WHITESPACE@591..600 "\n        "
+                      COMMENT_LINE@600..622 "// Match another range"
+                      WHITESPACE@622..631 "\n        "
+                      SWITCH_ARM@631..677
+                        EXPR@631..638
+                          EXPR_BINARY@631..638
+                            EXPR@631..632
+                              EXPR_LIT@631..632
+                                LIT@631..632
+                                  LIT_INT@631..632 "0"
+                            OP_RANGE@632..634 ".."
+                            EXPR@634..638
+                              EXPR_LIT@634..637
+                                LIT@634..637
+                                  LIT_INT@634..637 "100"
+                              WHITESPACE@637..638 " "
+                        PUNCT_ARROW_FAT@638..640 "=>"
+                        EXPR@640..677
+                          EXPR_CALL@640..677
+                            EXPR@640..646
+                              WHITESPACE@640..641 " "
+                              EXPR_IDENT@641..646
+                                IDENT@641..646 "print"
+                            ARG_LIST@646..677
+                              PUNCT_PAREN_START@646..647 "("
+                              EXPR@647..676
+                                EXPR_LIT@647..676
+                                  LIT@647..676
+                                    LIT_STR@647..676 "`A small odd number:  ..."
+                              PUNCT_PAREN_END@676..677 ")"
+                      PUNCT_COMMA@677..678 ","
+                      WHITESPACE@678..687 "\n        "
+                      COMMENT_LINE@687..702 "// Default case"
+                      WHITESPACE@702..711 "\n        "
+                      SWITCH_ARM@711..775
+                        EXPR@711..713
+                          EXPR_LIT@711..712
+                            LIT@711..712
+                              LIT_INT@711..712 "_"
+                          WHITESPACE@712..713 " "
+                        PUNCT_ARROW_FAT@713..715 "=>"
+                        EXPR@715..775
+                          EXPR_CALL@715..770
+                            EXPR@715..721
+                              WHITESPACE@715..716 " "
+                              EXPR_IDENT@716..721
+                                IDENT@716..721 "print"
+                            ARG_LIST@721..770
+                              PUNCT_PAREN_START@721..722 "("
+                              EXPR@722..769
+                                EXPR_LIT@722..769
+                                  LIT@722..769
+                                    LIT_STR@722..769 "`Something else: <${i ..."
+                              PUNCT_PAREN_END@769..770 ")"
+                          WHITESPACE@770..775 "\n    "
+                      PUNCT_BRACE_END@775..776 "}"
+                  WHITESPACE@776..777 "\n"
+            PUNCT_BRACE_END@777..778 "}"
+    WHITESPACE@778..779 "\n"
+

@@ -25,6 +25,8 @@ pub struct Context<'src> {
 
     // Tracks statements being separated by ";".
     statement_closed: bool,
+    // We are parsing a switch pattern expression.
+    switch_pat_expr: bool,
 }
 
 impl<'src> Context<'src> {
@@ -37,6 +39,7 @@ impl<'src> Context<'src> {
             errors: Vec::new(),
 
             statement_closed: true,
+            switch_pat_expr: false,
         }
     }
 
@@ -94,7 +97,7 @@ impl<'src> Context<'src> {
     ///
     /// This should only be used to split a token into more tokens,
     /// and source code should never be thrown away.
-    /// 
+    ///
     /// If no token was lexed (by calling [`Self::token`]), this is a no-op.
     pub fn discard(&mut self) {
         self.current_token = None;
@@ -123,7 +126,6 @@ impl<'src> Context<'src> {
     /// Add a parse error without touching the token or the tree.
     pub fn add_error(&mut self, error: ParseErrorKind) {
         self.add_error_inner(error, false);
-
     }
 
     /// Start a new node in the tree.
@@ -183,7 +185,12 @@ impl<'src> Context<'src> {
         //
         // If an error happens at the same location at least MAX_SIMILAR_ERROR_COUNT times,
         // we will surely eat the current token.
-        let same_error_count =  self.errors.iter().rev().take_while(|e| err.range == e.range).count();
+        let same_error_count = self
+            .errors
+            .iter()
+            .rev()
+            .take_while(|e| err.range == e.range)
+            .count();
 
         self.errors.push(err);
 
@@ -194,4 +201,11 @@ impl<'src> Context<'src> {
         }
     }
 
+    pub fn switch_pat_expr(&self) -> bool {
+        self.switch_pat_expr
+    }
+
+    pub fn set_switch_pat_expr(&mut self, switch_pat_expr: bool) {
+        self.switch_pat_expr = switch_pat_expr;
+    }
 }

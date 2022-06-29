@@ -30,7 +30,7 @@ use test_case::test_case;
 #[test_case("char", include_str!("../../../testdata/valid/char.rhai"))]
 fn parse_valid(name: &str, src: &str) {
     let parse = Parser::new(src).parse_script();
-    assert!(parse.errors.is_empty());
+    assert!(parse.errors.is_empty(), "{:#?}", parse.errors);
 
     insta::with_settings!(
         { snapshot_suffix => name },

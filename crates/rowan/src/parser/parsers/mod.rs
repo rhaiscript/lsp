@@ -341,6 +341,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
                 T![";"] | T![","] | T!["{"] | T!["}"] | T![")"] | T!["]"] | T!["=>"] | T!["as"],
             )
             | None => break,
+            Some(T!["if"]) if ctx.switch_pat_expr() => break,
             Some(t) => t,
         };
 
@@ -956,7 +957,15 @@ fn parse_switch_arm(ctx: &mut Context) {
     if matches!(token, T!["_"]) {
         ctx.eat();
     } else {
+        ctx.set_switch_pat_expr(true);
         parse_expr(ctx);
+        ctx.set_switch_pat_expr(false);
+    }
+
+    let token = require_token!(ctx in node);
+
+    if matches!(token, T!["if"]) {
+        parse_switch_arm_condition(ctx);
     }
 
     expect_token!(ctx in node, T!["=>"]);
@@ -966,7 +975,16 @@ fn parse_switch_arm(ctx: &mut Context) {
     ctx.finish_node();
 }
 
-#[cfg_attr(not(fuzzing), tracing::instrument(skip(ctx)))]
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
+fn parse_switch_arm_condition(ctx: &mut Context) {
+    ctx.start_node(SWITCH_ARM_CONDITION);
+
+    expect_token!(ctx in node, T!["if"]);
+    parse_expr(ctx);
+
+    ctx.finish_node();
+}
+
 #[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_param_list(ctx: &mut Context) {
     ctx.start_node(PARAM_LIST);
