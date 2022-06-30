@@ -49,9 +49,18 @@ impl<'src> Parser<'src> {
         }
     }
 
+    /// # Panics
+    /// 
+    /// Panics if the given operator name is not a valid identifer.
     #[must_use]
     pub fn with_operator(mut self, name: impl Into<String>, operator: Operator) -> Self {
-        self.context.custom_op(name.into(), operator);
+        let ident = name.into();
+
+        let mut ident_parser = Parser::new(&ident);
+        ident_parser.execute(parsers::parse_expr_ident);
+        assert!(ident_parser.finish().errors.is_empty(), "the provided operator name must be a valid identifier");
+
+        self.context.custom_op(ident, operator);
         self
     }
 

@@ -445,6 +445,14 @@ pub fn parse_expr_path_or_ident(ctx: &mut Context) {
     ctx.finish_node();
 }
 
+/// Parse an ident expression ([`ExprIdent`](`crate::ast::generated::ExprIdent`)).
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
+pub fn parse_expr_ident(ctx: &mut Context) {
+    ctx.start_node(EXPR_IDENT);
+    expect_token!(ctx in node, T!["ident"]);
+    ctx.finish_node();
+}
+
 /// Parse a literal expression.
 #[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 pub fn parse_expr_lit(ctx: &mut Context) {
