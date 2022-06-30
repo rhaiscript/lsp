@@ -97,6 +97,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Import(ImportSymbol {
+                        target: None,
                         scope: import_scope,
                         alias: import_def.alias().map(|alias| {
                             let alias_symbol = self.add_symbol(SymbolData {

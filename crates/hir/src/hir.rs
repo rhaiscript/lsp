@@ -2,6 +2,7 @@ mod add;
 mod query;
 mod remove;
 mod resolve;
+mod errors;
 
 use core::ops;
 

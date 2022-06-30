@@ -70,10 +70,20 @@ impl SymbolData {
 
     #[inline]
     #[must_use]
+    pub fn is_param(&self) -> bool {
+        match &self.kind {
+            SymbolKind::Decl(d) => d.is_param,
+            _ => false,
+        }
+    }
+
+    #[inline]
+    #[must_use]
     pub fn target(&self) -> Option<ReferenceTarget> {
         match &self.kind {
             SymbolKind::Reference(r) => r.target,
             SymbolKind::Decl(d) => d.target,
+            SymbolKind::Import(i) => i.target.map(ReferenceTarget::Module),
             _ => None,
         }
     }
@@ -562,6 +572,15 @@ impl SymbolKind {
         }
     }
 
+    #[must_use]
+    pub fn as_import_mut(&mut self) -> Option<&mut ImportSymbol> {
+        if let Self::Import(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
     /// Returns `true` if the symbol kind is [`Discard`].
     ///
     /// [`Discard`]: SymbolKind::Discard
@@ -763,6 +782,7 @@ pub struct ImportSymbol {
     pub scope: Scope,
     pub expr: Option<Symbol>,
     pub alias: Option<Symbol>,
+    pub target: Option<Module>,
 }
 
 impl ImportSymbol {
