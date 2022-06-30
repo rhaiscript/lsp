@@ -23,3 +23,4 @@ url = "2.2.2"
 insta = "1.8.0"
 criterion = { version = "0.3", features = ["html_reports"] }
 pprof = { version = "0.5", features = ["flamegraph", "criterion"] }
+test-case = "2.1.0"

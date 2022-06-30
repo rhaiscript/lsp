@@ -1,5 +1,3 @@
-#![allow(clippy::unsafe_derive_deserialize)]
-
 use crate::Scope;
 use url::Url;
 
