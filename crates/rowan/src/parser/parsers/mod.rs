@@ -195,15 +195,20 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             ctx.finish_node();
             return;
         }
+        T!["throw"] => {
+            parse_expr_throw(ctx);
+            ctx.finish_node();
+            return;
+        }
         T!["#{"] => {
             parse_expr_object(ctx);
-            if let Some(t) = ctx.token() {
+            if ctx.token().is_some() {
                 // This can be part of a binary expression,
                 // but it's also block-like.
                 //
                 // To disambiguate, we check whether the next token
                 // is a binary operator or not.
-                if t.infix_binding_power().is_none() {
+                if ctx.infix_binding_power().is_none() {
                     ctx.finish_node();
                     return;
                 }
@@ -223,13 +228,13 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         T!["if"] => {
             parse_expr_if(ctx);
 
-            if let Some(t) = ctx.token() {
+            if ctx.token().is_some() {
                 // This can be part of a binary expression,
                 // but it's also block-like.
                 //
                 // To disambiguate, we check whether the next token
                 // is a binary operator or not.
-                if t.infix_binding_power().is_none() {
+                if ctx.infix_binding_power().is_none() {
                     ctx.finish_node();
                     return;
                 }
@@ -237,11 +242,9 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         }
         T!["loop"] => {
             parse_expr_loop(ctx);
-            if let Some(t) = ctx.token() {
-                if t.infix_binding_power().is_none() {
-                    ctx.finish_node();
-                    return;
-                }
+            if ctx.token().is_some() && ctx.infix_binding_power().is_none() {
+                ctx.finish_node();
+                return;
             }
         }
         T!["for"] => {
@@ -271,13 +274,13 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         }
         T!["switch"] => {
             parse_expr_switch(ctx);
-            if let Some(t) = ctx.token() {
+            if ctx.token().is_some() {
                 // This can be part of a binary expression,
                 // but it's also block-like.
                 //
                 // To disambiguate, we check whether the next token
                 // is a binary operator or not.
-                if t.infix_binding_power().is_none() {
+                if ctx.infix_binding_power().is_none() {
                     ctx.finish_node();
                     return;
                 }
@@ -300,13 +303,13 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         }
         T!["{"] => {
             parse_expr_block(ctx);
-            if let Some(t) = ctx.token() {
+            if ctx.token().is_some() {
                 // This can be part of a binary expression,
                 // but it's also block-like.
                 //
                 // To disambiguate, we check whether the next token
                 // is a binary operator or not.
-                if t.infix_binding_power().is_none() {
+                if ctx.infix_binding_power().is_none() {
                     ctx.finish_node();
                     return;
                 }
@@ -378,7 +381,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             continue;
         }
 
-        let (l_bp, r_bp) = match op.infix_binding_power() {
+        let (l_bp, r_bp) = match ctx.infix_binding_power() {
             Some(bp) => bp,
             None => {
                 ctx.add_error(ParseErrorKind::UnexpectedToken);
@@ -398,6 +401,16 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         parse_expr_bp(ctx, r_bp);
         ctx.finish_node();
     }
+
+    ctx.finish_node();
+}
+
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
+pub fn parse_expr_throw(ctx: &mut Context) {
+    ctx.start_node(EXPR_THROW);
+
+    expect_token!(ctx in node, T!["throw"]);
+    parse_expr(ctx);
 
     ctx.finish_node();
 }
@@ -1107,18 +1120,9 @@ fn parse_lit(ctx: &mut Context) {
 // Binding powers based on C and python (**) operator precedence.
 impl SyntaxKind {
     #[must_use]
-    pub fn prefix_binding_power(self) -> Option<u8> {
-        let bp = match self {
-            T!["+"] | T!["-"] | T!["!"] => 24,
-            _ => return None,
-        };
-
-        Some(bp)
-    }
-
-    #[must_use]
     pub fn infix_binding_power(self) -> Option<(u8, u8)> {
         let bp = match self {
+            T!["in"] => (3, 4),
             T!["+="]
             | T!["="]
             | T!["&="]
@@ -1130,20 +1134,30 @@ impl SyntaxKind {
             | T!["<<="]
             | T![">>="]
             | T!["-="]
-            | T!["^="] => (1, 2),
-            T!["||"] => (3, 4),
-            T!["&&"] => (5, 6),
-            T!["|"] => (7, 8),
-            T!["^"] => (9, 10),
-            T!["&"] => (10, 11),
-            T!["=="] | T!["!="] => (12, 13),
-            T!["<"] | T!["<="] | T![">"] | T![">="] => (14, 15),
-            T!["<<"] | T![">>"] => (16, 17),
-            T!["+"] | T!["-"] => (18, 19),
-            T!["*"] | T!["/"] | T!["%"] => (20, 21),
-            T!["**"] => (22, 23),
-            T!["."] => (26, 27),
-            T![".."] | T!["..="] => (28, 29),
+            | T!["^="] => (5, 6),
+            T!["||"] => (7, 8),
+            T!["&&"] => (9, 10),
+            T!["|"] => (11, 12),
+            T!["^"] => (13, 14),
+            T!["&"] => (15, 16),
+            T!["=="] | T!["!="] => (17, 18),
+            T!["<"] | T!["<="] | T![">"] | T![">="] => (19, 20),
+            T!["<<"] | T![">>"] => (21, 22),
+            T!["+"] | T!["-"] => (23, 24),
+            T!["*"] | T!["/"] | T!["%"] => (25, 26),
+            T!["**"] => (27, 28),
+            T!["."] => (31, 32),
+            T![".."] | T!["..="] => (33, 34),
+            _ => return None,
+        };
+
+        Some(bp)
+    }
+
+    #[must_use]
+    pub fn prefix_binding_power(self) -> Option<u8> {
+        let bp = match self {
+            T!["+"] | T!["-"] | T!["!"] => 29,
             _ => return None,
         };
 
@@ -1153,7 +1167,7 @@ impl SyntaxKind {
     #[must_use]
     pub fn postfix_binding_power(self) -> Option<u8> {
         let bp = match self {
-            T!["["] | T!["("] => 25,
+            T!["["] | T!["("] => 30,
             _ => return None,
         };
 

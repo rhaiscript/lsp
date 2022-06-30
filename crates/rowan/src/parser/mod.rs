@@ -5,7 +5,7 @@ use crate::syntax::{SyntaxKind, SyntaxNode};
 use rowan::GreenNode;
 use thiserror::Error;
 
-use self::context::Context;
+pub use self::context::{Context, Operator};
 
 mod context;
 pub mod parsers;
@@ -47,6 +47,12 @@ impl<'src> Parser<'src> {
         Self {
             context: Context::new(source),
         }
+    }
+
+    #[must_use]
+    pub fn with_operator(mut self, name: impl Into<String>, operator: Operator) -> Self {
+        self.context.custom_op(name.into(), operator);
+        self
     }
 
     /// Finish parsing.

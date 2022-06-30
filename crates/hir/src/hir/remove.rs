@@ -215,6 +215,11 @@ impl Hir {
                 self.remove_scope(t.try_scope);
                 self.remove_scope(t.catch_scope);
             }
+            SymbolKind::Throw(sym) => {
+                if let Some(sym) = sym.expr {
+                    self.remove_symbol(sym);
+                }
+            }
             SymbolKind::Op(_op) => {
                 // TODO
             }

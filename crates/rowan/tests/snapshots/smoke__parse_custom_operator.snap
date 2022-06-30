@@ -1,0 +1,57 @@
+---
+source: crates/rowan/tests/smoke.rs
+assertion_line: 70
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..49
+  STMT@0..15
+    ITEM@0..14
+      EXPR@0..14
+        EXPR_LET@0..14
+          KW_LET@0..3 "let"
+          WHITESPACE@3..4 " "
+          IDENT@4..5 "a"
+          WHITESPACE@5..6 " "
+          OP_ASSIGN@6..7 "="
+          EXPR@7..14
+            EXPR_BINARY@7..14
+              EXPR@7..10
+                WHITESPACE@7..8 " "
+                EXPR_LIT@8..9
+                  LIT@8..9
+                    LIT_INT@8..9 "3"
+                WHITESPACE@9..10 " "
+              KW_IN@10..12 "in"
+              EXPR@12..14
+                WHITESPACE@12..13 " "
+                EXPR_LIT@13..14
+                  LIT@13..14
+                    LIT_INT@13..14 "4"
+    PUNCT_SEMI@14..15 ";"
+  WHITESPACE@15..17 "\n\n"
+  STMT@17..48
+    ITEM@17..47
+      EXPR@17..47
+        EXPR_LET@17..47
+          KW_LET@17..20 "let"
+          WHITESPACE@20..21 " "
+          IDENT@21..36 "custom_operator"
+          WHITESPACE@36..37 " "
+          OP_ASSIGN@37..38 "="
+          EXPR@38..47
+            EXPR_BINARY@38..47
+              EXPR@38..41
+                WHITESPACE@38..39 " "
+                EXPR_LIT@39..40
+                  LIT@39..40
+                    LIT_INT@39..40 "3"
+                WHITESPACE@40..41 " "
+              IDENT@41..45 "over"
+              EXPR@45..47
+                WHITESPACE@45..46 " "
+                EXPR_LIT@46..47
+                  LIT@46..47
+                    LIT_INT@46..47 "4"
+    PUNCT_SEMI@47..48 ";"
+  WHITESPACE@48..49 "\n"
+

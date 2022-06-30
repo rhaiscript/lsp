@@ -1096,6 +1096,25 @@ impl Hir {
                 scope.add_symbol(self, symbol, false);
                 Some(symbol)
             }
+            Expr::Throw(throw_expr) => {
+                let expr = throw_expr
+                    .expr()
+                    .and_then(|e| self.add_expression(source, scope, false, e));
+
+                let symbol = self.add_symbol(SymbolData {
+                    source: SourceInfo {
+                        source: Some(source),
+                        text_range: throw_expr.syntax().text_range().into(),
+                        selection_text_range: None,
+                    },
+                    parent_scope: Scope::default(),
+                    export: false,
+                    kind: SymbolKind::Throw(ThrowSymbol { expr }),
+                });
+
+                scope.add_symbol(self, symbol, false);
+                Some(symbol)
+            }
         }
     }
 }

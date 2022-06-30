@@ -51,6 +51,7 @@ Expr =
 | ExprExport
 | ExprImport
 | ExprTry
+| ExprThrow
 
 // Standalone identifiers are also valid expressions.
 ExprIdent =
@@ -151,6 +152,9 @@ SwitchArm =
 
 SwitchArmCondition =
   'if' Expr
+
+ExprThrow = 
+  'throw' Expr
 
 ExprReturn =
   'return' Expr?

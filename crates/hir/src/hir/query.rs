@@ -543,6 +543,11 @@ fn collect_symbol_scope_iters<'h>(
             iters.push(Box::new(hir.scope_symbols(sym.catch_scope)));
         }
         SymbolKind::Import(sym) => iters.push(Box::new(hir.scope_symbols(sym.scope))),
+        SymbolKind::Throw(sym) => {
+            if let Some(sym) = sym.expr {
+                collect_symbol_scope_iters(hir, iters, sym);
+            }
+        }
         SymbolKind::Op(_)
         | SymbolKind::Lit(_)
         | SymbolKind::Reference(_)

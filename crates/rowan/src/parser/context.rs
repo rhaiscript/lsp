@@ -1,7 +1,8 @@
 //! The parser context is a separate module to limit
 //! the API surface for the parser functions.
 
-#![allow(dead_code)]
+use std::collections::HashMap;
+
 use rowan::{Checkpoint, GreenNodeBuilder, TextRange, TextSize};
 
 use crate::syntax::{
@@ -23,9 +24,16 @@ pub struct Context<'src> {
     green: GreenNodeBuilder<'static>,
     errors: Vec<ParseError>,
 
-    // Tracks statements being separated by ";".
+    /// User-provided custom operators.
+    ///
+    /// tamasfe: originally I wanted to treat all identifiers
+    /// as valid operators, but it introduced too much ambiguity,
+    /// so the user has to provide them.
+    custom_ops: HashMap<String, Operator>,
+
+    /// Tracks statements being separated by ";".
     statement_closed: bool,
-    // We are parsing a switch pattern expression.
+    /// We are parsing a switch pattern expression.
     switch_pat_expr: bool,
 }
 
@@ -37,10 +45,15 @@ impl<'src> Context<'src> {
             last_token: None,
             green: GreenNodeBuilder::new(),
             errors: Vec::new(),
+            custom_ops: HashMap::default(),
 
             statement_closed: true,
             switch_pat_expr: false,
         }
+    }
+
+    pub(super) fn custom_op(&mut self, ident: String, op: Operator) {
+        self.custom_ops.insert(ident, op);
     }
 
     pub(crate) fn finish(self) -> Parse {
@@ -75,6 +88,7 @@ impl<'src> Context<'src> {
     }
 
     /// Get the previously added token.
+    #[must_use]
     pub fn previous_token(&self) -> Option<SyntaxKind> {
         self.last_token
     }
@@ -151,6 +165,7 @@ impl<'src> Context<'src> {
     /// Check whether the last statement was closed with `;`.
     ///
     /// Block-like statements are also self-closing.
+    #[must_use]
     pub fn statement_closed(&self) -> bool {
         self.statement_closed
     }
@@ -160,8 +175,31 @@ impl<'src> Context<'src> {
         self.statement_closed = v;
     }
 
+    #[must_use]
     pub fn slice(&self) -> &str {
         self.lexer.slice()
+    }
+
+    #[must_use]
+    pub fn switch_pat_expr(&self) -> bool {
+        self.switch_pat_expr
+    }
+
+    pub fn set_switch_pat_expr(&mut self, switch_pat_expr: bool) {
+        self.switch_pat_expr = switch_pat_expr;
+    }
+
+    /// The binding power of the current token.
+    #[must_use]
+    pub fn infix_binding_power(&self) -> Option<(u8, u8)> {
+        if let Some(bp) = self
+            .current_token
+            .and_then(SyntaxKind::infix_binding_power)
+        {
+            return Some(bp);
+        }
+
+        self.custom_ops.get(self.slice()).map(|o| o.binding_power)
     }
 
     fn add_error_inner(&mut self, error: ParseErrorKind, eat: bool) {
@@ -200,12 +238,19 @@ impl<'src> Context<'src> {
             self.eat();
         }
     }
+}
 
-    pub fn switch_pat_expr(&self) -> bool {
-        self.switch_pat_expr
-    }
+/// A custom Operator.
+#[derive(Debug)]
+pub struct Operator {
+    pub binding_power: (u8, u8),
+}
 
-    pub fn set_switch_pat_expr(&mut self, switch_pat_expr: bool) {
-        self.switch_pat_expr = switch_pat_expr;
+impl Default for Operator {
+    fn default() -> Self {
+        // Lowest by default.
+        Self {
+            binding_power: (1, 2),
+        }
     }
 }

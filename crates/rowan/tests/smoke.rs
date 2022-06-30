@@ -1,4 +1,4 @@
-use rhai_rowan::parser::Parser;
+use rhai_rowan::parser::{Operator, Parser};
 use test_case::test_case;
 
 #[test_case("simple", include_str!("../../../testdata/valid/simple.rhai"))]
@@ -28,6 +28,7 @@ use test_case::test_case;
 #[test_case("switch", include_str!("../../../testdata/valid/switch.rhai"))]
 #[test_case("while", include_str!("../../../testdata/valid/while.rhai"))]
 #[test_case("char", include_str!("../../../testdata/valid/char.rhai"))]
+#[test_case("throw_try_catch", include_str!("../../../testdata/valid/throw_try_catch.rhai"))]
 fn parse_valid(name: &str, src: &str) {
     let parse = Parser::new(src).parse_script();
     assert!(parse.errors.is_empty(), "{:#?}", parse.errors);
@@ -55,4 +56,19 @@ fn parse_valid(name: &str, src: &str) {
             insta::assert_snapshot!(format!("{:#?}", parse.into_syntax()));
         }
     );
+}
+
+#[test]
+fn parse_custom_operator() {
+    let src = include_str!("../../../testdata/valid/operators.rhai");
+
+    let parse = Parser::new(src)
+        .with_operator("over", Operator::default())
+        .parse_script();
+    assert!(parse.errors.is_empty(), "{:#?}", parse.errors);
+
+    insta::assert_snapshot!(format!("{:#?}", parse.into_syntax()));
+
+    let parse = Parser::new(src).parse_script();
+    assert!(!parse.errors.is_empty());
 }

@@ -1,0 +1,36 @@
+---
+source: crates/rowan/tests/smoke.rs
+assertion_line: 56
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..37
+  STMT@0..37
+    ITEM@0..37
+      EXPR@0..37
+        EXPR_TRY@0..37
+          KW_TRY@0..3 "try"
+          EXPR_BLOCK@3..26
+            WHITESPACE@3..4 " "
+            PUNCT_BRACE_START@4..5 "{"
+            WHITESPACE@5..10 "\n    "
+            STMT@10..24
+              ITEM@10..23
+                EXPR@10..23
+                  EXPR_THROW@10..23
+                    KW_THROW@10..15 "throw"
+                    EXPR@15..23
+                      WHITESPACE@15..16 " "
+                      EXPR_LIT@16..23
+                        LIT@16..23
+                          LIT_STR@16..23 "\"hello\""
+              PUNCT_SEMI@23..24 ";"
+            WHITESPACE@24..25 "\n"
+            PUNCT_BRACE_END@25..26 "}"
+          WHITESPACE@26..27 " "
+          KW_CATCH@27..32 "catch"
+          WHITESPACE@32..33 " "
+          EXPR_BLOCK@33..37
+            PUNCT_BRACE_START@33..34 "{"
+            WHITESPACE@34..36 "\n\n"
+            PUNCT_BRACE_END@36..37 "}"
+
