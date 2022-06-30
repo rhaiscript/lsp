@@ -370,6 +370,7 @@ pub enum SyntaxKind {
     EXPR_EXPORT,
     EXPR_IMPORT,
     EXPR_TRY,
+    EXPR_THROW,
     OBJECT_FIELD,
     ARG_LIST,
     PARAM_LIST,

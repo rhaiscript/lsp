@@ -1,0 +1,5 @@
+try {
+    throw "hello";
+} catch {
+
+}

@@ -28,6 +28,7 @@ use test_case::test_case;
 #[test_case("switch", include_str!("../../../testdata/valid/switch.rhai"))]
 #[test_case("while", include_str!("../../../testdata/valid/while.rhai"))]
 #[test_case("char", include_str!("../../../testdata/valid/char.rhai"))]
+#[test_case("throw_try_catch", include_str!("../../../testdata/valid/throw_try_catch.rhai"))]
 fn parse_valid(name: &str, src: &str) {
     let parse = Parser::new(src).parse_script();
     assert!(parse.errors.is_empty(), "{:#?}", parse.errors);

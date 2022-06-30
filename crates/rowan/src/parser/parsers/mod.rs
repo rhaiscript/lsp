@@ -195,6 +195,11 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             ctx.finish_node();
             return;
         }
+        T!["throw"] => {
+            parse_expr_throw(ctx);
+            ctx.finish_node();
+            return;
+        }
         T!["#{"] => {
             parse_expr_object(ctx);
             if let Some(t) = ctx.token() {
@@ -398,6 +403,16 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         parse_expr_bp(ctx, r_bp);
         ctx.finish_node();
     }
+
+    ctx.finish_node();
+}
+
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
+pub fn parse_expr_throw(ctx: &mut Context) {
+    ctx.start_node(EXPR_THROW);
+
+    expect_token!(ctx in node, T!["throw"]);
+    parse_expr(ctx);
 
     ctx.finish_node();
 }

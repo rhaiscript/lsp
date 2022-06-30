@@ -115,6 +115,7 @@ pub enum SymbolKind {
     Switch(SwitchSymbol),
     Export(ExportSymbol),
     Try(TrySymbol),
+    Throw(ThrowSymbol),
     Import(ImportSymbol),
     Discard(DiscardSymbol),
 }
@@ -597,6 +598,23 @@ impl SymbolKind {
             None
         }
     }
+
+    /// Returns `true` if the symbol kind is [`Throw`].
+    ///
+    /// [`Throw`]: SymbolKind::Throw
+    #[must_use]
+    pub fn is_throw(&self) -> bool {
+        matches!(self, Self::Throw(..))
+    }
+
+    #[must_use]
+    pub fn as_throw(&self) -> Option<&ThrowSymbol> {
+        if let Self::Throw(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -704,23 +722,15 @@ pub struct ObjectField {
     pub value: Option<Symbol>,
 }
 
+#[derive(Debug, Clone)]
+pub struct ThrowSymbol {
+    pub expr: Option<Symbol>,
+}
+
 #[derive(Debug, Default, Clone)]
 pub struct ClosureSymbol {
     pub scope: Scope,
     pub expr: Option<Symbol>,
-}
-
-impl ClosureSymbol {
-    // pub fn params<'s>(&'s self, m: &'s Module) -> impl Iterator<Item = Symbol> + 's {
-    //     m[self.scope]
-    //         .symbols
-    //         .iter()
-    //         .take_while(|s| match &m[**s].kind {
-    //             SymbolKind::Decl(d) => d.is_param,
-    //             _ => false,
-    //         })
-    //         .copied()
-    // }
 }
 
 #[derive(Debug, Default, Clone)]
