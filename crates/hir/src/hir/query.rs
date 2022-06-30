@@ -1,13 +1,8 @@
 use core::iter;
 use std::cmp::Ordering;
-
 use itertools::Either;
 use rhai_rowan::{TextRange, TextSize};
-
-use crate::{
-    error::{Error, ErrorKind},
-    scope::ScopeParent,
-};
+use crate::scope::ScopeParent;
 
 use super::*;
 
@@ -270,31 +265,6 @@ impl Hir {
         None
     }
 
-    #[must_use]
-    pub fn errors(&self) -> Vec<Error> {
-        let mut errors = Vec::new();
-
-        for (symbol, _) in self.symbols() {
-            self.collect_errors_from_symbol(symbol, &mut errors);
-        }
-
-        errors
-    }
-
-    #[must_use]
-    pub fn errors_for_source(&self, source: Source) -> Vec<Error> {
-        let mut errors = Vec::new();
-
-        for (symbol, _) in self
-            .symbols()
-            .filter(|(_, symbol_data)| symbol_data.source.source == Some(source))
-        {
-            self.collect_errors_from_symbol(symbol, &mut errors);
-        }
-
-        errors
-    }
-
     /// All the missing modules that appear in imports.
     #[must_use]
     pub fn missing_modules(&self) -> impl ExactSizeIterator<Item = Url> {
@@ -351,25 +321,7 @@ impl Hir {
         None
     }
 
-    fn collect_errors_from_symbol(&self, symbol: Symbol, errors: &mut Vec<Error>) {
-        if let Some(symbol_data) = self.symbol(symbol) {
-            if let SymbolKind::Reference(r) = &symbol_data.kind {
-                if !r.field_access && r.target.is_none() && r.name != "this" {
-                    errors.push(Error {
-                        text_range: symbol_data.selection_or_text_range(),
-                        kind: ErrorKind::UnresolvedReference {
-                            reference_name: r.name.clone(),
-                            reference_range: symbol_data.selection_or_text_range(),
-                            reference_symbol: symbol,
-                            similar_name: self.find_similar_name(symbol, &r.name),
-                        },
-                    });
-                }
-            }
-        }
-    }
-
-    fn find_similar_name(&self, symbol: Symbol, name: &str) -> Option<String> {
+    pub(super) fn find_similar_name(&self, symbol: Symbol, name: &str) -> Option<String> {
         const MIN_DISTANCE: f64 = 0.5;
 
         self.visible_symbols_from_symbol(symbol)

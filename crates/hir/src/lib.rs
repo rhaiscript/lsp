@@ -24,6 +24,7 @@ pub(crate) mod util;
 pub(crate) type IndexMap<K, V> = indexmap::IndexMap<K, V, ahash::RandomState>;
 pub(crate) type IndexSet<V> = indexmap::IndexSet<V, ahash::RandomState>;
 pub(crate) type HashSet<V> = ahash::AHashSet<V>;
+pub(crate) type HashMap<K, V> = ahash::AHashMap<K, V>;
 
 pub use hir::Hir;
 pub use module::Module;

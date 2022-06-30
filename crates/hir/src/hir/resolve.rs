@@ -111,8 +111,8 @@ impl Hir {
                 }
             };
 
-            if let Some(import_symbol) = self[import_symbol].kind.as_import() {
-                if let Some(import_path) = import_symbol.import_path(self) {
+            if let Some(import_symbol_data) = self[import_symbol].kind.as_import() {
+                if let Some(import_path) = import_symbol_data.import_path(self) {
                     let import_url = match self.resolve_import_url(self[module].url(), import_path)
                     {
                         Some(u) => u,
@@ -124,11 +124,17 @@ impl Hir {
                         None => continue,
                     };
 
-                    if let Some(alias) = import_symbol.alias {
+                    if let Some(alias) = import_symbol_data.alias {
                         if let Some(alias_decl) = self.symbol_mut(alias).kind.as_decl_mut() {
                             alias_decl.target = Some(ReferenceTarget::Module(target_module));
                         }
                     }
+
+                    self.symbol_mut(import_symbol)
+                        .kind
+                        .as_import_mut()
+                        .unwrap()
+                        .target = Some(target_module);
                 }
             }
         }

@@ -3,8 +3,11 @@ use crate::{
     world::{Document, World},
 };
 use lsp_async_stub::{util::LspExt, Context, RequestWriter};
-use lsp_types::{notification, Diagnostic, DiagnosticSeverity, PublishDiagnosticsParams, Url};
-use rhai_hir::Hir;
+use lsp_types::{
+    notification, Diagnostic, DiagnosticRelatedInformation, DiagnosticSeverity, Location,
+    PublishDiagnosticsParams, Url,
+};
+use rhai_hir::{error::ErrorKind, Hir};
 
 pub(crate) async fn publish_all_diagnostics<E: Environment>(context: Context<World<E>>) {
     let workspaces = context.workspaces.read().await;
@@ -112,23 +115,85 @@ fn collect_syntax_errors(doc: &Document, diags: &mut Vec<Diagnostic>) {
 #[tracing::instrument(skip_all)]
 fn collect_hir_errors(uri: &Url, doc: &Document, hir: &Hir, diags: &mut Vec<Diagnostic>) {
     if let Some(source) = hir.source_by_url(uri) {
-        diags.extend(hir.errors_for_source(source).into_iter().map(|e| {
-            let range = doc
-                .mapper
-                .range(e.text_range.unwrap_or_default())
-                .unwrap_or_default()
-                .into_lsp();
-            Diagnostic {
-                range,
-                severity: Some(DiagnosticSeverity::ERROR),
-                code: None,
-                code_description: None,
-                source: Some("Rhai".into()),
-                message: e.kind.to_string(),
-                related_information: None,
-                tags: None,
-                data: None,
+        for error in hir.errors_for_source(source) {
+            match &error.kind {
+                ErrorKind::DuplicateFnParameter {
+                    duplicate_symbol,
+                    existing_symbol,
+                } => diags.push(Diagnostic {
+                    range: doc
+                        .mapper
+                        .range(hir[*duplicate_symbol].source.text_range.unwrap_or_default())
+                        .unwrap_or_default()
+                        .into_lsp(),
+                    severity: Some(DiagnosticSeverity::ERROR),
+                    code: None,
+                    code_description: None,
+                    source: Some("Rhai".into()),
+                    message: error.to_string(),
+                    related_information: Some(Vec::from([DiagnosticRelatedInformation {
+                        message: "parameter with the same name".into(),
+                        location: Location {
+                            range: doc
+                                .mapper
+                                .range(hir[*existing_symbol].source.text_range.unwrap_or_default())
+                                .unwrap_or_default()
+                                .into_lsp(),
+                            uri: uri.clone(),
+                        },
+                    }])),
+                    tags: None,
+                    data: None,
+                }),
+                ErrorKind::UnresolvedReference {
+                    reference_symbol,
+                    similar_name: _,
+                } => diags.push(Diagnostic {
+                    range: doc
+                        .mapper
+                        .range(hir[*reference_symbol].source.text_range.unwrap_or_default())
+                        .unwrap_or_default()
+                        .into_lsp(),
+                    severity: Some(DiagnosticSeverity::ERROR),
+                    code: None,
+                    code_description: None,
+                    source: Some("Rhai".into()),
+                    message: error.to_string(),
+                    related_information: None,
+                    tags: None,
+                    data: None,
+                }),
+                ErrorKind::UnresolvedImport { import } => diags.push(Diagnostic {
+                    range: doc
+                        .mapper
+                        .range(hir[*import].source.text_range.unwrap_or_default())
+                        .unwrap_or_default()
+                        .into_lsp(),
+                    severity: Some(DiagnosticSeverity::ERROR),
+                    code: None,
+                    code_description: None,
+                    source: Some("Rhai".into()),
+                    message: error.to_string(),
+                    related_information: None,
+                    tags: None,
+                    data: None,
+                }),
+                ErrorKind::NestedFunction { function } => diags.push(Diagnostic {
+                    range: doc
+                        .mapper
+                        .range(hir[*function].source.text_range.unwrap_or_default())
+                        .unwrap_or_default()
+                        .into_lsp(),
+                    severity: Some(DiagnosticSeverity::ERROR),
+                    code: None,
+                    code_description: None,
+                    source: Some("Rhai".into()),
+                    message: error.to_string(),
+                    related_information: None,
+                    tags: None,
+                    data: None,
+                }),
             }
-        }));
+        }
     }
 }
