@@ -32,15 +32,27 @@ fn parse_valid(name: &str, src: &str) {
     let parse = Parser::new(src).parse_script();
     assert!(parse.errors.is_empty(), "{:#?}", parse.errors);
 
+    let mut engine = rhai::Engine::new();
+    engine.set_max_expr_depths(0, 0);
+
+    if src.starts_with("#!") {
+        engine
+            .compile(
+                src.lines()
+                    .skip(1)
+                    .map(ToString::to_string)
+                    .collect::<Vec<String>>()
+                    .join("\n"),
+            )
+            .unwrap();
+    } else {
+        engine.compile(src).unwrap();
+    }
+
     insta::with_settings!(
         { snapshot_suffix => name },
         {
             insta::assert_snapshot!(format!("{:#?}", parse.into_syntax()));
         }
     );
-
-    rhai::Engine::new()
-        .set_max_expr_depths(0, 0)
-        .compile(src)
-        .unwrap();
 }
