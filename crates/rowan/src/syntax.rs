@@ -329,7 +329,7 @@ pub enum SyntaxKind {
     #[token("/**", lex_multi_line_comment)]
     COMMENT_BLOCK_DOC,
 
-    #[regex(r"[ \t\n\f]+")]
+    #[regex(r"[ \t\r\n\f]+")]
     WHITESPACE,
     #[error]
     ERROR,

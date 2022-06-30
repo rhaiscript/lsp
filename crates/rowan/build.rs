@@ -5,6 +5,12 @@ fn main() {
 
     let ungram = std::fs::read_to_string("src/ast/rhai.ungram").unwrap();
 
+    let ungram = if cfg!(windows) {
+        ungram.replace("\r\n", "\n")
+    } else {
+        ungram
+    };
+
     let generated = rhai_sourcegen::syntax::generate_syntax(&ungram).unwrap();
 
     let syntax_file = std::fs::read_to_string("src/syntax.rs").unwrap();
