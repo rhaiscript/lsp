@@ -1,4 +1,4 @@
-use rhai_rowan::parser::Parser;
+use rhai_rowan::parser::{Operator, Parser};
 use test_case::test_case;
 
 #[test_case("simple", include_str!("../../../testdata/valid/simple.rhai"))]
@@ -56,4 +56,19 @@ fn parse_valid(name: &str, src: &str) {
             insta::assert_snapshot!(format!("{:#?}", parse.into_syntax()));
         }
     );
+}
+
+#[test]
+fn parse_custom_operator() {
+    let src = include_str!("../../../testdata/valid/operators.rhai");
+
+    let parse = Parser::new(src)
+        .with_operator("over", Operator::default())
+        .parse_script();
+    assert!(parse.errors.is_empty(), "{:#?}", parse.errors);
+
+    insta::assert_snapshot!(format!("{:#?}", parse.into_syntax()));
+
+    let parse = Parser::new(src).parse_script();
+    assert!(!parse.errors.is_empty());
 }
