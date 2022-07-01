@@ -118,7 +118,7 @@ impl Hir {
 impl Scope {
     pub(crate) fn add_symbol(self, hir: &mut Hir, symbol: Symbol, hoist: bool) {
         assert!(!self.is_null(), "the scope cannot be null");
-        assert!(!symbol.is_null(), "the provided symbol be null");
+        assert!(!symbol.is_null(), "the provided symbol cannot be null");
         let s = hir.scope_mut(self);
         debug_assert!(!s.symbols.contains(&symbol));
         debug_assert!(!s.hoisted_symbols.contains(&symbol));

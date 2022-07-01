@@ -699,7 +699,7 @@ impl Hir {
                         iterable: expr
                             .iterable()
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
-                        scope,
+                        scope: for_scope,
                     }),
                 };
 
