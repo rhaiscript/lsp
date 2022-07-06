@@ -51,7 +51,7 @@ fn type_of(data: ?) -> String;
 /// 
 /// f.call(42);             // call: foo(42)
 /// ```
-fn Fn(fn_name: &str) -> FnPtr;
+fn Fn(fn_name: String) -> FnPtr;
 
 /// Call a function pointed to by a function pointer,
 /// passing following arguments to the function call.
@@ -119,7 +119,7 @@ fn curry(fn_ptr: FnPtr, args...) -> FnPtr;
 /// print(is_def_fn("foo", 0));     // prints false
 /// print(is_def_fn("bar", 1));     // prints false
 /// ```
-fn is_def_fn(fn_name: &str, num_params: INT) -> bool;
+fn is_def_fn(fn_name: String, num_params: i64) -> bool;
 
 /// Return `true` if a variable matching a specified name is defined.
 /// 
@@ -138,7 +138,7 @@ fn is_def_fn(fn_name: &str, num_params: INT) -> bool;
 /// 
 /// print(is_def_var("y"));         // prints false
 /// ```
-fn is_def_var(var_name: &str) -> bool;
+fn is_def_var(var_name: String) -> bool;
 
 /// Return `true` if the variable is shared.
 /// 
@@ -167,4 +167,4 @@ fn is_shared(variable) -> bool;
 /// print(x);           // prints 123
 /// print(y);           // prints 42
 /// ```
-fn eval(script: &str) -> ?;
+fn eval(script: String) -> ?;
