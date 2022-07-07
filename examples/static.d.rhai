@@ -153,7 +153,7 @@ fn is_def_var(var_name: String) -> bool;
 /// 
 /// print(is_shared(x));        // prints true
 /// ```
-fn is_shared(variable) -> bool;
+fn is_shared(variable: ?) -> bool;
 
 /// Evaluate a text script within the current scope.
 /// 
