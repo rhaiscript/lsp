@@ -173,6 +173,8 @@ repository:
           (?x)  !(?!=) 
             | &&
             | \|\|
+      - name: keyword.operator.coalesce.rhai
+        match: \?\?
       - name: keyword.operator.assignment.rhai
         match: (?x)  =(?![=>])
       - name: keyword.operator.assignment.augmented.rhai
@@ -213,12 +215,18 @@ repository:
             \*(?!\)) |
             \+(?!\+) |
             -(?![>-])
+      - name: keyword.operator.range.rhai
+        match: |-
+          (?x)  \.\.(?![\.=]) |
+            \.\.=
       - name: keyword.operator.accessor.rhai punctuation.accessor.rhai
-        match: \.(?!\.)
+        match: |-
+          (?x)  \.(?!\.) |
+            \?\.
       - name: punctuation.separator.switch.case.rhai
         match: =>
       - name: invalid.illegal.operator.rhai
-        match: (\(\*|\*\)|\+\+|--|\.\.+|~|#(?!{)|@|\$(?!{)|->|<-|===|!==|\:=|\:\:<)
+        match: (\(\*|\*\)|\+\+|--|\.\.\.+|~|#(?!{)|@|\?|\$(?!{)|->|<-|===|!==|\:=|\:\:<)
   parameter-list-types:
     # Parameter list but only containing types.
     begin: \(

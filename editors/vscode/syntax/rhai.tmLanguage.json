@@ -330,6 +330,10 @@
           "match": "(?x)  !(?!=) \n  | &&\n  | \\|\\|"
         },
         {
+          "name": "keyword.operator.coalesce.rhai",
+          "match": "\\?\\?"
+        },
+        {
           "name": "keyword.operator.assignment.rhai",
           "match": "(?x)  =(?![=>])"
         },
@@ -354,8 +358,12 @@
           "match": "(?x)  / |\n  % |\n  \\*\\* |\n  \\*(?!\\)) |\n  \\+(?!\\+) |\n  -(?![>-])"
         },
         {
+          "name": "keyword.operator.range.rhai",
+          "match": "(?x)  \\.\\.(?![\\.=]) |\n  \\.\\.="
+        },
+        {
           "name": "keyword.operator.accessor.rhai punctuation.accessor.rhai",
-          "match": "\\.(?!\\.)"
+          "match": "(?x)  \\.(?!\\.) |\n  \\?\\."
         },
         {
           "name": "punctuation.separator.switch.case.rhai",
@@ -363,7 +371,7 @@
         },
         {
           "name": "invalid.illegal.operator.rhai",
-          "match": "(\\(\\*|\\*\\)|\\+\\+|--|\\.\\.+|~|#(?!{)|@|\\$(?!{)|->|<-|===|!==|\\:=|\\:\\:<)"
+          "match": "(\\(\\*|\\*\\)|\\+\\+|--|\\.\\.\\.+|~|#(?!{)|@|\\?|\\$(?!{)|->|<-|===|!==|\\:=|\\:\\:<)"
         }
       ]
     },
