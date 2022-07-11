@@ -155,6 +155,8 @@ pub enum SyntaxKind {
     PUNCT_UNDERSCORE,
     #[token("=>")]
     PUNCT_ARROW_FAT,
+    #[token("->")]
+    PUNCT_ARROW_THIN,
 
     #[token("(")]
     PUNCT_PAREN_START,
@@ -203,6 +205,9 @@ pub enum SyntaxKind {
     OP_RANGE,
     #[token("..=")]
     OP_RANGE_INCLUSIVE,
+
+    #[token("...")]
+    OP_SPREAD,
 
     #[token("=")]
     OP_ASSIGN,

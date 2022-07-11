@@ -5,4 +5,4 @@
 module external;
 
 /// Load a file into a byte array.
-fn load_file(path: string): [u8];
+fn load_file(path: String) -> [u8];

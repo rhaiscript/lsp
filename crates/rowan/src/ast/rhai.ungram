@@ -251,7 +251,7 @@ DefFn =
   'fn'
   'ident'
   TypedParamList
-  (':' ty:Type)?
+  ('->' ty:Type)?
 
 Type =
   TypeIdent
@@ -278,7 +278,7 @@ TypedParamList =
   '(' (TypedParam (',' TypedParam)* ','?)? ')'
 
 TypedParam =
-  'ident' ':' ty:Type
+  '...'? 'ident' ':' ty:Type
 
 TypeList = 
   '(' (fist_ty:Type (',' more_ty:Type)* ','?)? ')'

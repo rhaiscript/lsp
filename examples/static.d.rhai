@@ -65,7 +65,7 @@ fn Fn(fn_name: String) -> FnPtr;
 /// 
 /// f.call(1, 2, 3);        // call: foo(1, 2, 3)
 /// ```
-fn call(fn_ptr: FnPtr, args...) -> ?;
+fn call(fn_ptr: FnPtr, ...args: ?) -> ?;
 
 /// Call a function pointed to by a function pointer, binding the `this` pointer
 /// to the object of the method call, and passing on following arguments to the function call.
@@ -87,7 +87,7 @@ fn call(fn_ptr: FnPtr, args...) -> ?;
 /// 
 /// print(r);               // prints 42
 /// ```
-fn call(obj: ?, fn_ptr: FnPtr, args...) -> ?;
+fn call(obj: ?, fn_ptr: FnPtr, ...args: ?) -> ?;
 
 /// Curry a number of arguments into a function pointer and return it as a new function pointer.
 /// 
@@ -104,7 +104,7 @@ fn call(obj: ?, fn_ptr: FnPtr, args...) -> ?;
 /// 
 /// g.call(3);              // call: foo(1, 2, 3)
 /// ```
-fn curry(fn_ptr: FnPtr, args...) -> FnPtr;
+fn curry(fn_ptr: FnPtr, ...args: ?) -> FnPtr;
 
 /// Return `true` if a script-defined function exists with a specified name and
 /// number of parameters.

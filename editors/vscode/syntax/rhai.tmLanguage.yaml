@@ -99,7 +99,7 @@ repository:
     patterns:
       - include: "#types"
   fn-definition:
-    match: (fn)\s*([^\(]*)(\([^\)]*\))\s*(\:(?:\n|.)*)?(?!\{)
+    match: (fn)\s*([^\(]*)(\([^\)]*\))\s*(->(?:\n|.)*)?(?!\{)
     captures:
       "1":
         name: storage.type.function.rhai

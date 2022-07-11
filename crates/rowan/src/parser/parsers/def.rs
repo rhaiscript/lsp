@@ -224,7 +224,7 @@ pub fn parse_def_fn(ctx: &mut Context) {
 
     parse_typed_param_list(ctx);
 
-    if let Some(T![":"]) = ctx.token() {
+    if let Some(T!["->"]) = ctx.token() {
         ctx.eat();
         super::ty::parse_type(ctx);
     }
@@ -351,6 +351,12 @@ fn parse_typed_param_list(ctx: &mut Context) {
 #[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_typed_param(ctx: &mut Context) {
     ctx.start_node(TYPED_PARAM);
+
+    let token = require_token!(ctx in node);
+
+    if let T!["..."] = token {
+        ctx.eat();
+    }
 
     expect_token!(ctx in node, T!["ident"]);
     expect_token!(ctx in node, T![":"]);

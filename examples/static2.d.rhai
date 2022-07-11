@@ -4,6 +4,6 @@
 /// in multiple definition files.
 module static;
 
-fn floor(number: f32): f32;
+fn floor(number: f32) -> f32;
 
 const RUNTIME_VERSION: string;
