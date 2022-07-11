@@ -11,9 +11,9 @@ information_for_contributors:
   - "tamasfe: me@tamasfe.dev"
 patterns:
   - include: "#comments"
+  - include: "#keywords"
   - include: "#definitions"
   - include: "#expressions"
-  - include: "#keywords"
   - include: "#punctuation"
 repository:
   definitions:
@@ -296,13 +296,13 @@ repository:
   expressions:
     patterns:
       - include: "#comments"
+      - include: "#keywords"
       - include: "#closure-expr"
       - include: "#fn-expr"
       - include: "#var-expr"
       - include: "#block-expr"
       - include: "#namespace-access"
       - include: "#fn-call-expr"
-      - include: "#keywords"
       - include: "#literals"
       - include: "#let-ident"
 

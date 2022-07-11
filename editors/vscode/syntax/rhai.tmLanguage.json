@@ -16,13 +16,13 @@
       "include": "#comments"
     },
     {
+      "include": "#keywords"
+    },
+    {
       "include": "#definitions"
     },
     {
       "include": "#expressions"
-    },
-    {
-      "include": "#keywords"
     },
     {
       "include": "#punctuation"
@@ -504,6 +504,9 @@
           "include": "#comments"
         },
         {
+          "include": "#keywords"
+        },
+        {
           "include": "#closure-expr"
         },
         {
@@ -520,9 +523,6 @@
         },
         {
           "include": "#fn-call-expr"
-        },
-        {
-          "include": "#keywords"
         },
         {
           "include": "#literals"
