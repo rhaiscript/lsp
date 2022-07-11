@@ -165,6 +165,8 @@ pub enum SyntaxKind {
 
     #[token("[")]
     PUNCT_BRACKET_START,
+    #[token("?[")]
+    PUNCT_NULL_BRACKET_START,
     #[token("]")]
     PUNCT_BRACKET_END,
 
@@ -206,6 +208,8 @@ pub enum SyntaxKind {
     #[token("..=")]
     OP_RANGE_INCLUSIVE,
 
+    #[token("?.")]
+    OP_NULL_ACCESS,
     #[token("...")]
     OP_SPREAD,
 
@@ -251,6 +255,8 @@ pub enum SyntaxKind {
     OP_BOOL_AND,
     #[token("||")]
     OP_BOOL_OR,
+    #[token("??")]
+    OP_NULL_OR,
     #[token("!")]
     OP_NOT,
     // endregion

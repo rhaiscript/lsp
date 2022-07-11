@@ -358,7 +358,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             ctx.finish_node();
 
             match op {
-                T!["["] => {
+                T!["["] | T!["?["] => {
                     ctx.start_node_at(expr_start, EXPR_INDEX);
                     ctx.eat();
                     parse_expr_bp(ctx, 0);
@@ -1154,8 +1154,9 @@ impl SyntaxKind {
             T!["+"] | T!["-"] => (23, 24),
             T!["*"] | T!["/"] | T!["%"] => (25, 26),
             T!["**"] => (27, 28),
-            T!["."] => (31, 32),
-            T![".."] | T!["..="] => (33, 34),
+            T!["??"] => (31, 32),
+            T!["."] | T!["?."] => (33, 34),
+            T![".."] | T!["..="] => (35, 36),
             _ => return None,
         };
 
@@ -1175,7 +1176,7 @@ impl SyntaxKind {
     #[must_use]
     pub fn postfix_binding_power(self) -> Option<u8> {
         let bp = match self {
-            T!["["] | T!["("] => 30,
+            T!["?["] | T!["["] | T!["("] => 30,
             _ => return None,
         };
 

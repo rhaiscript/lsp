@@ -85,7 +85,7 @@ ExprBinary =
   | '==' | '!=' | '<=' | '>=' | '<' | '>'
   | '+' | '*' | '**' | '-' | '/' | '%' | '<<' | '>>' | '^' | '|' | '&'
   | '=' | '+=' | '/=' | '*=' | '**=' | '%=' | '>>=' | '<<=' | '-=' | '|=' | '&=' | '^='
-  | '.'
+  | '.' | '?.' | '??'
   )
   rhs:Expr
 
@@ -96,7 +96,7 @@ ExprArray =
   '['  (Expr (',' Expr)* ','?)? ']'
 
 ExprIndex =
-  base:Expr '[' index:Expr ']'
+  base:Expr '?['? '['? index:Expr ']'
 
 ExprObject =
   '#{' fields:(ObjectField (',' ObjectField)* ','?)? '}'
