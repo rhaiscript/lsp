@@ -339,7 +339,7 @@ pub enum SyntaxKind {
     COMMENT_LINE_DOC,
 
     // /******... is not a block comment
-    #[regex(r"/*|/***", lex_multi_line_comment)]
+    #[regex(r"/\*|/\*\*\*", lex_multi_line_comment)]
     COMMENT_BLOCK,
 
     #[token("/**", lex_multi_line_comment)]
