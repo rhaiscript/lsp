@@ -328,7 +328,7 @@ pub enum SyntaxKind {
     #[regex(r"#![^\n\r]*")]
     SHEBANG,
 
-    #[regex("_?[A-Za-z][0-9A-Za-z_]*")]
+    #[regex("_*[A-Za-z][0-9A-Za-z_]*")]
     IDENT,
 
     // ///////... is not a block comment
