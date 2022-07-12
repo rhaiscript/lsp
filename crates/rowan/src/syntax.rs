@@ -262,13 +262,16 @@ pub enum SyntaxKind {
     // endregion
 
     // region: Literals
-    #[regex(r"[0-9_]+", priority = 3)]
+    #[regex(r"[0-9][0-9_]*", priority = 3)]
     #[regex(r"0x[0-9A-Fa-f_]+")]
     #[regex(r"0o[0-7_]+")]
-    #[regex(r"0b(0|1|_)+")]
+    #[regex(r"0b[01_]+")]
     LIT_INT,
 
-    #[regex(r"([0-9_]+(\.[0-9_]+)?([eE][+-]?[0-9_]+)?)", priority = 2)]
+    #[regex(
+        r"[0-9][0-9_]*(\.([0-9][0-9]*)?)?(e([+-][0-9_]+|[0-9][0-9_]*))?",
+        priority = 2
+    )]
     LIT_FLOAT,
 
     #[regex("true|false")]
@@ -325,16 +328,18 @@ pub enum SyntaxKind {
     #[regex(r"#![^\n\r]*")]
     SHEBANG,
 
-    #[regex("[A-Za-z_][0-9A-Za-z_]*")]
+    #[regex("_?[A-Za-z][0-9A-Za-z_]*")]
     IDENT,
 
-    #[regex(r"//[^\n\r]*")]
+    // ///////... is not a block comment
+    #[regex(r"(//|////)[^\n\r]*")]
     COMMENT_LINE,
 
     #[regex(r"///[^\n\r]*")]
     COMMENT_LINE_DOC,
 
-    #[token("/*", lex_multi_line_comment)]
+    // /******... is not a block comment
+    #[regex(r"/*|/***", lex_multi_line_comment)]
     COMMENT_BLOCK,
 
     #[token("/**", lex_multi_line_comment)]
