@@ -1,7 +1,6 @@
 use rhai_hir::Hir;
 use rhai_rowan::parser::Parser;
 use test_case::test_case;
-use url::Url;
 
 #[test_case("simple", include_str!("../../../testdata/valid/simple.rhai"))]
 #[test_case("array", include_str!("../../../testdata/valid/array.rhai"))]
@@ -137,51 +136,31 @@ fn add_and_remove_sources() {
             "throw_try_catch",
             include_str!("../../../testdata/valid/throw_try_catch.rhai"),
         ),
+        (
+            "for2_2",
+            include_str!("../../../testdata/benchmarks/for2.rhai"),
+        ),
     ];
 
     let mut hir = Hir::new();
 
-    for (name, source) in sources {
-        add(&mut hir, name, source);
+    // In some cases reference issues appeared only
+    // after the second time a symbol was attempted
+    // to be resolved.
+    //
+    // So we repeat some ops a few times to
+    // potentially catch more errors.
+    for _ in 0..5 {
+        for (name, source) in sources {
+            add(&mut hir, name, source);
+        }
+
+        hir.resolve_references();
+
+        for (name, _) in sources {
+            remove(&mut hir, name);
+        }
+
+        hir.resolve_references();
     }
-
-    hir.resolve_references();
-
-    for (name, _) in sources {
-        remove(&mut hir, name);
-    }
-
-    hir.resolve_references();
-
-    for (name, source) in sources {
-        add(&mut hir, name, source);
-    }
-
-    hir.resolve_references();
-}
-
-#[test]
-fn test_for_loops() {
-    let url = Url::parse("test:///example.rhai").unwrap();
-
-
-    let mut hir = Hir::new();
-    hir.add_source(&url, &Parser::new(
-        r#"for i in range(5, 0, -1) {  // runs from 5 down to 1
-        print(i);
-    }"#,
-    )
-    .parse_script().into_syntax());
-    hir.resolve_references();
-
-    hir.remove_source(hir.source_by_url(&url).unwrap());
-    hir.resolve_references();
-
-    hir.add_source(&url, &Parser::new(
-        r#"for i in range(5, 0) {  // runs from 5 down to 1
-        print(i);
-    }"#,
-    )
-    .parse_script().into_syntax());
-    hir.resolve_references();
 }

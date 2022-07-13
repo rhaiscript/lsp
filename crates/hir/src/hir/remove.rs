@@ -70,14 +70,8 @@ impl Hir {
                 }
             }
             SymbolKind::Path(path) => {
-                let symbols = path
-                    .segments
-                    .into_iter()
-                    .filter_map(|s| self.symbols.remove(s))
-                    .collect::<Vec<_>>();
-
-                for symbol in symbols {
-                    self.remove_symbol_data(symbol);
+                for symbol in path.segments {
+                    self.remove_symbol(symbol);
                 }
             }
             SymbolKind::Unary(unary) => {
@@ -94,14 +88,8 @@ impl Hir {
                 }
             }
             SymbolKind::Array(array) => {
-                let symbols = array
-                    .values
-                    .into_iter()
-                    .filter_map(|s| self.symbols.remove(s))
-                    .collect::<Vec<_>>();
-
-                for symbol in symbols {
-                    self.remove_symbol_data(symbol);
+                for symbol in array.values {
+                    self.remove_symbol(symbol);
                 }
             }
             SymbolKind::Index(index) => {
@@ -129,14 +117,8 @@ impl Hir {
                     self.remove_symbol(s);
                 }
 
-                let symbols = call
-                    .arguments
-                    .into_iter()
-                    .filter_map(|s| self.symbols.remove(s))
-                    .collect::<Vec<_>>();
-
-                for symbol in symbols {
-                    self.remove_symbol_data(symbol);
+                for symbol in call.arguments {
+                    self.remove_symbol(symbol);
                 }
             }
             SymbolKind::Closure(f) => self.remove_scope(f.scope),
