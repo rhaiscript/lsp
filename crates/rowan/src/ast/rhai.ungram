@@ -243,7 +243,7 @@ DefOp =
       | '.'
     )
   )
-  TypeList (':' ty:Type)?
+  TypeList ('->' ty:Type)?
 
 DefType = ty_token:'ident' 'ident' '=' ty:Type
 

@@ -263,7 +263,7 @@ pub fn parse_def_op(ctx: &mut Context) {
 
     parse_type_list(ctx);
 
-    if let Some(T![":"]) = ctx.token() {
+    if let Some(T!["->"]) = ctx.token() {
         ctx.eat();
         super::ty::parse_type(ctx);
     }
