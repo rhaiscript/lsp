@@ -246,9 +246,9 @@ impl<E: Environment> Workspace<E> {
 
         let mapper = Mapper::new_utf16(text, false);
 
-        let url = url.normalize();
+        let normalized_url = url.clone().normalize();
 
-        self.hir.add_source(&url, &parse.clone_syntax());
+        self.hir.add_source(&normalized_url, &parse.clone_syntax());
         self.hir.resolve_references();
         self.documents.insert(url, Document { parse, mapper });
     }
