@@ -70,7 +70,12 @@ impl<E: Environment> Workspaces<E> {
     pub fn by_document(&self, url: &Url) -> &Workspace<E> {
         self.0
             .iter()
-            .filter(|(key, _)| url.as_str().starts_with(key.as_str()))
+            .filter(|(key, _)| {
+                let normalized_url = (*key).clone().normalize();
+
+                url.as_str().starts_with(key.as_str())
+                    || url.as_str().starts_with(normalized_url.as_str())
+            })
             .max_by(|(a, _), (b, _)| a.as_str().len().cmp(&b.as_str().len()))
             .map_or_else(
                 || {
@@ -86,7 +91,11 @@ impl<E: Environment> Workspaces<E> {
         self.0
             .iter_mut()
             .filter(|(key, _)| {
-                url.as_str().starts_with(key.as_str()) || *key == &*DEFAULT_WORKSPACE_URL
+                let normalized_url = (*key).clone().normalize();
+
+                url.as_str().starts_with(key.as_str())
+                    || url.as_str().starts_with(normalized_url.as_str())
+                    || *key == &*DEFAULT_WORKSPACE_URL
             })
             .max_by(|(a, _), (b, _)| a.as_str().len().cmp(&b.as_str().len()))
             .map(|(k, ws)| {
