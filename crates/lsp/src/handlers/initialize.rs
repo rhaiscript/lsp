@@ -1,7 +1,6 @@
-use std::path::Path;
 use std::sync::Arc;
 
-use super::{update_configuration, update_document};
+use super::update_configuration;
 use crate::config::InitConfig;
 use crate::diagnostics::publish_all_diagnostics;
 use crate::environment::Environment;
@@ -11,7 +10,7 @@ use lsp_async_stub::{rpc::Error, Context, Params};
 use lsp_types::{
     CompletionOptions, DeclarationCapability, FoldingRangeProviderCapability,
     HoverProviderCapability, InitializedParams, OneOf, RenameOptions, ServerCapabilities,
-    ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind, Url,
+    ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind,
     WorkspaceFoldersServerCapabilities, WorkspaceServerCapabilities,
 };
 use lsp_types::{InitializeParams, InitializeResult};
@@ -85,56 +84,21 @@ pub async fn initialized<E: Environment>(
 
     let mut workspaces = context.workspaces.write().await;
 
-    let workspace_roots = workspaces
-        .iter()
-        .filter(|(url, _)| **url != *DEFAULT_WORKSPACE_URL)
-        .map(|w| w.0.clone())
-        .collect::<Vec<_>>();
-
-    for ws_root in workspace_roots {
-        if let Some(root) = context.env.url_to_file_path(&ws_root) {
-            tracing::info!(?root, "discovering files");
-            let mut count = 0;
-            match context.env.rhai_files(&root) {
-                Ok(files) => {
-                    for file in files {
-                        if let Some(path) = file.to_str() {
-                            let url: Url = match format!("file://{path}").parse() {
-                                Ok(u) => u,
-                                Err(_) => continue,
-                            };
-
-                            let file_content = match context.env.read_file(Path::new(path)).await {
-                                Ok(c) => c,
-                                Err(err) => {
-                                    tracing::error!(error = %err, "failed to read file");
-                                    continue;
-                                }
-                            };
-
-                            let source = match String::from_utf8(file_content) {
-                                Ok(s) => s,
-                                Err(error) => {
-                                    tracing::error!(%url, %error, "source is not valid UTF-8");
-                                    continue;
-                                }
-                            };
-
-                            count += 1;
-                            update_document(&mut *workspaces, &url, &source);
-                            tracing::info!(%url, "loaded file");
-                        }
-                    }
-
-                    tracing::info!(count, ?root, "found files");
-                }
-                Err(err) => {
-                    tracing::warn!(error = %err, "failed to discover files in workspace");
-                }
-            }
+    for (ws_url, ws) in workspaces.iter_mut() {
+        if ws_url == &*DEFAULT_WORKSPACE_URL {
+            continue;
         }
+
+        if let Err(error) = ws.load_rhai_config().await {
+            tracing::error!(%error, "failed to load Rhai config");
+        }
+
+        ws.load_all_files().await;
     }
 
     drop(workspaces);
-    publish_all_diagnostics(context).await;
+    context
+        .clone()
+        .all_diagnostics_debouncer
+        .spawn(publish_all_diagnostics(context));
 }
