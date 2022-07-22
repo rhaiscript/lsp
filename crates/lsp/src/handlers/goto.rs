@@ -1,4 +1,4 @@
-use crate::{environment::Environment, world::World};
+use crate::{environment::Environment, world::World, utils::Normalize};
 
 use lsp_async_stub::{rpc, util::LspExt, Context, Params};
 use lsp_types::{
@@ -54,7 +54,7 @@ async fn goto_target<E: Environment>(
         None => return Ok(None),
     };
 
-    let source = match ws.hir.source_of(&uri) {
+    let source = match ws.hir.source_of(&uri.clone().normalize()) {
         Some(s) => s,
         None => return Ok(None),
     };

@@ -9,13 +9,16 @@ use lsp_types::{
 };
 use rhai_hir::{error::ErrorKind, Hir};
 
+#[tracing::instrument(skip_all)]
 pub(crate) async fn publish_all_diagnostics<E: Environment>(context: Context<World<E>>) {
     let workspaces = context.workspaces.read().await;
-
-    for doc_url in workspaces
+    let document_urls = workspaces
         .iter()
         .flat_map(|(_, ws)| ws.documents.keys().cloned())
-    {
+        .collect::<Vec<_>>();
+    drop(workspaces);
+
+    for doc_url in document_urls {
         context
             .env
             .clone()

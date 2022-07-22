@@ -1,3 +1,4 @@
+use crate::utils::Normalize;
 use crate::world::Workspace;
 use crate::{environment::Environment, world::World};
 use core::iter;
@@ -31,7 +32,7 @@ pub async fn prepare_rename<E: Environment>(
         }
     };
 
-    let source = match ws.hir.source_of(&document_uri) {
+    let source = match ws.hir.source_of(&document_uri.clone().normalize()) {
         Some(s) => s,
         None => return Ok(None),
     };
@@ -79,7 +80,7 @@ pub async fn rename<E: Environment>(
         }
     };
 
-    let source = match ws.hir.source_of(&document_uri) {
+    let source = match ws.hir.source_of(&document_uri.clone().normalize()) {
         Some(s) => s,
         None => return Ok(None),
     };

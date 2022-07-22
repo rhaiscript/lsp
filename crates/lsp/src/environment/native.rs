@@ -1,4 +1,4 @@
-use std::{ffi::OsStr, path::Path};
+use std::{path::{Path, PathBuf}, time::Duration};
 
 use async_trait::async_trait;
 use lsp_types::Url;
@@ -37,19 +37,38 @@ impl Environment for NativeEnvironment {
         url.to_file_path().ok()
     }
 
-    fn rhai_files(&self, root: &Path) -> Result<Vec<std::path::PathBuf>, anyhow::Error> {
-        Ok(ignore::WalkBuilder::new(root)
-            .git_ignore(false)
-            .hidden(false)
-            .build()
-            .filter_map(Result::ok)
-            .filter_map(|e| {
-                if e.path().is_file() && e.path().extension() == Some(OsStr::new("rhai")) {
-                    Some(e.path().into())
-                } else {
-                    None
-                }
-            })
-            .collect())
+    fn cwd(&self) -> Option<std::path::PathBuf> {
+        std::env::current_dir().ok()
+    }
+
+    fn glob_files(&self, pattern: &str) -> Result<Vec<std::path::PathBuf>, anyhow::Error> {
+        let paths = glob::glob_with(
+            pattern,
+            glob::MatchOptions {
+                case_sensitive: true,
+                ..Default::default()
+            },
+        )?;
+        Ok(paths.filter_map(Result::ok).collect())
+    }
+
+    fn is_absolute(&self, base: &std::path::Path) -> bool {
+        base.is_absolute()
+    }
+
+    fn discover_rhai_config(&self, root: &Path) -> Option<PathBuf> {
+        let path = root.join("Rhai.toml");
+
+        if let Ok(meta) = std::fs::metadata(root.join("Rhai.toml")) {
+            if meta.is_file() {
+                return Some(path);
+            }
+        }
+
+        None
+    }
+
+    async fn sleep(&self, duration: Duration) {
+        tokio::time::sleep(duration).await;
     }
 }
