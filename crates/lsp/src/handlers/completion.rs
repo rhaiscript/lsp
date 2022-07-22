@@ -1,6 +1,6 @@
 use crate::{
     environment::Environment,
-    utils::{documentation_for, signature_of},
+    utils::{documentation_for, signature_of, Normalize},
     world::World,
 };
 use itertools::Itertools;
@@ -37,7 +37,7 @@ pub(crate) async fn completion<E: Environment>(
         None => return Ok(None),
     };
 
-    let source = match ws.hir.source_of(&uri) {
+    let source = match ws.hir.source_of(&uri.clone().normalize()) {
         Some(s) => s,
         None => return Ok(None),
     };

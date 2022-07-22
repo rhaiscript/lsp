@@ -137,6 +137,7 @@ impl<E: Environment> Workspace<E> {
     pub(crate) fn document(&self, url: &Url) -> Result<&Document, rpc::Error> {
         self.documents
             .get(url)
+            .or_else(|| self.documents.get(&url.clone().normalize()))
             .ok_or_else(rpc::Error::invalid_params)
     }
 
