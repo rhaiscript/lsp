@@ -1,5 +1,5 @@
 use rhai_rowan::{
-    parser::{Operator, Parser},
+    parser::{Operator, Parser, parsers::parse_expr},
     syntax::SyntaxKind::*,
 };
 use test_case::test_case;
@@ -112,4 +112,23 @@ fn parse_ambiguous_ranges() {
         assert_eq!(ctx.token(), Some(LIT_INT));
         ctx.eat();
     });
+}
+
+
+#[test]
+fn parse_ambiguous_integer_field_access() {
+    Parser::new(r#"0.foo"#).execute(|ctx| {
+        assert_eq!(ctx.token(), Some(LIT_INT));
+        ctx.eat();
+
+        assert_eq!(ctx.token(), Some(PUNCT_DOT));
+        ctx.eat();
+
+        assert_eq!(ctx.token(), Some(IDENT));
+        ctx.eat();
+    });
+
+    let mut parser = Parser::new(r#"0.foo()"#);
+    parser.execute(parse_expr);
+    assert!(parser.finish().errors.is_empty());
 }

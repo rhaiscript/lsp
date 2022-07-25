@@ -87,7 +87,7 @@ impl<'src> Context<'src> {
                     self.eat_error(ParseErrorKind::InvalidInput);
                     self.last_token = None;
                 }
-                Some(t @ __AMBIGUOUS_INTEGER_AND_RANGE) => {
+                Some(t @ (__AMBIGUOUS_INTEGER_AND_RANGE | __AMBIGUOUS_INTEGER_AND_IDENT)) => {
                     self.ambiguous_tokens = Some(AmbiguousTokens::new(
                         t,
                         self.lexer.slice(),

@@ -377,12 +377,20 @@ pub enum SyntaxKind {
 
     // region: ambiguous tokens
     /// The following is used to resolve ambiguity
-    /// between floats and integers with ranges (#62).
+    /// between floats and integers with ranges e.g. `0..1` (#62).
     ///
     /// If this token is encountered it must be further processed
     /// with [`AmbiguousTokens`].
     #[regex(r#"[0-9][0-9_]*\.\.=?"#)]
     __AMBIGUOUS_INTEGER_AND_RANGE,
+
+    /// Same as `__AMBIGUOUS_INTEGER_AND_RANGE`, except this time
+    /// `1.foo` should be parsed as integer, dot, ident respectively.
+    ///
+    /// If this token is encountered it must be further processed
+    /// with [`AmbiguousTokens`].
+    #[regex(r#"[0-9][0-9_]*\._*[A-Za-z][0-9A-Za-z_]*"#)]
+    __AMBIGUOUS_INTEGER_AND_IDENT,
 
     // endregion
 
@@ -622,6 +630,35 @@ impl<'lexer> AmbiguousTokens<'lexer> {
                     },
                 }
             }
+            #[allow(clippy::range_plus_one)]
+            SyntaxKind::__AMBIGUOUS_INTEGER_AND_IDENT => {
+                let dot_idx = slice.as_bytes().iter().position(|b| *b == b'.').unwrap();
+                let integer = &slice[..dot_idx];
+                let dot = &slice[dot_idx..=dot_idx];
+                let ident = &slice[(dot_idx + 1)..];
+
+                Self {
+                    last_slice: None,
+                    last_span: None,
+                    token: AmbiguousToken::IntegerAndIdent {
+                        integer: Some((
+                            SyntaxKind::LIT_INT,
+                            integer,
+                            span.start..(span.start + dot_idx),
+                        )),
+                        dot: Some((
+                            SyntaxKind::PUNCT_DOT,
+                            dot,
+                            (span.start + dot_idx)..(span.start + dot_idx + 1),
+                        )),
+                        ident: Some((
+                            SyntaxKind::IDENT,
+                            ident,
+                            (span.start + dot_idx + 1)..span.end,
+                        )),
+                    },
+                }
+            }
             _ => unreachable!("unambiguous token passed"),
         }
     }
@@ -655,6 +692,27 @@ impl Iterator for AmbiguousTokens<'_> {
                     None
                 }
             }
+            AmbiguousToken::IntegerAndIdent {
+                integer,
+                dot,
+                ident,
+            } => {
+                if let Some((token, slice, span)) = integer.take() {
+                    self.last_slice = Some(slice);
+                    self.last_span = Some(span);
+                    Some(token)
+                } else if let Some((token, slice, span)) = dot.take() {
+                    self.last_slice = Some(slice);
+                    self.last_span = Some(span);
+                    Some(token)
+                } else if let Some((token, slice, span)) = ident.take() {
+                    self.last_slice = Some(slice);
+                    self.last_span = Some(span);
+                    Some(token)
+                } else {
+                    None
+                }
+            }
         }
     }
 }
@@ -664,5 +722,10 @@ enum AmbiguousToken<'lexer> {
     IntegerAndRange {
         integer: Option<(SyntaxKind, &'lexer str, Range<usize>)>,
         range: Option<(SyntaxKind, &'lexer str, Range<usize>)>,
+    },
+    IntegerAndIdent {
+        integer: Option<(SyntaxKind, &'lexer str, Range<usize>)>,
+        dot: Option<(SyntaxKind, &'lexer str, Range<usize>)>,
+        ident: Option<(SyntaxKind, &'lexer str, Range<usize>)>,
     },
 }
