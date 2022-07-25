@@ -1,0 +1,71 @@
+---
+source: crates/rowan/tests/smoke.rs
+assertion_line: 58
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..62
+  STMT@0..13
+    ITEM@0..12
+      EXPR@0..12
+        EXPR_LET@0..12
+          KW_LET@0..3 "let"
+          WHITESPACE@3..4 " "
+          IDENT@4..5 "a"
+          WHITESPACE@5..6 " "
+          OP_ASSIGN@6..7 "="
+          EXPR@7..12
+            WHITESPACE@7..8 " "
+            EXPR_LIT@8..12
+              LIT@8..12
+                LIT_STR@8..12 "\"\"\"\""
+    PUNCT_SEMI@12..13 ";"
+  WHITESPACE@13..14 "\n"
+  STMT@14..29
+    ITEM@14..28
+      EXPR@14..28
+        EXPR_LET@14..28
+          KW_LET@14..17 "let"
+          WHITESPACE@17..18 " "
+          IDENT@18..19 "a"
+          WHITESPACE@19..20 " "
+          OP_ASSIGN@20..21 "="
+          EXPR@21..28
+            WHITESPACE@21..22 " "
+            EXPR_LIT@22..28
+              LIT@22..28
+                LIT_STR@22..28 "\" \"\" \""
+    PUNCT_SEMI@28..29 ";"
+  WHITESPACE@29..31 "\n\n"
+  STMT@31..44
+    ITEM@31..43
+      EXPR@31..43
+        EXPR_LET@31..43
+          KW_LET@31..34 "let"
+          WHITESPACE@34..35 " "
+          IDENT@35..36 "b"
+          WHITESPACE@36..37 " "
+          OP_ASSIGN@37..38 "="
+          EXPR@38..43
+            WHITESPACE@38..39 " "
+            EXPR_LIT@39..43
+              LIT@39..43
+                LIT_STR@39..43 "````"
+    PUNCT_SEMI@43..44 ";"
+  WHITESPACE@44..45 "\n"
+  STMT@45..60
+    ITEM@45..59
+      EXPR@45..59
+        EXPR_LET@45..59
+          KW_LET@45..48 "let"
+          WHITESPACE@48..49 " "
+          IDENT@49..50 "b"
+          WHITESPACE@50..51 " "
+          OP_ASSIGN@51..52 "="
+          EXPR@52..59
+            WHITESPACE@52..53 " "
+            EXPR_LIT@53..59
+              LIT@53..59
+                LIT_STR@53..59 "` `` `"
+    PUNCT_SEMI@59..60 ";"
+  WHITESPACE@60..62 "\n\n"
+
