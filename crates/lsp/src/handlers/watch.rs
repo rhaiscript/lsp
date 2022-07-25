@@ -1,9 +1,14 @@
 use lsp_async_stub::{Context, Params};
 use lsp_types::{DidChangeWatchedFilesParams, FileChangeType};
 
-use crate::{diagnostics::publish_all_diagnostics, environment::Environment, world::World};
+use crate::{
+    diagnostics::{clear_diagnostics, publish_all_diagnostics},
+    environment::Environment,
+    utils::Normalize,
+    world::World,
+};
 
-use super::{load_missing_documents, update_document};
+use super::update_document;
 
 pub(crate) async fn watched_file_change<E: Environment>(
     context: Context<World<E>>,
@@ -45,19 +50,18 @@ pub(crate) async fn watched_file_change<E: Environment>(
                     }
                 };
 
-                update_document(&mut *workspaces, &uri, &source);
-                let ws = workspaces.by_document_mut(&uri);
-
-                let missing_modules = ws.hir.missing_modules();
-                load_missing_documents(context.clone(), &mut *workspaces, missing_modules).await;
+                drop(workspaces);
+                update_document(context.clone(), uri, &source).await;
             }
             FileChangeType::DELETED => {
                 let ws = workspaces.by_document_mut(&uri);
                 ws.documents.remove(&uri);
 
-                if let Some(src) = ws.hir.source_by_url(&uri) {
+                if let Some(src) = ws.hir.source_by_url(&uri.clone().normalize()) {
                     ws.hir.remove_source(src);
                 }
+
+                clear_diagnostics(context.clone(), uri).await;
             }
             _ => {
                 tracing::warn!(change_type = ?change.typ, "unknown file event");
@@ -65,5 +69,8 @@ pub(crate) async fn watched_file_change<E: Environment>(
         }
     }
 
-    publish_all_diagnostics(context).await;
+    context
+        .clone()
+        .all_diagnostics_debouncer
+        .spawn(publish_all_diagnostics(context));
 }

@@ -1,4 +1,4 @@
-use crate::{environment::Environment, utils::documentation_for, world::World};
+use crate::{environment::Environment, utils::{documentation_for, Normalize}, world::World};
 use lsp_async_stub::{rpc, util::LspExt, Context, Params};
 use lsp_types::{Hover, HoverContents, HoverParams, MarkupContent, MarkupKind, Range};
 use rhai_hir::{symbol::ReferenceTarget, Hir, Symbol};
@@ -26,7 +26,7 @@ pub(crate) async fn hover<E: Environment>(
         None => return Ok(None),
     };
 
-    let source = match ws.hir.source_of(&uri) {
+    let source = match ws.hir.source_of(&uri.clone().normalize()) {
         Some(s) => s,
         None => return Ok(None),
     };

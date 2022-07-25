@@ -279,16 +279,27 @@ pub enum SyntaxKind {
 
     #[token(r#"""#, |lex| {
         let mut escaped = false;
+        let mut last_char = 0_u8;
 
         for (i, b) in lex.remainder().bytes().enumerate() {
-            if !escaped && b == b'"' {
-                lex.bump(i + 1);
-                return Some(());
+            if !escaped && last_char == b'"' {
+                if b != b'"' {
+                    lex.bump(i);
+                    return Some(());
+                }
+                last_char = 0_u8;
+            } else {
+                escaped = b == b'\\';
+                last_char = b;
             }
-            escaped = b == b'\\';
         }
 
-        None
+        if last_char == b'"' {
+            lex.bump(lex.remainder().bytes().len());
+            Some(())
+        } else {
+            None
+        }
     })]
     #[token("`", |lex| {
         let mut escaped = false;
@@ -298,25 +309,38 @@ pub enum SyntaxKind {
         for (i, b) in lex.remainder().bytes().enumerate() {
             if b == b'{' && last_char == b'$' {
                 interpolation_level += 1;
+                last_char = 0_u8;
                 continue;
             }
 
             if interpolation_level > 0 {
-                if b == b'}' {
+                if last_char != b'\\' && b == b'}' {
                     interpolation_level -= 1;
+                    last_char = 0_u8;
+                } else {
+                    last_char = b;
                 }
                 continue;
             }
 
-            if !escaped && b == b'`' {
-                lex.bump(i + 1);
-                return Some(());
+            if !escaped && last_char == b'`' {
+                if b != b'`' {
+                    lex.bump(i);
+                    return Some(());
+                }
+                last_char = 0_u8;
+            } else {
+                escaped = b == b'\\';
+                last_char = b;
             }
-            escaped = b == b'\\';
-            last_char = b;
         }
 
-        None
+        if last_char == b'`' {
+            lex.bump(lex.remainder().bytes().len());
+            Some(())
+        } else {
+            None
+        }
     })]
     LIT_STR,
 

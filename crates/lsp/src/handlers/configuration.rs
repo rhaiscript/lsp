@@ -1,7 +1,4 @@
-use crate::{
-    environment::Environment,
-    world::{World, DEFAULT_WORKSPACE_URL},
-};
+use crate::{environment::Environment, world::World};
 use anyhow::Context as AnyhowContext;
 use lsp_async_stub::{Context, Params, RequestWriter};
 use lsp_types::{
@@ -37,8 +34,8 @@ pub async fn update_configuration<E: Environment>(context: Context<World<E>>) {
 
     let config_items: Vec<_> = workspaces
         .iter()
-        .filter_map(|(url, _)| {
-            if *url == *DEFAULT_WORKSPACE_URL {
+        .filter_map(|(url, ws)| {
+            if ws.is_detached() {
                 None
             } else {
                 Some(ConfigurationItem {
@@ -48,10 +45,6 @@ pub async fn update_configuration<E: Environment>(context: Context<World<E>>) {
             }
         })
         .collect();
-
-    for (url, _) in workspaces.iter() {
-        if *url == *DEFAULT_WORKSPACE_URL {}
-    }
 
     let res = context
         .clone()

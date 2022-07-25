@@ -33,6 +33,7 @@ use test_case::test_case;
 #[test_case("char", include_str!("../../../testdata/valid/char.rhai"))]
 #[test_case("throw_try_catch", include_str!("../../../testdata/valid/throw_try_catch.rhai"))]
 #[test_case("optional_ops", include_str!("../../../testdata/valid/optional_ops.rhai"))]
+#[test_case("string_escape", include_str!("../../../testdata/valid/string_escape.rhai"))]
 fn parse_valid(name: &str, src: &str) {
     let parse = Parser::new(src).parse_script();
     assert!(parse.errors.is_empty(), "{:#?}", parse.errors);

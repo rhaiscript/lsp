@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::{path::{Path, PathBuf}, time::Duration};
 
 use async_trait::async_trait;
 use futures::Future;
@@ -23,5 +23,14 @@ pub trait Environment: Clone + Send + Sync + 'static {
 
     fn url_to_file_path(&self, url: &Url) -> Option<PathBuf>;
 
-    fn rhai_files(&self, root: &Path) -> Result<Vec<PathBuf>, anyhow::Error>;
+    /// Absolute current working dir.
+    fn cwd(&self) -> Option<PathBuf>;
+
+    fn glob_files(&self, glob: &str) -> Result<Vec<PathBuf>, anyhow::Error>;
+
+    fn is_absolute(&self, path: &Path) -> bool;
+
+    fn discover_rhai_config(&self, root: &Path) -> Option<PathBuf>;
+
+    async fn sleep(&self, duration: Duration);
 }

@@ -1,6 +1,6 @@
 #![allow(deprecated)]
 
-use crate::{environment::Environment, utils::signature_of, world::World};
+use crate::{environment::Environment, utils::{signature_of, Normalize}, world::World};
 use lsp_async_stub::{
     rpc,
     util::{LspExt, Mapper},
@@ -26,7 +26,7 @@ pub(crate) async fn document_symbols<E: Environment>(
 
     let syntax = doc.parse.clone().into_syntax();
 
-    let source = match ws.hir.source_of(&p.text_document.uri) {
+    let source = match ws.hir.source_of(&p.text_document.uri.clone().normalize()) {
         Some(s) => s,
         None => return Ok(None),
     };

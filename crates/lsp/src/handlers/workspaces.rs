@@ -22,9 +22,14 @@ pub async fn workspace_change<E: Environment>(
     }
 
     for added in p.event.added {
-        workspaces
-            .entry(added.uri.clone())
-            .or_insert(Workspace::new(context.env.clone(), added.uri));
+        let mut ws = Workspace::new(context.env.clone(), added.uri.clone());
+
+        if let Err(error) = ws.load_rhai_config().await {
+            tracing::error!(%error, "invalid configuration");
+        }
+        ws.load_all_files().await;
+
+        workspaces.entry(added.uri).or_insert(ws);
     }
 
     drop(workspaces);
