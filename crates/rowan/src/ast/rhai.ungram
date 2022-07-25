@@ -249,7 +249,8 @@ DefType = ty_token:'ident' 'ident' '=' ty:Type
 
 DefFn =
   'fn'
-  'ident'
+  __kw_get:'ident'?
+  __name:'ident'
   TypedParamList
   ('->' ty:Type)?
 
@@ -257,11 +258,21 @@ Type =
   TypeIdent
 | TypeLit
 | TypeObject
-| TypeVoid
 | TypeArray
+| TypeTuple
 | TypeUnknown
 
-TypeIdent = 'ident'
+TypeIdent = 'ident' TypeGenerics?
+
+TypeGenerics =
+  '<'
+  (Type (',' Type)* ','?)?
+  '>'
+
+TypeTuple = 
+  '('
+  (Type (',' Type)* ','?)?
+  ')'
 
 TypeLit = Lit
 
@@ -284,10 +295,6 @@ TypeList =
   '(' (fist_ty:Type (',' more_ty:Type)* ','?)? ')'
 
 TypeUnion = ty_left:Type '|' ty_right:Type
-
-TypeParen = '(' ty:Type ')'
-
-TypeVoid = 'void'
 
 TypeUnknown = '?'
 

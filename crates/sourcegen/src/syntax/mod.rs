@@ -275,6 +275,10 @@ fn generate_ast(grammar: &Grammar) -> String {
                         r => r,
                     };
 
+                    if label.as_ref().map_or(false, |l| l.starts_with("__")) {
+                        continue;
+                    }
+
                     match rule {
                         Rule::Node(n) => {
                             let inner_node = &grammar[*n];

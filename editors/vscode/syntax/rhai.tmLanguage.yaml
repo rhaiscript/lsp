@@ -11,9 +11,9 @@ information_for_contributors:
   - "tamasfe: me@tamasfe.dev"
 patterns:
   - include: "#comments"
-  - include: "#keywords"
   - include: "#definitions"
   - include: "#expressions"
+  - include: "#keywords"
   - include: "#punctuation"
 repository:
   definitions:
@@ -99,22 +99,25 @@ repository:
     patterns:
       - include: "#types"
   fn-definition:
-    match: (fn)\s*([^\(]*)(\([^\)]*\))\s*(->(?:\n|.)*)?(?!\{)
+    match: (fn)\s*(get|set)?\s*([^\(]*)(\([^\)]*\))\s*(->(?:\r|\n|.)*)?;
+    name: meta.function.rhai
     captures:
       "1":
         name: storage.type.function.rhai
       "2":
+        name: storage.type.rhai
+      "3":
         patterns:
           - name: entity.name.function.rhai
             match: "[A-Za-z_][0-9A-Za-z_]*"
-      "3":
+      "4":
         patterns:
           - include: "#parameter-list"
-      "4":
+      "5":
         patterns:
           - include: "#types"
   operator-definition:
-    begin: (op)\s*([^\(]*)(\([^\)]*\))\s*(\:)?
+    begin: (op)\s*([^\(]*)(\([^\)]*\))\s*(->)?
     end: (?=;)|(?=\})|(?=\))
     beginCaptures:
       "1":
@@ -390,7 +393,7 @@ repository:
       - include: "#expressions"
   fn-call-expr:
     name: meta.function-call.rhai
-    begin: ([A-Za-z_][0-9A-Za-z_]*)\s*\(
+    begin: (?!for)([A-Za-z_][0-9A-Za-z_]*)\s*\(
     end: \)
     beginCaptures:
       "1":

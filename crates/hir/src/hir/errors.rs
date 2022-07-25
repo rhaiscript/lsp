@@ -66,13 +66,15 @@ impl Hir {
                         }
 
                         if let Some(name) = param_data.name() {
-                            if let Some(existing_param) = param_names.insert(name, param) {
-                                errors.push(Error {
-                                    kind: ErrorKind::DuplicateFnParameter {
-                                        duplicate_symbol: param,
-                                        existing_symbol: existing_param,
-                                    },
-                                });
+                            if name != "_" {
+                                if let Some(existing_param) = param_names.insert(name, param) {
+                                    errors.push(Error {
+                                        kind: ErrorKind::DuplicateFnParameter {
+                                            duplicate_symbol: param,
+                                            existing_symbol: existing_param,
+                                        },
+                                    });
+                                }
                             }
                         }
                     }

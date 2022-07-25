@@ -205,6 +205,8 @@ impl Hir {
                             .unwrap_or_default(),
                         docs,
                         scope: fn_scope,
+                        getter: expr.has_kw_get(),
+                        setter: expr.has_kw_set(),
                         ..FnSymbol::default()
                     }),
                 });

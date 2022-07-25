@@ -19,9 +19,8 @@ fn parse_type_bp(ctx: &mut Context, min_bp: u8) {
     match token {
         T!["?"] => parse_type_unknown(ctx),
         T!["["] => parse_type_array(ctx),
-        T!["void"] => parse_type_void(ctx),
+        T!["("] => parse_type_tuple(ctx),
         T!["ident"] => parse_type_ident(ctx),
-        T!["("] => parse_type_paren(ctx),
         T!["#{"] => parse_type_object(ctx),
         _ => {
             ctx.add_error(ParseErrorKind::UnexpectedToken);
@@ -61,9 +60,44 @@ fn parse_type_bp(ctx: &mut Context, min_bp: u8) {
 #[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
 fn parse_type_array(ctx: &mut Context) {
     ctx.start_node(TYPE_ARRAY);
-    expect_token!(ctx in node, T!["["]);
-    parse_type(ctx);
-    expect_token!(ctx in node, T!["]"]);
+
+    let start_token = require_token!(ctx in node);
+
+    match start_token {
+        T!["["] => {
+            ctx.eat();
+        }
+        _ => {
+            ctx.eat_error(ParseErrorKind::ExpectedToken(T!["["]));
+            ctx.finish_node();
+            return;
+        }
+    }
+
+    loop {
+        let token = require_token!(ctx in node);
+        if matches!((start_token, token), (T!["["], T!["]"])) {
+            ctx.eat();
+            break;
+        }
+
+        parse_type(ctx);
+
+        let end_token = require_token!(ctx in node);
+
+        match (start_token, end_token) {
+            (T!["["], T!["]"]) => {
+                ctx.eat();
+                break;
+            }
+            (_, T![","]) => {
+                ctx.eat();
+            }
+            _ => {
+                ctx.add_error(ParseErrorKind::ExpectedToken(T![","]));
+            }
+        }
+    }
     ctx.finish_node();
 }
 
@@ -75,18 +109,46 @@ fn parse_type_unknown(ctx: &mut Context) {
 }
 
 #[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
-fn parse_type_void(ctx: &mut Context) {
-    ctx.start_node(TYPE_VOID);
-    expect_token!(ctx in node, T!["void"]);
-    ctx.finish_node();
-}
+fn parse_type_tuple(ctx: &mut Context) {
+    ctx.start_node(TYPE_TUPLE);
 
-#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
-fn parse_type_paren(ctx: &mut Context) {
-    ctx.start_node(TYPE_PAREN);
-    expect_token!(ctx in node, T!["("]);
-    parse_type(ctx);
-    expect_token!(ctx in node, T![")"]);
+    let start_token = require_token!(ctx in node);
+
+    match start_token {
+        T!["("] => {
+            ctx.eat();
+        }
+        _ => {
+            ctx.eat_error(ParseErrorKind::ExpectedToken(T!["("]));
+            ctx.finish_node();
+            return;
+        }
+    }
+
+    loop {
+        let token = require_token!(ctx in node);
+        if matches!((start_token, token), (T!["("], T![")"])) {
+            ctx.eat();
+            break;
+        }
+
+        parse_type(ctx);
+
+        let end_token = require_token!(ctx in node);
+
+        match (start_token, end_token) {
+            (T!["("], T![")"]) => {
+                ctx.eat();
+                break;
+            }
+            (_, T![","]) => {
+                ctx.eat();
+            }
+            _ => {
+                ctx.add_error(ParseErrorKind::ExpectedToken(T![","]));
+            }
+        }
+    }
     ctx.finish_node();
 }
 
@@ -94,6 +156,55 @@ fn parse_type_paren(ctx: &mut Context) {
 fn parse_type_ident(ctx: &mut Context) {
     ctx.start_node(TYPE_IDENT);
     expect_token!(ctx in node, T!["ident"]);
+
+    if let Some(T!["<"]) = ctx.token() {
+        parse_type_generics(ctx);
+    }
+
+    ctx.finish_node();
+}
+
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
+fn parse_type_generics(ctx: &mut Context) {
+    ctx.start_node(TYPE_GENERICS);
+
+    let start_token = require_token!(ctx in node);
+
+    match start_token {
+        T!["<"] => {
+            ctx.eat();
+        }
+        _ => {
+            ctx.eat_error(ParseErrorKind::ExpectedToken(T!["<"]));
+            ctx.finish_node();
+            return;
+        }
+    }
+
+    loop {
+        let token = require_token!(ctx in node);
+        if matches!((start_token, token), (T!["<"], T![">"])) {
+            ctx.eat();
+            break;
+        }
+
+        parse_type(ctx);
+
+        let end_token = require_token!(ctx in node);
+
+        match (start_token, end_token) {
+            (T!["<"], T![">"]) => {
+                ctx.eat();
+                break;
+            }
+            (_, T![","]) => {
+                ctx.eat();
+            }
+            _ => {
+                ctx.add_error(ParseErrorKind::ExpectedToken(T![","]));
+            }
+        }
+    }
     ctx.finish_node();
 }
 

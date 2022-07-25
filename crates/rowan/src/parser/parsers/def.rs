@@ -206,14 +206,14 @@ pub fn parse_def_fn(ctx: &mut Context) {
 
     let token = require_token!(ctx in node);
 
-    expect_token!(ctx in node, T!["ident"]);
-
-    if token.infix_binding_power().is_some() || matches!(token, T!["ident"]) {
+    if token == T!["ident"] && ctx.slice() == "get" || ctx.slice() == "set" {
         ctx.eat();
+
+        if ctx.token() == Some(T!["ident"]) {
+            ctx.eat();
+        }
     } else {
-        ctx.add_error(ParseErrorKind::UnexpectedToken);
-        ctx.finish_node();
-        return;
+        expect_token!(ctx in node, T!["ident"]);
     }
 
     if !matches!(ctx.token(), Some(T!["("])) {
@@ -247,8 +247,11 @@ pub fn parse_def_op(ctx: &mut Context) {
 
     let token = require_token!(ctx in node);
 
-    if token.infix_binding_power().is_some() || matches!(token, T!["ident"]) {
-        ctx.eat();
+    if token.infix_binding_power().is_some()
+        || token.prefix_binding_power().is_some()
+        || matches!(token, T!["ident"])
+    {
+        ctx.eat_as(T!["ident"]);
     } else {
         ctx.add_error(ParseErrorKind::UnexpectedToken);
         ctx.finish_node();
@@ -358,7 +361,17 @@ fn parse_typed_param(ctx: &mut Context) {
         ctx.eat();
     }
 
-    expect_token!(ctx in node, T!["ident"]);
+    if !matches!(ctx.token(), Some(T!["_"] | T!["ident"])) {
+        ctx.add_error(ParseErrorKind::ExpectedOneOfTokens(vec![
+            T!["_"],
+            T!["ident"],
+        ]));
+        ctx.finish_node();
+        return;
+    }
+
+    ctx.eat_as(T!["ident"]);
+
     expect_token!(ctx in node, T![":"]);
 
     super::ty::parse_type(ctx);

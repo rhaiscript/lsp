@@ -237,6 +237,73 @@ impl super::DefItem {
     }
 }
 
+impl super::DefFn {
+    #[must_use]
+    #[inline]
+    pub fn has_kw_get(&self) -> bool {
+        let mut tokens = self.syntax().children_with_tokens().filter_map(|t| {
+            if t.kind() != T!["ident"] {
+                return None;
+            }
+            t.into_token()
+        });
+
+        let get = tokens.next();
+
+        if let Some("get") = get.as_ref().map(SyntaxToken::text) {
+            return tokens.next().is_some();
+        }
+
+        false
+    }
+
+    #[must_use]
+    #[inline]
+    pub fn has_kw_set(&self) -> bool {
+        let mut tokens = self.syntax().children_with_tokens().filter_map(|t| {
+            if t.kind() != T!["ident"] {
+                return None;
+            }
+            t.into_token()
+        });
+
+        let get = tokens.next();
+
+        if let Some("set") = get.as_ref().map(SyntaxToken::text) {
+            return tokens.next().is_some();
+        }
+
+        false
+    }
+
+    #[must_use]
+    pub fn get_token(&self) -> Option<SyntaxToken> {
+        if !self.has_kw_get() {
+            return None;
+        }
+
+        self.syntax().children_with_tokens().find_map(|t| {
+            if t.kind() != T!["ident"] {
+                return None;
+            }
+            t.into_token()
+        })
+    }
+
+    #[must_use]
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        self.syntax()
+            .children_with_tokens()
+            .filter_map(|t| {
+                if t.kind() != T!["ident"] {
+                    return None;
+                }
+                t.into_token()
+            })
+            .nth(if self.has_kw_get() { 1 } else { 0 })
+    }
+}
+
 impl super::DefModuleDecl {
     #[must_use]
     pub fn docs_content(&self) -> String {

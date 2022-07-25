@@ -629,6 +629,8 @@ pub struct FnSymbol {
     pub scope: Scope,
     pub ty: Type,
     pub references: HashSet<Symbol>,
+    pub getter: bool,
+    pub setter: bool,
 }
 
 #[derive(Debug, Default, Clone)]
