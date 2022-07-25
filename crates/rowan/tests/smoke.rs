@@ -1,4 +1,7 @@
-use rhai_rowan::parser::{Operator, Parser};
+use rhai_rowan::{
+    parser::{Operator, Parser},
+    syntax::SyntaxKind::*,
+};
 use test_case::test_case;
 
 #[test_case("simple", include_str!("../../../testdata/valid/simple.rhai"))]
@@ -72,4 +75,40 @@ fn parse_custom_operator() {
 
     let parse = Parser::new(src).parse_script();
     assert!(!parse.errors.is_empty());
+}
+
+#[test]
+fn parse_ambiguous_ranges() {
+    Parser::new(r#"0..1"#).execute(|ctx| {
+        assert_eq!(ctx.token(), Some(LIT_INT));
+        ctx.eat();
+
+        assert_eq!(ctx.token(), Some(OP_RANGE));
+        ctx.eat();
+
+        assert_eq!(ctx.token(), Some(LIT_INT));
+        ctx.eat();
+    });
+
+    Parser::new(r#"0..=1"#).execute(|ctx| {
+        assert_eq!(ctx.token(), Some(LIT_INT));
+        ctx.eat();
+
+        assert_eq!(ctx.token(), Some(OP_RANGE_INCLUSIVE));
+        ctx.eat();
+
+        assert_eq!(ctx.token(), Some(LIT_INT));
+        ctx.eat();
+    });
+
+    Parser::new(r#"0. ..=1"#).execute(|ctx| {
+        assert_eq!(ctx.token(), Some(LIT_FLOAT));
+        ctx.eat();
+
+        assert_eq!(ctx.token(), Some(OP_RANGE_INCLUSIVE));
+        ctx.eat();
+
+        assert_eq!(ctx.token(), Some(LIT_INT));
+        ctx.eat();
+    });
 }

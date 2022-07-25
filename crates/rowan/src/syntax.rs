@@ -269,7 +269,7 @@ pub enum SyntaxKind {
     LIT_INT,
 
     #[regex(
-        r"[0-9][0-9_]*(\.([0-9][0-9]*)?)?(e([+-][0-9_]+|[0-9][0-9_]*))?",
+        r"([0-9][0-9_]*\.([0-9][0-9]*)(e([+-][0-9_]+|[0-9][0-9_]*))?)|([0-9][0-9_]*(\.([0-9][0-9]*)?))",
         priority = 2
     )]
     LIT_FLOAT,
@@ -351,6 +351,17 @@ pub enum SyntaxKind {
     ERROR,
     // endregion
 
+    // region: ambiguous tokens
+    /// The following is used to resolve ambiguity
+    /// between floats and integers with ranges (#62).
+    ///
+    /// If this token is encountered it must be further processed
+    /// with [`AmbiguousTokens`].
+    #[regex(r#"[0-9][0-9_]*\.\.=?"#)]
+    __AMBIGUOUS_INTEGER_AND_RANGE,
+
+    // endregion
+
     // region: Nodes
     // This region is generated from ungrammar, do not touch it!
     LIT,
@@ -417,13 +428,13 @@ pub enum SyntaxKind {
     TYPE_IDENT,
     TYPE_LIT,
     TYPE_OBJECT,
-    TYPE_VOID,
     TYPE_ARRAY,
+    TYPE_TUPLE,
     TYPE_UNKNOWN,
+    TYPE_GENERICS,
     TYPE_OBJECT_FIELD,
     TYPED_PARAM,
     TYPE_UNION,
-    TYPE_PAREN,
     // endregion
 
     // A marker to safely cast between u16 and syntax kinds.
@@ -547,4 +558,87 @@ fn lex_multi_line_comment(lex: &mut LogosLexer<SyntaxKind>) -> Option<()> {
     lex.bump(to_bump);
 
     Some(())
+}
+
+#[derive(Debug)]
+pub struct AmbiguousTokens<'lexer> {
+    last_slice: Option<&'lexer str>,
+    last_span: Option<Range<usize>>,
+    token: AmbiguousToken<'lexer>,
+}
+
+impl<'lexer> AmbiguousTokens<'lexer> {
+    #[allow(clippy::missing_panics_doc)]
+    #[must_use]
+    pub fn new(token: SyntaxKind, slice: &'lexer str, span: Range<usize>) -> Self {
+        match token {
+            SyntaxKind::__AMBIGUOUS_INTEGER_AND_RANGE => {
+                let range_idx = slice.as_bytes().iter().position(|b| *b == b'.').unwrap();
+                let integer = &slice[..range_idx];
+                let range = &slice[range_idx..];
+
+                Self {
+                    last_slice: None,
+                    last_span: None,
+                    token: AmbiguousToken::IntegerAndRange {
+                        integer: Some((
+                            SyntaxKind::LIT_INT,
+                            integer,
+                            span.start..(span.start + range_idx),
+                        )),
+                        range: Some((
+                            if range.ends_with('=') {
+                                SyntaxKind::OP_RANGE_INCLUSIVE
+                            } else {
+                                SyntaxKind::OP_RANGE
+                            },
+                            range,
+                            (span.start + range_idx)..span.end,
+                        )),
+                    },
+                }
+            }
+            _ => unreachable!("unambiguous token passed"),
+        }
+    }
+
+    #[must_use]
+    pub fn slice(&self) -> &str {
+        self.last_slice.unwrap_or("")
+    }
+
+    #[must_use]
+    pub fn span(&self) -> Range<usize> {
+        self.last_span.clone().unwrap_or_default()
+    }
+}
+
+impl Iterator for AmbiguousTokens<'_> {
+    type Item = SyntaxKind;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match &mut self.token {
+            AmbiguousToken::IntegerAndRange { integer, range } => {
+                if let Some((token, slice, span)) = integer.take() {
+                    self.last_slice = Some(slice);
+                    self.last_span = Some(span);
+                    Some(token)
+                } else if let Some((token, slice, span)) = range.take() {
+                    self.last_slice = Some(slice);
+                    self.last_span = Some(span);
+                    Some(token)
+                } else {
+                    None
+                }
+            }
+        }
+    }
+}
+
+#[derive(Debug)]
+enum AmbiguousToken<'lexer> {
+    IntegerAndRange {
+        integer: Option<(SyntaxKind, &'lexer str, Range<usize>)>,
+        range: Option<(SyntaxKind, &'lexer str, Range<usize>)>,
+    },
 }

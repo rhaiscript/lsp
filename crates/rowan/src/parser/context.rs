@@ -1,12 +1,12 @@
 //! The parser context is a separate module to limit
 //! the API surface for the parser functions.
 
-use std::collections::HashMap;
+use std::{collections::HashMap, iter::Iterator};
 
 use rowan::{Checkpoint, GreenNodeBuilder, TextRange, TextSize};
 
 use crate::syntax::{
-    Lexer,
+    AmbiguousTokens, Lexer,
     SyntaxKind::{self, *},
 };
 
@@ -23,6 +23,7 @@ pub struct Context<'src> {
     last_token: Option<SyntaxKind>,
     green: GreenNodeBuilder<'static>,
     errors: Vec<ParseError>,
+    ambiguous_tokens: Option<AmbiguousTokens<'src>>,
 
     /// User-provided custom operators.
     ///
@@ -46,6 +47,7 @@ impl<'src> Context<'src> {
             green: GreenNodeBuilder::new(),
             errors: Vec::new(),
             custom_ops: HashMap::default(),
+            ambiguous_tokens: None,
 
             statement_closed: true,
             switch_pat_expr: false,
@@ -68,7 +70,12 @@ impl<'src> Context<'src> {
         // Eat insignificant tokens
         loop {
             if self.current_token.is_none() {
-                self.current_token = self.lexer.next();
+                if let Some(token) = self.ambiguous_tokens.as_mut().and_then(Iterator::next) {
+                    self.current_token = Some(token);
+                } else {
+                    self.ambiguous_tokens = None;
+                    self.current_token = self.lexer.next();
+                }
             }
 
             match self.current_token {
@@ -79,6 +86,14 @@ impl<'src> Context<'src> {
                 Some(ERROR) => {
                     self.eat_error(ParseErrorKind::InvalidInput);
                     self.last_token = None;
+                }
+                Some(t @ __AMBIGUOUS_INTEGER_AND_RANGE) => {
+                    self.ambiguous_tokens = Some(AmbiguousTokens::new(
+                        t,
+                        self.lexer.slice(),
+                        self.lexer.span(),
+                    ));
+                    self.current_token = None;
                 }
                 _ => break,
             }
@@ -96,7 +111,12 @@ impl<'src> Context<'src> {
     /// "Eat" the current token, add it to the tree inside the current node.
     pub fn eat(&mut self) {
         if let Some(t) = self.current_token.take() {
-            self.green.token(t.into(), self.lexer.slice());
+            self.green.token(
+                t.into(),
+                self.ambiguous_tokens
+                    .as_ref()
+                    .map_or_else(|| self.lexer.slice(), AmbiguousTokens::slice),
+            );
             self.last_token = Some(t);
         }
         self.current_token = None;
@@ -120,7 +140,12 @@ impl<'src> Context<'src> {
     /// Eat the current token with the given kind.
     pub fn eat_as(&mut self, kind: SyntaxKind) {
         if self.current_token.is_some() {
-            self.green.token(kind.into(), self.lexer.slice());
+            self.green.token(
+                kind.into(),
+                self.ambiguous_tokens
+                    .as_ref()
+                    .map_or_else(|| self.lexer.slice(), AmbiguousTokens::slice),
+            );
             self.last_token = Some(kind);
         }
         self.current_token = None;
@@ -177,7 +202,9 @@ impl<'src> Context<'src> {
 
     #[must_use]
     pub fn slice(&self) -> &str {
-        self.lexer.slice()
+        self.ambiguous_tokens
+            .as_ref()
+            .map_or_else(|| self.lexer.slice(), AmbiguousTokens::slice)
     }
 
     #[must_use]
@@ -192,10 +219,7 @@ impl<'src> Context<'src> {
     /// The binding power of the current token.
     #[must_use]
     pub fn infix_binding_power(&self) -> Option<(u8, u8)> {
-        if let Some(bp) = self
-            .current_token
-            .and_then(SyntaxKind::infix_binding_power)
-        {
+        if let Some(bp) = self.current_token.and_then(SyntaxKind::infix_binding_power) {
             return Some(bp);
         }
 
@@ -209,7 +233,10 @@ impl<'src> Context<'src> {
         {
             tracing::trace!(%error, "syntax error");
         }
-        let span = self.lexer.span();
+        let span = self
+            .ambiguous_tokens
+            .as_ref()
+            .map_or_else(|| self.lexer.span(), AmbiguousTokens::span);
 
         let err = ParseError::new(
             TextRange::new(
