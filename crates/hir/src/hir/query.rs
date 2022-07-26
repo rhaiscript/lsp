@@ -1,8 +1,8 @@
+use crate::scope::ScopeParent;
 use core::iter;
-use std::cmp::Ordering;
 use itertools::Either;
 use rhai_rowan::{TextRange, TextSize};
-use crate::scope::ScopeParent;
+use std::cmp::Ordering;
 
 use super::*;
 
@@ -548,10 +548,14 @@ fn collect_symbol_scope_iters<'h>(
                 collect_symbol_scope_iters(hir, iters, sym);
             }
         }
+        SymbolKind::Virtual(VirtualSymbol::Module(m)) => {
+            iters.push(Box::new(hir.scope_symbols(hir[m.module].scope)));
+        }
         SymbolKind::Op(_)
         | SymbolKind::Lit(_)
         | SymbolKind::Reference(_)
         | SymbolKind::Continue(_)
-        | SymbolKind::Discard(_) => {}
+        | SymbolKind::Discard(_)
+        | SymbolKind::Virtual(VirtualSymbol::Proxy(..)) => {}
     }
 }

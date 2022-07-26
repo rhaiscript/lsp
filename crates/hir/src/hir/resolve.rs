@@ -2,7 +2,7 @@ use itertools::Itertools;
 use url::Url;
 
 use crate::{
-    symbol::{ReferenceTarget, SymbolKind},
+    symbol::{ReferenceTarget, SymbolKind, VirtualSymbol},
     Hir, Module, Symbol,
 };
 
@@ -32,10 +32,10 @@ impl Hir {
         // to be resolved.
         self.resolve_imports();
         self.resolve_paths();
-        self.resolve_same_file_references();
+        self.resolve_scope_references();
     }
 
-    fn resolve_same_file_references(&mut self) {
+    fn resolve_scope_references(&mut self) {
         let ref_symbols_to_resolve: Vec<Symbol> = self
             .symbols
             .iter()
@@ -61,7 +61,9 @@ impl Hir {
                     SymbolKind::Reference(_) => {
                         if matches!(
                             &self[visible_symbol].kind,
-                            SymbolKind::Fn(_) | SymbolKind::Decl(_)
+                            SymbolKind::Fn(_)
+                                | SymbolKind::Decl(_)
+                                | SymbolKind::Virtual(VirtualSymbol::Module(..))
                         ) {
                             drop(visible_symbols);
                             let vis_symbol_data = self.symbol_mut(visible_symbol);
@@ -162,7 +164,11 @@ impl Hir {
                 while let Some(mut visible_symbol) = visible_symbols.next() {
                     match &self[module_reference].kind {
                         SymbolKind::Reference(_) => {
-                            if matches!(&self[visible_symbol].kind, SymbolKind::Import(_)) {
+                            if matches!(
+                                &self[visible_symbol].kind,
+                                SymbolKind::Import(_)
+                                    | SymbolKind::Virtual(VirtualSymbol::Module(_))
+                            ) {
                                 let vis_symbol_data = &self[visible_symbol];
 
                                 match &vis_symbol_data.kind {
@@ -181,6 +187,11 @@ impl Hir {
                                         }
 
                                         visible_symbol = import_alias;
+                                    }
+                                    SymbolKind::Virtual(VirtualSymbol::Module(m)) => {
+                                        if self[module_reference].name() != Some(m.name.as_str()) {
+                                            continue;
+                                        }
                                     }
                                     _ => {}
                                 }

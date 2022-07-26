@@ -55,6 +55,7 @@ impl Hir {
 
         let module = self.ensure_module(module_kind);
         self.module_mut(module).docs = docs;
+        self.module_mut(module).sources.insert(source);
 
         self.source_mut(source).module = module;
 

@@ -1,8 +1,8 @@
 mod add;
+mod errors;
 mod query;
 mod remove;
 mod resolve;
-mod errors;
 
 use core::ops;
 
@@ -139,7 +139,13 @@ impl ops::Index<Symbol> for Hir {
     type Output = SymbolData;
 
     fn index(&self, index: Symbol) -> &Self::Output {
-        self.symbols.get(index).unwrap()
+        let sym = self.symbols.get(index).unwrap();
+
+        if let SymbolKind::Virtual(VirtualSymbol::Proxy(proxy)) = &sym.kind {
+            return self.symbols.get(proxy.target).unwrap();
+        }
+
+        sym
     }
 }
 
