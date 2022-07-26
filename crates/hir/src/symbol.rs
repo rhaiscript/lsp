@@ -20,6 +20,7 @@ impl SymbolData {
             SymbolKind::Fn(f) => Some(&f.name),
             SymbolKind::Decl(d) => Some(&d.name),
             SymbolKind::Reference(r) => Some(&r.name),
+            SymbolKind::Virtual(VirtualSymbol::Module(m)) => Some(&m.name),
             _ => None,
         }
     }
@@ -84,6 +85,9 @@ impl SymbolData {
             SymbolKind::Reference(r) => r.target,
             SymbolKind::Decl(d) => d.target,
             SymbolKind::Import(i) => i.target.map(ReferenceTarget::Module),
+            SymbolKind::Virtual(VirtualSymbol::Module(m)) => {
+                Some(ReferenceTarget::Module(m.module))
+            }
             _ => None,
         }
     }
@@ -118,6 +122,7 @@ pub enum SymbolKind {
     Throw(ThrowSymbol),
     Import(ImportSymbol),
     Discard(DiscardSymbol),
+    Virtual(VirtualSymbol),
 }
 
 impl SymbolKind {
@@ -818,4 +823,63 @@ pub struct DiscardSymbol {}
 pub enum ReferenceTarget {
     Symbol(Symbol),
     Module(Module),
+}
+
+/// A symbol that does not and cannot originate
+/// from source code and was injected into the hir.
+#[derive(Debug, Clone)]
+pub enum VirtualSymbol {
+    Proxy(VirtualProxySymbol),
+    Module(VirtualModuleSymbol),
+}
+
+#[allow(irrefutable_let_patterns)]
+impl VirtualSymbol {
+    /// Returns `true` if the virtual symbol is [`Proxy`].
+    ///
+    /// [`Proxy`]: VirtualSymbol::Proxy
+    #[must_use]
+    pub fn is_proxy(&self) -> bool {
+        matches!(self, Self::Proxy(..))
+    }
+
+    #[must_use]
+    pub fn as_proxy(&self) -> Option<&VirtualProxySymbol> {
+        if let Self::Proxy(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
+    /// Returns `true` if the virtual symbol is [`Module`].
+    ///
+    /// [`Module`]: VirtualSymbol::Module
+    #[must_use]
+    pub fn is_module(&self) -> bool {
+        matches!(self, Self::Module(..))
+    }
+
+    #[must_use]
+    pub fn as_module(&self) -> Option<&VirtualModuleSymbol> {
+        if let Self::Module(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+}
+
+/// A symbol that points to some other symbols transparently.
+#[derive(Debug, Clone, Copy)]
+pub struct VirtualProxySymbol {
+    pub target: Symbol,
+}
+
+/// A symbol that is used to inject modules into scopes
+/// without an import statement.
+#[derive(Debug, Clone)]
+pub struct VirtualModuleSymbol {
+    pub name: String,
+    pub module: Module,
 }

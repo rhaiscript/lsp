@@ -1,8 +1,8 @@
 use crate::{
     scope::Scope,
     source::Source,
-    symbol::{ReferenceTarget, SwitchArm, Symbol, SymbolData, SymbolKind},
-    Hir,
+    symbol::{ReferenceTarget, SwitchArm, Symbol, SymbolData, SymbolKind, VirtualSymbol},
+    Hir, Module,
 };
 
 impl Hir {
@@ -19,8 +19,50 @@ impl Hir {
         for symbol in symbols_to_remove {
             self.remove_symbol(symbol);
         }
+
+        for m in self.modules.values_mut() {
+            m.sources.remove(&source);
+        }
+
+        self.cleanup_modules();
     }
 
+    /// Remove scopes and symbols of modules that
+    /// are not protected and have no sources associated to them.
+    fn cleanup_modules(&mut self) {
+        for m in self.modules.keys().collect::<Vec<_>>() {
+            let m_data = &self[m];
+
+            if !m_data.protected && m_data.sources.is_empty() {
+                self.remove_module(m);
+            }
+        }
+    }
+
+    fn remove_module(&mut self, module: Module) {
+        if let Some(m) = self.modules.remove(module) {
+            self.remove_scope(m.scope);
+
+            let symbols_to_remove = self
+                .symbols
+                .keys()
+                .filter(|sym| {
+                    matches!(
+                        &self[*sym].kind,
+                        SymbolKind::Virtual(VirtualSymbol::Module(m))
+                        if m.module == module
+                    )
+                })
+                .collect::<Vec<_>>();
+
+            for sym in symbols_to_remove {
+                self.remove_symbol(sym);
+            }
+        }
+    }
+
+    /// Recursively remove all descendant symbols and scopes,
+    /// and then remove the scope itself.
     fn remove_scope(&mut self, scope: Scope) {
         if let Some(s) = self.scopes.remove(scope) {
             for symbol in s.symbols {
@@ -33,6 +75,8 @@ impl Hir {
         }
     }
 
+    /// Recursively remove all descendant symbols and scopes,
+    /// and then remove the symbol itself.
     fn remove_symbol(&mut self, symbol: Symbol) {
         if let Some(s) = self.symbols.remove(symbol) {
             if self.scopes.contains_key(s.parent_scope) {
@@ -204,6 +248,13 @@ impl Hir {
             }
             SymbolKind::Op(_op) => {
                 // TODO
+            }
+            SymbolKind::Virtual(virt) => {
+                match virt {
+                    VirtualSymbol::Module(_) | VirtualSymbol::Proxy(_) => {
+                        // no cleanup needed.
+                    }
+                }
             }
         }
     }

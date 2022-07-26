@@ -1,4 +1,4 @@
-use crate::Scope;
+use crate::{Scope, source::Source, IndexSet};
 use url::Url;
 
 slotmap::new_key_type! { pub struct Module; }
@@ -21,6 +21,10 @@ pub struct ModuleData {
     pub scope: Scope,
     pub kind: ModuleKind,
     pub docs: String,
+    /// Protected modules must not be removed,
+    /// even if it has no sources associated.
+    pub protected: bool,
+    pub sources: IndexSet<Source>,
 }
 
 impl ModuleData {

@@ -13,7 +13,10 @@ use lsp_types::{
     CompletionItem, CompletionItemKind, CompletionParams, CompletionResponse, Documentation,
     InsertTextFormat, MarkupContent, MarkupKind,
 };
-use rhai_hir::{symbol::SymbolKind, Hir, Symbol};
+use rhai_hir::{
+    symbol::{SymbolKind, VirtualSymbol},
+    Hir, Symbol,
+};
 use rhai_rowan::{query::Query, syntax::SyntaxNode};
 
 pub(crate) async fn completion<E: Environment>(
@@ -163,6 +166,20 @@ fn reference_completion(
                 } else {
                     Some(d.name.clone())
                 },
+                ..CompletionItem::default()
+            },
+        )),
+        SymbolKind::Virtual(VirtualSymbol::Module(m)) => Some((
+            symbol,
+            CompletionItem {
+                label: m.name.clone(),
+                detail: Some(signature_of(hir, syntax, symbol)),
+                documentation: Some(Documentation::MarkupContent(MarkupContent {
+                    kind: MarkupKind::Markdown,
+                    value: documentation_for(hir, syntax, symbol, false),
+                })),
+                kind: Some(CompletionItemKind::MODULE),
+                insert_text: Some(format!("{}::", m.name)),
                 ..CompletionItem::default()
             },
         )),

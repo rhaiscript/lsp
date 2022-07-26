@@ -5,10 +5,7 @@ use crate::{
     source::SourceKind,
     Type,
 };
-use rhai_rowan::{
-    ast::{AstNode, DefStmt, Rhai, RhaiDef},
-    parser::{parsers::def::parse_def_stmt, Parser},
-};
+use rhai_rowan::ast::{AstNode, Rhai, RhaiDef};
 
 mod def;
 mod script;
@@ -47,6 +44,8 @@ impl Hir {
             let scope = self.scopes.insert(ScopeData::default());
             self.static_module = self.modules.insert(ModuleData {
                 scope,
+                protected: true,
+                sources: Default::default(),
                 kind: ModuleKind::Static,
                 docs: String::new(),
             });
@@ -79,6 +78,8 @@ impl Hir {
                     self.modules.insert(ModuleData {
                         scope,
                         kind,
+                        protected: false,
+                        sources: Default::default(),
                         docs: String::new(),
                     })
                 }),
@@ -97,19 +98,24 @@ impl Hir {
 
                 let name = match url.host_str() {
                     Some(name) => name,
-                    _ => return,
+                    _ => unreachable!(),
                 };
 
-                let import_src = format!(r#"import "{url}" as {name}"#);
+                let name = name.to_string();
 
-                let mut parser = Parser::new(&import_src);
-                parser.execute(parse_def_stmt);
+                let virt_module_symbol = self.add_symbol(SymbolData {
+                    source: Default::default(),
+                    parent_scope: Scope::default(),
+                    kind: SymbolKind::Virtual(VirtualSymbol::Module(VirtualModuleSymbol {
+                        name,
+                        module,
+                    })),
+                    export: true,
+                });
 
-                self.add_def_statement(
-                    self.virtual_source,
-                    self[self.static_module].scope,
-                    &DefStmt::cast(parser.finish().into_syntax()).unwrap(),
-                );
+                self[self.static_module]
+                    .scope
+                    .add_symbol(self, virt_module_symbol, true);
             }
         }
     }
