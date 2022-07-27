@@ -11,11 +11,23 @@ pub struct ScopeData {
 }
 
 impl ScopeData {
-    pub fn all_symbols(&self) -> impl Iterator<Item = Symbol> + '_ {
+    /// Iterate over all direct symbols in the scope.
+    pub fn iter_symbols(&self) -> impl Iterator<Item = Symbol> + '_ {
         self.symbols
             .iter()
             .copied()
             .chain(self.hoisted_symbols.iter().copied())
+    }
+
+    /// Total count of direct symbols in the scope.
+    #[must_use]
+    pub fn symbol_count(&self) -> usize {
+        self.symbols.len() + self.hoisted_symbols.len()
+    }
+
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.symbol_count() == 0
     }
 }
 

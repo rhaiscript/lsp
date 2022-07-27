@@ -10,11 +10,11 @@ use lsp_async_stub::{
     Context, Params,
 };
 use lsp_types::{
-    CompletionItem, CompletionItemKind, CompletionParams, CompletionResponse, Documentation,
-    InsertTextFormat, MarkupContent, MarkupKind, Command,
+    Command, CompletionItem, CompletionItemKind, CompletionParams, CompletionResponse,
+    Documentation, InsertTextFormat, MarkupContent, MarkupKind,
 };
 use rhai_hir::{
-    symbol::{SymbolKind, VirtualSymbol},
+    symbol::{ReferenceTarget, SymbolKind, VirtualSymbol},
     Hir, Symbol,
 };
 use rhai_rowan::{query::Query, syntax::SyntaxNode};
@@ -181,8 +181,12 @@ fn reference_completion(
                 } else {
                     CompletionItemKind::VARIABLE
                 }),
-                insert_text: if d.is_import && !ident_only {
-                    Some(format!("{}::", d.name))
+                insert_text: if let Some(ReferenceTarget::Module(m)) = d.target {
+                    if ident_only || hir[hir[m].scope].is_empty() {
+                        Some(d.name.clone())
+                    } else {
+                        Some(format!("{}::", d.name))
+                    }
                 } else {
                     Some(d.name.clone())
                 },
@@ -204,7 +208,11 @@ fn reference_completion(
                     value: documentation_for(hir, syntax, symbol, false),
                 })),
                 kind: Some(CompletionItemKind::MODULE),
-                insert_text: Some(format!("{}::", m.name)),
+                insert_text: if ident_only || hir[hir[m.module].scope].is_empty() {
+                    Some(m.name.clone())
+                } else {
+                    Some(format!("{}::", m.name))
+                },
                 command: Some(Command {
                     command: "editor.action.triggerSuggest".into(),
                     title: "Suggest".into(),

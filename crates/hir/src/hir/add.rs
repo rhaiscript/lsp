@@ -105,7 +105,7 @@ impl Hir {
                     _ => unreachable!(),
                 };
 
-                for static_symbol in self[self[self.static_module].scope].all_symbols() {
+                for static_symbol in self[self[self.static_module].scope].iter_symbols() {
                     if let SymbolKind::Virtual(VirtualSymbol::Module(m)) = &self[static_symbol].kind
                     {
                         if m.module == module {
