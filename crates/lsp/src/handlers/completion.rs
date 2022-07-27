@@ -51,7 +51,23 @@ pub(crate) async fn completion<E: Environment>(
         let modules = ws
             .hir
             .visible_symbols_from_offset(source, offset, false)
-            .filter_map(|symbol| ws.hir[symbol].kind.as_import().and_then(|d| d.alias));
+            .filter_map(|symbol| {
+                ws.hir[symbol]
+                    .kind
+                    .as_import()
+                    .and_then(|d| d.alias)
+                    .or_else(|| {
+                        if ws.hir[symbol]
+                            .kind
+                            .as_virtual()
+                            .map_or(false, VirtualSymbol::is_module)
+                        {
+                            Some(symbol)
+                        } else {
+                            None
+                        }
+                    })
+            });
 
         let idx = query.path_segment_index();
 

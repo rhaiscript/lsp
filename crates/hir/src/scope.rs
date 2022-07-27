@@ -10,6 +10,15 @@ pub struct ScopeData {
     pub hoisted_symbols: HashSet<Symbol>,
 }
 
+impl ScopeData {
+    pub fn all_symbols(&self) -> impl Iterator<Item = Symbol> + '_ {
+        self.symbols
+            .iter()
+            .copied()
+            .chain(self.hoisted_symbols.iter().copied())
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub enum ScopeParent {
     Scope(Scope),

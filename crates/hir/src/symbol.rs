@@ -620,6 +620,23 @@ impl SymbolKind {
             None
         }
     }
+
+    /// Returns `true` if the symbol kind is [`Virtual`].
+    ///
+    /// [`Virtual`]: SymbolKind::Virtual
+    #[must_use]
+    pub fn is_virtual(&self) -> bool {
+        matches!(self, Self::Virtual(..))
+    }
+
+    #[must_use]
+    pub fn as_virtual(&self) -> Option<&VirtualSymbol> {
+        if let Self::Virtual(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
