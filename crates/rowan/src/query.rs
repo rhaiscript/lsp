@@ -106,6 +106,22 @@ impl Query {
             .unwrap_or_else(|| p.segments().count())
     }
 
+    #[must_use]
+    pub fn is_in_comment(&self) -> bool {
+        match (&self.before, &self.after) {
+            (None, Some(_) | None) => false,
+            (Some(before), None) => matches!(before.syntax.kind(), COMMENT_LINE | COMMENT_LINE_DOC),
+            (Some(before), Some(after)) => matches!(
+                (before.syntax.kind(), after.syntax.kind()),
+                (COMMENT_LINE | COMMENT_LINE_DOC, _)
+                    | (
+                        COMMENT_BLOCK | COMMENT_BLOCK_DOC,
+                        COMMENT_BLOCK | COMMENT_BLOCK_DOC
+                    )
+            ),
+        }
+    }
+
     fn path_node(&self) -> Option<SyntaxNode> {
         let path_before = self.before.as_ref().and_then(|t| match t.syntax.parent() {
             Some(p) => {

@@ -47,6 +47,10 @@ pub(crate) async fn completion<E: Environment>(
 
     let query = Query::at(&syntax, offset);
 
+    if query.is_in_comment() {
+        return Ok(None);
+    }
+
     if query.is_path() {
         let modules = ws
             .hir
