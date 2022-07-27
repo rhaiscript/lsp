@@ -30,12 +30,18 @@ impl Hir {
     /// Remove scopes and symbols of modules that
     /// are not protected and have no sources associated to them.
     fn cleanup_modules(&mut self) {
-        for m in self.modules.keys().collect::<Vec<_>>() {
-            let m_data = &self[m];
+        let modules_to_remove = self
+            .modules
+            .keys()
+            .filter(|m| {
+                let m = &self[*m];
 
-            if !m_data.protected && m_data.sources.is_empty() {
-                self.remove_module(m);
-            }
+                !m.protected && m.sources.is_empty()
+            })
+            .collect::<Vec<_>>();
+
+        for m in modules_to_remove {
+            self.remove_module(m);
         }
     }
 
