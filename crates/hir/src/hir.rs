@@ -63,37 +63,45 @@ impl Hir {
     }
 
     #[must_use]
+    #[inline]
     pub fn symbol(&self, symbol: Symbol) -> Option<&SymbolData> {
         self.symbols.get(symbol)
     }
 
+    #[inline]
     pub fn symbols(&self) -> impl Iterator<Item = (Symbol, &SymbolData)> {
         self.symbols.iter()
     }
 
     #[must_use]
+    #[inline]
     pub fn scope(&self, scope: Scope) -> Option<&ScopeData> {
         self.scopes.get(scope)
     }
 
+    #[inline]
     pub fn scopes(&self) -> impl Iterator<Item = (Scope, &ScopeData)> {
         self.scopes.iter()
     }
 
     #[must_use]
+    #[inline]
     pub const fn static_module(&self) -> Module {
         self.static_module
     }
 
     #[must_use]
+    #[inline]
     pub fn module(&self, module: Module) -> Option<&ModuleData> {
         self.modules.get(module)
     }
 
+    #[inline]
     pub fn modules(&self) -> impl Iterator<Item = (Module, &ModuleData)> {
         self.modules.iter()
     }
 
+    #[inline]
     pub fn sources(&self) -> impl Iterator<Item = (Source, &SourceData)> {
         self.sources.iter()
     }
@@ -104,19 +112,22 @@ impl Hir {
             .find_map(|(s, data)| if data.url == *url { Some(s) } else { None })
     }
 
+    #[inline]
     fn symbol_mut(&mut self, symbol: Symbol) -> &mut SymbolData {
         self.symbols.get_mut(symbol).unwrap()
     }
 
+    #[inline]
     fn scope_mut(&mut self, scope: Scope) -> &mut ScopeData {
         self.scopes.get_mut(scope).unwrap()
     }
 
+    #[inline]
     fn source_mut(&mut self, source: Source) -> &mut SourceData {
         self.sources.get_mut(source).unwrap()
     }
 
-    #[allow(dead_code)]
+    #[inline]
     fn module_mut(&mut self, module: Module) -> &mut ModuleData {
         self.modules.get_mut(module).unwrap()
     }
