@@ -157,6 +157,32 @@ impl Hir {
 
                 scope.add_symbol(self, symbol, true);
             }
+            Def::Let(let_def) => {
+                let ident_token = match let_def.ident_token() {
+                    Some(s) => s,
+                    None => return,
+                };
+
+                let symbol = self.symbols.insert(SymbolData {
+                    export: false,
+                    source: SourceInfo {
+                        source: Some(source),
+                        text_range: Some(let_def.syntax().text_range()),
+                        selection_text_range: Some(ident_token.text_range()),
+                    },
+                    parent_scope: Scope::default(),
+                    kind: SymbolKind::Decl(Box::new(DeclSymbol {
+                        name: ident_token.text().into(),
+                        is_const: false,
+                        value: None,
+                        value_scope: None,
+                        docs,
+                        ..DeclSymbol::default()
+                    })),
+                });
+
+                scope.add_symbol(self, symbol, true);
+            }
             Def::Fn(expr) => {
                 let fn_scope = self.scopes.insert(ScopeData {
                     source: SourceInfo {
