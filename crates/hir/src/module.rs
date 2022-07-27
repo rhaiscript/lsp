@@ -1,4 +1,4 @@
-use crate::{Scope, source::Source, IndexSet};
+use crate::{source::Source, IndexSet, Scope};
 use url::Url;
 
 slotmap::new_key_type! { pub struct Module; }
@@ -9,8 +9,11 @@ pub enum ModuleKind {
     /// items and modules defined in the scope of the static module
     /// are available in every script.
     ///
-    /// Other modules themselves are always part of this module.
+    /// Other root modules themselves are always part of this module.
     Static,
+
+    /// A module that is defined inline.
+    Inline,
 
     /// A module identified by an URL.
     Url(Url),
@@ -31,7 +34,7 @@ impl ModuleData {
     #[must_use]
     pub fn url(&self) -> Option<&Url> {
         match &self.kind {
-            ModuleKind::Static => None,
+            ModuleKind::Static | ModuleKind::Inline => None,
             ModuleKind::Url(u) => Some(u),
         }
     }

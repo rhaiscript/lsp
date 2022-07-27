@@ -11,7 +11,7 @@ use lsp_async_stub::{
 };
 use lsp_types::{
     CompletionItem, CompletionItemKind, CompletionParams, CompletionResponse, Documentation,
-    InsertTextFormat, MarkupContent, MarkupKind,
+    InsertTextFormat, MarkupContent, MarkupKind, Command,
 };
 use rhai_hir::{
     symbol::{SymbolKind, VirtualSymbol},
@@ -92,7 +92,7 @@ pub(crate) async fn completion<E: Environment>(
 
             let module_symbol = symbols
                 .iter()
-                .find(|&&symbol| ws.hir[symbol].name() == Some(module_name));
+                .find(|&&symbol| ws.hir[symbol].name(&ws.hir) == Some(module_name));
 
             let module_symbol = match module_symbol {
                 Some(s) => *s,
@@ -103,7 +103,7 @@ pub(crate) async fn completion<E: Environment>(
                 Some(m) => {
                     symbols = ws
                         .hir
-                        .descendant_symbols(ws.hir[m].scope)
+                        .scope_symbols(ws.hir[m].scope)
                         .filter(|s| ws.hir[*s].export)
                         .collect();
                 }
@@ -186,6 +186,11 @@ fn reference_completion(
                 } else {
                     Some(d.name.clone())
                 },
+                command: d.is_import.then(|| Command {
+                    command: "editor.action.triggerSuggest".into(),
+                    title: "Suggest".into(),
+                    ..Default::default()
+                }),
                 ..CompletionItem::default()
             },
         )),
@@ -200,6 +205,11 @@ fn reference_completion(
                 })),
                 kind: Some(CompletionItemKind::MODULE),
                 insert_text: Some(format!("{}::", m.name)),
+                command: Some(Command {
+                    command: "editor.action.triggerSuggest".into(),
+                    title: "Suggest".into(),
+                    ..Default::default()
+                }),
                 ..CompletionItem::default()
             },
         )),
