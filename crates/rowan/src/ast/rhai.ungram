@@ -213,12 +213,16 @@ DefModuleDecl =
   DefModule
 
 Def =
-  DefImport
+  DefModuleInline
+| DefImport
 | DefConst
 | DefLet
 | DefFn
 | DefOp
 | DefType
+
+DefModuleInline =
+  'module' 'ident' '{' statements:DefStmt* '}'
 
 DefModule =
   'module' ( 'ident' | 'lit_str' | 'static' )?

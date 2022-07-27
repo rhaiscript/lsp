@@ -6,6 +6,8 @@ foo::bar::hello();
 
 let a = foo::bar::hello;
 
+// We can access nested modules defined inline as well.
+nested::inner::need::to::go_deeper::YEAH;
 
 
 // Private function is not reachable.

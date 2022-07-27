@@ -123,6 +123,7 @@ pub fn parse_def(ctx: &mut Context) {
     let token = require_token!(ctx in node);
 
     match token {
+        T!["module"] => parse_def_module_inline(ctx),
         T!["import"] => parse_def_import(ctx),
         T!["const"] => parse_def_const(ctx),
         T!["let"] => parse_def_let(ctx),
@@ -133,6 +134,36 @@ pub fn parse_def(ctx: &mut Context) {
             ctx.add_error(ParseErrorKind::UnexpectedToken);
         }
     }
+
+    ctx.finish_node();
+}
+
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
+pub fn parse_def_module_inline(ctx: &mut Context) {
+    ctx.start_node(DEF_MODULE_INLINE);
+
+    expect_token!(ctx in node, T!["module"]);
+    expect_token!(ctx in node, T!["ident"]);
+
+    expect_token!(ctx in node, T!["{"]);
+
+    ctx.set_statement_closed(true);
+    while ctx.token().is_some() {
+        if let Some(T!["}"]) = ctx.token() {
+            ctx.eat();
+            ctx.finish_node();
+            ctx.set_statement_closed(true);
+            return;
+        }
+
+        if !ctx.statement_closed() {
+            ctx.add_error(ParseErrorKind::ExpectedToken(T![";"]));
+        }
+
+        parse_def_stmt(ctx);
+    }
+
+    ctx.add_error(ParseErrorKind::UnexpectedEof);
 
     ctx.finish_node();
 }

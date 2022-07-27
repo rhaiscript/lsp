@@ -121,7 +121,7 @@ impl Hir {
         }
     }
 
-    /// Iterate over all symbols in the scope and its sub-scopes.
+    /// Iterate over all symbols in the scope.
     pub fn scope_symbols(&self, scope: Scope) -> impl Iterator<Item = Symbol> + '_ {
         let scope_data = &self[scope];
 
@@ -147,7 +147,7 @@ impl Hir {
     /// Filter symbols with unique name, to be used with [`unique_by`](itertools::Itertools::unique_by).
     #[must_use]
     pub fn unique_symbol_name(&self, symbol: &Symbol) -> NameOrSymbol {
-        match self[*symbol].name() {
+        match self[*symbol].name(self) {
             Some(s) => NameOrSymbol::Name(s),
             None => NameOrSymbol::Symbol(*symbol),
         }
@@ -296,7 +296,7 @@ impl Hir {
     pub fn find_in_module(&self, module: Module, name: &str) -> Option<Symbol> {
         self.scope_symbols(self[module].scope)
             .filter(|s| self[*s].export)
-            .find(|s| self[*s].name() == Some(name))
+            .find(|s| self[*s].name(self) == Some(name))
     }
 
     /// Recursively resolve a module from a reference.
@@ -325,7 +325,7 @@ impl Hir {
         const MIN_DISTANCE: f64 = 0.5;
 
         self.visible_symbols_from_symbol(symbol)
-            .filter_map(|symbol| self[symbol].name())
+            .filter_map(|symbol| self[symbol].name(self))
             .map(|visible_name| {
                 (
                     strsim::normalized_damerau_levenshtein(name, visible_name),

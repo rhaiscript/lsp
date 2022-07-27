@@ -15,11 +15,12 @@ pub struct SymbolData {
 
 impl SymbolData {
     #[must_use]
-    pub fn name(&self) -> Option<&str> {
+    pub fn name<'h>(&'h self, hir: &'h Hir) -> Option<&'h str> {
         match &self.kind {
             SymbolKind::Fn(f) => Some(&f.name),
             SymbolKind::Decl(d) => Some(&d.name),
             SymbolKind::Reference(r) => Some(&r.name),
+            SymbolKind::Import(import) => import.alias.and_then(|alias| hir[alias].name(hir)),
             SymbolKind::Virtual(VirtualSymbol::Module(m)) => Some(&m.name),
             _ => None,
         }

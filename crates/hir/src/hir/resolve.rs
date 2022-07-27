@@ -53,7 +53,7 @@ impl Hir {
             let mut visible_symbols = self.visible_symbols_from_symbol(ref_symbol);
 
             while let Some(visible_symbol) = visible_symbols.next() {
-                if self[visible_symbol].name() != self[ref_symbol].name() {
+                if self[visible_symbol].name(self) != self[ref_symbol].name(self) {
                     continue;
                 }
 
@@ -180,8 +180,8 @@ impl Hir {
                                             }
                                         };
 
-                                        if self[import_alias].name()
-                                            != self[module_reference].name()
+                                        if self[import_alias].name(self)
+                                            != self[module_reference].name(self)
                                         {
                                             continue;
                                         }
@@ -189,7 +189,7 @@ impl Hir {
                                         visible_symbol = import_alias;
                                     }
                                     SymbolKind::Virtual(VirtualSymbol::Module(m)) => {
-                                        if self[module_reference].name() != Some(m.name.as_str()) {
+                                        if self[module_reference].name(self) != Some(m.name.as_str()) {
                                             continue;
                                         }
                                     }
@@ -225,10 +225,10 @@ impl Hir {
 
     fn resolve_in_module(&mut self, module: Module, ref_symbol: Symbol) {
         let target_symbol = {
-            self.descendant_symbols(self[module].scope)
+            self.scope_symbols(self[module].scope)
                 .find(|&target_symbol| {
                     self[target_symbol].export
-                        && self[target_symbol].name() == self[ref_symbol].name()
+                        && self[target_symbol].name(self) == self[ref_symbol].name(self)
                 })
         };
 
