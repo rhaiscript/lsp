@@ -448,6 +448,7 @@ pub enum SyntaxKind {
     DEF_ITEM,
     DEF,
     DEF_MODULE,
+    DEF_MODULE_INLINE,
     DEF_IMPORT,
     DEF_CONST,
     DEF_LET,

@@ -65,7 +65,7 @@ impl Hir {
                             break;
                         }
 
-                        if let Some(name) = param_data.name() {
+                        if let Some(name) = param_data.name(self) {
                             if name != "_" {
                                 if let Some(existing_param) = param_names.insert(name, param) {
                                     errors.push(Error {

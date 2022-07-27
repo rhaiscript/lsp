@@ -10,10 +10,3 @@ private fn cant_touch_this() {
 fn hello() {
     print("hello");
 }
-
-fn asd() {
-    let i = 0;
-    for i in range(1, 2)  {
-        i += 1;
-    }
-}

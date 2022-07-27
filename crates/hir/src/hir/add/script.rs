@@ -936,7 +936,7 @@ impl Hir {
                 });
 
                 let symbol_data = SymbolData {
-                    export: false,
+                    export: true,
                     parent_scope: Scope::default(),
                     source: SourceInfo {
                         source: Some(source),

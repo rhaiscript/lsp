@@ -83,13 +83,17 @@ impl Hir {
                         docs: String::new(),
                     })
                 }),
+            ModuleKind::Inline => unreachable!(),
         }
     }
 
     pub(crate) fn add_module_to_static_scope(&mut self, module: Module) {
         match &self[module].kind {
-            ModuleKind::Static => {
-                tracing::debug!("cannot insert static module");
+            ModuleKind::Static | ModuleKind::Inline => {
+                // Inserting the root static module makes no sense,
+                // and while inline modules can in fact be part of the static scope,
+                // they are never inserted via this function.
+                unreachable!()
             }
             ModuleKind::Url(url) => {
                 if url.scheme() != STATIC_URL_SCHEME {
@@ -160,8 +164,19 @@ impl Scope {
     }
 
     pub(crate) fn set_parent(self, hir: &mut Hir, parent: impl Into<ScopeParent>) {
+        let parent = parent.into();
+
+        if cfg!(debug_assertions) {
+            match parent {
+                ScopeParent::Scope(s) => {
+                    assert_ne!(s, self, "scope cannot be the parent of itself");
+                }
+                ScopeParent::Symbol(_) => {}
+            }
+        }
+
         let s = hir.scope_mut(self);
         debug_assert!(s.parent.is_none());
-        s.parent = Some(parent.into());
+        s.parent = Some(parent);
     }
 }

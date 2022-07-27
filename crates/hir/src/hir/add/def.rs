@@ -1,5 +1,5 @@
 use super::*;
-use crate::{module::ModuleKind, source::SourceInfo, util::script_url};
+use crate::{module::ModuleKind, source::SourceInfo, util::script_url, IndexSet};
 use rhai_rowan::{
     ast::{AstNode, Def, DefStmt, RhaiDef},
     syntax::SyntaxElement,
@@ -270,6 +270,46 @@ impl Hir {
                 });
 
                 scope.add_symbol(self, symbol, true);
+            }
+            Def::ModuleInline(m) => {
+                let ident = m.ident_token();
+
+                let ident = match ident {
+                    Some(ident) => ident,
+                    None => return,
+                };
+
+                let module_scope = self.scopes.insert(ScopeData::default());
+
+                module_scope.set_parent(self, scope);
+
+                let module = self.modules.insert(ModuleData {
+                    scope: module_scope,
+                    kind: ModuleKind::Inline,
+                    protected: false,
+                    sources: IndexSet::from_iter([source]),
+                    docs,
+                });
+
+                for statement in m.statements() {
+                    self.add_def_statement(source, module_scope, &statement);
+                }
+
+                let virt_module_symbol = self.add_symbol(SymbolData {
+                    source: SourceInfo {
+                        source: Some(source),
+                        text_range: Some(m.syntax().text_range()),
+                        selection_text_range: Some(ident.text_range()),
+                    },
+                    parent_scope: Scope::default(),
+                    kind: SymbolKind::Virtual(VirtualSymbol::Module(VirtualModuleSymbol {
+                        name: ident.text().to_string(),
+                        module,
+                    })),
+                    export: true,
+                });
+
+                scope.add_symbol(self, virt_module_symbol, true);
             }
             Def::Type(_) => {
                 // TODO

@@ -59,11 +59,10 @@ pub async fn initialize<E: Environment>(
             declaration_provider: Some(DeclarationCapability::Simple(true)),
             definition_provider: Some(OneOf::Left(true)),
             document_symbol_provider: Some(OneOf::Left(true)),
-            // document_formatting_provider: Some(OneOf::Left(true)),
             hover_provider: Some(HoverProviderCapability::Simple(true)),
             completion_provider: Some(CompletionOptions {
                 resolve_provider: Some(false),
-                trigger_characters: Some(vec!["#".into(), "=".into(), ".".into()]),
+                trigger_characters: Some(vec!["#".into(), "=".into(), ".".into(), ":".into()]),
                 ..CompletionOptions::default()
             }),
             ..Default::default()
