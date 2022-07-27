@@ -3,11 +3,35 @@
 //! These can be gradually turned into code generation if similar
 //! repetitive patterns are found and the effort is worth it.
 
+use rowan::NodeOrToken;
+
 use super::{
     AstNode, Expr, ObjectField, Param, ParamList, SwitchArm, SwitchArmCondition, TypedParam,
 };
 use super::{ExprBlock, ExprIf, T};
 use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
+
+impl super::Rhai {
+    #[must_use]
+    pub fn script_docs(&self) -> String {
+        let mut s = String::new();
+        for comment_token in self
+            .syntax()
+            .children_with_tokens()
+            .filter_map(NodeOrToken::into_token)
+            .filter(|t| t.kind() == SyntaxKind::COMMENT_LINE)
+        {
+            if let Some(t) = comment_token.text().strip_prefix("//!") {
+                let t = t.strip_prefix(' ').unwrap_or(t);
+                let t = t.trim_end();
+                s += t;
+                s += "\n";
+            }
+        }
+
+        s
+    }
+}
 
 impl super::ExprLet {
     pub fn expr(&self) -> Option<Expr> {

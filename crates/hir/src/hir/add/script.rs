@@ -14,6 +14,13 @@ impl Hir {
         let module = self.ensure_module(ModuleKind::Url(url));
         self.module_mut(module).sources.insert(source);
 
+        let script_docs = rhai.script_docs();
+
+        if !script_docs.is_empty() {
+            self.module_mut(module).docs = script_docs;
+        }
+
+
         self.source_mut(source).module = module;
 
         self.add_statements(source, self[module].scope, true, rhai.statements());
