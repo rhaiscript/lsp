@@ -1,4 +1,4 @@
-use std::{sync::Arc, time::Duration};
+use std::{collections::HashSet, sync::Arc, time::Duration};
 
 use crate::{
     config::{InitConfig, LspConfig, RhaiConfig},
@@ -11,10 +11,10 @@ use arc_swap::ArcSwap;
 use lsp_async_stub::{rpc, util::Mapper};
 use lsp_types::Url;
 use once_cell::sync::Lazy;
-use rhai_hir::Hir;
+use rhai_hir::{Hir, Type};
 use rhai_rowan::{
-    parser::{Parse, Parser},
-    util::is_rhai_def,
+    parser::{Operator, Parse, Parser},
+    util::{is_rhai_def, is_valid_ident},
 };
 use tokio::sync::RwLock as AsyncRwLock;
 
@@ -117,6 +117,9 @@ pub struct Workspace<E: Environment> {
     pub(crate) root: Url,
     pub(crate) documents: IndexMap<lsp_types::Url, Document>,
     pub(crate) hir: Hir,
+    /// A set of custom operators from definitions,
+    /// along with their lhs and rhs types.
+    pub(crate) custom_operators: HashSet<(String, Type, Type)>,
 }
 
 impl<E: Environment> Workspace<E> {
@@ -129,6 +132,7 @@ impl<E: Environment> Workspace<E> {
             config: LspConfig::default(),
             documents: Default::default(),
             hir: Default::default(),
+            custom_operators: Default::default(),
         }
     }
 }
@@ -236,13 +240,32 @@ impl<E: Environment> Workspace<E> {
 
             self.add_document(document_url, &source_text);
         }
+        self.hir.resolve_references();
     }
 
     pub fn add_document(&mut self, url: Url, text: &str) {
+        let is_def = is_rhai_def(text);
+
         let parse = if is_rhai_def(text) {
-            Parser::new(text).parse_def()
+            Parser::new(text)
+                .with_operators(self.custom_operators.iter().filter_map(|(name, ..)| {
+                    if is_valid_ident(name) {
+                        Some((name.clone(), Operator::default()))
+                    } else {
+                        None
+                    }
+                }))
+                .parse_def()
         } else {
-            Parser::new(text).parse_script()
+            Parser::new(text)
+                .with_operators(self.custom_operators.iter().filter_map(|(name, ..)| {
+                    if is_valid_ident(name) {
+                        Some((name.clone(), Operator::default()))
+                    } else {
+                        None
+                    }
+                }))
+                .parse_script()
         };
 
         let mapper = Mapper::new_utf16(text, false);
@@ -250,8 +273,63 @@ impl<E: Environment> Workspace<E> {
         let normalized_url = url.clone().normalize();
 
         self.hir.add_source(&normalized_url, &parse.clone_syntax());
-        self.hir.resolve_references();
-        self.documents.insert(url, Document { parse, mapper });
+        self.documents.insert(
+            url,
+            Document {
+                parse,
+                mapper,
+                is_def,
+            },
+        );
+
+        if is_def {
+            self.check_operators();
+        }
+    }
+
+    pub fn remove_document(&mut self, uri: &Url) {
+        if let Some(src) = self.hir.source_by_url(&uri.clone().normalize()) {
+            self.hir.remove_source(src);
+        }
+
+        if let Some(doc) = self.documents.remove(uri) {
+            if doc.is_def {
+                self.check_operators();
+            }
+        }
+    }
+
+    /// Reparses scripts if the list of defined operators change.
+    pub(crate) fn check_operators(&mut self) {
+        let new_operators = self
+            .hir
+            .operators()
+            .map(|op| (op.name.clone(), op.lhs_ty.clone(), op.rhs_ty.clone()))
+            .collect::<HashSet<_>>();
+
+        if new_operators == self.custom_operators {
+            return;
+        }
+
+        self.custom_operators = new_operators;
+
+        let mut docs_to_reparse = Vec::new();
+        self.documents.retain(|uri, doc| {
+            if !doc.is_def {
+                // Remove the source from the HIR.
+                if let Some(src) = self.hir.source_by_url(&uri.clone().normalize()) {
+                    self.hir.remove_source(src);
+                }
+
+                docs_to_reparse.push((uri.clone(), doc.parse.green.to_string()));
+            }
+
+            doc.is_def
+        });
+
+        for (uri, text) in docs_to_reparse {
+            self.add_document(uri, &text);
+        }
     }
 }
 
@@ -259,4 +337,5 @@ impl<E: Environment> Workspace<E> {
 pub struct Document {
     pub(crate) parse: Parse,
     pub(crate) mapper: Mapper,
+    pub(crate) is_def: bool,
 }

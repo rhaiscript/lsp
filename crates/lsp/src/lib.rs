@@ -40,7 +40,7 @@ pub fn create_server<E: Environment>() -> Server<World<E>> {
         .on_request::<request::References, _>(handlers::references)
         .on_request::<request::DocumentSymbolRequest, _>(handlers::document_symbols)
         .on_request::<request::HoverRequest, _>(handlers::hover)
-        // .on_request::<request::Formatting, _>(handlers::format)
+        .on_request::<request::SemanticTokensFullRequest, _>(handlers::semantic_tokens)
         .on_request::<request::Completion, _>(handlers::completion)
         .on_request::<request::PrepareRenameRequest, _>(handlers::prepare_rename)
         .on_request::<request::Rename, _>(handlers::rename)

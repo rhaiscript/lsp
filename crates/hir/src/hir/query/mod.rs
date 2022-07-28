@@ -85,6 +85,15 @@ impl Hir {
 
         None
     }
+
+    pub fn operators(&self) -> impl Iterator<Item = &OpSymbol> + '_ {
+        self.symbols.values().filter_map(|v| v.kind.as_op())
+    }
+
+    #[must_use]
+    pub fn operator_by_name(&self, name: &str) -> Option<&OpSymbol> {
+        self.operators().find(|&op| op.name == name)
+    }
 }
 
 /// Used for filtering shadowed symbols.

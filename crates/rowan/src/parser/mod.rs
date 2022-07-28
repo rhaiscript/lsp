@@ -1,7 +1,10 @@
 //! This module contains all parsing-related tools including a
 //! recursive-descent parser.
 
-use crate::syntax::{SyntaxKind, SyntaxNode};
+use crate::{
+    syntax::{SyntaxKind, SyntaxNode},
+    util::is_valid_ident,
+};
 use rowan::GreenNode;
 use thiserror::Error;
 
@@ -50,17 +53,34 @@ impl<'src> Parser<'src> {
     }
 
     /// # Panics
-    /// 
+    ///
     /// Panics if the given operator name is not a valid identifer.
     #[must_use]
     pub fn with_operator(mut self, name: impl Into<String>, operator: Operator) -> Self {
         let ident = name.into();
 
-        let mut ident_parser = Parser::new(&ident);
-        ident_parser.execute(parsers::parse_expr_ident);
-        assert!(ident_parser.finish().errors.is_empty(), "the provided operator name must be a valid identifier");
+        assert!(
+            is_valid_ident(&ident),
+            "the provided operator name must be a valid identifier"
+        );
 
         self.context.custom_op(ident, operator);
+        self
+    }
+
+    /// # Panics
+    ///
+    /// Panics if the given operator name is not a valid identifer.
+    #[must_use]
+    pub fn with_operators<I, S>(mut self, operators: I) -> Self
+    where
+        I: IntoIterator<Item = (S, Operator)>,
+        S: Into<String>,
+    {
+        for (ident, op) in operators {
+            self = self.with_operator(ident, op);
+        }
+
         self
     }
 

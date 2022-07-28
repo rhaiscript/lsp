@@ -39,3 +39,6 @@ pub(crate) use watch::*;
 
 mod completion;
 pub(crate) use completion::*;
+
+mod semantic_tokens;
+pub(crate) use semantic_tokens::*;

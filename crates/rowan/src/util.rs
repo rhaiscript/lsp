@@ -1,5 +1,5 @@
 use crate::parser::{
-    parsers::{def::parse_def_header, parse_expr},
+    parsers::{self, def::parse_def_header, parse_expr},
     Parse, Parser,
 };
 use rowan::{TextRange, TextSize};
@@ -90,6 +90,13 @@ pub fn is_rhai_def(source: &str) -> bool {
     let mut parser = Parser::new(source);
     parser.execute(parse_def_header);
     parser.finish().errors.is_empty()
+}
+
+/// Determine whether the given text is a valid identifier.
+pub fn is_valid_ident(text: &str) -> bool {
+    let mut ident_parser = Parser::new(text);
+    ident_parser.execute(parsers::parse_expr_ident);
+    ident_parser.finish().errors.is_empty()
 }
 
 #[must_use]

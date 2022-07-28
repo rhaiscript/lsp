@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use super::update_configuration;
+use super::{semantic_tokens, update_configuration};
 use crate::config::InitConfig;
 use crate::diagnostics::publish_all_diagnostics;
 use crate::environment::Environment;
@@ -9,9 +9,10 @@ use crate::World;
 use lsp_async_stub::{rpc::Error, Context, Params};
 use lsp_types::{
     CompletionOptions, DeclarationCapability, FoldingRangeProviderCapability,
-    HoverProviderCapability, InitializedParams, OneOf, RenameOptions, ServerCapabilities,
-    ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind,
-    WorkspaceFoldersServerCapabilities, WorkspaceServerCapabilities,
+    HoverProviderCapability, InitializedParams, OneOf, RenameOptions, SemanticTokensFullOptions,
+    SemanticTokensLegend, SemanticTokensOptions, SemanticTokensServerCapabilities,
+    ServerCapabilities, ServerInfo, TextDocumentSyncCapability, TextDocumentSyncKind,
+    WorkDoneProgressOptions, WorkspaceFoldersServerCapabilities, WorkspaceServerCapabilities,
 };
 use lsp_types::{InitializeParams, InitializeResult};
 
@@ -60,6 +61,19 @@ pub async fn initialize<E: Environment>(
             definition_provider: Some(OneOf::Left(true)),
             document_symbol_provider: Some(OneOf::Left(true)),
             hover_provider: Some(HoverProviderCapability::Simple(true)),
+            semantic_tokens_provider: Some(
+                SemanticTokensServerCapabilities::SemanticTokensOptions(SemanticTokensOptions {
+                    work_done_progress_options: WorkDoneProgressOptions {
+                        work_done_progress: false.into(),
+                    },
+                    legend: SemanticTokensLegend {
+                        token_types: semantic_tokens::TokenType::LEGEND.into(),
+                        token_modifiers: semantic_tokens::TokenModifier::MODIFIERS.into(),
+                    },
+                    full: Some(SemanticTokensFullOptions::Bool(true)),
+                    range: Some(false),
+                }),
+            ),
             completion_provider: Some(CompletionOptions {
                 resolve_provider: Some(false),
                 trigger_characters: Some(vec!["#".into(), "=".into(), ".".into(), ":".into()]),

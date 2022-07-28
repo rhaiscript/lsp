@@ -1,8 +1,12 @@
-use crate::{environment::Environment, utils::{documentation_for, Normalize}, world::World};
+use crate::{
+    environment::Environment,
+    utils::{documentation_for, Normalize},
+    world::World,
+};
 use lsp_async_stub::{rpc, util::LspExt, Context, Params};
 use lsp_types::{Hover, HoverContents, HoverParams, MarkupContent, MarkupKind, Range};
 use rhai_hir::{symbol::ReferenceTarget, Hir, Symbol};
-use rhai_rowan::{syntax::SyntaxNode, TextSize};
+use rhai_rowan::{query::Query, syntax::SyntaxNode, TextSize};
 
 pub(crate) async fn hover<E: Environment>(
     context: Context<World<E>>,
@@ -30,6 +34,22 @@ pub(crate) async fn hover<E: Environment>(
         Some(s) => s,
         None => return Ok(None),
     };
+
+    let syntax = doc.parse.clone_syntax();
+
+    let query = Query::at(&syntax, offset);
+
+    if let Some(ident) = query.binary_op_ident() {
+        if let Some(op) = ws.hir.operator_by_name(ident.text()) {
+            return Ok(Some(Hover {
+                contents: HoverContents::Markup(MarkupContent {
+                    kind: MarkupKind::Markdown,
+                    value: op.docs.clone(),
+                }),
+                range: doc.mapper.range(ident.text_range()).map(LspExt::into_lsp),
+            }));
+        }
+    }
 
     let target_symbol = ws
         .hir
