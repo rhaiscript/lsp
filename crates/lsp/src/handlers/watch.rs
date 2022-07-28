@@ -4,7 +4,6 @@ use lsp_types::{DidChangeWatchedFilesParams, FileChangeType};
 use crate::{
     diagnostics::{clear_diagnostics, publish_all_diagnostics},
     environment::Environment,
-    utils::Normalize,
     world::World,
 };
 
@@ -55,12 +54,7 @@ pub(crate) async fn watched_file_change<E: Environment>(
             }
             FileChangeType::DELETED => {
                 let ws = workspaces.by_document_mut(&uri);
-                ws.documents.remove(&uri);
-
-                if let Some(src) = ws.hir.source_by_url(&uri.clone().normalize()) {
-                    ws.hir.remove_source(src);
-                }
-
+                ws.remove_document(&uri) ;
                 clear_diagnostics(context.clone(), uri).await;
             }
             _ => {

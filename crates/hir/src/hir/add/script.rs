@@ -20,7 +20,6 @@ impl Hir {
             self.module_mut(module).docs = script_docs;
         }
 
-
         self.source_mut(source).module = module;
 
         self.add_statements(source, self[module].scope, true, rhai.statements());
@@ -362,9 +361,19 @@ impl Hir {
                     .rhs()
                     .and_then(|rhs| self.add_expression(source, scope, false, rhs));
 
-                let op = expr.op_token().map(|t| t.kind());
+                let op = expr.op_token().map(|t| {
+                    if t.kind() == SyntaxKind::IDENT {
+                        BinaryOpKind::Custom(CustomBinaryOp {
+                            name: t.text().to_string(),
+                            range: t.text_range()
+                        })
+                    } else {
+                        BinaryOpKind::Regular(t.kind())
+                    }
+                });
 
-                if let Some(SyntaxKind::PUNCT_DOT) = op {
+
+                if let Some(BinaryOpKind::Regular(SyntaxKind::PUNCT_DOT)) = op {
                     if let Some(rhs) = rhs {
                         if let Some(ref_rhs) = self.symbol_mut(rhs).kind.as_reference_mut() {
                             ref_rhs.field_access = true;
@@ -380,7 +389,11 @@ impl Hir {
                         text_range: expr.syntax().text_range().into(),
                         selection_text_range: None,
                     },
-                    kind: SymbolKind::Binary(BinarySymbol { lhs, op, rhs }),
+                    kind: SymbolKind::Binary(BinarySymbol {
+                        lhs,
+                        op,
+                        rhs,
+                    }),
                 });
 
                 scope.add_symbol(self, symbol, false);

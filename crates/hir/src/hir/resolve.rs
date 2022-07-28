@@ -13,7 +13,6 @@ impl Hir {
         for (_, sym_data) in ref_symbols {
             match &mut sym_data.kind {
                 SymbolKind::Fn(f) => f.references.clear(),
-                SymbolKind::Op(f) => f.references.clear(),
                 SymbolKind::Decl(d) => {
                     d.target = None;
                     d.references.clear();

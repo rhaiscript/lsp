@@ -52,9 +52,34 @@ impl Query {
 impl Query {
     #[must_use]
     pub fn is_field_access(&self) -> bool {
+        let binary_expr = match self.binary_expr() {
+            Some(expr) => expr,
+            None => return false,
+        };
+
+        binary_expr
+            .children_with_tokens()
+            .any(|t| t.kind() == PUNCT_DOT)
+    }
+
+    #[must_use]
+    pub fn binary_op_ident(&self) -> Option<SyntaxToken> {
+        self.binary_expr().and_then(|expr| {
+            expr.children_with_tokens().find_map(|t| {
+                if t.kind() == IDENT {
+                    t.into_token()
+                } else {
+                    None
+                }
+            })
+        })
+    }
+
+    #[must_use]
+    pub fn binary_expr(&self) -> Option<SyntaxNode> {
         let before = match &self.before {
             Some(before) => before,
-            None => return false,
+            None => return None,
         };
 
         let binary_expr = before
@@ -64,16 +89,14 @@ impl Query {
 
         let binary_expr = match binary_expr {
             Some(p) => p,
-            None => return false,
+            None => return None,
         };
 
         if binary_expr.kind() != EXPR_BINARY {
-            return false;
+            return None;
         }
 
-        binary_expr
-            .children_with_tokens()
-            .any(|t| t.kind() == PUNCT_DOT)
+        Some(binary_expr)
     }
 
     #[must_use]

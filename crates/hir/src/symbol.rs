@@ -662,7 +662,6 @@ pub struct OpSymbol {
     pub docs: String,
     pub lhs_ty: Type,
     pub rhs_ty: Type,
-    pub references: HashSet<Symbol>,
 }
 
 #[allow(clippy::struct_excessive_bools)]
@@ -713,8 +712,56 @@ pub struct UnarySymbol {
 #[derive(Debug, Clone)]
 pub struct BinarySymbol {
     pub lhs: Option<Symbol>,
-    pub op: Option<SyntaxKind>,
+    pub op: Option<BinaryOpKind>,
     pub rhs: Option<Symbol>,
+}
+
+#[derive(Debug, Clone)]
+pub enum BinaryOpKind {
+    Regular(SyntaxKind),
+    Custom(CustomBinaryOp),
+}
+
+impl BinaryOpKind {
+    /// Returns `true` if the binary op kind is [`Custom`].
+    ///
+    /// [`Custom`]: BinaryOpKind::Custom
+    #[must_use]
+    pub fn is_custom(&self) -> bool {
+        matches!(self, Self::Custom(..))
+    }
+
+    #[must_use]
+    pub fn as_custom(&self) -> Option<&CustomBinaryOp> {
+        if let Self::Custom(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
+    /// Returns `true` if the binary op kind is [`Regular`].
+    ///
+    /// [`Regular`]: BinaryOpKind::Regular
+    #[must_use]
+    pub fn is_regular(&self) -> bool {
+        matches!(self, Self::Regular(..))
+    }
+
+    #[must_use]
+    pub fn as_regular(&self) -> Option<&SyntaxKind> {
+        if let Self::Regular(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CustomBinaryOp {
+    pub name: String,
+    pub range: TextRange,
 }
 
 #[derive(Debug, Clone)]

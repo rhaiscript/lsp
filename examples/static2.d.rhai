@@ -7,3 +7,9 @@ module static;
 fn floor(number: f32) -> f32;
 
 const RUNTIME_VERSION: string;
+
+/// Magically compares two items.
+op is(?, ?) -> bool;
+
+/// Asserts that the given expression is true.
+fn assert(expr: bool);
