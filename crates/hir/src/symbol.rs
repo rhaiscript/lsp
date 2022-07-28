@@ -662,6 +662,7 @@ pub struct OpSymbol {
     pub docs: String,
     pub lhs_ty: Type,
     pub rhs_ty: Type,
+    pub binding_powers: (u8, u8),
 }
 
 #[allow(clippy::struct_excessive_bools)]

@@ -395,7 +395,11 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         ctx.start_node_at(expr_start, EXPR);
         ctx.finish_node();
 
-        ctx.eat();
+        if ctx.token().map_or(false, |t| t.is_reserved_keyword()) {
+            ctx.eat_as(T!["ident"]);
+        } else {
+            ctx.eat();
+        }
 
         ctx.start_node_at(expr_start, EXPR_BINARY);
         parse_expr_bp(ctx, r_bp);

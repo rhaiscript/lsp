@@ -281,6 +281,7 @@ pub fn parse_def_op(ctx: &mut Context) {
     if token.infix_binding_power().is_some()
         || token.prefix_binding_power().is_some()
         || matches!(token, T!["ident"])
+        || token.is_reserved_keyword()
     {
         ctx.eat_as(T!["ident"]);
     } else {
@@ -301,6 +302,37 @@ pub fn parse_def_op(ctx: &mut Context) {
         ctx.eat();
         super::ty::parse_type(ctx);
     }
+
+    if let Some(T!["with"]) = ctx.token() {
+        parse_def_op_precedence(ctx);
+    }
+
+    ctx.finish_node();
+}
+
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
+fn parse_def_op_precedence(ctx: &mut Context) {
+    ctx.start_node(DEF_OP_PRECEDENCE);
+
+    expect_token!(ctx in node, T!["with"]);
+
+    expect_token!(ctx in node, T!["("]);
+
+    expect_token!(ctx in node, T!["lit_int"]);
+
+    if let Some(T![","]) = ctx.token() {
+        ctx.eat();
+
+        if let Some(T!["lit_int"]) = ctx.token() {
+            ctx.eat();
+
+            if let Some(T![","]) = ctx.token() {
+                ctx.eat();
+            }
+        }
+    }
+
+    expect_token!(ctx in node, T![")"]);
 
     ctx.finish_node();
 }

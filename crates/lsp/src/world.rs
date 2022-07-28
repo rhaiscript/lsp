@@ -1,5 +1,3 @@
-use std::{collections::HashSet, sync::Arc, time::Duration};
-
 use crate::{
     config::{InitConfig, LspConfig, RhaiConfig},
     environment::Environment,
@@ -16,6 +14,7 @@ use rhai_rowan::{
     parser::{Operator, Parse, Parser},
     util::{is_rhai_def, is_valid_ident},
 };
+use std::{collections::HashSet, sync::Arc, time::Duration};
 use tokio::sync::RwLock as AsyncRwLock;
 
 pub static DEFAULT_WORKSPACE_URL: Lazy<Url> = Lazy::new(|| Url::parse("root:///").unwrap());
@@ -119,7 +118,7 @@ pub struct Workspace<E: Environment> {
     pub(crate) hir: Hir,
     /// A set of custom operators from definitions,
     /// along with their lhs and rhs types.
-    pub(crate) custom_operators: HashSet<(String, Type, Type)>,
+    pub(crate) custom_operators: HashSet<(String, Type, Type, (u8, u8))>,
 }
 
 impl<E: Environment> Workspace<E> {
@@ -248,9 +247,9 @@ impl<E: Environment> Workspace<E> {
 
         let parse = if is_rhai_def(text) {
             Parser::new(text)
-                .with_operators(self.custom_operators.iter().filter_map(|(name, ..)| {
+                .with_operators(self.custom_operators.iter().filter_map(|(name, .., bp)| {
                     if is_valid_ident(name) {
-                        Some((name.clone(), Operator::default()))
+                        Some((name.clone(), Operator { binding_power: *bp }))
                     } else {
                         None
                     }
@@ -258,9 +257,9 @@ impl<E: Environment> Workspace<E> {
                 .parse_def()
         } else {
             Parser::new(text)
-                .with_operators(self.custom_operators.iter().filter_map(|(name, ..)| {
+                .with_operators(self.custom_operators.iter().filter_map(|(name, .., bp)| {
                     if is_valid_ident(name) {
-                        Some((name.clone(), Operator::default()))
+                        Some((name.clone(), Operator { binding_power: *bp }))
                     } else {
                         None
                     }
@@ -304,7 +303,14 @@ impl<E: Environment> Workspace<E> {
         let new_operators = self
             .hir
             .operators()
-            .map(|op| (op.name.clone(), op.lhs_ty.clone(), op.rhs_ty.clone()))
+            .map(|op| {
+                (
+                    op.name.clone(),
+                    op.lhs_ty.clone(),
+                    op.rhs_ty.clone(),
+                    op.binding_powers,
+                )
+            })
             .collect::<HashSet<_>>();
 
         if new_operators == self.custom_operators {

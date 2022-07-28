@@ -457,6 +457,7 @@ pub enum SyntaxKind {
     DEF_TYPE,
     TYPE,
     TYPE_LIST,
+    DEF_OP_PRECEDENCE,
     TYPED_PARAM_LIST,
     TYPE_IDENT,
     TYPE_LIT,

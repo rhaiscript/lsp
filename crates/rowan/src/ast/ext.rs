@@ -6,7 +6,7 @@
 use rowan::NodeOrToken;
 
 use super::{
-    AstNode, Expr, ObjectField, Param, ParamList, SwitchArm, SwitchArmCondition, TypedParam,
+    AstNode, Expr, ObjectField, Param, ParamList, SwitchArm, SwitchArmCondition, TypedParam, DefOpPrecedence,
 };
 use super::{ExprBlock, ExprIf, T};
 use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
@@ -325,6 +325,24 @@ impl super::DefFn {
                 t.into_token()
             })
             .nth(if self.has_kw_get() { 1 } else { 0 })
+    }
+}
+
+impl super::DefOp {
+    pub fn precedence(&self) -> Option<DefOpPrecedence> {
+        self.syntax().children().find_map(AstNode::cast)
+    }
+}
+
+impl super::DefOpPrecedence {
+    pub fn binding_powers(&self) -> impl Iterator<Item = SyntaxToken> {
+        self.syntax().children_with_tokens().filter_map(|t| {
+            if t.kind() == SyntaxKind::LIT_INT {
+                t.into_token()
+            } else {
+                None
+            }
+        })
     }
 }
 

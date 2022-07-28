@@ -365,7 +365,7 @@ impl Hir {
                     if t.kind() == SyntaxKind::IDENT {
                         BinaryOpKind::Custom(CustomBinaryOp {
                             name: t.text().to_string(),
-                            range: t.text_range()
+                            range: t.text_range(),
                         })
                     } else {
                         BinaryOpKind::Regular(t.kind())

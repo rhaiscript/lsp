@@ -265,6 +265,20 @@ impl Hir {
                     kind: SymbolKind::Op(OpSymbol {
                         name: ident.text().into(),
                         docs,
+                        binding_powers: f
+                            .precedence()
+                            .and_then(|precedence| {
+                                let mut bps = precedence.binding_powers();
+
+                                let bp_l: u8 = bps.next().and_then(|bp| bp.text().parse().ok())?;
+                                let bp_r: u8 = bps
+                                    .next()
+                                    .and_then(|bp| bp.text().parse().ok())
+                                    .unwrap_or_else(|| bp_l.saturating_add(1));
+
+                                Some((bp_l, bp_r))
+                            })
+                            .unwrap_or((1, 2)),
                         ..OpSymbol::default()
                     }),
                 });
