@@ -245,9 +245,60 @@ pub enum EscapeError {
 #[must_use]
 #[allow(clippy::missing_panics_doc)]
 pub fn src_cursor_offset(src: &str) -> (TextSize, String) {
-    let offset = src.find("$$").unwrap();
-    (
-        TextSize::from(u32::try_from(offset).unwrap()),
-        src.replace("$$", ""),
-    )
+    let mut o = src_cursor_offsets(src);
+    (o.0.next().unwrap(), o.1)
+}
+
+/// Replaces all occurrences of '$$' and returns their positions.
+///
+/// Used for tests internally.
+pub fn src_cursor_offsets(src: &str) -> (impl Iterator<Item = TextSize>, String) {
+    let mut offsets = Vec::new();
+
+    let mut s = String::with_capacity(src.len());
+
+    let mut replaced_count: u32 = 0;
+
+    let mut prev_dollar = false;
+    for (idx, c) in src.char_indices() {
+        if c == '$' && prev_dollar {
+            offsets.push(TextSize::from((idx as u32) - (replaced_count * 2) - 1));
+            replaced_count += 1;
+            prev_dollar = false;
+        } else if c == '$' {
+            prev_dollar = true;
+        } else if prev_dollar {
+            s.push('$');
+            s.push(c);
+            prev_dollar = false;
+        } else {
+            s.push(c);
+        }
+    }
+
+    if prev_dollar {
+        s.push('$');
+    }
+
+    (offsets.into_iter(), s)
+}
+
+#[cfg(test)]
+#[test]
+fn test_cursor_offsets() {
+    let original = "$$a$$bbb$$c$$";
+    let replaced = "abbbc";
+
+    let (offsets, src) = src_cursor_offsets(original);
+
+    let offsets: Vec<_> = offsets.collect();
+
+    assert_eq!(src, replaced);
+    assert_eq!(
+        offsets,
+        [0, 1, 4, 5]
+            .into_iter()
+            .map(TextSize::from)
+            .collect::<Vec<_>>()
+    );
 }

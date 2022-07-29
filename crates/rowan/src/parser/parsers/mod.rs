@@ -339,7 +339,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         // delimited by `;`.
         //
         // Here we list all the cases when expressions have to end no matter what.
-        let op = match ctx.token() {
+        let op_token = match ctx.token() {
             Some(
                 T![";"] | T![","] | T!["{"] | T!["}"] | T![")"] | T!["]"] | T!["=>"] | T!["as"],
             )
@@ -348,7 +348,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             Some(t) => t,
         };
 
-        if let Some(l_bp) = op.postfix_binding_power() {
+        if let Some(l_bp) = op_token.postfix_binding_power() {
             if l_bp < min_bp {
                 break;
             }
@@ -357,7 +357,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             ctx.start_node_at(expr_start, EXPR);
             ctx.finish_node();
 
-            match op {
+            match op_token {
                 T!["["] | T!["?["] => {
                     ctx.start_node_at(expr_start, EXPR_INDEX);
                     ctx.eat();
@@ -385,6 +385,15 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             Some(bp) => bp,
             None => {
                 ctx.add_error(ParseErrorKind::UnexpectedToken);
+
+                if op_token == T!["ident"] || op_token.is_reserved_keyword() {
+                    ctx.start_node_at(expr_start, EXPR);
+                    ctx.finish_node();
+                    
+                    ctx.start_node_at(expr_start, EXPR_BINARY);
+                    ctx.eat();
+                    ctx.finish_node();
+                }
                 break;
             }
         };
