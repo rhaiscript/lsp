@@ -662,7 +662,18 @@ pub struct OpSymbol {
     pub docs: String,
     pub lhs_ty: Type,
     pub rhs_ty: Type,
+    pub ret_ty: Type,
     pub binding_powers: (u8, u8),
+}
+
+impl OpSymbol {
+    #[must_use]
+    pub fn signature(&self) -> String {
+        format!(
+            "{}({}, {}) -> {}",
+            self.name, self.lhs_ty, self.rhs_ty, self.ret_ty
+        )
+    }
 }
 
 #[allow(clippy::struct_excessive_bools)]

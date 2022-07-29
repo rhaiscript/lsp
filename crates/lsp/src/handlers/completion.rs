@@ -11,7 +11,7 @@ use lsp_async_stub::{
 };
 use lsp_types::{
     Command, CompletionItem, CompletionItemKind, CompletionParams, CompletionResponse,
-    Documentation, InsertTextFormat, MarkupContent, MarkupKind,
+    CompletionTextEdit, Documentation, InsertTextFormat, MarkupContent, MarkupKind, TextEdit,
 };
 use rhai_hir::{
     symbol::{ReferenceTarget, SymbolKind, VirtualSymbol},
@@ -123,7 +123,7 @@ pub(crate) async fn completion<E: Environment>(
                 .map(|(_, c)| c)
                 .collect(),
         )))
-    } else {
+    } else if query.can_complete_ref() {
         Ok(Some(CompletionResponse::Array(
             ws.hir
                 .visible_symbols_from_offset(source, offset, false)
@@ -140,6 +140,37 @@ pub(crate) async fn completion<E: Environment>(
                 .map(|(_, c)| c)
                 .collect(),
         )))
+    } else if query.can_complete_op() {
+        Ok(Some(CompletionResponse::Array(
+            ws.hir
+                .operators()
+                .unique_by(|n| n.name.clone())
+                .map(|op| {
+                    let text_edit = query.binary_op_ident().map(|ident| {
+                        CompletionTextEdit::Edit(TextEdit {
+                            new_text: format!("{} ", op.name),
+                            range: doc.mapper.range(ident.text_range()).unwrap().into_lsp(),
+                        })
+                    });
+
+                    CompletionItem {
+                        label: op.name.clone(),
+                        detail: Some(op.signature()),
+                        documentation: Some(Documentation::MarkupContent(MarkupContent {
+                            kind: MarkupKind::Markdown,
+                            value: op.docs.clone(),
+                        })),
+                        kind: Some(CompletionItemKind::OPERATOR),
+                        insert_text: Some(format!("{} ", &op.name)),
+                        command: text_edit.is_none().then(trigger_completion),
+                        text_edit,
+                        ..CompletionItem::default()
+                    }
+                })
+                .collect(),
+        )))
+    } else {
+        Ok(None)
     }
 }
 
@@ -190,11 +221,7 @@ fn reference_completion(
                 } else {
                     Some(d.name.clone())
                 },
-                command: d.is_import.then(|| Command {
-                    command: "editor.action.triggerSuggest".into(),
-                    title: "Suggest".into(),
-                    ..Default::default()
-                }),
+                command: d.is_import.then(trigger_completion),
                 ..CompletionItem::default()
             },
         )),
@@ -222,5 +249,13 @@ fn reference_completion(
             },
         )),
         _ => None,
+    }
+}
+
+fn trigger_completion() -> Command {
+    Command {
+        command: "editor.action.triggerSuggest".into(),
+        title: "Suggest".into(),
+        ..Default::default()
     }
 }
