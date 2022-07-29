@@ -251,8 +251,8 @@ impl Query {
             (Some((EXPR_BINARY, pos, _)), _) | (_, Some((EXPR_BINARY, pos, _))) => {
                 pos.syntax.kind() != WHITESPACE
             }
-            (Some((EXPR_UNARY, _, _)), _) | (_, Some((EXPR_UNARY, _, _))) => false,
-            (Some((EXPR_BLOCK, _, _)), _) | (_, Some((EXPR_BLOCK, _, _))) => false,
+            (Some((EXPR_UNARY | EXPR_BLOCK | EXPR_FN, _, _)), _)
+            | (_, Some((EXPR_UNARY | EXPR_BLOCK | EXPR_FN, _, _))) => false,
             (Some((.., pos, _)), ..) | (.., Some((.., pos, _))) => {
                 if let Some(parent) = self.binary_expr() {
                     if let Some(op_token) = parent
