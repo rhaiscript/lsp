@@ -1,0 +1,142 @@
+---
+source: crates/rowan/tests/smoke.rs
+assertion_line: 61
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..314
+  COMMENT_LINE@0..56 "// This script define ..."
+  WHITESPACE@56..58 "\n\n"
+  COMMENT_LINE@58..111 "// Use 'this' to refe ..."
+  WHITESPACE@111..112 "\n"
+  STMT@112..195
+    ITEM@112..193
+      EXPR@112..193
+        EXPR_FN@112..193
+          KW_FN@112..114 "fn"
+          WHITESPACE@114..115 " "
+          IDENT@115..121 "action"
+          PARAM_LIST@121..127
+            PUNCT_PAREN_START@121..122 "("
+            PARAM@122..123
+              IDENT@122..123 "x"
+            PUNCT_COMMA@123..124 ","
+            WHITESPACE@124..125 " "
+            PARAM@125..126
+              IDENT@125..126 "y"
+            PUNCT_PAREN_END@126..127 ")"
+          EXPR_BLOCK@127..193
+            WHITESPACE@127..128 " "
+            PUNCT_BRACE_START@128..129 "{"
+            WHITESPACE@129..134 "\n    "
+            STMT@134..160
+              ITEM@134..159
+                EXPR@134..159
+                  EXPR_BINARY@134..159
+                    EXPR@134..139
+                      EXPR_IDENT@134..139
+                        IDENT@134..138 "this"
+                        WHITESPACE@138..139 " "
+                    OP_ASSIGN@139..140 "="
+                    EXPR@140..159
+                      EXPR_BINARY@140..159
+                        EXPR@140..152
+                          EXPR_BINARY@140..152
+                            EXPR@140..145
+                              WHITESPACE@140..141 " "
+                              EXPR_IDENT@141..145
+                                IDENT@141..145 "this"
+                            PUNCT_DOT@145..146 "."
+                            EXPR@146..152
+                              EXPR_CALL@146..151
+                                EXPR@146..149
+                                  EXPR_IDENT@146..149
+                                    IDENT@146..149 "abs"
+                                ARG_LIST@149..151
+                                  PUNCT_PAREN_START@149..150 "("
+                                  PUNCT_PAREN_END@150..151 ")"
+                              WHITESPACE@151..152 " "
+                        OP_ADD@152..153 "+"
+                        EXPR@153..159
+                          EXPR_BINARY@153..159
+                            EXPR@153..156
+                              WHITESPACE@153..154 " "
+                              EXPR_IDENT@154..156
+                                IDENT@154..155 "x"
+                                WHITESPACE@155..156 " "
+                            OP_MUL@156..157 "*"
+                            EXPR@157..159
+                              WHITESPACE@157..158 " "
+                              EXPR_IDENT@158..159
+                                IDENT@158..159 "y"
+              PUNCT_SEMI@159..160 ";"
+            WHITESPACE@160..166 "      "
+            COMMENT_LINE@166..191 "// 'this' can be modi ..."
+            WHITESPACE@191..192 "\n"
+            PUNCT_BRACE_END@192..193 "}"
+    WHITESPACE@193..195 "\n\n"
+  STMT@195..209
+    ITEM@195..208
+      EXPR@195..208
+        EXPR_LET@195..208
+          KW_LET@195..198 "let"
+          WHITESPACE@198..199 " "
+          IDENT@199..202 "obj"
+          WHITESPACE@202..203 " "
+          OP_ASSIGN@203..204 "="
+          EXPR@204..208
+            EXPR_UNARY@204..208
+              WHITESPACE@204..205 " "
+              OP_SUB@205..206 "-"
+              EXPR@206..208
+                EXPR_LIT@206..208
+                  LIT@206..208
+                    LIT_INT@206..208 "40"
+    PUNCT_SEMI@208..209 ";"
+  WHITESPACE@209..211 "\n\n"
+  STMT@211..228
+    ITEM@211..227
+      EXPR@211..227
+        EXPR_BINARY@211..227
+          EXPR@211..214
+            EXPR_IDENT@211..214
+              IDENT@211..214 "obj"
+          PUNCT_DOT@214..215 "."
+          EXPR@215..227
+            EXPR_CALL@215..227
+              EXPR@215..221
+                EXPR_IDENT@215..221
+                  IDENT@215..221 "action"
+              ARG_LIST@221..227
+                PUNCT_PAREN_START@221..222 "("
+                EXPR@222..223
+                  EXPR_LIT@222..223
+                    LIT@222..223
+                      LIT_INT@222..223 "1"
+                PUNCT_COMMA@223..224 ","
+                WHITESPACE@224..225 " "
+                EXPR@225..226
+                  EXPR_LIT@225..226
+                    LIT@225..226
+                      LIT_INT@225..226 "2"
+                PUNCT_PAREN_END@226..227 ")"
+    PUNCT_SEMI@227..228 ";"
+  WHITESPACE@228..247 "                   "
+  COMMENT_LINE@247..273 "// call 'action' as m ..."
+  WHITESPACE@273..275 "\n\n"
+  STMT@275..313
+    ITEM@275..312
+      EXPR@275..312
+        EXPR_CALL@275..312
+          EXPR@275..280
+            EXPR_IDENT@275..280
+              IDENT@275..280 "print"
+          ARG_LIST@280..312
+            PUNCT_PAREN_START@280..281 "("
+            EXPR@281..311
+              EXPR_LIT@281..311
+                LIT@281..311
+                  LIT_STR@281..311 "`obj should now be 42 ..."
+            PUNCT_PAREN_END@311..312 ")"
+    PUNCT_SEMI@312..313 ";"
+  WHITESPACE@313..314 "\n"
+
