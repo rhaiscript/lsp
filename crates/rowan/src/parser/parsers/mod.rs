@@ -184,6 +184,12 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
 
     let token = require_token!(ctx in node);
 
+    if let Some(T!["."]) = ctx.previous_token() {
+        if token != IDENT {
+            ctx.add_error(ParseErrorKind::ExpectedToken(IDENT));
+        }
+    }
+
     // Handle "standalone" expressions, and
     // unary operators.
     match token {
