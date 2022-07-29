@@ -1,5 +1,5 @@
 use rhai_rowan::{
-    parser::{Operator, Parser, parsers::parse_expr},
+    parser::{parsers::parse_expr, Operator, Parser},
     syntax::SyntaxKind::*,
 };
 use test_case::test_case;
@@ -34,8 +34,12 @@ use test_case::test_case;
 #[test_case("throw_try_catch", include_str!("../../../testdata/valid/throw_try_catch.rhai"))]
 #[test_case("optional_ops", include_str!("../../../testdata/valid/optional_ops.rhai"))]
 #[test_case("string_escape", include_str!("../../../testdata/valid/string_escape.rhai"))]
+#[test_case("template", include_str!("../../../testdata/valid/template.rhai"))]
 fn parse_valid(name: &str, src: &str) {
-    let parse = Parser::new(src).parse_script();
+    let parse = Parser::new(src)
+        // This operator does not actually exist among the scripts.
+        .with_operator("op", Operator::default())
+        .parse_script();
     assert!(parse.errors.is_empty(), "{:#?}", parse.errors);
 
     let mut engine = rhai::Engine::new();
@@ -113,7 +117,6 @@ fn parse_ambiguous_ranges() {
         ctx.eat();
     });
 }
-
 
 #[test]
 fn parse_ambiguous_integer_field_access() {

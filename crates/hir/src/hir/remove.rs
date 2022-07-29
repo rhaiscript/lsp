@@ -237,7 +237,12 @@ impl Hir {
                     self.remove_symbol(s);
                 }
             }
-            SymbolKind::Lit(_) | SymbolKind::Continue(_) | SymbolKind::Discard(_) => {}
+            SymbolKind::Lit(lit) => {
+                for scope in lit.interpolated_scopes {
+                    self.remove_scope(scope);
+                }
+            }
+             SymbolKind::Continue(_) | SymbolKind::Discard(_) => {}
             SymbolKind::Export(e) => {
                 if let Some(s) = e.target {
                     self.remove_symbol(s);

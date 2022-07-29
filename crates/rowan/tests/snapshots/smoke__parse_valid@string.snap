@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 37
+assertion_line: 65
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..1385
@@ -241,7 +241,23 @@ RHAI@0..1385
             EXPR@596..613
               EXPR_LIT@596..613
                 LIT@596..613
-                  LIT_STR@596..613 "`length=${s.len}`"
+                  LIT_STR_TEMPLATE@596..613
+                    LIT_STR@596..604 "`length="
+                    INTERPOLATION_START@604..606 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@606..611
+                      STMT@606..611
+                        ITEM@606..611
+                          EXPR@606..611
+                            EXPR_BINARY@606..611
+                              EXPR@606..607
+                                EXPR_IDENT@606..607
+                                  IDENT@606..607 "s"
+                              PUNCT_DOT@607..608 "."
+                              EXPR@608..611
+                                EXPR_IDENT@608..611
+                                  IDENT@608..611 "len"
+                    PUNCT_BRACE_END@611..612 "}"
+                    LIT_STR@612..613 "`"
             PUNCT_PAREN_END@613..614 ")"
     PUNCT_SEMI@614..615 ";"
   WHITESPACE@615..622 "       "
@@ -297,7 +313,17 @@ RHAI@0..1385
             EXPR@698..714
               EXPR_LIT@698..714
                 LIT@698..714
-                  LIT_STR@698..714 "`Question: ${s}`"
+                  LIT_STR_TEMPLATE@698..714
+                    LIT_STR@698..709 "`Question: "
+                    INTERPOLATION_START@709..711 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@711..712
+                      STMT@711..712
+                        ITEM@711..712
+                          EXPR@711..712
+                            EXPR_IDENT@711..712
+                              IDENT@711..712 "s"
+                    PUNCT_BRACE_END@712..713 "}"
+                    LIT_STR@713..714 "`"
             PUNCT_PAREN_END@714..715 ")"
     PUNCT_SEMI@715..716 ";"
   WHITESPACE@716..724 "        "
@@ -335,7 +361,17 @@ RHAI@0..1385
             EXPR@911..929
               EXPR_LIT@911..929
                 LIT@911..929
-                  LIT_STR@911..929 "`One string: ${s}`"
+                  LIT_STR_TEMPLATE@911..929
+                    LIT_STR@911..924 "`One string: "
+                    INTERPOLATION_START@924..926 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@926..927
+                      STMT@926..927
+                        ITEM@926..927
+                          EXPR@926..927
+                            EXPR_IDENT@926..927
+                              IDENT@926..927 "s"
+                    PUNCT_BRACE_END@927..928 "}"
+                    LIT_STR@928..929 "`"
             PUNCT_PAREN_END@929..930 ")"
     PUNCT_SEMI@930..931 ";"
   WHITESPACE@931..933 "\n\n"
@@ -354,7 +390,8 @@ RHAI@0..1385
             WHITESPACE@970..971 " "
             EXPR_LIT@971..1108
               LIT@971..1108
-                LIT_STR@971..1108 "`\n          \\U0001F60 ..."
+                LIT_STR_TEMPLATE@971..1108
+                  LIT_STR@971..1108 "`\n          \\U0001F60 ..."
     PUNCT_SEMI@1108..1109 ";"
   WHITESPACE@1109..1111 "\n\n"
   STMT@1111..1120
@@ -387,7 +424,61 @@ RHAI@0..1385
             WHITESPACE@1146..1147 " "
             EXPR_LIT@1147..1349
               LIT@1147..1349
-                LIT_STR@1147..1349 "`This is interpolatio ..."
+                LIT_STR_TEMPLATE@1147..1349
+                  LIT_STR@1147..1170 "`This is interpolation "
+                  INTERPOLATION_START@1170..1172 "${"
+                  LIT_STR_TEMPLATE_INTERPOLATION@1172..1324
+                    WHITESPACE@1172..1185 "\n            "
+                    STMT@1185..1309
+                      ITEM@1185..1308
+                        EXPR@1185..1308
+                          EXPR_LET@1185..1308
+                            KW_LET@1185..1188 "let"
+                            WHITESPACE@1188..1189 " "
+                            IDENT@1189..1190 "x"
+                            WHITESPACE@1190..1191 " "
+                            OP_ASSIGN@1191..1192 "="
+                            EXPR@1192..1308
+                              WHITESPACE@1192..1193 " "
+                              EXPR_LIT@1193..1308
+                                LIT@1193..1308
+                                  LIT_STR_TEMPLATE@1193..1308
+                                    LIT_STR@1193..1201 "`within "
+                                    INTERPOLATION_START@1201..1203 "${"
+                                    LIT_STR_TEMPLATE_INTERPOLATION@1203..1292
+                                      STMT@1203..1290
+                                        ITEM@1203..1289
+                                          EXPR@1203..1289
+                                            EXPR_LET@1203..1289
+                                              KW_LET@1203..1206 "let"
+                                              WHITESPACE@1206..1207 " "
+                                              IDENT@1207..1208 "y"
+                                              WHITESPACE@1208..1209 " "
+                                              OP_ASSIGN@1209..1210 "="
+                                              EXPR@1210..1289
+                                                WHITESPACE@1210..1211 " "
+                                                EXPR_LIT@1211..1289
+                                                  LIT@1211..1289
+                                                    LIT_STR@1211..1289 "\"yet another level \\\n ..."
+                                        PUNCT_SEMI@1289..1290 ";"
+                                      WHITESPACE@1290..1291 " "
+                                      STMT@1291..1292
+                                        ITEM@1291..1292
+                                          EXPR@1291..1292
+                                            EXPR_IDENT@1291..1292
+                                              IDENT@1291..1292 "y"
+                                    PUNCT_BRACE_END@1292..1293 "}"
+                                    LIT_STR@1293..1308 " interpolation`"
+                      PUNCT_SEMI@1308..1309 ";"
+                    WHITESPACE@1309..1322 "\n            "
+                    STMT@1322..1324
+                      ITEM@1322..1324
+                        EXPR@1322..1324
+                          EXPR_IDENT@1322..1324
+                            IDENT@1322..1323 "x"
+                            WHITESPACE@1323..1324 "\n"
+                  PUNCT_BRACE_END@1324..1325 "}"
+                  LIT_STR@1325..1349 " within literal string.`"
     PUNCT_SEMI@1349..1350 ";"
   WHITESPACE@1350..1352 "\n\n"
   STMT@1352..1361

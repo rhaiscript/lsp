@@ -264,6 +264,15 @@ impl SymbolKind {
         }
     }
 
+    #[must_use]
+    pub fn as_lit_mut(&mut self) -> Option<&mut LitSymbol> {
+        if let Self::Lit(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
     /// Returns `true` if the symbol kind is [`Unary`].
     ///
     /// [`Unary`]: SymbolKind::Unary
@@ -713,6 +722,7 @@ pub struct PathSymbol {
 pub struct LitSymbol {
     pub ty: Type,
     pub value: Value,
+    pub interpolated_scopes: Vec<Scope>,
 }
 
 #[derive(Debug, Clone)]

@@ -124,7 +124,7 @@ impl<'b> SemanticTokensBuilder<'b> {
             tokens.push(SemanticToken {
                 delta_line: relative.start.line as u32,
                 delta_start: relative.start.character as u32,
-                length: (relative.end.character - relative.start.character) as u32,
+                length: (relative.end.character.saturating_sub(relative.start.character)) as u32,
                 token_type: ty as u32,
                 token_modifiers_bitset: modifiers.iter().enumerate().fold(
                     0,

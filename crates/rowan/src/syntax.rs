@@ -277,72 +277,11 @@ pub enum SyntaxKind {
     #[regex("true|false")]
     LIT_BOOL,
 
-    #[token(r#"""#, |lex| {
-        let mut escaped = false;
-        let mut last_char = 0_u8;
-
-        for (i, b) in lex.remainder().bytes().enumerate() {
-            if !escaped && last_char == b'"' {
-                if b != b'"' {
-                    lex.bump(i);
-                    return Some(());
-                }
-                last_char = 0_u8;
-            } else {
-                escaped = b == b'\\';
-                last_char = b;
-            }
-        }
-
-        if last_char == b'"' {
-            lex.bump(lex.remainder().bytes().len());
-            Some(())
-        } else {
-            None
-        }
-    })]
-    #[token("`", |lex| {
-        let mut escaped = false;
-        let mut last_char = 0_u8;
-        let mut interpolation_level = 0;
-
-        for (i, b) in lex.remainder().bytes().enumerate() {
-            if b == b'{' && last_char == b'$' {
-                interpolation_level += 1;
-                last_char = 0_u8;
-                continue;
-            }
-
-            if interpolation_level > 0 {
-                if last_char != b'\\' && b == b'}' {
-                    interpolation_level -= 1;
-                    last_char = 0_u8;
-                } else {
-                    last_char = b;
-                }
-                continue;
-            }
-
-            if !escaped && last_char == b'`' {
-                if b != b'`' {
-                    lex.bump(i);
-                    return Some(());
-                }
-                last_char = 0_u8;
-            } else {
-                escaped = b == b'\\';
-                last_char = b;
-            }
-        }
-
-        if last_char == b'`' {
-            lex.bump(lex.remainder().bytes().len());
-            Some(())
-        } else {
-            None
-        }
-    })]
+    #[token(r#"""#, lex_str)]
     LIT_STR,
+
+    #[token("${")]
+    INTERPOLATION_START,
 
     #[regex(r#"'\\.'|'.'|'\\x[A-Fa-f0-9][A-Fa-f0-9]'|'\\u[A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9]'|'\\U[A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9]'"#)]
     LIT_CHAR,
@@ -394,10 +333,14 @@ pub enum SyntaxKind {
 
     // endregion
 
+    // region: temporary parse-time only utils
+    #[token("`")]
+    __TEMP_STR_TEMPLATE_START,
+
+    // endregion
+
     // region: Nodes
     // This region is generated from ungrammar, do not touch it!
-    LIT,
-    PATH,
     RHAI,
     STMT,
     ITEM,
@@ -430,6 +373,10 @@ pub enum SyntaxKind {
     EXPR_IMPORT,
     EXPR_TRY,
     EXPR_THROW,
+    PATH,
+    LIT_STR_TEMPLATE,
+    LIT_STR_TEMPLATE_INTERPOLATION,
+    LIT,
     OBJECT_FIELD,
     ARG_LIST,
     PARAM_LIST,
@@ -545,8 +492,16 @@ impl<'source> Lexer<'source> {
         self.lexer.span()
     }
 
+    pub(crate) fn bump(&mut self, n: usize) {
+        self.lexer.bump(n);
+    }
+
     pub(crate) fn slice(&self) -> &'source str {
         self.lexer.slice()
+    }
+
+    pub(crate) fn remainder(&self) -> &'source str {
+        self.lexer.remainder()
     }
 }
 
@@ -557,6 +512,31 @@ impl<'source> Iterator for Lexer<'source> {
         self.peeked
             .take()
             .map_or_else(|| self.lexer.next(), |peeked| peeked)
+    }
+}
+
+fn lex_str(lex: &mut LogosLexer<SyntaxKind>) -> Option<()> {
+    let mut escaped = false;
+    let mut last_char = 0_u8;
+
+    for (i, b) in lex.remainder().bytes().enumerate() {
+        if !escaped && last_char == b'"' {
+            if b != b'"' {
+                lex.bump(i);
+                return Some(());
+            }
+            last_char = 0_u8;
+        } else {
+            escaped = b == b'\\';
+            last_char = b;
+        }
+    }
+
+    if last_char == b'"' {
+        lex.bump(lex.remainder().bytes().len());
+        Some(())
+    } else {
+        None
     }
 }
 

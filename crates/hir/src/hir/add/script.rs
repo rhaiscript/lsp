@@ -209,73 +209,119 @@ impl Hir {
                     kind: SymbolKind::Lit(LitSymbol {
                         ty: expr
                             .lit()
-                            .and_then(|l| l.token())
-                            .map(|lit| match lit.kind() {
-                                SyntaxKind::LIT_INT => Type::Int,
-                                SyntaxKind::LIT_FLOAT => Type::Float,
-                                SyntaxKind::LIT_BOOL => Type::Bool,
-                                SyntaxKind::LIT_STR => Type::String,
-                                SyntaxKind::LIT_CHAR => Type::Char,
-                                _ => Type::Unknown,
+                            .map(|l| {
+                                if let Some(lit) = l.lit_token() {
+                                    match lit.kind() {
+                                        SyntaxKind::LIT_INT => Type::Int,
+                                        SyntaxKind::LIT_FLOAT => Type::Float,
+                                        SyntaxKind::LIT_BOOL => Type::Bool,
+                                        SyntaxKind::LIT_STR => Type::String,
+                                        SyntaxKind::LIT_CHAR => Type::Char,
+                                        _ => Type::Unknown,
+                                    }
+                                } else if l.lit_str_template().is_some() {
+                                    Type::String
+                                } else {
+                                    Type::Unknown
+                                }
                             })
                             .unwrap_or(Type::Unknown),
                         value: expr
                             .lit()
-                            .and_then(|l| l.token())
-                            .map(|lit| match lit.kind() {
-                                SyntaxKind::LIT_INT => lit
-                                    .text()
-                                    .parse::<i64>()
-                                    .map(Value::Int)
-                                    .unwrap_or(Value::Unknown),
-                                SyntaxKind::LIT_FLOAT => lit
-                                    .text()
-                                    .parse::<f64>()
-                                    .map(Value::Float)
-                                    .unwrap_or(Value::Unknown),
-                                SyntaxKind::LIT_BOOL => lit
-                                    .text()
-                                    .parse::<bool>()
-                                    .map(Value::Bool)
-                                    .unwrap_or(Value::Unknown),
-                                SyntaxKind::LIT_STR => {
-                                    let mut text = lit.text();
+                            .map(|l| {
+                                if let Some(lit) = l.lit_token() {
+                                    match lit.kind() {
+                                        SyntaxKind::LIT_INT => lit
+                                            .text()
+                                            .parse::<i64>()
+                                            .map(Value::Int)
+                                            .unwrap_or(Value::Unknown),
+                                        SyntaxKind::LIT_FLOAT => lit
+                                            .text()
+                                            .parse::<f64>()
+                                            .map(Value::Float)
+                                            .unwrap_or(Value::Unknown),
+                                        SyntaxKind::LIT_BOOL => lit
+                                            .text()
+                                            .parse::<bool>()
+                                            .map(Value::Bool)
+                                            .unwrap_or(Value::Unknown),
+                                        SyntaxKind::LIT_STR => {
+                                            let mut text = lit.text();
 
-                                    if text.starts_with('"') {
-                                        text = text
-                                            .strip_prefix('"')
-                                            .unwrap_or(text)
-                                            .strip_suffix('"')
-                                            .unwrap_or(text);
+                                            if text.starts_with('"') {
+                                                text = text
+                                                    .strip_prefix('"')
+                                                    .unwrap_or(text)
+                                                    .strip_suffix('"')
+                                                    .unwrap_or(text);
 
-                                        Value::String(unescape(text, '"').0)
-                                    } else {
-                                        text = text
-                                            .strip_prefix('`')
-                                            .unwrap_or(text)
-                                            .strip_suffix('`')
-                                            .unwrap_or(text);
-                                        Value::String(unescape(text, '`').0)
+                                                Value::String(unescape(text, '"').0)
+                                            } else {
+                                                text = text
+                                                    .strip_prefix('`')
+                                                    .unwrap_or(text)
+                                                    .strip_suffix('`')
+                                                    .unwrap_or(text);
+                                                Value::String(unescape(text, '`').0)
+                                            }
+                                        }
+                                        SyntaxKind::LIT_CHAR => {
+                                            let mut text = lit.text();
+                                            text = text
+                                                .strip_prefix('\'')
+                                                .unwrap_or(text)
+                                                .strip_suffix('\'')
+                                                .unwrap_or(text);
+
+                                            Value::Char(
+                                                // FIXME: this allocates a string.
+                                                unescape(text, '\'')
+                                                    .0
+                                                    .chars()
+                                                    .next()
+                                                    .unwrap_or('💩'),
+                                            )
+                                        }
+                                        _ => Value::Unknown,
                                     }
+                                } else {
+                                    Value::Unknown
                                 }
-                                SyntaxKind::LIT_CHAR => {
-                                    let mut text = lit.text();
-                                    text = text
-                                        .strip_prefix('\'')
-                                        .unwrap_or(text)
-                                        .strip_suffix('\'')
-                                        .unwrap_or(text);
-
-                                    Value::Char(
-                                        // FIXME: this allocates a string.
-                                        unescape(text, '\'').0.chars().next().unwrap_or('💩'),
-                                    )
-                                }
-                                _ => Value::Unknown,
                             })
                             .unwrap_or(Value::Unknown),
+                        interpolated_scopes: Vec::default(),
                     }),
                 });
+
+                if let Some(lit) = expr.lit().and_then(|l| l.lit_str_template()) {
+                    let mut interpolated_scopes = Vec::new();
+                    for interpolation in lit.interpolations() {
+                        let interpolation_scope = self.add_scope(ScopeData {
+                            source: SourceInfo {
+                                source: Some(source),
+                                text_range: interpolation.syntax().text_range().into(),
+                                selection_text_range: None,
+                            },
+                            ..ScopeData::default()
+                        });
+
+                        interpolation_scope.set_parent(self, symbol);
+                        self.add_statements(
+                            source,
+                            interpolation_scope,
+                            false,
+                            interpolation.statements(),
+                        );
+                        interpolated_scopes.push(interpolation_scope);
+                    }
+
+                    self.symbol_mut(symbol)
+                        .kind
+                        .as_lit_mut()
+                        .unwrap()
+                        .interpolated_scopes = interpolated_scopes;
+                }
 
                 scope.add_symbol(self, symbol, false);
                 Some(symbol)
@@ -372,7 +418,6 @@ impl Hir {
                     }
                 });
 
-
                 if let Some(BinaryOpKind::Regular(SyntaxKind::PUNCT_DOT)) = op {
                     if let Some(rhs) = rhs {
                         if let Some(ref_rhs) = self.symbol_mut(rhs).kind.as_reference_mut() {
@@ -389,11 +434,7 @@ impl Hir {
                         text_range: expr.syntax().text_range().into(),
                         selection_text_range: None,
                     },
-                    kind: SymbolKind::Binary(BinarySymbol {
-                        lhs,
-                        op,
-                        rhs,
-                    }),
+                    kind: SymbolKind::Binary(BinarySymbol { lhs, op, rhs }),
                 });
 
                 scope.add_symbol(self, symbol, false);

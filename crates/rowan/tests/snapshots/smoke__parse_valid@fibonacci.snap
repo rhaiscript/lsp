@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 37
+assertion_line: 65
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..635
@@ -167,7 +167,26 @@ RHAI@0..635
             EXPR@284..335
               EXPR_LIT@284..335
                 LIT@284..335
-                  LIT_STR@284..335 "`Running Fibonacci(${ ..."
+                  LIT_STR_TEMPLATE@284..335
+                    LIT_STR@284..303 "`Running Fibonacci("
+                    INTERPOLATION_START@303..305 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@305..311
+                      STMT@305..311
+                        ITEM@305..311
+                          EXPR@305..311
+                            EXPR_IDENT@305..311
+                              IDENT@305..311 "TARGET"
+                    PUNCT_BRACE_END@311..312 "}"
+                    LIT_STR@312..316 ") x "
+                    INTERPOLATION_START@316..318 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@318..324
+                      STMT@318..324
+                        ITEM@318..324
+                          EXPR@318..324
+                            EXPR_IDENT@318..324
+                              IDENT@318..324 "REPEAT"
+                    PUNCT_BRACE_END@324..325 "}"
+                    LIT_STR@325..335 " times...`"
             PUNCT_PAREN_END@335..336 ")"
     PUNCT_SEMI@336..337 ";"
   WHITESPACE@337..338 "\n"
@@ -279,7 +298,23 @@ RHAI@0..635
             EXPR@454..500
               EXPR_LIT@454..500
                 LIT@454..500
-                  LIT_STR@454..500 "`Finished. Run time = ..."
+                  LIT_STR_TEMPLATE@454..500
+                    LIT_STR@454..476 "`Finished. Run time = "
+                    INTERPOLATION_START@476..478 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@478..489
+                      STMT@478..489
+                        ITEM@478..489
+                          EXPR@478..489
+                            EXPR_BINARY@478..489
+                              EXPR@478..481
+                                EXPR_IDENT@478..481
+                                  IDENT@478..481 "now"
+                              PUNCT_DOT@481..482 "."
+                              EXPR@482..489
+                                EXPR_IDENT@482..489
+                                  IDENT@482..489 "elapsed"
+                    PUNCT_BRACE_END@489..490 "}"
+                    LIT_STR@490..500 " seconds.`"
             PUNCT_PAREN_END@500..501 ")"
     PUNCT_SEMI@501..502 ";"
   WHITESPACE@502..504 "\n\n"
@@ -295,7 +330,26 @@ RHAI@0..635
             EXPR@510..551
               EXPR_LIT@510..551
                 LIT@510..551
-                  LIT_STR@510..551 "`Fibonacci number #${ ..."
+                  LIT_STR_TEMPLATE@510..551
+                    LIT_STR@510..529 "`Fibonacci number #"
+                    INTERPOLATION_START@529..531 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@531..537
+                      STMT@531..537
+                        ITEM@531..537
+                          EXPR@531..537
+                            EXPR_IDENT@531..537
+                              IDENT@531..537 "TARGET"
+                    PUNCT_BRACE_END@537..538 "}"
+                    LIT_STR@538..541 " = "
+                    INTERPOLATION_START@541..543 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@543..549
+                      STMT@543..549
+                        ITEM@543..549
+                          EXPR@543..549
+                            EXPR_IDENT@543..549
+                              IDENT@543..549 "result"
+                    PUNCT_BRACE_END@549..550 "}"
+                    LIT_STR@550..551 "`"
             PUNCT_PAREN_END@551..552 ")"
     PUNCT_SEMI@552..553 ";"
   WHITESPACE@553..555 "\n\n"
@@ -332,7 +386,17 @@ RHAI@0..635
                       EXPR@587..630
                         EXPR_LIT@587..630
                           LIT@587..630
-                            LIT_STR@587..630 "`The answer is WRONG! ..."
+                            LIT_STR_TEMPLATE@587..630
+                              LIT_STR@587..619 "`The answer is WRONG! ..."
+                              INTERPOLATION_START@619..621 "${"
+                              LIT_STR_TEMPLATE_INTERPOLATION@621..627
+                                STMT@621..627
+                                  ITEM@621..627
+                                    EXPR@621..627
+                                      EXPR_IDENT@621..627
+                                        IDENT@621..627 "ANSWER"
+                              PUNCT_BRACE_END@627..628 "}"
+                              LIT_STR@628..630 "!`"
                       PUNCT_PAREN_END@630..631 ")"
               PUNCT_SEMI@631..632 ";"
             WHITESPACE@632..633 "\n"

@@ -200,11 +200,32 @@ impl<'src> Context<'src> {
         self.statement_closed = v;
     }
 
+    /// Bump the slice of the current token by `n` bytes.
+    pub fn bump(&mut self, n: usize) {
+        self.lexer.bump(n);
+    }
+
+    #[must_use]
+    pub fn remainder(&self) -> &str {
+        self.lexer.remainder()
+    }
+
     #[must_use]
     pub fn slice(&self) -> &str {
         self.ambiguous_tokens
             .as_ref()
             .map_or_else(|| self.lexer.slice(), AmbiguousTokens::slice)
+    }
+
+    /// Get the next token from the inner lexer without
+    /// any magic such as whitespace or error handling.
+    /// 
+    /// This token is also not cached, so the existing token
+    /// will always be overwritten.
+    #[must_use]
+    pub fn token_raw(&mut self) -> Option<SyntaxKind> {
+        self.current_token = self.lexer.next();
+        self.current_token
     }
 
     #[must_use]

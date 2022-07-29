@@ -1,0 +1,14 @@
+let hi = 2;
+`${2}💩  💩   asd abc${3 + 2 + 1 + `${""}`}`;
+
+let a = `with \interpolation ${hi} `;
+let a = `${hi}`;
+
+let a = `multiple ${hi}${hi} ${hi} \interpolations ${hi + 2} and more complex ${
+    {
+        let a = 2;
+        let b = `nested ${hi} interpolation ${ 3**3 + 4}`;
+        let c = `with escaped `` but you cannot escape the \`` `;
+        a + a
+    }
+} expressions`;

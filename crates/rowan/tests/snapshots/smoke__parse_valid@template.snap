@@ -1,0 +1,316 @@
+---
+source: crates/rowan/tests/smoke.rs
+assertion_line: 65
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..386
+  STMT@0..11
+    ITEM@0..10
+      EXPR@0..10
+        EXPR_LET@0..10
+          KW_LET@0..3 "let"
+          WHITESPACE@3..4 " "
+          IDENT@4..6 "hi"
+          WHITESPACE@6..7 " "
+          OP_ASSIGN@7..8 "="
+          EXPR@8..10
+            WHITESPACE@8..9 " "
+            EXPR_LIT@9..10
+              LIT@9..10
+                LIT_INT@9..10 "2"
+    PUNCT_SEMI@10..11 ";"
+  WHITESPACE@11..12 "\n"
+  STMT@12..61
+    ITEM@12..60
+      EXPR@12..60
+        EXPR_LIT@12..60
+          LIT@12..60
+            LIT_STR_TEMPLATE@12..60
+              LIT_STR@12..13 "`"
+              INTERPOLATION_START@13..15 "${"
+              LIT_STR_TEMPLATE_INTERPOLATION@15..16
+                STMT@15..16
+                  ITEM@15..16
+                    EXPR@15..16
+                      EXPR_LIT@15..16
+                        LIT@15..16
+                          LIT_INT@15..16 "2"
+              PUNCT_BRACE_END@16..17 "}"
+              LIT_STR@17..37 "💩  💩   asd abc"
+              INTERPOLATION_START@37..39 "${"
+              LIT_STR_TEMPLATE_INTERPOLATION@39..58
+                STMT@39..58
+                  ITEM@39..58
+                    EXPR@39..58
+                      EXPR_BINARY@39..58
+                        EXPR@39..49
+                          EXPR_BINARY@39..49
+                            EXPR@39..45
+                              EXPR_BINARY@39..45
+                                EXPR@39..41
+                                  EXPR_LIT@39..40
+                                    LIT@39..40
+                                      LIT_INT@39..40 "3"
+                                  WHITESPACE@40..41 " "
+                                OP_ADD@41..42 "+"
+                                EXPR@42..45
+                                  WHITESPACE@42..43 " "
+                                  EXPR_LIT@43..44
+                                    LIT@43..44
+                                      LIT_INT@43..44 "2"
+                                  WHITESPACE@44..45 " "
+                            OP_ADD@45..46 "+"
+                            EXPR@46..49
+                              WHITESPACE@46..47 " "
+                              EXPR_LIT@47..48
+                                LIT@47..48
+                                  LIT_INT@47..48 "1"
+                              WHITESPACE@48..49 " "
+                        OP_ADD@49..50 "+"
+                        EXPR@50..58
+                          WHITESPACE@50..51 " "
+                          EXPR_LIT@51..58
+                            LIT@51..58
+                              LIT_STR_TEMPLATE@51..58
+                                LIT_STR@51..52 "`"
+                                INTERPOLATION_START@52..54 "${"
+                                LIT_STR_TEMPLATE_INTERPOLATION@54..56
+                                  STMT@54..56
+                                    ITEM@54..56
+                                      EXPR@54..56
+                                        EXPR_LIT@54..56
+                                          LIT@54..56
+                                            LIT_STR@54..56 "\"\""
+                                PUNCT_BRACE_END@56..57 "}"
+                                LIT_STR@57..58 "`"
+              PUNCT_BRACE_END@58..59 "}"
+              LIT_STR@59..60 "`"
+    PUNCT_SEMI@60..61 ";"
+  WHITESPACE@61..63 "\n\n"
+  STMT@63..100
+    ITEM@63..99
+      EXPR@63..99
+        EXPR_LET@63..99
+          KW_LET@63..66 "let"
+          WHITESPACE@66..67 " "
+          IDENT@67..68 "a"
+          WHITESPACE@68..69 " "
+          OP_ASSIGN@69..70 "="
+          EXPR@70..99
+            WHITESPACE@70..71 " "
+            EXPR_LIT@71..99
+              LIT@71..99
+                LIT_STR_TEMPLATE@71..99
+                  LIT_STR@71..92 "`with \\interpolation "
+                  INTERPOLATION_START@92..94 "${"
+                  LIT_STR_TEMPLATE_INTERPOLATION@94..96
+                    STMT@94..96
+                      ITEM@94..96
+                        EXPR@94..96
+                          EXPR_IDENT@94..96
+                            IDENT@94..96 "hi"
+                  PUNCT_BRACE_END@96..97 "}"
+                  LIT_STR@97..99 " `"
+    PUNCT_SEMI@99..100 ";"
+  WHITESPACE@100..101 "\n"
+  STMT@101..117
+    ITEM@101..116
+      EXPR@101..116
+        EXPR_LET@101..116
+          KW_LET@101..104 "let"
+          WHITESPACE@104..105 " "
+          IDENT@105..106 "a"
+          WHITESPACE@106..107 " "
+          OP_ASSIGN@107..108 "="
+          EXPR@108..116
+            WHITESPACE@108..109 " "
+            EXPR_LIT@109..116
+              LIT@109..116
+                LIT_STR_TEMPLATE@109..116
+                  LIT_STR@109..110 "`"
+                  INTERPOLATION_START@110..112 "${"
+                  LIT_STR_TEMPLATE_INTERPOLATION@112..114
+                    STMT@112..114
+                      ITEM@112..114
+                        EXPR@112..114
+                          EXPR_IDENT@112..114
+                            IDENT@112..114 "hi"
+                  PUNCT_BRACE_END@114..115 "}"
+                  LIT_STR@115..116 "`"
+    PUNCT_SEMI@116..117 ";"
+  WHITESPACE@117..119 "\n\n"
+  STMT@119..385
+    ITEM@119..384
+      EXPR@119..384
+        EXPR_LET@119..384
+          KW_LET@119..122 "let"
+          WHITESPACE@122..123 " "
+          IDENT@123..124 "a"
+          WHITESPACE@124..125 " "
+          OP_ASSIGN@125..126 "="
+          EXPR@126..384
+            WHITESPACE@126..127 " "
+            EXPR_LIT@127..384
+              LIT@127..384
+                LIT_STR_TEMPLATE@127..384
+                  LIT_STR@127..137 "`multiple "
+                  INTERPOLATION_START@137..139 "${"
+                  LIT_STR_TEMPLATE_INTERPOLATION@139..141
+                    STMT@139..141
+                      ITEM@139..141
+                        EXPR@139..141
+                          EXPR_IDENT@139..141
+                            IDENT@139..141 "hi"
+                  PUNCT_BRACE_END@141..142 "}"
+                  INTERPOLATION_START@142..144 "${"
+                  LIT_STR_TEMPLATE_INTERPOLATION@144..146
+                    STMT@144..146
+                      ITEM@144..146
+                        EXPR@144..146
+                          EXPR_IDENT@144..146
+                            IDENT@144..146 "hi"
+                  PUNCT_BRACE_END@146..147 "}"
+                  LIT_STR@147..148 " "
+                  INTERPOLATION_START@148..150 "${"
+                  LIT_STR_TEMPLATE_INTERPOLATION@150..152
+                    STMT@150..152
+                      ITEM@150..152
+                        EXPR@150..152
+                          EXPR_IDENT@150..152
+                            IDENT@150..152 "hi"
+                  PUNCT_BRACE_END@152..153 "}"
+                  LIT_STR@153..170 " \\interpolations "
+                  INTERPOLATION_START@170..172 "${"
+                  LIT_STR_TEMPLATE_INTERPOLATION@172..178
+                    STMT@172..178
+                      ITEM@172..178
+                        EXPR@172..178
+                          EXPR_BINARY@172..178
+                            EXPR@172..175
+                              EXPR_IDENT@172..175
+                                IDENT@172..174 "hi"
+                                WHITESPACE@174..175 " "
+                            OP_ADD@175..176 "+"
+                            EXPR@176..178
+                              WHITESPACE@176..177 " "
+                              EXPR_LIT@177..178
+                                LIT@177..178
+                                  LIT_INT@177..178 "2"
+                  PUNCT_BRACE_END@178..179 "}"
+                  LIT_STR@179..197 " and more complex "
+                  INTERPOLATION_START@197..199 "${"
+                  LIT_STR_TEMPLATE_INTERPOLATION@199..370
+                    WHITESPACE@199..204 "\n    "
+                    STMT@204..370
+                      ITEM@204..370
+                        EXPR@204..370
+                          EXPR_BLOCK@204..369
+                            PUNCT_BRACE_START@204..205 "{"
+                            WHITESPACE@205..214 "\n        "
+                            STMT@214..224
+                              ITEM@214..223
+                                EXPR@214..223
+                                  EXPR_LET@214..223
+                                    KW_LET@214..217 "let"
+                                    WHITESPACE@217..218 " "
+                                    IDENT@218..219 "a"
+                                    WHITESPACE@219..220 " "
+                                    OP_ASSIGN@220..221 "="
+                                    EXPR@221..223
+                                      WHITESPACE@221..222 " "
+                                      EXPR_LIT@222..223
+                                        LIT@222..223
+                                          LIT_INT@222..223 "2"
+                              PUNCT_SEMI@223..224 ";"
+                            WHITESPACE@224..233 "\n        "
+                            STMT@233..283
+                              ITEM@233..282
+                                EXPR@233..282
+                                  EXPR_LET@233..282
+                                    KW_LET@233..236 "let"
+                                    WHITESPACE@236..237 " "
+                                    IDENT@237..238 "b"
+                                    WHITESPACE@238..239 " "
+                                    OP_ASSIGN@239..240 "="
+                                    EXPR@240..282
+                                      WHITESPACE@240..241 " "
+                                      EXPR_LIT@241..282
+                                        LIT@241..282
+                                          LIT_STR_TEMPLATE@241..282
+                                            LIT_STR@241..249 "`nested "
+                                            INTERPOLATION_START@249..251 "${"
+                                            LIT_STR_TEMPLATE_INTERPOLATION@251..253
+                                              STMT@251..253
+                                                ITEM@251..253
+                                                  EXPR@251..253
+                                                    EXPR_IDENT@251..253
+                                                      IDENT@251..253 "hi"
+                                            PUNCT_BRACE_END@253..254 "}"
+                                            LIT_STR@254..269 " interpolation "
+                                            INTERPOLATION_START@269..271 "${"
+                                            LIT_STR_TEMPLATE_INTERPOLATION@271..280
+                                              WHITESPACE@271..272 " "
+                                              STMT@272..280
+                                                ITEM@272..280
+                                                  EXPR@272..280
+                                                    EXPR_BINARY@272..280
+                                                      EXPR@272..277
+                                                        EXPR_BINARY@272..277
+                                                          EXPR@272..273
+                                                            EXPR_LIT@272..273
+                                                              LIT@272..273
+                                                                LIT_INT@272..273 "3"
+                                                          OP_POW@273..275 "**"
+                                                          EXPR@275..277
+                                                            EXPR_LIT@275..276
+                                                              LIT@275..276
+                                                                LIT_INT@275..276 "3"
+                                                            WHITESPACE@276..277 " "
+                                                      OP_ADD@277..278 "+"
+                                                      EXPR@278..280
+                                                        WHITESPACE@278..279 " "
+                                                        EXPR_LIT@279..280
+                                                          LIT@279..280
+                                                            LIT_INT@279..280 "4"
+                                            PUNCT_BRACE_END@280..281 "}"
+                                            LIT_STR@281..282 "`"
+                              PUNCT_SEMI@282..283 ";"
+                            WHITESPACE@283..292 "\n        "
+                            STMT@292..349
+                              ITEM@292..348
+                                EXPR@292..348
+                                  EXPR_LET@292..348
+                                    KW_LET@292..295 "let"
+                                    WHITESPACE@295..296 " "
+                                    IDENT@296..297 "c"
+                                    WHITESPACE@297..298 " "
+                                    OP_ASSIGN@298..299 "="
+                                    EXPR@299..348
+                                      WHITESPACE@299..300 " "
+                                      EXPR_LIT@300..348
+                                        LIT@300..348
+                                          LIT_STR_TEMPLATE@300..348
+                                            LIT_STR@300..348 "`with escaped `` but  ..."
+                              PUNCT_SEMI@348..349 ";"
+                            WHITESPACE@349..358 "\n        "
+                            STMT@358..368
+                              ITEM@358..368
+                                EXPR@358..368
+                                  EXPR_BINARY@358..368
+                                    EXPR@358..360
+                                      EXPR_IDENT@358..360
+                                        IDENT@358..359 "a"
+                                        WHITESPACE@359..360 " "
+                                    OP_ADD@360..361 "+"
+                                    EXPR@361..368
+                                      WHITESPACE@361..362 " "
+                                      EXPR_IDENT@362..368
+                                        IDENT@362..363 "a"
+                                        WHITESPACE@363..368 "\n    "
+                            PUNCT_BRACE_END@368..369 "}"
+                          WHITESPACE@369..370 "\n"
+                  PUNCT_BRACE_END@370..371 "}"
+                  LIT_STR@371..384 " expressions`"
+    PUNCT_SEMI@384..385 ";"
+  WHITESPACE@385..386 "\n"
+

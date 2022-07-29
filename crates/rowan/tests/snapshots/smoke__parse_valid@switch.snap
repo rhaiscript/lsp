@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 60
+assertion_line: 65
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..779
@@ -162,7 +162,17 @@ RHAI@0..779
                               EXPR@300..327
                                 EXPR_LIT@300..327
                                   LIT@300..327
-                                    LIT_STR@300..327 "`Floating point... ${ ..."
+                                    LIT_STR_TEMPLATE@300..327
+                                      LIT_STR@300..319 "`Floating point... "
+                                      INTERPOLATION_START@319..321 "${"
+                                      LIT_STR_TEMPLATE_INTERPOLATION@321..325
+                                        STMT@321..325
+                                          ITEM@321..325
+                                            EXPR@321..325
+                                              EXPR_IDENT@321..325
+                                                IDENT@321..325 "item"
+                                      PUNCT_BRACE_END@325..326 "}"
+                                      LIT_STR@326..327 "`"
                               PUNCT_PAREN_END@327..328 ")"
                       PUNCT_COMMA@328..329 ","
                       WHITESPACE@329..338 "\n        "
@@ -186,7 +196,17 @@ RHAI@0..779
                               EXPR@386..402
                                 EXPR_LIT@386..402
                                   LIT@386..402
-                                    LIT_STR@386..402 "`${item} world!`"
+                                    LIT_STR_TEMPLATE@386..402
+                                      LIT_STR@386..387 "`"
+                                      INTERPOLATION_START@387..389 "${"
+                                      LIT_STR_TEMPLATE_INTERPOLATION@389..393
+                                        STMT@389..393
+                                          ITEM@389..393
+                                            EXPR@389..393
+                                              EXPR_IDENT@389..393
+                                                IDENT@389..393 "item"
+                                      PUNCT_BRACE_END@393..394 "}"
+                                      LIT_STR@394..402 " world!`"
                               PUNCT_PAREN_END@402..403 ")"
                       PUNCT_COMMA@403..404 ","
                       WHITESPACE@404..413 "\n        "
@@ -210,7 +230,17 @@ RHAI@0..779
                               EXPR@459..477
                                 EXPR_LIT@459..477
                                   LIT@459..477
-                                    LIT_STR@459..477 "`Got 999: ${item}`"
+                                    LIT_STR_TEMPLATE@459..477
+                                      LIT_STR@459..469 "`Got 999: "
+                                      INTERPOLATION_START@469..471 "${"
+                                      LIT_STR_TEMPLATE_INTERPOLATION@471..475
+                                        STMT@471..475
+                                          ITEM@471..475
+                                            EXPR@471..475
+                                              EXPR_IDENT@471..475
+                                                IDENT@471..475 "item"
+                                      PUNCT_BRACE_END@475..476 "}"
+                                      LIT_STR@476..477 "`"
                               PUNCT_PAREN_END@477..478 ")"
                       PUNCT_COMMA@478..479 ","
                       WHITESPACE@479..488 "\n        "
@@ -266,7 +296,17 @@ RHAI@0..779
                               EXPR@559..589
                                 EXPR_LIT@559..589
                                   LIT@559..589
-                                    LIT_STR@559..589 "`A small even number: ..."
+                                    LIT_STR_TEMPLATE@559..589
+                                      LIT_STR@559..581 "`A small even number: "
+                                      INTERPOLATION_START@581..583 "${"
+                                      LIT_STR_TEMPLATE_INTERPOLATION@583..587
+                                        STMT@583..587
+                                          ITEM@583..587
+                                            EXPR@583..587
+                                              EXPR_IDENT@583..587
+                                                IDENT@583..587 "item"
+                                      PUNCT_BRACE_END@587..588 "}"
+                                      LIT_STR@588..589 "`"
                               PUNCT_PAREN_END@589..590 ")"
                       PUNCT_COMMA@590..591 ","
                       WHITESPACE@591..600 "\n        "
@@ -297,7 +337,17 @@ RHAI@0..779
                               EXPR@647..676
                                 EXPR_LIT@647..676
                                   LIT@647..676
-                                    LIT_STR@647..676 "`A small odd number:  ..."
+                                    LIT_STR_TEMPLATE@647..676
+                                      LIT_STR@647..668 "`A small odd number: "
+                                      INTERPOLATION_START@668..670 "${"
+                                      LIT_STR_TEMPLATE_INTERPOLATION@670..674
+                                        STMT@670..674
+                                          ITEM@670..674
+                                            EXPR@670..674
+                                              EXPR_IDENT@670..674
+                                                IDENT@670..674 "item"
+                                      PUNCT_BRACE_END@674..675 "}"
+                                      LIT_STR@675..676 "`"
                               PUNCT_PAREN_END@676..677 ")"
                       PUNCT_COMMA@677..678 ","
                       WHITESPACE@678..687 "\n        "
@@ -318,7 +368,34 @@ RHAI@0..779
                               EXPR@722..769
                                 EXPR_LIT@722..769
                                   LIT@722..769
-                                    LIT_STR@722..769 "`Something else: <${i ..."
+                                    LIT_STR_TEMPLATE@722..769
+                                      LIT_STR@722..740 "`Something else: <"
+                                      INTERPOLATION_START@740..742 "${"
+                                      LIT_STR_TEMPLATE_INTERPOLATION@742..746
+                                        STMT@742..746
+                                          ITEM@742..746
+                                            EXPR@742..746
+                                              EXPR_IDENT@742..746
+                                                IDENT@742..746 "item"
+                                      PUNCT_BRACE_END@746..747 "}"
+                                      LIT_STR@747..752 "> is "
+                                      INTERPOLATION_START@752..754 "${"
+                                      LIT_STR_TEMPLATE_INTERPOLATION@754..767
+                                        STMT@754..767
+                                          ITEM@754..767
+                                            EXPR@754..767
+                                              EXPR_CALL@754..767
+                                                EXPR@754..761
+                                                  EXPR_IDENT@754..761
+                                                    IDENT@754..761 "type_of"
+                                                ARG_LIST@761..767
+                                                  PUNCT_PAREN_START@761..762 "("
+                                                  EXPR@762..766
+                                                    EXPR_IDENT@762..766
+                                                      IDENT@762..766 "item"
+                                                  PUNCT_PAREN_END@766..767 ")"
+                                      PUNCT_BRACE_END@767..768 "}"
+                                      LIT_STR@768..769 "`"
                               PUNCT_PAREN_END@769..770 ")"
                           WHITESPACE@770..775 "\n    "
                       PUNCT_BRACE_END@775..776 "}"
