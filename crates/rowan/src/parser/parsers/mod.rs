@@ -2,6 +2,8 @@
 
 #![deny(unreachable_patterns)]
 
+use logos::Logos;
+
 use super::context::Context;
 use crate::parser::ParseErrorKind;
 use crate::syntax::{SyntaxKind, SyntaxKind::*};
@@ -317,7 +319,9 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
         }
         T!["("] => parse_expr_paren(ctx),
         T!["["] => parse_expr_array(ctx),
-        LIT_INT | LIT_FLOAT | LIT_BOOL | LIT_STR | LIT_CHAR => parse_expr_lit(ctx),
+        LIT_INT | LIT_FLOAT | LIT_BOOL | LIT_STR | LIT_CHAR | __TEMP_STR_TEMPLATE_START => {
+            parse_expr_lit(ctx);
+        }
         IDENT => parse_expr_path_or_ident(ctx),
         op => {
             if let Some(r_bp) = op.prefix_binding_power() {
@@ -389,7 +393,7 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
                 if op_token == T!["ident"] || op_token.is_reserved_keyword() {
                     ctx.start_node_at(expr_start, EXPR);
                     ctx.finish_node();
-                    
+
                     ctx.start_node_at(expr_start, EXPR_BINARY);
                     ctx.eat();
                     ctx.finish_node();
@@ -1128,12 +1132,111 @@ fn parse_lit(ctx: &mut Context) {
         LIT_INT | LIT_FLOAT | LIT_BOOL | LIT_STR | LIT_CHAR => {
             ctx.eat();
         }
+        __TEMP_STR_TEMPLATE_START => parse_lit_str_template(ctx),
         _ => {
             ctx.eat_error(ParseErrorKind::ExpectedOneOfTokens(vec![
                 LIT_INT, LIT_FLOAT, LIT_BOOL, LIT_STR, LIT_CHAR,
             ]));
         }
     }
+
+    ctx.finish_node();
+}
+
+#[tracing::instrument(level = tracing::Level::TRACE, skip(ctx))]
+fn parse_lit_str_template(ctx: &mut Context) {
+    #[derive(Debug, Clone, Copy, Eq, PartialEq, Logos)]
+    #[allow(non_camel_case_types, clippy::upper_case_acronyms)]
+    pub enum LitStrTemplateToken {
+        #[token("${")]
+        INTERPOLATION_START,
+
+        #[token(r#"``"#)]
+        ESCAPED_BACKTICK,
+
+        #[token("`")]
+        END_BACKTICK,
+
+        #[error]
+        OTHER,
+    }
+    use LitStrTemplateToken::*;
+
+    ctx.start_node(LIT_STR_TEMPLATE);
+
+    let token = require_token!(ctx in node);
+
+    if token != __TEMP_STR_TEMPLATE_START {
+        ctx.add_error(ParseErrorKind::UnexpectedToken);
+        ctx.finish_node();
+        return;
+    }
+
+    let mut str_lex = LitStrTemplateToken::lexer(ctx.remainder());
+    let mut len = 0;
+    let mut had_interpolated = false;
+
+    while let Some(token) = str_lex.next() {
+        match token {
+            INTERPOLATION_START => {
+                drop(str_lex);
+
+                if len > 0 {
+                    if had_interpolated {
+                        ctx.token_raw().unwrap();
+                        ctx.bump(len - ctx.slice().len());
+                    } else {
+                        ctx.bump(len);
+                    }
+                }
+
+                ctx.eat_as(LIT_STR);
+                expect_token!(ctx in node, T!["${"]);
+                ctx.set_statement_closed(true);
+                ctx.start_node(LIT_STR_TEMPLATE_INTERPOLATION);
+                loop {
+                    let token = require_token!(ctx in node);
+
+                    if token == T!["}"] {
+                        break;
+                    }
+
+                    if !ctx.statement_closed() {
+                        ctx.add_error(ParseErrorKind::ExpectedToken(T![";"]));
+                    }
+
+                    parse_stmt(ctx);
+                }
+                ctx.finish_node();
+                expect_token!(ctx in node, T!["}"]);
+                str_lex = LitStrTemplateToken::lexer(ctx.remainder());
+                len = 0;
+                had_interpolated = true;
+            }
+            END_BACKTICK => {
+                len += str_lex.slice().len();
+                drop(str_lex);
+
+                // If there was an interpolated part
+                // the current context might not yet
+                // have a token to bump.
+                if had_interpolated {
+                    ctx.token_raw().unwrap();
+                    ctx.bump(len - ctx.slice().len());
+                } else {
+                    ctx.bump(len);
+                }
+
+                ctx.eat_as(LIT_STR);
+                ctx.finish_node();
+                return;
+            }
+            OTHER | ESCAPED_BACKTICK => {
+                len += str_lex.slice().len();
+            }
+        }
+    }
+    ctx.add_error(ParseErrorKind::InvalidOrUnclosedString);
 
     ctx.finish_node();
 }

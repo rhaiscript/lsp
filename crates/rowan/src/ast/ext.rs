@@ -6,7 +6,8 @@
 use rowan::NodeOrToken;
 
 use super::{
-    AstNode, Expr, ObjectField, Param, ParamList, SwitchArm, SwitchArmCondition, TypedParam, DefOpPrecedence,
+    AstNode, DefOpPrecedence, Expr, LitStrTemplate, LitStrTemplateInterpolation, ObjectField,
+    Param, ParamList, Stmt, SwitchArm, SwitchArmCondition, TypedParam,
 };
 use super::{ExprBlock, ExprIf, T};
 use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
@@ -30,6 +31,32 @@ impl super::Rhai {
         }
 
         s
+    }
+}
+
+impl super::Lit {
+    pub fn lit_token(&self) -> Option<SyntaxToken> {
+        self.syntax()
+            .first_child_or_token()
+            .and_then(NodeOrToken::into_token)
+    }
+
+    pub fn lit_str_template(&self) -> Option<LitStrTemplate> {
+        self.syntax().first_child().and_then(LitStrTemplate::cast)
+    }
+}
+
+impl super::LitStrTemplate {
+    pub fn interpolations(&self) -> impl Iterator<Item = LitStrTemplateInterpolation> {
+        self.syntax()
+            .children()
+            .filter_map(LitStrTemplateInterpolation::cast)
+    }
+}
+
+impl super::LitStrTemplateInterpolation {
+    pub fn statements(&self) -> impl Iterator<Item = Stmt> {
+        self.syntax().children().filter_map(Stmt::cast)
     }
 }
 

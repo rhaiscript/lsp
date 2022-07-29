@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 61
+assertion_line: 65
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..734
@@ -330,7 +330,26 @@ RHAI@0..734
             EXPR@534..596
               EXPR_LIT@534..596
                 LIT@534..596
-                  LIT_STR@534..596 "`Total ${total_primes ..."
+                  LIT_STR_TEMPLATE@534..596
+                    LIT_STR@534..541 "`Total "
+                    INTERPOLATION_START@541..543 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@543..561
+                      STMT@543..561
+                        ITEM@543..561
+                          EXPR@543..561
+                            EXPR_IDENT@543..561
+                              IDENT@543..561 "total_primes_found"
+                    PUNCT_BRACE_END@561..562 "}"
+                    LIT_STR@562..573 " primes <= "
+                    INTERPOLATION_START@573..575 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@575..594
+                      STMT@575..594
+                        ITEM@575..594
+                          EXPR@575..594
+                            EXPR_IDENT@575..594
+                              IDENT@575..594 "MAX_NUMBER_TO_CHECK"
+                    PUNCT_BRACE_END@594..595 "}"
+                    LIT_STR@595..596 "`"
             PUNCT_PAREN_END@596..597 ")"
     PUNCT_SEMI@597..598 ";"
   WHITESPACE@598..599 "\n"
@@ -346,7 +365,23 @@ RHAI@0..734
             EXPR@605..641
               EXPR_LIT@605..641
                 LIT@605..641
-                  LIT_STR@605..641 "`Run time = ${now.ela ..."
+                  LIT_STR_TEMPLATE@605..641
+                    LIT_STR@605..617 "`Run time = "
+                    INTERPOLATION_START@617..619 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@619..630
+                      STMT@619..630
+                        ITEM@619..630
+                          EXPR@619..630
+                            EXPR_BINARY@619..630
+                              EXPR@619..622
+                                EXPR_IDENT@619..622
+                                  IDENT@619..622 "now"
+                              PUNCT_DOT@622..623 "."
+                              EXPR@623..630
+                                EXPR_IDENT@623..630
+                                  IDENT@623..630 "elapsed"
+                    PUNCT_BRACE_END@630..631 "}"
+                    LIT_STR@631..641 " seconds.`"
             PUNCT_PAREN_END@641..642 ")"
     PUNCT_SEMI@642..643 ";"
   WHITESPACE@643..645 "\n\n"

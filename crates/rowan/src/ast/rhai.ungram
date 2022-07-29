@@ -1,13 +1,3 @@
-Lit =
-  'lit_int'
-| 'lit_float'
-| 'lit_str'
-| 'lit_bool'
-| 'lit_char'
-
-Path =
-  root:'ident' segments:('::' 'ident')*
-
 // Some Rhai code, could be a file, a module, etc.
 Rhai =
   'shebang'?
@@ -60,8 +50,26 @@ ExprIdent =
 ExprPath =
   Path
 
+
+Path =
+  root:'ident' segments:('::' 'ident')*
+
+LitStrTemplate =
+  ('lit_str' '${' LitStrTemplateInterpolation '}')* 'lit_str'
+
+LitStrTemplateInterpolation =
+  statements:Stmt*
+
 ExprLit =
   Lit
+
+Lit =
+  'lit_int'
+| 'lit_float'
+| 'lit_str'
+| 'lit_bool'
+| 'lit_char'
+| LitStrTemplate
 
 ExprLet =
   'let' 'ident' assignment:('=' Expr)?

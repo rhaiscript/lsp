@@ -159,6 +159,9 @@ pub enum ParseErrorKind {
     #[error(r#"unexpected token"#)]
     UnexpectedToken,
 
+    #[error(r#"invalid or unclosed string"#)]
+    InvalidOrUnclosedString,
+
     #[error(r#"expected token "{0:?}""#)]
     ExpectedToken(SyntaxKind),
 

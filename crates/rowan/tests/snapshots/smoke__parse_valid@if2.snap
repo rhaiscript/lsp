@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 37
+assertion_line: 65
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..183
@@ -128,7 +128,17 @@ RHAI@0..183
             EXPR@157..180
               EXPR_LIT@157..180
                 LIT@157..180
-                  LIT_STR@157..180 "`x should be 810: ${x}`"
+                  LIT_STR_TEMPLATE@157..180
+                    LIT_STR@157..175 "`x should be 810: "
+                    INTERPOLATION_START@175..177 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@177..178
+                      STMT@177..178
+                        ITEM@177..178
+                          EXPR@177..178
+                            EXPR_IDENT@177..178
+                              IDENT@177..178 "x"
+                    PUNCT_BRACE_END@178..179 "}"
+                    LIT_STR@179..180 "`"
             PUNCT_PAREN_END@180..181 ")"
     PUNCT_SEMI@181..182 ";"
   WHITESPACE@182..183 "\n"

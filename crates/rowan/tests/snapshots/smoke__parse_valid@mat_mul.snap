@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 61
+assertion_line: 65
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..1027
@@ -932,7 +932,23 @@ RHAI@0..1027
             EXPR@978..1024
               EXPR_LIT@978..1024
                 LIT@978..1024
-                  LIT_STR@978..1024 "`Finished. Run time = ..."
+                  LIT_STR_TEMPLATE@978..1024
+                    LIT_STR@978..1000 "`Finished. Run time = "
+                    INTERPOLATION_START@1000..1002 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@1002..1013
+                      STMT@1002..1013
+                        ITEM@1002..1013
+                          EXPR@1002..1013
+                            EXPR_BINARY@1002..1013
+                              EXPR@1002..1005
+                                EXPR_IDENT@1002..1005
+                                  IDENT@1002..1005 "now"
+                              PUNCT_DOT@1005..1006 "."
+                              EXPR@1006..1013
+                                EXPR_IDENT@1006..1013
+                                  IDENT@1006..1013 "elapsed"
+                    PUNCT_BRACE_END@1013..1014 "}"
+                    LIT_STR@1014..1024 " seconds.`"
             PUNCT_PAREN_END@1024..1025 ")"
     PUNCT_SEMI@1025..1026 ";"
   WHITESPACE@1026..1027 "\n"

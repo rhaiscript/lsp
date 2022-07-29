@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 37
+assertion_line: 65
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..412
@@ -120,7 +120,17 @@ RHAI@0..412
             EXPR@299..334
               EXPR_LIT@299..334
                 LIT@299..334
-                  LIT_STR@299..334 "`add(a, 4) should be  ..."
+                  LIT_STR_TEMPLATE@299..334
+                    LIT_STR@299..324 "`add(a, 4) should be  ..."
+                    INTERPOLATION_START@324..326 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@326..332
+                      STMT@326..332
+                        ITEM@326..332
+                          EXPR@326..332
+                            EXPR_IDENT@326..332
+                              IDENT@326..332 "result"
+                    PUNCT_BRACE_END@332..333 "}"
+                    LIT_STR@333..334 "`"
             PUNCT_PAREN_END@334..335 ")"
     PUNCT_SEMI@335..336 ";"
   WHITESPACE@336..338 "\n\n"
@@ -136,7 +146,17 @@ RHAI@0..412
             EXPR@344..371
               EXPR_LIT@344..371
                 LIT@344..371
-                  LIT_STR@344..371 "`a should still be 3: ..."
+                  LIT_STR_TEMPLATE@344..371
+                    LIT_STR@344..366 "`a should still be 3: "
+                    INTERPOLATION_START@366..368 "${"
+                    LIT_STR_TEMPLATE_INTERPOLATION@368..369
+                      STMT@368..369
+                        ITEM@368..369
+                          EXPR@368..369
+                            EXPR_IDENT@368..369
+                              IDENT@368..369 "a"
+                    PUNCT_BRACE_END@369..370 "}"
+                    LIT_STR@370..371 "`"
             PUNCT_PAREN_END@371..372 ")"
     PUNCT_SEMI@372..373 ";"
   WHITESPACE@373..378 "     "
