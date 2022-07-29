@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 57
+assertion_line: 61
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..73
@@ -47,24 +47,24 @@ RHAI@0..73
                     EXPR@47..69
                       EXPR_BINARY@47..69
                         EXPR@47..65
-                          EXPR_INDEX@47..64
-                            EXPR@47..56
-                              EXPR_BINARY@47..56
-                                EXPR@47..51
-                                  WHITESPACE@47..48 " "
-                                  EXPR_IDENT@48..51
-                                    IDENT@48..51 "foo"
-                                OP_NULL_ACCESS@51..53 "?."
+                          EXPR_BINARY@47..65
+                            EXPR@47..51
+                              WHITESPACE@47..48 " "
+                              EXPR_IDENT@48..51
+                                IDENT@48..51 "foo"
+                            OP_NULL_ACCESS@51..53 "?."
+                            EXPR@53..65
+                              EXPR_INDEX@53..64
                                 EXPR@53..56
                                   EXPR_IDENT@53..56
                                     IDENT@53..56 "bar"
-                            PUNCT_NULL_BRACKET_START@56..58 "?["
-                            EXPR@58..63
-                              EXPR_LIT@58..63
-                                LIT@58..63
-                                  LIT_STR@58..63 "\"baz\""
-                            PUNCT_BRACKET_END@63..64 "]"
-                          WHITESPACE@64..65 " "
+                                PUNCT_NULL_BRACKET_START@56..58 "?["
+                                EXPR@58..63
+                                  EXPR_LIT@58..63
+                                    LIT@58..63
+                                      LIT_STR@58..63 "\"baz\""
+                                PUNCT_BRACKET_END@63..64 "]"
+                              WHITESPACE@64..65 " "
                         OP_NULL_OR@65..67 "??"
                         EXPR@67..69
                           WHITESPACE@67..68 " "

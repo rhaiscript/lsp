@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 37
+assertion_line: 61
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..5234
@@ -2590,24 +2590,24 @@ RHAI@0..5234
                                 STMT@4914..4968
                                   ITEM@4914..4968
                                     EXPR@4914..4968
-                                      EXPR_CALL@4914..4959
-                                        EXPR@4914..4923
-                                          EXPR_BINARY@4914..4923
-                                            EXPR@4914..4918
-                                              EXPR_IDENT@4914..4918
-                                                IDENT@4914..4918 "keys"
-                                            PUNCT_DOT@4918..4919 "."
+                                      EXPR_BINARY@4914..4968
+                                        EXPR@4914..4918
+                                          EXPR_IDENT@4914..4918
+                                            IDENT@4914..4918 "keys"
+                                        PUNCT_DOT@4918..4919 "."
+                                        EXPR@4919..4968
+                                          EXPR_CALL@4919..4959
                                             EXPR@4919..4923
                                               EXPR_IDENT@4919..4923
                                                 IDENT@4919..4923 "push"
-                                        ARG_LIST@4923..4959
-                                          PUNCT_PAREN_START@4923..4924 "("
-                                          EXPR@4924..4958
-                                            EXPR_LIT@4924..4958
-                                              LIT@4924..4958
-                                                LIT_STR@4924..4958 "`${adverb} ${adjectiv ..."
-                                          PUNCT_PAREN_END@4958..4959 ")"
-                                      WHITESPACE@4959..4968 "\n        "
+                                            ARG_LIST@4923..4959
+                                              PUNCT_PAREN_START@4923..4924 "("
+                                              EXPR@4924..4958
+                                                EXPR_LIT@4924..4958
+                                                  LIT@4924..4958
+                                                    LIT_STR@4924..4958 "`${adverb} ${adjectiv ..."
+                                              PUNCT_PAREN_END@4958..4959 ")"
+                                          WHITESPACE@4959..4968 "\n        "
                                 PUNCT_BRACE_END@4968..4969 "}"
                         WHITESPACE@4969..4974 "\n    "
                       PUNCT_BRACE_END@4974..4975 "}"
@@ -2786,22 +2786,22 @@ RHAI@0..5234
             STMT@5136..5152
               ITEM@5136..5151
                 EXPR@5136..5151
-                  EXPR_CALL@5136..5151
-                    EXPR@5136..5146
-                      EXPR_BINARY@5136..5146
-                        EXPR@5136..5139
-                          EXPR_IDENT@5136..5139
-                            IDENT@5136..5139 "map"
-                        PUNCT_DOT@5139..5140 "."
+                  EXPR_BINARY@5136..5151
+                    EXPR@5136..5139
+                      EXPR_IDENT@5136..5139
+                        IDENT@5136..5139 "map"
+                    PUNCT_DOT@5139..5140 "."
+                    EXPR@5140..5151
+                      EXPR_CALL@5140..5151
                         EXPR@5140..5146
                           EXPR_IDENT@5140..5146
                             IDENT@5140..5146 "remove"
-                    ARG_LIST@5146..5151
-                      PUNCT_PAREN_START@5146..5147 "("
-                      EXPR@5147..5150
-                        EXPR_IDENT@5147..5150
-                          IDENT@5147..5150 "key"
-                      PUNCT_PAREN_END@5150..5151 ")"
+                        ARG_LIST@5146..5151
+                          PUNCT_PAREN_START@5146..5147 "("
+                          EXPR@5147..5150
+                            EXPR_IDENT@5147..5150
+                              IDENT@5147..5150 "key"
+                          PUNCT_PAREN_END@5150..5151 ")"
               PUNCT_SEMI@5151..5152 ";"
             WHITESPACE@5152..5153 "\n"
             PUNCT_BRACE_END@5153..5154 "}"

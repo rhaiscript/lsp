@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 37
+assertion_line: 61
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..422
@@ -121,22 +121,22 @@ RHAI@0..422
             STMT@211..224
               ITEM@211..223
                 EXPR@211..223
-                  EXPR_CALL@211..223
-                    EXPR@211..220
-                      EXPR_BINARY@211..220
-                        EXPR@211..215
-                          EXPR_IDENT@211..215
-                            IDENT@211..215 "list"
-                        PUNCT_DOT@215..216 "."
+                  EXPR_BINARY@211..223
+                    EXPR@211..215
+                      EXPR_IDENT@211..215
+                        IDENT@211..215 "list"
+                    PUNCT_DOT@215..216 "."
+                    EXPR@216..223
+                      EXPR_CALL@216..223
                         EXPR@216..220
                           EXPR_IDENT@216..220
                             IDENT@216..220 "push"
-                    ARG_LIST@220..223
-                      PUNCT_PAREN_START@220..221 "("
-                      EXPR@221..222
-                        EXPR_IDENT@221..222
-                          IDENT@221..222 "i"
-                      PUNCT_PAREN_END@222..223 ")"
+                        ARG_LIST@220..223
+                          PUNCT_PAREN_START@220..221 "("
+                          EXPR@221..222
+                            EXPR_IDENT@221..222
+                              IDENT@221..222 "i"
+                          PUNCT_PAREN_END@222..223 ")"
               PUNCT_SEMI@223..224 ";"
             WHITESPACE@224..225 "\n"
             PUNCT_BRACE_END@225..226 "}"

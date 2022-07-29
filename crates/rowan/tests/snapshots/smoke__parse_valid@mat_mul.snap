@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 37
+assertion_line: 61
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..1027
@@ -61,28 +61,28 @@ RHAI@0..1027
             STMT@124..140
               ITEM@124..139
                 EXPR@124..139
-                  EXPR_CALL@124..139
-                    EXPR@124..131
-                      EXPR_BINARY@124..131
-                        EXPR@124..127
-                          EXPR_IDENT@124..127
-                            IDENT@124..127 "row"
-                        PUNCT_DOT@127..128 "."
+                  EXPR_BINARY@124..139
+                    EXPR@124..127
+                      EXPR_IDENT@124..127
+                        IDENT@124..127 "row"
+                    PUNCT_DOT@127..128 "."
+                    EXPR@128..139
+                      EXPR_CALL@128..139
                         EXPR@128..131
                           EXPR_IDENT@128..131
                             IDENT@128..131 "pad"
-                    ARG_LIST@131..139
-                      PUNCT_PAREN_START@131..132 "("
-                      EXPR@132..133
-                        EXPR_IDENT@132..133
-                          IDENT@132..133 "y"
-                      PUNCT_COMMA@133..134 ","
-                      WHITESPACE@134..135 " "
-                      EXPR@135..138
-                        EXPR_LIT@135..138
-                          LIT@135..138
-                            LIT_FLOAT@135..138 "0.0"
-                      PUNCT_PAREN_END@138..139 ")"
+                        ARG_LIST@131..139
+                          PUNCT_PAREN_START@131..132 "("
+                          EXPR@132..133
+                            EXPR_IDENT@132..133
+                              IDENT@132..133 "y"
+                          PUNCT_COMMA@133..134 ","
+                          WHITESPACE@134..135 " "
+                          EXPR@135..138
+                            EXPR_LIT@135..138
+                              LIT@135..138
+                                LIT_FLOAT@135..138 "0.0"
+                          PUNCT_PAREN_END@138..139 ")"
               PUNCT_SEMI@139..140 ";"
             WHITESPACE@140..146 "\n\n    "
             STMT@146..162
@@ -104,27 +104,27 @@ RHAI@0..1027
             STMT@167..186
               ITEM@167..185
                 EXPR@167..185
-                  EXPR_CALL@167..185
-                    EXPR@167..177
-                      EXPR_BINARY@167..177
-                        EXPR@167..173
-                          EXPR_IDENT@167..173
-                            IDENT@167..173 "matrix"
-                        PUNCT_DOT@173..174 "."
+                  EXPR_BINARY@167..185
+                    EXPR@167..173
+                      EXPR_IDENT@167..173
+                        IDENT@167..173 "matrix"
+                    PUNCT_DOT@173..174 "."
+                    EXPR@174..185
+                      EXPR_CALL@174..185
                         EXPR@174..177
                           EXPR_IDENT@174..177
                             IDENT@174..177 "pad"
-                    ARG_LIST@177..185
-                      PUNCT_PAREN_START@177..178 "("
-                      EXPR@178..179
-                        EXPR_IDENT@178..179
-                          IDENT@178..179 "x"
-                      PUNCT_COMMA@179..180 ","
-                      WHITESPACE@180..181 " "
-                      EXPR@181..184
-                        EXPR_IDENT@181..184
-                          IDENT@181..184 "row"
-                      PUNCT_PAREN_END@184..185 ")"
+                        ARG_LIST@177..185
+                          PUNCT_PAREN_START@177..178 "("
+                          EXPR@178..179
+                            EXPR_IDENT@178..179
+                              IDENT@178..179 "x"
+                          PUNCT_COMMA@179..180 ","
+                          WHITESPACE@180..181 " "
+                          EXPR@181..184
+                            EXPR_IDENT@181..184
+                              IDENT@181..184 "row"
+                          PUNCT_PAREN_END@184..185 ")"
               PUNCT_SEMI@185..186 ";"
             WHITESPACE@186..192 "\n\n    "
             STMT@192..199
@@ -449,30 +449,30 @@ RHAI@0..1027
                     KW_IN@491..493 "in"
                     EXPR@493..506
                       EXPR_BINARY@493..506
-                        EXPR@493..501
-                          EXPR_INDEX@493..501
-                            EXPR@493..498
-                              EXPR_BINARY@493..498
-                                EXPR@493..495
-                                  WHITESPACE@493..494 " "
-                                  EXPR_LIT@494..495
-                                    LIT@494..495
-                                      LIT_INT@494..495 "0"
-                                OP_RANGE@495..497 ".."
+                        EXPR@493..495
+                          WHITESPACE@493..494 " "
+                          EXPR_LIT@494..495
+                            LIT@494..495
+                              LIT_INT@494..495 "0"
+                        OP_RANGE@495..497 ".."
+                        EXPR@497..506
+                          EXPR_BINARY@497..506
+                            EXPR@497..501
+                              EXPR_INDEX@497..501
                                 EXPR@497..498
                                   EXPR_IDENT@497..498
                                     IDENT@497..498 "a"
-                            PUNCT_BRACKET_START@498..499 "["
-                            EXPR@499..500
-                              EXPR_LIT@499..500
-                                LIT@499..500
-                                  LIT_INT@499..500 "0"
-                            PUNCT_BRACKET_END@500..501 "]"
-                        PUNCT_DOT@501..502 "."
-                        EXPR@502..506
-                          EXPR_IDENT@502..506
-                            IDENT@502..505 "len"
-                            WHITESPACE@505..506 " "
+                                PUNCT_BRACKET_START@498..499 "["
+                                EXPR@499..500
+                                  EXPR_LIT@499..500
+                                    LIT@499..500
+                                      LIT_INT@499..500 "0"
+                                PUNCT_BRACKET_END@500..501 "]"
+                            PUNCT_DOT@501..502 "."
+                            EXPR@502..506
+                              EXPR_IDENT@502..506
+                                IDENT@502..505 "len"
+                                WHITESPACE@505..506 " "
                     EXPR_BLOCK@506..586
                       PUNCT_BRACE_START@506..507 "{"
                       WHITESPACE@507..516 "\n        "
@@ -489,30 +489,30 @@ RHAI@0..1027
                               KW_IN@522..524 "in"
                               EXPR@524..537
                                 EXPR_BINARY@524..537
-                                  EXPR@524..532
-                                    EXPR_INDEX@524..532
-                                      EXPR@524..529
-                                        EXPR_BINARY@524..529
-                                          EXPR@524..526
-                                            WHITESPACE@524..525 " "
-                                            EXPR_LIT@525..526
-                                              LIT@525..526
-                                                LIT_INT@525..526 "0"
-                                          OP_RANGE@526..528 ".."
+                                  EXPR@524..526
+                                    WHITESPACE@524..525 " "
+                                    EXPR_LIT@525..526
+                                      LIT@525..526
+                                        LIT_INT@525..526 "0"
+                                  OP_RANGE@526..528 ".."
+                                  EXPR@528..537
+                                    EXPR_BINARY@528..537
+                                      EXPR@528..532
+                                        EXPR_INDEX@528..532
                                           EXPR@528..529
                                             EXPR_IDENT@528..529
                                               IDENT@528..529 "b"
-                                      PUNCT_BRACKET_START@529..530 "["
-                                      EXPR@530..531
-                                        EXPR_LIT@530..531
-                                          LIT@530..531
-                                            LIT_INT@530..531 "0"
-                                      PUNCT_BRACKET_END@531..532 "]"
-                                  PUNCT_DOT@532..533 "."
-                                  EXPR@533..537
-                                    EXPR_IDENT@533..537
-                                      IDENT@533..536 "len"
-                                      WHITESPACE@536..537 " "
+                                          PUNCT_BRACKET_START@529..530 "["
+                                          EXPR@530..531
+                                            EXPR_LIT@530..531
+                                              LIT@530..531
+                                                LIT_INT@530..531 "0"
+                                          PUNCT_BRACKET_END@531..532 "]"
+                                      PUNCT_DOT@532..533 "."
+                                      EXPR@533..537
+                                        EXPR_IDENT@533..537
+                                          IDENT@533..536 "len"
+                                          WHITESPACE@536..537 " "
                               EXPR_BLOCK@537..580
                                 PUNCT_BRACE_START@537..538 "{"
                                 WHITESPACE@538..551 "\n            "
@@ -624,22 +624,22 @@ RHAI@0..1027
                     KW_IN@637..639 "in"
                     EXPR@639..649
                       EXPR_BINARY@639..649
-                        EXPR@639..644
-                          EXPR_BINARY@639..644
-                            EXPR@639..641
-                              WHITESPACE@639..640 " "
-                              EXPR_LIT@640..641
-                                LIT@640..641
-                                  LIT_INT@640..641 "0"
-                            OP_RANGE@641..643 ".."
+                        EXPR@639..641
+                          WHITESPACE@639..640 " "
+                          EXPR_LIT@640..641
+                            LIT@640..641
+                              LIT_INT@640..641 "0"
+                        OP_RANGE@641..643 ".."
+                        EXPR@643..649
+                          EXPR_BINARY@643..649
                             EXPR@643..644
                               EXPR_IDENT@643..644
                                 IDENT@643..644 "c"
-                        PUNCT_DOT@644..645 "."
-                        EXPR@645..649
-                          EXPR_IDENT@645..649
-                            IDENT@645..648 "len"
-                            WHITESPACE@648..649 " "
+                            PUNCT_DOT@644..645 "."
+                            EXPR@645..649
+                              EXPR_IDENT@645..649
+                                IDENT@645..648 "len"
+                                WHITESPACE@648..649 " "
                     EXPR_BLOCK@649..821
                       PUNCT_BRACE_START@649..650 "{"
                       WHITESPACE@650..659 "\n        "
@@ -656,29 +656,29 @@ RHAI@0..1027
                               KW_IN@665..667 "in"
                               EXPR@667..680
                                 EXPR_BINARY@667..680
-                                  EXPR@667..675
-                                    EXPR_INDEX@667..675
-                                      EXPR@667..672
-                                        EXPR_BINARY@667..672
-                                          EXPR@667..669
-                                            WHITESPACE@667..668 " "
-                                            EXPR_LIT@668..669
-                                              LIT@668..669
-                                                LIT_INT@668..669 "0"
-                                          OP_RANGE@669..671 ".."
+                                  EXPR@667..669
+                                    WHITESPACE@667..668 " "
+                                    EXPR_LIT@668..669
+                                      LIT@668..669
+                                        LIT_INT@668..669 "0"
+                                  OP_RANGE@669..671 ".."
+                                  EXPR@671..680
+                                    EXPR_BINARY@671..680
+                                      EXPR@671..675
+                                        EXPR_INDEX@671..675
                                           EXPR@671..672
                                             EXPR_IDENT@671..672
                                               IDENT@671..672 "c"
-                                      PUNCT_BRACKET_START@672..673 "["
-                                      EXPR@673..674
-                                        EXPR_IDENT@673..674
-                                          IDENT@673..674 "i"
-                                      PUNCT_BRACKET_END@674..675 "]"
-                                  PUNCT_DOT@675..676 "."
-                                  EXPR@676..680
-                                    EXPR_IDENT@676..680
-                                      IDENT@676..679 "len"
-                                      WHITESPACE@679..680 " "
+                                          PUNCT_BRACKET_START@672..673 "["
+                                          EXPR@673..674
+                                            EXPR_IDENT@673..674
+                                              IDENT@673..674 "i"
+                                          PUNCT_BRACKET_END@674..675 "]"
+                                      PUNCT_DOT@675..676 "."
+                                      EXPR@676..680
+                                        EXPR_IDENT@676..680
+                                          IDENT@676..679 "len"
+                                          WHITESPACE@679..680 " "
                               EXPR_BLOCK@680..815
                                 PUNCT_BRACE_START@680..681 "{"
                                 WHITESPACE@681..694 "\n            "
@@ -725,29 +725,29 @@ RHAI@0..1027
                                         KW_IN@728..730 "in"
                                         EXPR@730..743
                                           EXPR_BINARY@730..743
-                                            EXPR@730..738
-                                              EXPR_INDEX@730..738
-                                                EXPR@730..735
-                                                  EXPR_BINARY@730..735
-                                                    EXPR@730..732
-                                                      WHITESPACE@730..731 " "
-                                                      EXPR_LIT@731..732
-                                                        LIT@731..732
-                                                          LIT_INT@731..732 "0"
-                                                    OP_RANGE@732..734 ".."
+                                            EXPR@730..732
+                                              WHITESPACE@730..731 " "
+                                              EXPR_LIT@731..732
+                                                LIT@731..732
+                                                  LIT_INT@731..732 "0"
+                                            OP_RANGE@732..734 ".."
+                                            EXPR@734..743
+                                              EXPR_BINARY@734..743
+                                                EXPR@734..738
+                                                  EXPR_INDEX@734..738
                                                     EXPR@734..735
                                                       EXPR_IDENT@734..735
                                                         IDENT@734..735 "a"
-                                                PUNCT_BRACKET_START@735..736 "["
-                                                EXPR@736..737
-                                                  EXPR_IDENT@736..737
-                                                    IDENT@736..737 "i"
-                                                PUNCT_BRACKET_END@737..738 "]"
-                                            PUNCT_DOT@738..739 "."
-                                            EXPR@739..743
-                                              EXPR_IDENT@739..743
-                                                IDENT@739..742 "len"
-                                                WHITESPACE@742..743 " "
+                                                    PUNCT_BRACKET_START@735..736 "["
+                                                    EXPR@736..737
+                                                      EXPR_IDENT@736..737
+                                                        IDENT@736..737 "i"
+                                                    PUNCT_BRACKET_END@737..738 "]"
+                                                PUNCT_DOT@738..739 "."
+                                                EXPR@739..743
+                                                  EXPR_IDENT@739..743
+                                                    IDENT@739..742 "len"
+                                                    WHITESPACE@742..743 " "
                                         EXPR_BLOCK@743..805
                                           PUNCT_BRACE_START@743..744 "{"
                                           WHITESPACE@744..761 "\n                "
