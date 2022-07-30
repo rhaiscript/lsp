@@ -26,12 +26,16 @@ macro_rules! require_token {
             None => return $ctx.eat_error(ParseErrorKind::UnexpectedEof),
         }
     };
-
     ($ctx:ident in node) => {
+        require_token!($ctx in nodes(1))
+    };
+    ($ctx:ident in nodes($count:literal)) => {
         match $ctx.token() {
             Some(t) => t,
             None => {
-                $ctx.finish_node();
+                for _ in 0..$count {
+                    $ctx.finish_node();
+                }
                 $ctx.eat_error(ParseErrorKind::UnexpectedEof);
                 return;
             }
@@ -1201,7 +1205,7 @@ fn parse_lit_str_template(ctx: &mut Context) {
                 ctx.set_statement_closed(true);
                 ctx.start_node(LIT_STR_TEMPLATE_INTERPOLATION);
                 loop {
-                    let token = require_token!(ctx in node);
+                    let token = require_token!(ctx in nodes(2));
 
                     if token == T!["}"] {
                         break;
