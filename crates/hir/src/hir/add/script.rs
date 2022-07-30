@@ -1,6 +1,7 @@
 use crate::{eval::Value, source::SourceInfo};
 use rhai_rowan::{
     ast::{ExportTarget, Expr, Rhai, Stmt},
+    parser::Parser,
     syntax::{SyntaxKind, SyntaxToken},
     util::unescape,
 };
@@ -47,17 +48,9 @@ impl Hir {
     ) -> Option<Symbol> {
         stmt.item().and_then(|item| {
             item.expr().and_then(|expr| {
-                match self.add_expression(source, scope, can_export, expr) {
-                    Some(symbol) => {
-                        match &mut self.symbol_mut(symbol).kind {
-                            SymbolKind::Fn(f) => f.docs = item.docs_content(),
-                            SymbolKind::Decl(decl) => decl.docs = item.docs_content(),
-                            _ => {}
-                        };
-                        Some(symbol)
-                    }
-                    None => None,
-                }
+                let docs = item.docs_content();
+                let docs = if docs.is_empty() { None } else { Some(docs) };
+                self.add_expression(source, scope, can_export, docs, expr)
             })
         })
     }
@@ -68,6 +61,7 @@ impl Hir {
         source: Source,
         scope: Scope,
         can_export: bool,
+        docs: Option<String>,
         expr: Expr,
     ) -> Option<Symbol> {
         /// `let` or `const`
@@ -80,6 +74,7 @@ impl Hir {
             syntax: &SyntaxNode,
             is_const: bool,
             export: bool,
+            docs: Option<String>,
         ) -> Symbol {
             let (value, value_scope) = value
                 .map(|expr| {
@@ -91,7 +86,10 @@ impl Hir {
                         },
                         ..ScopeData::default()
                     });
-                    (hir.add_expression(source, scope, false, expr), Some(scope))
+                    (
+                        hir.add_expression(source, scope, false, None, expr),
+                        Some(scope),
+                    )
                 })
                 .unwrap_or_default();
 
@@ -107,6 +105,7 @@ impl Hir {
                     name: ident_syntax
                         .map(|s| s.text().to_string())
                         .unwrap_or_default(),
+                    docs: docs.unwrap_or_default(),
                     is_const,
                     value,
                     value_scope,
@@ -336,6 +335,7 @@ impl Hir {
                 &expr.syntax(),
                 false,
                 can_export,
+                docs,
             )
             .into(),
             Expr::Const(expr) => add_decl(
@@ -347,6 +347,7 @@ impl Hir {
                 &expr.syntax(),
                 true,
                 can_export,
+                docs,
             )
             .into(),
             Expr::Block(expr) => {
@@ -379,7 +380,7 @@ impl Hir {
             Expr::Unary(expr) => {
                 let rhs = expr
                     .expr()
-                    .and_then(|rhs| self.add_expression(source, scope, false, rhs));
+                    .and_then(|rhs| self.add_expression(source, scope, false, None, rhs));
 
                 let symbol = self.add_symbol(SymbolData {
                     export: false,
@@ -401,11 +402,11 @@ impl Hir {
             Expr::Binary(expr) => {
                 let lhs = expr
                     .lhs()
-                    .and_then(|lhs| self.add_expression(source, scope, false, lhs));
+                    .and_then(|lhs| self.add_expression(source, scope, false, None, lhs));
 
                 let rhs = expr
                     .rhs()
-                    .and_then(|rhs| self.add_expression(source, scope, false, rhs));
+                    .and_then(|rhs| self.add_expression(source, scope, false, None, rhs));
 
                 let op = expr.op_token().map(|t| {
                     if t.kind() == SyntaxKind::IDENT {
@@ -442,7 +443,7 @@ impl Hir {
             }
             Expr::Paren(expr) => expr
                 .expr()
-                .and_then(|expr| self.add_expression(source, scope, false, expr)),
+                .and_then(|expr| self.add_expression(source, scope, false, None, expr)),
             Expr::Array(expr) => {
                 let symbol_data = SymbolData {
                     export: false,
@@ -455,7 +456,9 @@ impl Hir {
                     kind: SymbolKind::Array(ArraySymbol {
                         values: expr
                             .values()
-                            .filter_map(|expr| self.add_expression(source, scope, false, expr))
+                            .filter_map(|expr| {
+                                self.add_expression(source, scope, false, None, expr)
+                            })
                             .collect(),
                     }),
                 };
@@ -468,11 +471,11 @@ impl Hir {
             Expr::Index(expr) => {
                 let base = expr
                     .base()
-                    .and_then(|base| self.add_expression(source, scope, false, base));
+                    .and_then(|base| self.add_expression(source, scope, false, None, base));
 
                 let index = expr
                     .index()
-                    .and_then(|index| self.add_expression(source, scope, false, index));
+                    .and_then(|index| self.add_expression(source, scope, false, None, index));
 
                 let symbol = self.add_symbol(SymbolData {
                     export: false,
@@ -515,7 +518,8 @@ impl Hir {
                                             text_range: field.syntax().text_range().into(),
                                             selection_text_range: None,
                                         },
-                                        value: self.add_expression(source, scope, false, expr),
+                                        value: self
+                                            .add_expression(source, scope, false, None, expr),
                                     },
                                 )),
                                 _ => None,
@@ -531,7 +535,7 @@ impl Hir {
             Expr::Call(expr) => {
                 let lhs = expr
                     .expr()
-                    .and_then(|expr| self.add_expression(source, scope, false, expr));
+                    .and_then(|expr| self.add_expression(source, scope, false, None, expr));
 
                 let symbol_data = SymbolData {
                     export: false,
@@ -546,7 +550,9 @@ impl Hir {
                         arguments: match expr.arg_list() {
                             Some(arg_list) => arg_list
                                 .arguments()
-                                .filter_map(|expr| self.add_expression(source, scope, false, expr))
+                                .filter_map(|expr| {
+                                    self.add_expression(source, scope, false, None, expr)
+                                })
                                 .collect(),
                             None => Vec::default(),
                         },
@@ -593,7 +599,7 @@ impl Hir {
 
                 let closure_expr_symbol = expr
                     .body()
-                    .and_then(|body| self.add_expression(source, closure_scope, false, body));
+                    .and_then(|body| self.add_expression(source, closure_scope, false, None, body));
 
                 let symbol = self.add_symbol(SymbolData {
                     export: false,
@@ -633,7 +639,7 @@ impl Hir {
                 while let Some(branch) = next_branch.take() {
                     let branch_condition = branch
                         .expr()
-                        .and_then(|expr| self.add_expression(source, scope, false, expr));
+                        .and_then(|expr| self.add_expression(source, scope, false, None, expr));
 
                     let then_scope = self.add_scope(ScopeData {
                         source: SourceInfo {
@@ -761,7 +767,7 @@ impl Hir {
                     kind: SymbolKind::For(ForSymbol {
                         iterable: expr
                             .iterable()
-                            .and_then(|expr| self.add_expression(source, scope, false, expr)),
+                            .and_then(|expr| self.add_expression(source, scope, false, None, expr)),
                         scope: for_scope,
                     }),
                 };
@@ -797,7 +803,7 @@ impl Hir {
                         scope: while_scope,
                         condition: expr
                             .expr()
-                            .and_then(|expr| self.add_expression(source, scope, false, expr)),
+                            .and_then(|expr| self.add_expression(source, scope, false, None, expr)),
                     }),
                 };
 
@@ -819,7 +825,7 @@ impl Hir {
                     kind: SymbolKind::Break(BreakSymbol {
                         expr: expr
                             .expr()
-                            .and_then(|expr| self.add_expression(source, scope, false, expr)),
+                            .and_then(|expr| self.add_expression(source, scope, false, None, expr)),
                     }),
                 };
 
@@ -846,7 +852,7 @@ impl Hir {
             Expr::Switch(expr) => {
                 let target = expr
                     .expr()
-                    .and_then(|expr| self.add_expression(source, scope, false, expr));
+                    .and_then(|expr| self.add_expression(source, scope, false, None, expr));
 
                 let arms = expr
                     .switch_arm_list()
@@ -872,15 +878,15 @@ impl Hir {
                                 }
 
                                 if let Some(expr) = arm.condition().and_then(|c| c.expr()) {
-                                    left = self.add_expression(source, scope, false, expr);
+                                    left = self.add_expression(source, scope, false, None, expr);
                                 }
 
                                 if let Some(expr) = arm.pattern_expr() {
-                                    left = self.add_expression(source, scope, false, expr);
+                                    left = self.add_expression(source, scope, false, None, expr);
                                 }
 
                                 if let Some(expr) = arm.value_expr() {
-                                    right = self.add_expression(source, scope, false, expr);
+                                    right = self.add_expression(source, scope, false, None, expr);
                                 }
 
                                 SwitchArm {
@@ -919,7 +925,7 @@ impl Hir {
                     kind: SymbolKind::Return(ReturnSymbol {
                         expr: expr
                             .expr()
-                            .and_then(|expr| self.add_expression(source, scope, false, expr)),
+                            .and_then(|expr| self.add_expression(source, scope, false, None, expr)),
                     }),
                 };
 
@@ -936,6 +942,12 @@ impl Hir {
                     },
                     ..ScopeData::default()
                 });
+
+                if let Some(docs) = &docs {
+                    if let Some(scope_def) = parse_fn_scope_docs(docs) {
+                        self.add_fn_scope_def(source, fn_scope, &scope_def);
+                    }
+                }
 
                 if let Some(param_list) = expr.param_list() {
                     for param in param_list.params() {
@@ -977,6 +989,7 @@ impl Hir {
                             .ident_token()
                             .map(|s| s.text().to_string())
                             .unwrap_or_default(),
+                        docs: docs.unwrap_or_default(),
                         scope: fn_scope,
                         ..FnSymbol::default()
                     }),
@@ -1028,7 +1041,7 @@ impl Hir {
                             alias_symbol
                         }),
                         expr: expr.expr().and_then(|expr| {
-                            self.add_expression(source, import_scope, false, expr)
+                            self.add_expression(source, import_scope, false, None, expr)
                         }),
                     }),
                 };
@@ -1043,10 +1056,10 @@ impl Hir {
             Expr::Export(expr) => {
                 let target = expr.export_target().and_then(|target| match target {
                     ExportTarget::ExprLet(expr) => {
-                        self.add_expression(source, scope, can_export, Expr::Let(expr))
+                        self.add_expression(source, scope, can_export, docs, Expr::Let(expr))
                     }
                     ExportTarget::ExprConst(expr) => {
-                        self.add_expression(source, scope, can_export, Expr::Const(expr))
+                        self.add_expression(source, scope, can_export, docs, Expr::Const(expr))
                     }
                     ExportTarget::Ident(expr) => {
                         let symbol = self.add_symbol(SymbolData {
@@ -1162,7 +1175,7 @@ impl Hir {
             Expr::Throw(throw_expr) => {
                 let expr = throw_expr
                     .expr()
-                    .and_then(|e| self.add_expression(source, scope, false, e));
+                    .and_then(|e| self.add_expression(source, scope, false, None, e));
 
                 let symbol = self.add_symbol(SymbolData {
                     source: SourceInfo {
@@ -1179,6 +1192,44 @@ impl Hir {
                 Some(symbol)
             }
         }
+    }
+}
+
+impl Hir {
+    /// Add definitions for a function scope from docs.
+    fn add_fn_scope_def(&mut self, source: Source, scope: Scope, scope_def: &RhaiDef) {
+        for stmt in scope_def.statements() {
+            self.add_def_statement(source, scope, &stmt);
+        }
+    }
+}
+
+// FIXME: Figure out how to alter spans and report parse errors from here.
+fn parse_fn_scope_docs(docs_content: &str) -> Option<RhaiDef> {
+    let mut def_code = String::from("module ;\n");
+
+    let mut in_scope_block = false;
+    let mut has_def = false;
+    for line in docs_content.lines() {
+        if line.trim() == "```rhai-scope" {
+            in_scope_block = true;
+            continue;
+        } else if line.trim() == "```" {
+            in_scope_block = false;
+            continue;
+        }
+
+        if in_scope_block {
+            has_def = true;
+            def_code += line;
+            def_code += "\n";
+        }
+    }
+
+    if has_def {
+        RhaiDef::cast(Parser::new(&def_code).parse_def().into_syntax())
+    } else {
+        None
     }
 }
 

@@ -121,7 +121,7 @@ impl Hir {
                             alias_symbol
                         }),
                         expr: import_def.expr().and_then(|expr| {
-                            self.add_expression(source, import_scope, false, expr)
+                            self.add_expression(source, import_scope, false, None, expr)
                         }),
                     }),
                 };
