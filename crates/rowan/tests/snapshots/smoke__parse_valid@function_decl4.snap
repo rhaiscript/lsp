@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 65
+assertion_line: 66
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..314
@@ -40,21 +40,21 @@ RHAI@0..314
                     EXPR@140..159
                       EXPR_BINARY@140..159
                         EXPR@140..152
-                          EXPR_BINARY@140..152
-                            EXPR@140..145
-                              WHITESPACE@140..141 " "
-                              EXPR_IDENT@141..145
-                                IDENT@141..145 "this"
-                            PUNCT_DOT@145..146 "."
-                            EXPR@146..152
-                              EXPR_CALL@146..151
+                          EXPR_CALL@140..151
+                            EXPR@140..149
+                              EXPR_BINARY@140..149
+                                EXPR@140..145
+                                  WHITESPACE@140..141 " "
+                                  EXPR_IDENT@141..145
+                                    IDENT@141..145 "this"
+                                PUNCT_DOT@145..146 "."
                                 EXPR@146..149
                                   EXPR_IDENT@146..149
                                     IDENT@146..149 "abs"
-                                ARG_LIST@149..151
-                                  PUNCT_PAREN_START@149..150 "("
-                                  PUNCT_PAREN_END@150..151 ")"
-                              WHITESPACE@151..152 " "
+                            ARG_LIST@149..151
+                              PUNCT_PAREN_START@149..150 "("
+                              PUNCT_PAREN_END@150..151 ")"
+                          WHITESPACE@151..152 " "
                         OP_ADD@152..153 "+"
                         EXPR@153..159
                           EXPR_BINARY@153..159
@@ -96,29 +96,29 @@ RHAI@0..314
   STMT@211..228
     ITEM@211..227
       EXPR@211..227
-        EXPR_BINARY@211..227
-          EXPR@211..214
-            EXPR_IDENT@211..214
-              IDENT@211..214 "obj"
-          PUNCT_DOT@214..215 "."
-          EXPR@215..227
-            EXPR_CALL@215..227
+        EXPR_CALL@211..227
+          EXPR@211..221
+            EXPR_BINARY@211..221
+              EXPR@211..214
+                EXPR_IDENT@211..214
+                  IDENT@211..214 "obj"
+              PUNCT_DOT@214..215 "."
               EXPR@215..221
                 EXPR_IDENT@215..221
                   IDENT@215..221 "action"
-              ARG_LIST@221..227
-                PUNCT_PAREN_START@221..222 "("
-                EXPR@222..223
-                  EXPR_LIT@222..223
-                    LIT@222..223
-                      LIT_INT@222..223 "1"
-                PUNCT_COMMA@223..224 ","
-                WHITESPACE@224..225 " "
-                EXPR@225..226
-                  EXPR_LIT@225..226
-                    LIT@225..226
-                      LIT_INT@225..226 "2"
-                PUNCT_PAREN_END@226..227 ")"
+          ARG_LIST@221..227
+            PUNCT_PAREN_START@221..222 "("
+            EXPR@222..223
+              EXPR_LIT@222..223
+                LIT@222..223
+                  LIT_INT@222..223 "1"
+            PUNCT_COMMA@223..224 ","
+            WHITESPACE@224..225 " "
+            EXPR@225..226
+              EXPR_LIT@225..226
+                LIT@225..226
+                  LIT_INT@225..226 "2"
+            PUNCT_PAREN_END@226..227 ")"
     PUNCT_SEMI@227..228 ";"
   WHITESPACE@228..247 "                   "
   COMMENT_LINE@247..273 "// call 'action' as m ..."

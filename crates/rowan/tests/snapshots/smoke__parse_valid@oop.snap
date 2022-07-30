@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 65
+assertion_line: 66
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..1409
@@ -182,19 +182,19 @@ RHAI@0..1409
                         STMT@542..556
                           ITEM@542..555
                             EXPR@542..555
-                              EXPR_BINARY@542..555
-                                EXPR@542..546
-                                  EXPR_IDENT@542..546
-                                    IDENT@542..546 "this"
-                                PUNCT_DOT@546..547 "."
-                                EXPR@547..555
-                                  EXPR_CALL@547..555
+                              EXPR_CALL@542..555
+                                EXPR@542..553
+                                  EXPR_BINARY@542..553
+                                    EXPR@542..546
+                                      EXPR_IDENT@542..546
+                                        IDENT@542..546 "this"
+                                    PUNCT_DOT@546..547 "."
                                     EXPR@547..553
                                       EXPR_IDENT@547..553
                                         IDENT@547..553 "action"
-                                    ARG_LIST@553..555
-                                      PUNCT_PAREN_START@553..554 "("
-                                      PUNCT_PAREN_END@554..555 ")"
+                                ARG_LIST@553..555
+                                  PUNCT_PAREN_START@553..554 "("
+                                  PUNCT_PAREN_END@554..555 ")"
                           PUNCT_SEMI@555..556 ";"
                         WHITESPACE@556..561 "\n    "
                         PUNCT_BRACE_END@561..562 "}"
@@ -210,21 +210,21 @@ RHAI@0..1409
           EXPR@569..590
             EXPR_BINARY@569..590
               EXPR@569..586
-                EXPR_BINARY@569..586
-                  EXPR@569..574
-                    WHITESPACE@569..570 " "
-                    EXPR_IDENT@570..574
-                      IDENT@570..574 "obj1"
-                  PUNCT_DOT@574..575 "."
-                  EXPR@575..586
-                    EXPR_CALL@575..585
+                EXPR_CALL@569..585
+                  EXPR@569..583
+                    EXPR_BINARY@569..583
+                      EXPR@569..574
+                        WHITESPACE@569..570 " "
+                        EXPR_IDENT@570..574
+                          IDENT@570..574 "obj1"
+                      PUNCT_DOT@574..575 "."
                       EXPR@575..583
                         EXPR_IDENT@575..583
                           IDENT@575..583 "get_data"
-                      ARG_LIST@583..585
-                        PUNCT_PAREN_START@583..584 "("
-                        PUNCT_PAREN_END@584..585 ")"
-                    WHITESPACE@585..586 " "
+                  ARG_LIST@583..585
+                    PUNCT_PAREN_START@583..584 "("
+                    PUNCT_PAREN_END@584..585 ")"
+                WHITESPACE@585..586 " "
               OP_GT@586..587 ">"
               EXPR@587..590
                 WHITESPACE@587..588 " "
@@ -240,23 +240,23 @@ RHAI@0..1409
             STMT@638..655
               ITEM@638..654
                 EXPR@638..654
-                  EXPR_BINARY@638..654
-                    EXPR@638..642
-                      EXPR_IDENT@638..642
-                        IDENT@638..642 "obj1"
-                    PUNCT_DOT@642..643 "."
-                    EXPR@643..654
-                      EXPR_CALL@643..654
+                  EXPR_CALL@638..654
+                    EXPR@638..649
+                      EXPR_BINARY@638..649
+                        EXPR@638..642
+                          EXPR_IDENT@638..642
+                            IDENT@638..642 "obj1"
+                        PUNCT_DOT@642..643 "."
                         EXPR@643..649
                           EXPR_IDENT@643..649
                             IDENT@643..649 "update"
-                        ARG_LIST@649..654
-                          PUNCT_PAREN_START@649..650 "("
-                          EXPR@650..653
-                            EXPR_LIT@650..653
-                              LIT@650..653
-                                LIT_INT@650..653 "123"
-                          PUNCT_PAREN_END@653..654 ")"
+                    ARG_LIST@649..654
+                      PUNCT_PAREN_START@649..650 "("
+                      EXPR@650..653
+                        EXPR_LIT@650..653
+                          LIT@650..653
+                            LIT_INT@650..653 "123"
+                      PUNCT_PAREN_END@653..654 ")"
               PUNCT_SEMI@654..655 ";"
             WHITESPACE@655..682 "                      ..."
             COMMENT_LINE@682..696 "// call method"
@@ -388,19 +388,19 @@ RHAI@0..1409
                         STMT@1079..1093
                           ITEM@1079..1092
                             EXPR@1079..1092
-                              EXPR_BINARY@1079..1092
-                                EXPR@1079..1083
-                                  EXPR_IDENT@1079..1083
-                                    IDENT@1079..1083 "this"
-                                PUNCT_DOT@1083..1084 "."
-                                EXPR@1084..1092
-                                  EXPR_CALL@1084..1092
+                              EXPR_CALL@1079..1092
+                                EXPR@1079..1090
+                                  EXPR_BINARY@1079..1090
+                                    EXPR@1079..1083
+                                      EXPR_IDENT@1079..1083
+                                        IDENT@1079..1083 "this"
+                                    PUNCT_DOT@1083..1084 "."
                                     EXPR@1084..1090
                                       EXPR_IDENT@1084..1090
                                         IDENT@1084..1090 "action"
-                                    ARG_LIST@1090..1092
-                                      PUNCT_PAREN_START@1090..1091 "("
-                                      PUNCT_PAREN_END@1091..1092 ")"
+                                ARG_LIST@1090..1092
+                                  PUNCT_PAREN_START@1090..1091 "("
+                                  PUNCT_PAREN_END@1091..1092 ")"
                           PUNCT_SEMI@1092..1093 ";"
                         WHITESPACE@1093..1098 "\n    "
                         PUNCT_BRACE_END@1098..1099 "}"
@@ -411,22 +411,22 @@ RHAI@0..1409
   STMT@1103..1124
     ITEM@1103..1123
       EXPR@1103..1123
-        EXPR_BINARY@1103..1123
-          EXPR@1103..1107
-            EXPR_IDENT@1103..1107
-              IDENT@1103..1107 "obj2"
-          PUNCT_DOT@1107..1108 "."
-          EXPR@1108..1123
-            EXPR_CALL@1108..1123
+        EXPR_CALL@1103..1123
+          EXPR@1103..1117
+            EXPR_BINARY@1103..1117
+              EXPR@1103..1107
+                EXPR_IDENT@1103..1107
+                  IDENT@1103..1107 "obj2"
+              PUNCT_DOT@1107..1108 "."
               EXPR@1108..1117
                 EXPR_IDENT@1108..1117
                   IDENT@1108..1117 "fill_with"
-              ARG_LIST@1117..1123
-                PUNCT_PAREN_START@1117..1118 "("
-                EXPR@1118..1122
-                  EXPR_IDENT@1118..1122
-                    IDENT@1118..1122 "obj1"
-                PUNCT_PAREN_END@1122..1123 ")"
+          ARG_LIST@1117..1123
+            PUNCT_PAREN_START@1117..1118 "("
+            EXPR@1118..1122
+              EXPR_IDENT@1118..1122
+                IDENT@1118..1122 "obj1"
+            PUNCT_PAREN_END@1122..1123 ")"
     PUNCT_SEMI@1123..1124 ";"
   WHITESPACE@1124..1151 "                      ..."
   COMMENT_LINE@1151..1184 "// add all other fiel ..."
@@ -439,21 +439,21 @@ RHAI@0..1409
           EXPR@1188..1209
             EXPR_BINARY@1188..1209
               EXPR@1188..1205
-                EXPR_BINARY@1188..1205
-                  EXPR@1188..1193
-                    WHITESPACE@1188..1189 " "
-                    EXPR_IDENT@1189..1193
-                      IDENT@1189..1193 "obj2"
-                  PUNCT_DOT@1193..1194 "."
-                  EXPR@1194..1205
-                    EXPR_CALL@1194..1204
+                EXPR_CALL@1188..1204
+                  EXPR@1188..1202
+                    EXPR_BINARY@1188..1202
+                      EXPR@1188..1193
+                        WHITESPACE@1188..1189 " "
+                        EXPR_IDENT@1189..1193
+                          IDENT@1189..1193 "obj2"
+                      PUNCT_DOT@1193..1194 "."
                       EXPR@1194..1202
                         EXPR_IDENT@1194..1202
                           IDENT@1194..1202 "get_data"
-                      ARG_LIST@1202..1204
-                        PUNCT_PAREN_START@1202..1203 "("
-                        PUNCT_PAREN_END@1203..1204 ")"
-                    WHITESPACE@1204..1205 " "
+                  ARG_LIST@1202..1204
+                    PUNCT_PAREN_START@1202..1203 "("
+                    PUNCT_PAREN_END@1203..1204 ")"
+                WHITESPACE@1204..1205 " "
               OP_GT@1205..1206 ">"
               EXPR@1206..1209
                 WHITESPACE@1206..1207 " "
@@ -492,23 +492,23 @@ RHAI@0..1409
             STMT@1309..1325
               ITEM@1309..1324
                 EXPR@1309..1324
-                  EXPR_BINARY@1309..1324
-                    EXPR@1309..1313
-                      EXPR_IDENT@1309..1313
-                        IDENT@1309..1313 "obj2"
-                    PUNCT_DOT@1313..1314 "."
-                    EXPR@1314..1324
-                      EXPR_CALL@1314..1324
+                  EXPR_CALL@1309..1324
+                    EXPR@1309..1320
+                      EXPR_BINARY@1309..1320
+                        EXPR@1309..1313
+                          EXPR_IDENT@1309..1313
+                            IDENT@1309..1313 "obj2"
+                        PUNCT_DOT@1313..1314 "."
                         EXPR@1314..1320
                           EXPR_IDENT@1314..1320
                             IDENT@1314..1320 "update"
-                        ARG_LIST@1320..1324
-                          PUNCT_PAREN_START@1320..1321 "("
-                          EXPR@1321..1323
-                            EXPR_LIT@1321..1323
-                              LIT@1321..1323
-                                LIT_INT@1321..1323 "42"
-                          PUNCT_PAREN_END@1323..1324 ")"
+                    ARG_LIST@1320..1324
+                      PUNCT_PAREN_START@1320..1321 "("
+                      EXPR@1321..1323
+                        EXPR_LIT@1321..1323
+                          LIT@1321..1323
+                            LIT_INT@1321..1323 "42"
+                      PUNCT_PAREN_END@1323..1324 ")"
               PUNCT_SEMI@1324..1325 ";"
             WHITESPACE@1325..1353 "                      ..."
             COMMENT_LINE@1353..1367 "// call method"

@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 65
+assertion_line: 66
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..734
@@ -63,37 +63,37 @@ RHAI@0..734
   STMT@189..235
     ITEM@189..234
       EXPR@189..234
-        EXPR_BINARY@189..234
-          EXPR@189..199
-            EXPR_IDENT@189..199
-              IDENT@189..199 "prime_mask"
-          PUNCT_DOT@199..200 "."
-          EXPR@200..234
-            EXPR_CALL@200..234
+        EXPR_CALL@189..234
+          EXPR@189..203
+            EXPR_BINARY@189..203
+              EXPR@189..199
+                EXPR_IDENT@189..199
+                  IDENT@189..199 "prime_mask"
+              PUNCT_DOT@199..200 "."
               EXPR@200..203
                 EXPR_IDENT@200..203
                   IDENT@200..203 "pad"
-              ARG_LIST@203..234
-                PUNCT_PAREN_START@203..204 "("
-                EXPR@204..227
-                  EXPR_BINARY@204..227
-                    EXPR@204..224
-                      EXPR_IDENT@204..224
-                        IDENT@204..223 "MAX_NUMBER_TO_CHECK"
-                        WHITESPACE@223..224 " "
-                    OP_ADD@224..225 "+"
-                    EXPR@225..227
-                      WHITESPACE@225..226 " "
-                      EXPR_LIT@226..227
-                        LIT@226..227
-                          LIT_INT@226..227 "1"
-                PUNCT_COMMA@227..228 ","
-                WHITESPACE@228..229 " "
-                EXPR@229..233
-                  EXPR_LIT@229..233
-                    LIT@229..233
-                      LIT_BOOL@229..233 "true"
-                PUNCT_PAREN_END@233..234 ")"
+          ARG_LIST@203..234
+            PUNCT_PAREN_START@203..204 "("
+            EXPR@204..227
+              EXPR_BINARY@204..227
+                EXPR@204..224
+                  EXPR_IDENT@204..224
+                    IDENT@204..223 "MAX_NUMBER_TO_CHECK"
+                    WHITESPACE@223..224 " "
+                OP_ADD@224..225 "+"
+                EXPR@225..227
+                  WHITESPACE@225..226 " "
+                  EXPR_LIT@226..227
+                    LIT@226..227
+                      LIT_INT@226..227 "1"
+            PUNCT_COMMA@227..228 ","
+            WHITESPACE@228..229 " "
+            EXPR@229..233
+              EXPR_LIT@229..233
+                LIT@229..233
+                  LIT_BOOL@229..233 "true"
+            PUNCT_PAREN_END@233..234 ")"
     PUNCT_SEMI@234..235 ";"
   WHITESPACE@235..237 "\n\n"
   STMT@237..259

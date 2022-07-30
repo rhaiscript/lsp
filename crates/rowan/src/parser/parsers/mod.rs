@@ -1285,7 +1285,7 @@ impl SyntaxKind {
     #[must_use]
     pub fn prefix_binding_power(self) -> Option<u8> {
         let bp = match self {
-            T!["+"] | T!["-"] | T!["!"] => 255,
+            T!["+"] | T!["-"] | T!["!"] => 252,
             _ => return None,
         };
 
@@ -1295,7 +1295,7 @@ impl SyntaxKind {
     #[must_use]
     pub fn postfix_binding_power(self) -> Option<u8> {
         let bp = match self {
-            T!["?["] | T!["["] | T!["("] => 255,
+            T!["?["] | T!["["] | T!["("] => 253,
             _ => return None,
         };
 

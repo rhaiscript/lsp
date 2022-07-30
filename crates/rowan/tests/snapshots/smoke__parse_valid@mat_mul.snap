@@ -1,6 +1,6 @@
 ---
 source: crates/rowan/tests/smoke.rs
-assertion_line: 65
+assertion_line: 66
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
 RHAI@0..1027
@@ -61,28 +61,28 @@ RHAI@0..1027
             STMT@124..140
               ITEM@124..139
                 EXPR@124..139
-                  EXPR_BINARY@124..139
-                    EXPR@124..127
-                      EXPR_IDENT@124..127
-                        IDENT@124..127 "row"
-                    PUNCT_DOT@127..128 "."
-                    EXPR@128..139
-                      EXPR_CALL@128..139
+                  EXPR_CALL@124..139
+                    EXPR@124..131
+                      EXPR_BINARY@124..131
+                        EXPR@124..127
+                          EXPR_IDENT@124..127
+                            IDENT@124..127 "row"
+                        PUNCT_DOT@127..128 "."
                         EXPR@128..131
                           EXPR_IDENT@128..131
                             IDENT@128..131 "pad"
-                        ARG_LIST@131..139
-                          PUNCT_PAREN_START@131..132 "("
-                          EXPR@132..133
-                            EXPR_IDENT@132..133
-                              IDENT@132..133 "y"
-                          PUNCT_COMMA@133..134 ","
-                          WHITESPACE@134..135 " "
-                          EXPR@135..138
-                            EXPR_LIT@135..138
-                              LIT@135..138
-                                LIT_FLOAT@135..138 "0.0"
-                          PUNCT_PAREN_END@138..139 ")"
+                    ARG_LIST@131..139
+                      PUNCT_PAREN_START@131..132 "("
+                      EXPR@132..133
+                        EXPR_IDENT@132..133
+                          IDENT@132..133 "y"
+                      PUNCT_COMMA@133..134 ","
+                      WHITESPACE@134..135 " "
+                      EXPR@135..138
+                        EXPR_LIT@135..138
+                          LIT@135..138
+                            LIT_FLOAT@135..138 "0.0"
+                      PUNCT_PAREN_END@138..139 ")"
               PUNCT_SEMI@139..140 ";"
             WHITESPACE@140..146 "\n\n    "
             STMT@146..162
@@ -104,27 +104,27 @@ RHAI@0..1027
             STMT@167..186
               ITEM@167..185
                 EXPR@167..185
-                  EXPR_BINARY@167..185
-                    EXPR@167..173
-                      EXPR_IDENT@167..173
-                        IDENT@167..173 "matrix"
-                    PUNCT_DOT@173..174 "."
-                    EXPR@174..185
-                      EXPR_CALL@174..185
+                  EXPR_CALL@167..185
+                    EXPR@167..177
+                      EXPR_BINARY@167..177
+                        EXPR@167..173
+                          EXPR_IDENT@167..173
+                            IDENT@167..173 "matrix"
+                        PUNCT_DOT@173..174 "."
                         EXPR@174..177
                           EXPR_IDENT@174..177
                             IDENT@174..177 "pad"
-                        ARG_LIST@177..185
-                          PUNCT_PAREN_START@177..178 "("
-                          EXPR@178..179
-                            EXPR_IDENT@178..179
-                              IDENT@178..179 "x"
-                          PUNCT_COMMA@179..180 ","
-                          WHITESPACE@180..181 " "
-                          EXPR@181..184
-                            EXPR_IDENT@181..184
-                              IDENT@181..184 "row"
-                          PUNCT_PAREN_END@184..185 ")"
+                    ARG_LIST@177..185
+                      PUNCT_PAREN_START@177..178 "("
+                      EXPR@178..179
+                        EXPR_IDENT@178..179
+                          IDENT@178..179 "x"
+                      PUNCT_COMMA@179..180 ","
+                      WHITESPACE@180..181 " "
+                      EXPR@181..184
+                        EXPR_IDENT@181..184
+                          IDENT@181..184 "row"
+                      PUNCT_PAREN_END@184..185 ")"
               PUNCT_SEMI@185..186 ";"
             WHITESPACE@186..192 "\n\n    "
             STMT@192..199
