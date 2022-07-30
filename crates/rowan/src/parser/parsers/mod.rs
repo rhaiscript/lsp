@@ -342,9 +342,6 @@ fn parse_expr_bp(ctx: &mut Context, min_bp: u8) {
             } else {
                 ctx.eat_error(ParseErrorKind::UnexpectedToken);
             }
-
-            ctx.finish_node(); // EXPR
-            return;
         }
     }
 

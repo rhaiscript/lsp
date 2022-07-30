@@ -1,0 +1,127 @@
+---
+source: crates/rowan/tests/smoke.rs
+assertion_line: 66
+expression: "format!(\"{:#?}\", parse.into_syntax())"
+---
+RHAI@0..69
+  STMT@0..15
+    ITEM@0..14
+      EXPR@0..14
+        EXPR_LET@0..14
+          KW_LET@0..3 "let"
+          WHITESPACE@3..4 " "
+          IDENT@4..5 "a"
+          WHITESPACE@5..6 " "
+          OP_ASSIGN@6..7 "="
+          EXPR@7..14
+            EXPR_BINARY@7..14
+              EXPR@7..11
+                EXPR_UNARY@7..11
+                  WHITESPACE@7..8 " "
+                  OP_NOT@8..9 "!"
+                  EXPR@9..11
+                    EXPR_IDENT@9..11
+                      IDENT@9..10 "a"
+                      WHITESPACE@10..11 " "
+              OP_ADD@11..12 "+"
+              EXPR@12..14
+                WHITESPACE@12..13 " "
+                EXPR_LIT@13..14
+                  LIT@13..14
+                    LIT_INT@13..14 "2"
+    PUNCT_SEMI@14..15 ";"
+  WHITESPACE@15..17 "\n\n"
+  STMT@17..46
+    ITEM@17..45
+      EXPR@17..45
+        EXPR_LET@17..45
+          KW_LET@17..20 "let"
+          WHITESPACE@20..21 " "
+          IDENT@21..22 "b"
+          WHITESPACE@22..23 " "
+          OP_ASSIGN@23..24 "="
+          EXPR@24..45
+            EXPR_BINARY@24..45
+              EXPR@24..37
+                EXPR_BINARY@24..37
+                  EXPR@24..27
+                    WHITESPACE@24..25 " "
+                    EXPR_LIT@25..26
+                      LIT@25..26
+                        LIT_INT@25..26 "3"
+                    WHITESPACE@26..27 " "
+                  OP_ADD@27..28 "+"
+                  EXPR@28..37
+                    EXPR_UNARY@28..37
+                      WHITESPACE@28..29 " "
+                      OP_NOT@29..30 "!"
+                      EXPR@30..37
+                        EXPR_UNARY@30..37
+                          OP_ADD@30..31 "+"
+                          EXPR@31..37
+                            EXPR_UNARY@31..37
+                              WHITESPACE@31..32 " "
+                              OP_ADD@32..33 "+"
+                              EXPR@33..37
+                                EXPR_UNARY@33..37
+                                  WHITESPACE@33..34 " "
+                                  OP_ADD@34..35 "+"
+                                  EXPR@35..37
+                                    EXPR_LIT@35..36
+                                      LIT@35..36
+                                        LIT_INT@35..36 "4"
+                                    WHITESPACE@36..37 " "
+              OP_ADD@37..38 "+"
+              EXPR@38..45
+                EXPR_BINARY@38..45
+                  EXPR@38..42
+                    EXPR_UNARY@38..42
+                      WHITESPACE@38..39 " "
+                      OP_SUB@39..40 "-"
+                      EXPR@40..42
+                        EXPR_LIT@40..41
+                          LIT@40..41
+                            LIT_INT@40..41 "2"
+                        WHITESPACE@41..42 " "
+                  OP_MUL@42..43 "*"
+                  EXPR@43..45
+                    WHITESPACE@43..44 " "
+                    EXPR_LIT@44..45
+                      LIT@44..45
+                        LIT_INT@44..45 "3"
+    PUNCT_SEMI@45..46 ";"
+  WHITESPACE@46..48 "\n\n"
+  STMT@48..68
+    ITEM@48..67
+      EXPR@48..67
+        EXPR_LET@48..67
+          KW_LET@48..51 "let"
+          WHITESPACE@51..52 " "
+          IDENT@52..53 "b"
+          WHITESPACE@53..54 " "
+          OP_ASSIGN@54..55 "="
+          EXPR@55..67
+            EXPR_BINARY@55..67
+              EXPR@55..63
+                EXPR_UNARY@55..63
+                  WHITESPACE@55..56 " "
+                  OP_NOT@56..57 "!"
+                  EXPR@57..63
+                    EXPR_UNARY@57..63
+                      OP_NOT@57..58 "!"
+                      EXPR@58..63
+                        EXPR_UNARY@58..63
+                          OP_NOT@58..59 "!"
+                          EXPR@59..63
+                            EXPR_UNARY@59..63
+                              OP_NOT@59..60 "!"
+                              EXPR@60..63
+                                EXPR_IDENT@60..63
+                                  IDENT@60..63 "foo"
+              PUNCT_DOT@63..64 "."
+              EXPR@64..67
+                EXPR_IDENT@64..67
+                  IDENT@64..67 "bar"
+    PUNCT_SEMI@67..68 ";"
+  WHITESPACE@68..69 "\n"
+

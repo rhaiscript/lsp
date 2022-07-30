@@ -35,6 +35,7 @@ use test_case::test_case;
 #[test_case("optional_ops", include_str!("../../../testdata/valid/optional_ops.rhai"))]
 #[test_case("string_escape", include_str!("../../../testdata/valid/string_escape.rhai"))]
 #[test_case("template", include_str!("../../../testdata/valid/template.rhai"))]
+#[test_case("unary_ops", include_str!("../../../testdata/valid/unary_ops.rhai"))]
 fn parse_valid(name: &str, src: &str) {
     let parse = Parser::new(src)
         // This operator does not actually exist among the scripts.
