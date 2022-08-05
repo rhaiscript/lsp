@@ -1,4 +1,7 @@
-use std::{path::{Path, PathBuf}, time::Duration};
+use std::{
+    path::{Path, PathBuf},
+    time::Duration,
+};
 
 use async_trait::async_trait;
 use lsp_types::Url;
@@ -70,5 +73,9 @@ impl Environment for NativeEnvironment {
 
     async fn sleep(&self, duration: Duration) {
         tokio::time::sleep(duration).await;
+    }
+
+    fn is_dir(&self, root: &Path) -> bool {
+        root.is_dir()
     }
 }

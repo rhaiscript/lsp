@@ -663,6 +663,7 @@ pub struct FnSymbol {
     pub references: HashSet<Symbol>,
     pub getter: bool,
     pub setter: bool,
+    pub def: bool,
 }
 
 #[derive(Debug, Default, Clone)]

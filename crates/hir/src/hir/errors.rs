@@ -45,6 +45,10 @@ impl Hir {
                     }
                 }
                 SymbolKind::Fn(f) => {
+                    if f.def {
+                        return;
+                    }
+
                     let top_level = self
                         .modules
                         .iter()

@@ -5,7 +5,10 @@ use crate::{
     source::SourceKind,
     Type,
 };
-use rhai_rowan::ast::{AstNode, Rhai, RhaiDef};
+use rhai_rowan::{
+    ast::{AstNode, Rhai, RhaiDef},
+    TextRange, TextSize,
+};
 
 mod def;
 mod script;
@@ -178,5 +181,41 @@ impl Scope {
         let s = hir.scope_mut(self);
         debug_assert!(s.parent.is_none());
         s.parent = Some(parent);
+    }
+}
+
+/// Contextual information during insertion
+/// into the hir.
+#[derive(Debug, Default, Clone, Copy)]
+struct AddContext {
+    /// Override the root offset of syntax spans.
+    ///
+    /// Used for modifying the spans of definitions
+    /// in comments.
+    root_offset_override: Option<TextSize>,
+}
+
+impl AddContext {
+    fn with_root_offset(mut self, offset: TextSize) -> Self {
+        self.root_offset_override = self
+            .root_offset_override
+            .map_or(Some(offset), |o| o.checked_add(offset));
+        self
+    }
+
+    fn text_range(self, range: impl Into<Option<TextRange>>) -> Option<TextRange> {
+        range.into().map(|range| {
+            if let Some(root) = self.root_offset_override {
+                TextRange::new(
+                    range
+                        .start()
+                        .checked_add(root)
+                        .unwrap_or_else(|| range.start()),
+                    range.end().checked_add(root).unwrap_or_else(|| range.end()),
+                )
+            } else {
+                range
+            }
+        })
     }
 }

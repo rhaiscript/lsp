@@ -424,8 +424,7 @@ fn docs_to_string(docs: impl Iterator<Item = super::Doc>) -> String {
                         .strip_prefix("/**")
                         .unwrap_or_else(|| token.text())
                         .strip_suffix("*/")
-                        .unwrap_or_else(|| token.text())
-                        .trim();
+                        .unwrap_or_else(|| token.text());
                 }
                 SyntaxKind::COMMENT_LINE_DOC => {
                     let t = token
@@ -433,7 +432,6 @@ fn docs_to_string(docs: impl Iterator<Item = super::Doc>) -> String {
                         .strip_prefix("///")
                         .unwrap_or_else(|| token.text());
                     let t = t.strip_prefix(' ').unwrap_or(t);
-                    let t = t.trim_end();
                     s += t;
                     s += "\n";
                 }

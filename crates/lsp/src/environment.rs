@@ -32,5 +32,7 @@ pub trait Environment: Clone + Send + Sync + 'static {
 
     fn discover_rhai_config(&self, root: &Path) -> Option<PathBuf>;
 
+    fn is_dir(&self, root: &Path) -> bool;
+
     async fn sleep(&self, duration: Duration);
 }

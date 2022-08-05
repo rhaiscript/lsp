@@ -217,6 +217,9 @@ impl<E: Environment> Workspace<E> {
         tracing::info!(count = all, excluded, "found files");
 
         for path in paths {
+            if self.env.is_dir(&path) {
+                continue;
+            }
             tracing::debug!(?path, "found file");
 
             let document_url = Url::parse(&format!("file://{}", path.to_string_lossy())).unwrap();

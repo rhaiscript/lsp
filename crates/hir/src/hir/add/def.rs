@@ -66,11 +66,17 @@ impl Hir {
         }
 
         for stmt in def.statements() {
-            self.add_def_statement(source, self[module].scope, &stmt);
+            self.add_def_statement(AddContext::default(), source, self[module].scope, &stmt);
         }
     }
 
-    pub(super) fn add_def_statement(&mut self, source: Source, scope: Scope, stmt: &DefStmt) {
+    pub(super) fn add_def_statement(
+        &mut self,
+        ctx: AddContext,
+        source: Source,
+        scope: Scope,
+        stmt: &DefStmt,
+    ) {
         let def = match stmt.item().and_then(|it| it.def()) {
             Some(d) => d,
             None => return,
@@ -83,7 +89,7 @@ impl Hir {
                 let import_scope = self.scopes.insert(ScopeData {
                     source: SourceInfo {
                         source: Some(source),
-                        text_range: import_def.syntax().text_range().into(),
+                        text_range: ctx.text_range(import_def.syntax().text_range()),
                         selection_text_range: None,
                     },
                     ..ScopeData::default()
@@ -94,7 +100,7 @@ impl Hir {
                     parent_scope: Scope::default(),
                     source: SourceInfo {
                         source: Some(source),
-                        text_range: import_def.syntax().text_range().into(),
+                        text_range: ctx.text_range(import_def.syntax().text_range()),
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Import(ImportSymbol {
@@ -121,7 +127,7 @@ impl Hir {
                             alias_symbol
                         }),
                         expr: import_def.expr().and_then(|expr| {
-                            self.add_expression(source, import_scope, false, None, expr)
+                            self.add_expression(source, import_scope, false, expr)
                         }),
                     }),
                 };
@@ -141,8 +147,8 @@ impl Hir {
                     export: true,
                     source: SourceInfo {
                         source: Some(source),
-                        text_range: Some(const_def.syntax().text_range()),
-                        selection_text_range: Some(ident_token.text_range()),
+                        text_range: ctx.text_range(const_def.syntax().text_range()),
+                        selection_text_range: ctx.text_range(ident_token.text_range()),
                     },
                     parent_scope: Scope::default(),
                     kind: SymbolKind::Decl(Box::new(DeclSymbol {
@@ -167,8 +173,8 @@ impl Hir {
                     export: false,
                     source: SourceInfo {
                         source: Some(source),
-                        text_range: Some(let_def.syntax().text_range()),
-                        selection_text_range: Some(ident_token.text_range()),
+                        text_range: ctx.text_range(let_def.syntax().text_range()),
+                        selection_text_range: ctx.text_range(ident_token.text_range()),
                     },
                     parent_scope: Scope::default(),
                     kind: SymbolKind::Decl(Box::new(DeclSymbol {
@@ -187,7 +193,7 @@ impl Hir {
                 let fn_scope = self.scopes.insert(ScopeData {
                     source: SourceInfo {
                         source: Some(source),
-                        text_range: expr.syntax().text_range().into(),
+                        text_range: ctx.text_range(expr.syntax().text_range()),
                         selection_text_range: None,
                     },
                     ..ScopeData::default()
@@ -200,8 +206,9 @@ impl Hir {
                             parent_scope: Scope::default(),
                             source: SourceInfo {
                                 source: Some(source),
-                                text_range: param.syntax().text_range().into(),
-                                selection_text_range: param.ident_token().map(|t| t.text_range()),
+                                text_range: ctx.text_range(param.syntax().text_range()),
+                                selection_text_range: ctx
+                                    .text_range(param.ident_token().map(|t| t.text_range())),
                             },
                             kind: SymbolKind::Decl(Box::new(DeclSymbol {
                                 name: param
@@ -222,8 +229,9 @@ impl Hir {
                     parent_scope: Scope::default(),
                     source: SourceInfo {
                         source: Some(source),
-                        text_range: expr.syntax().text_range().into(),
-                        selection_text_range: expr.ident_token().map(|t| t.text_range()),
+                        text_range: ctx.text_range(expr.syntax().text_range()),
+                        selection_text_range: ctx
+                            .text_range(expr.ident_token().map(|t| t.text_range())),
                     },
                     kind: SymbolKind::Fn(FnSymbol {
                         name: expr
@@ -234,6 +242,7 @@ impl Hir {
                         scope: fn_scope,
                         getter: expr.has_kw_get(),
                         setter: expr.has_kw_set(),
+                        def: true,
                         ..FnSymbol::default()
                     }),
                 });
@@ -258,8 +267,8 @@ impl Hir {
                     export: true,
                     source: SourceInfo {
                         source: Some(source),
-                        text_range: Some(f.syntax().text_range()),
-                        selection_text_range: Some(ident.text_range()),
+                        text_range: ctx.text_range(f.syntax().text_range()),
+                        selection_text_range: ctx.text_range(ident.text_range()),
                     },
                     parent_scope: Scope::default(),
                     kind: SymbolKind::Op(OpSymbol {
@@ -306,14 +315,14 @@ impl Hir {
                 });
 
                 for statement in m.statements() {
-                    self.add_def_statement(source, module_scope, &statement);
+                    self.add_def_statement(ctx, source, module_scope, &statement);
                 }
 
                 let virt_module_symbol = self.add_symbol(SymbolData {
                     source: SourceInfo {
                         source: Some(source),
-                        text_range: Some(m.syntax().text_range()),
-                        selection_text_range: Some(ident.text_range()),
+                        text_range: ctx.text_range(m.syntax().text_range()),
+                        selection_text_range: ctx.text_range(ident.text_range()),
                     },
                     parent_scope: Scope::default(),
                     kind: SymbolKind::Virtual(VirtualSymbol::Module(VirtualModuleSymbol {
