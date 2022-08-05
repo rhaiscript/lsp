@@ -55,7 +55,7 @@ Path =
   root:'ident' segments:('::' 'ident')*
 
 LitStrTemplate =
-  ('lit_str' '${' LitStrTemplateInterpolation '}')* 'lit_str'
+  ('lit_str'? '${' LitStrTemplateInterpolation '}')* 'lit_str'
 
 LitStrTemplateInterpolation =
   statements:Stmt*
