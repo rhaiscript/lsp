@@ -177,6 +177,14 @@ fn test_query_path_segment_index() {
 fn test_complete_ref() {
     let (offsets, src) = src_cursor_offsets(
         r#"$$
+            fn asd() {
+                if hello() is b {
+                    $$
+                } else {
+                    $$
+                }
+            }
+
             let a =$$ $$;
             $$
 
@@ -188,6 +196,10 @@ fn test_complete_ref() {
 
             fn a() {
                 3*$$
+            }
+
+            fn b() {
+                a$$
             }
 
             const bar = $$;
@@ -211,6 +223,8 @@ fn test_complete_ref() {
 fn test_complete_op() {
     let (offsets, src) = src_cursor_offsets(
         r#"
+            a = `${a $$}`;
+
             let a = 3 $$;
 
             let b = a $$;
@@ -221,6 +235,7 @@ fn test_complete_op() {
 
             let c = "foo" $$
 
+            let in_template = `a ${a $$} b`;
             "#,
     );
 
@@ -234,9 +249,7 @@ fn test_complete_op() {
         assert!(q.can_complete_op(), "test failed for index {idx}",);
     }
 
-    let (offsets, src) = src_cursor_offsets(
-        r#"a op 2 $$"#,
-    );
+    let (offsets, src) = src_cursor_offsets(r#"a op 2 $$"#);
 
     let syntax = Parser::new(&src)
         .with_operator("op", Operator::default())
@@ -250,16 +263,24 @@ fn test_complete_op() {
 }
 
 #[test]
-fn test_complete_op_fails() {
+fn test_op_completion_should_fail() {
     let (offsets, src) = src_cursor_offsets(
         r#"
         let a = $$ op foo;
 
         let a = 3* $$;
-
+    
         let a = 3*$$;
-
+    
         let b = $$ + $$;
+
+        fn asd() {
+            if hello() + 2 {
+                $$
+            } else {
+                $$
+            }
+        }
         "#,
     );
 

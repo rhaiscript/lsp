@@ -200,6 +200,10 @@ impl Query {
     pub fn can_complete_op(&self) -> bool {
         // Deal with empty expressions first.
         if let Some(before) = &self.before {
+            if before.syntax.parent().map(|e| e.kind()) == Some(EXPR_BLOCK) {
+                return false;
+            }
+
             if let Some(exp_w) = before.expr_wrapper() {
                 if let Some(binary_exp) = exp_w.parent() {
                     if binary_exp.kind() == EXPR_BINARY {
@@ -219,6 +223,18 @@ impl Query {
         }
 
         if let Some(after) = &self.after {
+            if after.syntax.parent().map(|e| e.kind()) == Some(EXPR_BLOCK) {
+                return false;
+            }
+
+            if after.syntax.kind() == PUNCT_BRACE_END
+                && after.syntax.next_sibling_or_token().map(|t| t.kind()) == Some(LIT_STR)
+                && after.syntax.prev_sibling_or_token().map(|t| t.kind())
+                    == Some(LIT_STR_TEMPLATE_INTERPOLATION)
+            {
+                return true;
+            }
+
             if let Some(exp_w) = after.expr_wrapper() {
                 if let Some(binary_exp) = exp_w.parent() {
                     if binary_exp.kind() == EXPR_BINARY {
