@@ -1186,8 +1186,6 @@ fn parse_lit_str_template(ctx: &mut Context) {
     while let Some(token) = str_lex.next() {
         match token {
             INTERPOLATION_START => {
-                drop(str_lex);
-
                 if len > 0 {
                     if had_interpolated {
                         ctx.token_raw().unwrap();
@@ -1222,8 +1220,6 @@ fn parse_lit_str_template(ctx: &mut Context) {
             }
             END_BACKTICK => {
                 len += str_lex.slice().len();
-                drop(str_lex);
-
                 // If there was an interpolated part
                 // the current context might not yet
                 // have a token to bump.
