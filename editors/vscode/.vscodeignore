@@ -12,3 +12,4 @@ tslint.json
 sample
 images
 node_modules
+.yarn

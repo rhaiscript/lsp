@@ -7,6 +7,7 @@ use std::{
 use tokio::io::{AsyncRead, AsyncWrite};
 use url::Url;
 
+#[cfg(not(target_family = "wasm"))]
 pub mod native;
 
 #[async_trait(?Send)]

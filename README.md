@@ -10,9 +10,10 @@
   - [Profiling](#profiling)
   - [Contributing](#contributing)
     - [Development Process](#development-process)
-      - [Build and Install VSCode Extension](#build-and-install-vscode-extension)
-      - [Build the Language Server](#build-the-language-server)
+      - [Building and Installing the VSCode Extension](#building-and-installing-the-vscode-extension)
+      - [Building the Rhai CLI](#building-the-rhai-cli)
       - [Debugging the Language Server](#debugging-the-language-server)
+      - [Building the VSCode Extension](#building-the-vscode-extension)
 
 # Rhai LSP
 
@@ -23,7 +24,7 @@ It's incomplete and not recommended for general use yet, everything can be subje
 ## Requirements
 
 - Stable Rust toolchain (e.g. via [rustup](https://rustup.rs/))
-- yarn (for VS Code)
+- yarn 2 (for VS Code)
 - [vsce](https://www.npmjs.com/package/vsce) for VS Code extensions
 
 ## Project Structure
@@ -82,7 +83,7 @@ The documentation is still pretty much WIP (as everything else). All contributio
 
 Currently the following steps are used to develop the project via vscode:
 
-#### Build and Install VSCode Extension
+#### Building and Installing the VSCode Extension
 
 Install the extension with the following:
 ```sh
@@ -91,10 +92,10 @@ Install the extension with the following:
 
 You only have to do this at the beginning or whenever you update the extension.
 
-#### Build the Language Server
+#### Building the Rhai CLI
 
 ```sh
-cargo install --path crates/lsp --debug
+cargo install --path crates/rhai-cli --debug
 ```
 
 This will build and install the `rhai` executable globally that the vscode extension looks for.
@@ -104,3 +105,17 @@ After this step right now you have to manually kill the old running `rhai` execu
 #### Debugging the Language Server
 
 The debugging process can consist of either strategically placed `tracing::info` statements that are visible in the VSCode debug console under `Rhai LSP`, or attaching a debugger to the running `rhai` process via [LLDB VSCode](https://marketplace.visualstudio.com/items?itemName=lanza.lldb-vscode). Both approaches deemed sufficient so far.
+
+#### Building the VSCode Extension
+
+The vscode extension relies on rhai-lsp compiled to WebAssembly via [`rhai-wasm`](./crates/rhai-wasm). There are several related [js libraries](./js) that are built on top of it.
+
+Generally all you should need is `yarn` (2), and `vsce`, and the following single command:
+
+```sh
+(cd editors/vscode && yarn && vsce package --no-yarn && code --install-extension *.vsix --force)
+```
+
+If this fails, you will need to build each js package with `yarn build` individually.
+
+If all that fails, make sure to perform your favourite JavaScript exorcism ritual or file an issue.

@@ -15,8 +15,7 @@ use std::sync::Arc;
 use rhai_common::environment::Environment;
 use lsp_async_stub::Server;
 use lsp_types::{notification, request};
-use world::{World, WorldState};
-
+pub use world::{World, WorldState};
 
 pub(crate) mod config;
 pub(crate) mod diagnostics;

@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import * as client from "vscode-languageclient/node";
-import { Requests, SyntaxTree } from "./lsp-types";
-import { getOutput } from "./extension";
+import { Lsp } from "@rhaiscript/core";
 
 export class SyntaxTreeProvider
   implements vscode.TreeDataProvider<SyntaxTreeItem>
@@ -42,16 +41,14 @@ export class SyntaxTreeProvider
             return;
           }
 
-          const params: Requests.ConvertOffsets.ConvertOffsetsParams = {
+          const params: Lsp.Client.RequestParams<"rhai/convertOffsets"> = {
             uri: this.editor.document.uri.toString(),
             ranges: [textRange],
           };
 
-          const res =
-            await this.client.sendRequest<Requests.ConvertOffsets.ConvertOffsetsResponse>(
-              Requests.ConvertOffsets.METHOD,
-              params
-            );
+          const res = await this.client.sendRequest<
+            Lsp.Client.RequestResponse<"rhai/convertOffsets">
+          >("rhai/convertOffsets", params);
 
           const lspRange = res.ranges?.[0];
 
@@ -90,15 +87,13 @@ export class SyntaxTreeProvider
 
     await this.client.onReady();
 
-    const params: Requests.SyntaxTreeRequest.SyntaxTreeParams = {
+    const params: Lsp.Client.RequestParams<"rhai/syntaxTree"> = {
       uri: this.editor.document.uri.toString(),
     };
 
-    const res =
-      await this.client.sendRequest<Requests.SyntaxTreeRequest.SyntaxTreeResponse>(
-        Requests.SyntaxTreeRequest.METHOD,
-        params
-      );
+    const res = await this.client.sendRequest<
+      Lsp.Client.RequestResponse<"rhai/syntaxTree">
+    >("rhai/syntaxTree", params);
 
     if (!res) {
       // Try again, the document is probably not yet parsed.
@@ -116,7 +111,7 @@ export class SyntaxTreeProvider
 }
 
 class SyntaxTreeItem extends vscode.TreeItem {
-  constructor(public readonly syntax: SyntaxTree) {
+  constructor(public readonly syntax: Lsp.SyntaxTree) {
     super(
       syntax.kind,
       (syntax.children?.length ?? 0) > 0
