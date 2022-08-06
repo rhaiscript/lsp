@@ -1,0 +1,34 @@
+[package]
+name = "rhai-common"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.59"
+async-trait = "0.1.57"
+futures = "0.3.21"
+globset = "0.4.9"
+percent-encoding = "2.1.0"
+serde = { version = "1.0.142", features = ["derive"] }
+serde_json = "1.0.83"
+tracing = "0.1.36"
+tracing-subscriber = { version = "0.3.15", features = ["env-filter"] }
+url = "2.2.2"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = { version = "1.19.2", features = [
+    "rt",
+    "rt-multi-thread",
+    "sync",
+    "parking_lot",
+    "macros",
+    "fs",
+    "time",
+] }
+glob = "0.3.0"
+atty = "0.2.14"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+tokio = { version = "1.19.2" }

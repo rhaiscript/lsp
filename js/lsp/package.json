@@ -1,0 +1,36 @@
+{
+  "name": "@rhaiscript/lsp",
+  "version": "0.1.0",
+  "description": "A JavaScript wrapper for the Rhai language server.",
+  "scripts": {
+    "build": "yarn rollup --silent -c rollup.config.js",
+    "prepare": "yarn build"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "homepage": "https://rhai.rs/",
+  "repository": "https://github.com/rhaiscript/lsp",
+  "author": {
+    "name": "tamasfe",
+    "url": "https://github.com/tamasfe"
+  },
+  "license": "MIT",
+  "autoTag": {
+    "enabled": true
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@types/node": "^17.0.41",
+    "@wasm-tool/rollup-plugin-rust": "^2.2.2",
+    "esbuild": "^0.14.45",
+    "rollup": "^2.75.6",
+    "rollup-plugin-esbuild": "^4.9.1",
+    "rollup-plugin-typescript2": "^0.32.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "@rhaiscript/core": "file:../core"
+  }
+}

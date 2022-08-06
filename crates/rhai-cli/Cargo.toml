@@ -1,0 +1,30 @@
+[package]
+name = "rhai-cli"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+rhai-common = { version = "0.1.0", path = "../rhai-common" }
+rhai-lsp = { version = "0.1.0", path = "../rhai-lsp" }
+
+clap = { version = "3.2.16", features = ["derive", "cargo"] }
+rhai = "1.8.0"
+anyhow = "1.0.59"
+async-ctrlc = { version = "1.2.0", features = ["stream"] }
+tracing = "0.1.36"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+atty = "0.2.14"
+tokio = { version = "1.19.2", features = [
+    "sync",
+    "fs",
+    "time",
+    "io-std",
+    "rt-multi-thread",
+    "parking_lot",
+] }
+lsp-async-stub = { version = "0.6.0", features = ["tokio-tcp", "tokio-stdio"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+tokio = { version = "1.19.2", features = ["sync", "parking_lot", "io-util"] }
