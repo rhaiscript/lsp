@@ -1234,7 +1234,7 @@ fn extract_doc_definitions(item: &Item) -> Vec<(TextSize, String)> {
                 pulldown_cmark::Event::End(Tag::CodeBlock(CodeBlockKind::Fenced(_))) => {
                     definitions.push((
                         root_offset
-                            .checked_sub(("module ;\n".len() as u32).into())
+                            .checked_sub((("module ;\n".len() + 3) as u32).into())
                             .unwrap_or(root_offset),
                         mem::replace(&mut def_code, String::from("module ;\n")),
                     ));
