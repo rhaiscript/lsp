@@ -305,7 +305,11 @@ impl Hir {
                     .children_with_tokens()
                     .filter_map(SyntaxElement::into_token)
                     .skip(1)
-                    .find(|t| t.kind() == T!["ident"] || t.kind().infix_binding_power().is_some());
+                    .find(|t| {
+                        t.kind() == T!["ident"]
+                            || t.kind().infix_binding_power().is_some()
+                            || t.kind().prefix_binding_power().is_some()
+                    });
 
                 let ident = match name_token {
                     Some(i) => i,
@@ -362,7 +366,7 @@ impl Hir {
                     },
                     parent_scope: Scope::default(),
                     kind: SymbolKind::Op(OpSymbol {
-                        name: ident.text().into(),
+                        name: ident.text().trim().into(),
                         docs,
                         binding_powers: f
                             .precedence()

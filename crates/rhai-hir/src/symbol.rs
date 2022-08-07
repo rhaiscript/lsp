@@ -738,6 +738,7 @@ pub struct LitSymbol {
 
 #[derive(Debug, Clone)]
 pub struct UnarySymbol {
+    pub lookup_text: String,
     pub op: Option<SyntaxKind>,
     pub rhs: Option<Symbol>,
 }
@@ -745,9 +746,17 @@ pub struct UnarySymbol {
 #[derive(Debug, Clone)]
 pub struct BinarySymbol {
     pub scope: Scope,
+    pub lookup_text: String,
     pub lhs: Option<Symbol>,
     pub op: Option<BinaryOpKind>,
     pub rhs: Option<Symbol>,
+}
+
+impl BinarySymbol {
+    #[must_use]
+    pub fn is_field_access(&self) -> bool {
+        self.lookup_text == "."
+    }
 }
 
 #[derive(Debug, Clone)]

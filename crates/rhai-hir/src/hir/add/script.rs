@@ -382,6 +382,10 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Unary(UnarySymbol {
+                        lookup_text: expr
+                            .op_token()
+                            .map(|t| t.text().trim().to_string())
+                            .unwrap_or_default(),
                         op: expr.op_token().map(|t| t.kind()),
                         rhs,
                     }),
@@ -438,6 +442,10 @@ impl Hir {
                     },
                     kind: SymbolKind::Binary(BinarySymbol {
                         scope: binary_scope,
+                        lookup_text: expr
+                            .op_token()
+                            .map(|t| t.text().trim().to_string())
+                            .unwrap_or_default(),
                         lhs,
                         op,
                         rhs,

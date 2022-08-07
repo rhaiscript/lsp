@@ -9,6 +9,29 @@ impl Type {
     pub fn fmt(self, hir: &Hir) -> TypeFormatter {
         TypeFormatter { hir, ty: self }
     }
+
+    /// Comparison to other type via the HIR.
+    ///
+    /// Types are considered equal if the type itself is the same
+    /// or if both types are unresolved and their names are the same.
+    /// 
+    /// If `exact` is false, types are equal if at least one of them
+    /// are unknown.
+    #[must_use]
+    pub fn is(self, hir: &Hir, other: Type, exact: bool) -> bool {
+        if self == other {
+            return true;
+        }
+
+        let this = &hir[self];
+        let other = &hir[other];
+
+        match (&this.kind, &other.kind) {
+            (TypeKind::Unknown, _) | (_, TypeKind::Unknown) if !exact => true,
+            (TypeKind::Unresolved(ty1), TypeKind::Unresolved(ty2)) => ty1 == ty2,
+            _ => false,
+        }
+    }
 }
 
 #[derive(Debug, Default, Clone)]

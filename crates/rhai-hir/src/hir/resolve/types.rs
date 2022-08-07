@@ -408,6 +408,102 @@ impl Hir {
                         self.symbols.get(path_sym).unwrap().ty;
                 }
             }
+            SymbolKind::Binary(b) => {
+                let (lhs, rhs) = (b.lhs, b.rhs);
+                let lookup_text = b.lookup_text.clone();
+
+                let ty = if b.is_field_access() {
+                    lhs.and_then(|lhs| self[self[lhs].ty].kind.as_object())
+                        .and_then(|object| {
+                            Some((object, rhs.and_then(|rhs| self[rhs].name(self))?))
+                        })
+                        .and_then(|(object, field_name)| object.fields.get(field_name))
+                        .copied()
+                } else {
+                    match (lhs, rhs) {
+                        (Some(lhs), Some(rhs)) => {
+                            self.resolve_type_for_symbol(seen, lhs);
+                            self.resolve_type_for_symbol(seen, rhs);
+
+                            let lhs_ty = self[lhs].ty;
+                            let rhs_ty = self[rhs].ty;
+
+                            // (lhs, rhs, ret)
+                            let mut op_types = self
+                                .symbols
+                                .keys()
+                                .filter_map(|sym| {
+                                    if let Some(op) = self[sym].kind.as_op() {
+                                        if op.name == lookup_text
+                                            && op.lhs_ty.is(self, lhs_ty, false)
+                                            && op.rhs_ty?.is(self, rhs_ty, false)
+                                        {
+                                            Some((op.lhs_ty, op.rhs_ty?, op.ret_ty))
+                                        } else {
+                                            None
+                                        }
+                                    } else {
+                                        None
+                                    }
+                                })
+                                .collect::<Vec<_>>();
+
+                            let exact_types = op_types
+                                .iter()
+                                .find(|(op_lhs, op_rhs, _)| {
+                                    op_lhs.is(self, lhs_ty, true) && op_rhs.is(self, rhs_ty, true)
+                                })
+                                .copied();
+
+                            exact_types.or_else(|| op_types.pop()).map(|(.., ty)| ty)
+                        }
+                        _ => None,
+                    }
+                };
+
+                if let Some(ty) = ty {
+                    self.symbols.get_mut(symbol).unwrap().ty = ty;
+                } else {
+                    self.symbols.get_mut(symbol).unwrap().ty = self.builtin_types.unknown;
+                }
+            }
+            SymbolKind::Unary(u) => {
+                let lookup_text = u.lookup_text.clone();
+                if let Some(rhs_ty) = u.rhs.map(|rhs| self[rhs].ty) {
+                    // (lhs/rhs, ret)
+                    let mut op_types = self
+                        .symbols
+                        .keys()
+                        .filter_map(|sym| {
+                            if let Some(op) = self[sym].kind.as_op() {
+                                if op.name == lookup_text
+                                    && op.rhs_ty.is_none()
+                                    && op.lhs_ty.is(self, rhs_ty, false)
+                                {
+                                    Some((op.lhs_ty, op.ret_ty))
+                                } else {
+                                    None
+                                }
+                            } else {
+                                None
+                            }
+                        })
+                        .collect::<Vec<_>>();
+
+                    let exact_types = op_types
+                        .iter()
+                        .find(|(op_lhs, _)| op_lhs.is(self, rhs_ty, true))
+                        .copied();
+
+                    let ty = exact_types
+                        .map(|(_, ret)| ret)
+                        .or_else(|| op_types.pop().map(|(_, ret)| ret))
+                        .or(Some(rhs_ty))
+                        .unwrap_or(self.builtin_types.unknown);
+
+                    self.symbols.get_mut(symbol).unwrap().ty = ty;
+                }
+            }
             SymbolKind::Throw(_)
             | SymbolKind::Break(_)
             | SymbolKind::Continue(_)
@@ -424,9 +520,6 @@ impl Hir {
             | SymbolKind::Loop(_)
             | SymbolKind::While(_) => {
                 sym_data.ty = self.builtin_types.void;
-            }
-            SymbolKind::Unary(_) | SymbolKind::Binary(_) => {
-                // TODO
             }
         }
     }
