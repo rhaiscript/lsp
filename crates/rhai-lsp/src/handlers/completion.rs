@@ -1,6 +1,6 @@
 use crate::{
     utils::{documentation_for, signature_of},
-    world::World,
+    world::{Document, Workspace, World},
 };
 use itertools::Itertools;
 use lsp_async_stub::{
@@ -14,10 +14,12 @@ use lsp_types::{
 };
 use rhai_common::{environment::Environment, util::Normalize};
 use rhai_hir::{
+    scope::ScopeParent,
     symbol::{ReferenceTarget, SymbolKind, VirtualSymbol},
-    Hir, Symbol,
+    ty::Type,
+    Hir, Symbol, TypeKind,
 };
-use rhai_rowan::query::Query;
+use rhai_rowan::{query::Query, TextRange};
 
 pub(crate) async fn completion<E: Environment>(
     context: Context<World<E>>,
@@ -51,7 +53,28 @@ pub(crate) async fn completion<E: Environment>(
         return Ok(None);
     }
 
-    if query.is_path() {
+    if query.is_field_access() {
+        if let Some(sym) = ws.hir.symbol_at(source, offset, true) {
+            let sym_data = &ws.hir[sym];
+            match &sym_data.kind {
+                SymbolKind::Binary(b) => Ok(binary_field_access_completion(b, ws, doc, &query)),
+                _ => {
+                    if let Some(b) = ws.hir[sym_data.parent_scope]
+                        .parent
+                        .as_ref()
+                        .and_then(ScopeParent::as_symbol)
+                        .and_then(|&sym| ws.hir[sym].kind.as_binary())
+                    {
+                        Ok(binary_field_access_completion(b, ws, doc, &query))
+                    } else {
+                        Ok(None)
+                    }
+                }
+            }
+        } else {
+            Ok(None)
+        }
+    } else if query.is_path() {
         let modules = ws
             .hir
             .visible_symbols_from_offset(source, offset, false)
@@ -174,6 +197,41 @@ pub(crate) async fn completion<E: Environment>(
     }
 }
 
+fn binary_field_access_completion<E: Environment>(
+    b: &rhai_hir::symbol::BinarySymbol,
+    ws: &Workspace<E>,
+    doc: &Document,
+    query: &Query,
+) -> std::option::Option<lsp_types::CompletionResponse> {
+    if let Some(lhs_ty) = b.lhs.map(|lhs| ws.hir[lhs].ty) {
+        let lhs_ty_data = &ws.hir[lhs_ty];
+
+        match &lhs_ty_data.kind {
+            TypeKind::Object(o) => Some(CompletionResponse::Array(
+                o.fields
+                    .iter()
+                    .map(|(name, ty)| {
+                        field_completion(
+                            doc,
+                            &ws.hir,
+                            name,
+                            *ty,
+                            query.ident().map(|t| t.text_range()),
+                        )
+                    })
+                    .collect(),
+            )),
+            _ => {
+                // TODO: handle the rest of the types,
+                // functions with getters and known `this` type.
+                None
+            }
+        }
+    } else {
+        None
+    }
+}
+
 fn reference_completion(
     hir: &Hir,
     ident_only: bool,
@@ -248,6 +306,30 @@ fn reference_completion(
             },
         )),
         _ => None,
+    }
+}
+
+fn field_completion(
+    doc: &Document,
+    hir: &Hir,
+    name: &str,
+    ty: Type,
+    existing_ident: Option<TextRange>,
+) -> CompletionItem {
+    CompletionItem {
+        label: name.to_string(),
+        detail: Some(format!("{}", ty.fmt(hir))),
+        // TODO: include field docs in types.
+        documentation: None,
+        kind: Some(CompletionItemKind::FIELD),
+        insert_text: Some(name.to_string()),
+        text_edit: existing_ident.map(|range| {
+            CompletionTextEdit::Edit(TextEdit {
+                new_text: name.to_string(),
+                range: doc.mapper.range(range).unwrap().into_lsp(),
+            })
+        }),
+        ..CompletionItem::default()
     }
 }
 

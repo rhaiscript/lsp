@@ -744,6 +744,7 @@ pub struct UnarySymbol {
 
 #[derive(Debug, Clone)]
 pub struct BinarySymbol {
+    pub scope: Scope,
     pub lhs: Option<Symbol>,
     pub op: Option<BinaryOpKind>,
     pub rhs: Option<Symbol>,

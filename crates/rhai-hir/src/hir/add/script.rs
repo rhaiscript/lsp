@@ -392,13 +392,22 @@ impl Hir {
                 Some(symbol)
             }
             Expr::Binary(expr) => {
+                let binary_scope = self.add_scope(ScopeData {
+                    source: SourceInfo {
+                        source: Some(source),
+                        text_range: expr.syntax().text_range().into(),
+                        selection_text_range: None,
+                    },
+                    ..Default::default()
+                });
+
                 let lhs = expr
                     .lhs()
-                    .and_then(|lhs| self.add_expression(source, scope, false, lhs));
+                    .and_then(|lhs| self.add_expression(source, binary_scope, false, lhs));
 
                 let rhs = expr
                     .rhs()
-                    .and_then(|rhs| self.add_expression(source, scope, false, rhs));
+                    .and_then(|rhs| self.add_expression(source, binary_scope, false, rhs));
 
                 let op = expr.op_token().map(|t| {
                     if t.kind() == SyntaxKind::IDENT {
@@ -427,9 +436,15 @@ impl Hir {
                         text_range: expr.syntax().text_range().into(),
                         selection_text_range: None,
                     },
-                    kind: SymbolKind::Binary(BinarySymbol { lhs, op, rhs }),
+                    kind: SymbolKind::Binary(BinarySymbol {
+                        scope: binary_scope,
+                        lhs,
+                        op,
+                        rhs,
+                    }),
                     ty: self.builtin_types.unknown,
                 });
+                binary_scope.set_parent(self, symbol);
 
                 scope.add_symbol(self, symbol, false);
                 Some(symbol)

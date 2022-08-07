@@ -38,6 +38,26 @@ pub enum ScopeParent {
     Symbol(Symbol),
 }
 
+impl ScopeParent {
+    #[must_use]
+    pub fn as_scope(&self) -> Option<&Scope> {
+        if let Self::Scope(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
+    #[must_use]
+    pub fn as_symbol(&self) -> Option<&Symbol> {
+        if let Self::Symbol(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+}
+
 impl From<Scope> for ScopeParent {
     fn from(s: Scope) -> Self {
         Self::Scope(s)

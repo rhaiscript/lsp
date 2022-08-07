@@ -141,6 +141,7 @@ impl Hir {
                 }
             }
             SymbolKind::Binary(binary) => {
+                self.remove_scope(binary.scope);
                 if let Some(s) = binary.lhs {
                     self.remove_symbol(s);
                 }
