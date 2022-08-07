@@ -26,7 +26,7 @@ impl Hir {
 
     pub fn resolve_all(&mut self) {
         self.resolve_references();
-        self.resolve_types_for_all_symbols();
+        self.resolve_types();
     }
 
     pub fn resolve_references(&mut self) {

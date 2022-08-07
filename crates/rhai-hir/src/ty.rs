@@ -27,7 +27,7 @@ impl Type {
         let other = &hir[other];
 
         match (&this.kind, &other.kind) {
-            (TypeKind::Unknown, _) | (_, TypeKind::Unknown) if !exact => true,
+            (TypeKind::Unknown, _) | (_, TypeKind::Unknown) => !exact,
             (TypeKind::Unresolved(ty1), TypeKind::Unresolved(ty2)) => ty1 == ty2,
             _ => false,
         }
