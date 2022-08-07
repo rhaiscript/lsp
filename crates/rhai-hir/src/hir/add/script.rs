@@ -3,7 +3,6 @@ use rhai_rowan::{
     ast::{ExportTarget, Expr, Item, Rhai, Stmt},
     parser::Parser,
     syntax::{SyntaxKind, SyntaxToken},
-    util::unescape,
     TextSize,
 };
 
@@ -211,73 +210,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Lit(LitSymbol {
-                        value: expr
-                            .lit()
-                            .map(|l| {
-                                if let Some(lit) = l.lit_token() {
-                                    match lit.kind() {
-                                        SyntaxKind::LIT_INT => lit
-                                            .text()
-                                            .parse::<i64>()
-                                            .map(Value::Int)
-                                            .unwrap_or(Value::Unknown),
-                                        SyntaxKind::LIT_FLOAT => lit
-                                            .text()
-                                            .parse::<f64>()
-                                            .map(Value::Float)
-                                            .unwrap_or(Value::Unknown),
-                                        SyntaxKind::LIT_BOOL => lit
-                                            .text()
-                                            .parse::<bool>()
-                                            .map(Value::Bool)
-                                            .unwrap_or(Value::Unknown),
-                                        SyntaxKind::LIT_STR => {
-                                            let mut text = lit.text();
-
-                                            if text.starts_with('"') {
-                                                text = text
-                                                    .strip_prefix('"')
-                                                    .unwrap_or(text)
-                                                    .strip_suffix('"')
-                                                    .unwrap_or(text);
-
-                                                Value::String(unescape(text, '"').0)
-                                            } else {
-                                                text = text
-                                                    .strip_prefix('`')
-                                                    .unwrap_or(text)
-                                                    .strip_suffix('`')
-                                                    .unwrap_or(text);
-                                                Value::String(unescape(text, '`').0)
-                                            }
-                                        }
-                                        SyntaxKind::LIT_CHAR => {
-                                            let mut text = lit.text();
-                                            text = text
-                                                .strip_prefix('\'')
-                                                .unwrap_or(text)
-                                                .strip_suffix('\'')
-                                                .unwrap_or(text);
-
-                                            Value::Char(
-                                                // FIXME: this allocates a string.
-                                                unescape(text, '\'')
-                                                    .0
-                                                    .chars()
-                                                    .next()
-                                                    .unwrap_or('💩'),
-                                            )
-                                        }
-                                        _ => Value::Unknown,
-                                    }
-                                } else {
-                                    // It's a string template literal
-                                    // FIXME: we know its content if it has
-                                    // no code interpolations.
-                                    Value::String(String::new())
-                                }
-                            })
-                            .unwrap_or(Value::Unknown),
+                        value: expr.lit().map_or(Value::Unknown, value_of_lit),
                         interpolated_scopes: Vec::default(),
                     }),
                     ty: self.builtin_types.unknown,

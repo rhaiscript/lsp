@@ -10,12 +10,9 @@ impl Type {
         TypeFormatter { hir, ty: self }
     }
 
-    /// Comparison to other type via the HIR.
+    /// Type deep equality comparison to other type via the HIR.
     ///
-    /// Types are considered equal if the type itself is the same
-    /// or if both types are unresolved and their names are the same.
-    /// 
-    /// If `exact` is false, types are equal if at least one of them
+    /// If `exact` is false, types are always equal if at least one of them
     /// are unknown.
     #[must_use]
     pub fn is(self, hir: &Hir, other: Type, exact: bool) -> bool {
@@ -29,6 +26,33 @@ impl Type {
         match (&this.kind, &other.kind) {
             (TypeKind::Unknown, _) | (_, TypeKind::Unknown) => !exact,
             (TypeKind::Unresolved(ty1), TypeKind::Unresolved(ty2)) => ty1 == ty2,
+            (TypeKind::Alias(_, ty1), TypeKind::Alias(_, ty2)) => ty1.is(hir, *ty2, true),
+            (TypeKind::Array(arr1), TypeKind::Array(arr2)) => arr1.items.is(hir, arr2.items, true),
+            (TypeKind::Fn(f1), TypeKind::Fn(f2)) => {
+                f1.params.len() == f2.params.len()
+                    && f1
+                        .params
+                        .iter()
+                        .zip(f2.params.iter())
+                        .all(|(p1, p2)| p1.1.is(hir, p2.1, true))
+                    && f1.ret.is(hir, f2.ret, true)
+            }
+            (TypeKind::Object(obj1), TypeKind::Object(obj2)) => {
+                obj1.fields.iter().all(|(name, ty)| {
+                    obj2.fields
+                        .get(name)
+                        .map_or(false, |ty2| ty.is(hir, *ty2, true))
+                })
+            }
+            (TypeKind::Tuple(t1), TypeKind::Tuple(t2)) => {
+                t1.len() == t2.len()
+                    && t1
+                        .iter()
+                        .zip(t2.iter())
+                        .all(|(t1, t2)| t1.is(hir, *t2, true))
+            }
+            // No deep comparisons for unions.
+            (TypeKind::Union(u1), TypeKind::Union(u2)) => u1 == u2,
             _ => false,
         }
     }
@@ -59,6 +83,20 @@ impl core::fmt::Display for TypeFormatter<'_> {
             TypeKind::Char => f.write_str("char")?,
             TypeKind::String => f.write_str("String")?,
             TypeKind::Timestamp => f.write_str("timestamp")?,
+            TypeKind::Tuple(tys) => {
+                f.write_str("(")?;
+
+                let mut first = true;
+                for ty in tys {
+                    if !first {
+                        f.write_str(", ")?;
+                    }
+                    first = false;
+
+                    write!(f, "{}", ty.fmt(self.hir))?;
+                }
+                f.write_str(")")?;
+            }
             TypeKind::Array(arr) => {
                 f.write_str("[")?;
                 write!(f, "{}", arr.items.fmt(self.hir))?;
@@ -141,6 +179,7 @@ pub enum TypeKind {
     Fn(Function),
     Alias(String, Type),
     Unresolved(String),
+    Tuple(Vec<Type>),
     Never,
     Unknown,
 }
@@ -308,6 +347,23 @@ impl TypeKind {
     #[must_use]
     pub fn is_unknown(&self) -> bool {
         matches!(self, Self::Unknown)
+    }
+
+    /// Returns `true` if the type kind is [`Tuple`].
+    ///
+    /// [`Tuple`]: TypeKind::Tuple
+    #[must_use]
+    pub fn is_tuple(&self) -> bool {
+        matches!(self, Self::Tuple(..))
+    }
+
+    #[must_use]
+    pub fn as_tuple(&self) -> Option<&Vec<Type>> {
+        if let Self::Tuple(v) = self {
+            Some(v)
+        } else {
+            None
+        }
     }
 }
 

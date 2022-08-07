@@ -6,8 +6,8 @@
 use rowan::NodeOrToken;
 
 use super::{
-    AstNode, DefOpPrecedence, Expr, LitStrTemplate, LitStrTemplateInterpolation, ObjectField,
-    Param, ParamList, Stmt, SwitchArm, SwitchArmCondition, Type, TypedParam,
+    AstNode, DefOpPrecedence, Expr, Lit, LitStrTemplate, LitStrTemplateInterpolation, ObjectField,
+    Param, ParamList, Stmt, SwitchArm, SwitchArmCondition, Type, TypeObjectField, TypedParam,
 };
 use super::{ExprBlock, ExprIf, T};
 use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
@@ -434,6 +434,35 @@ impl super::DefConst {
 }
 
 impl super::TypeList {
+    pub fn types(&self) -> impl Iterator<Item = Type> {
+        self.syntax().children().filter_map(Type::cast)
+    }
+}
+
+impl super::TypeObject {
+    pub fn fields(&self) -> impl Iterator<Item = TypeObjectField> {
+        self.syntax().children().filter_map(TypeObjectField::cast)
+    }
+}
+
+impl super::TypeObjectField {
+    #[must_use]
+    pub fn name_ident(&self) -> Option<SyntaxToken> {
+        self.syntax().children_with_tokens().find_map(|t| {
+            if t.kind() != T!["ident"] {
+                return None;
+            }
+            t.into_token()
+        })
+    }
+
+    #[must_use]
+    pub fn name_lit(&self) -> Option<Lit> {
+        self.syntax().children().find_map(Lit::cast)
+    }
+}
+
+impl super::TypeTuple {
     pub fn types(&self) -> impl Iterator<Item = Type> {
         self.syntax().children().filter_map(Type::cast)
     }

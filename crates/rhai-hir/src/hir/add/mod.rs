@@ -1,12 +1,15 @@
 use super::*;
 use crate::{
+    eval::Value,
     module::{ModuleKind, STATIC_URL_SCHEME},
     scope::ScopeParent,
     source::SourceKind,
     TypeKind,
 };
 use rhai_rowan::{
-    ast::{AstNode, Rhai, RhaiDef},
+    ast::{AstNode, Lit, Rhai, RhaiDef},
+    syntax::SyntaxKind,
+    util::unescape,
     TextRange, TextSize,
 };
 
@@ -269,5 +272,67 @@ impl AddContext {
                 range
             }
         })
+    }
+}
+
+#[allow(clippy::needless_pass_by_value)]
+fn value_of_lit(lit: Lit) -> Value {
+    if let Some(lit) = lit.lit_token() {
+        match lit.kind() {
+            SyntaxKind::LIT_INT => lit
+                .text()
+                .parse::<i64>()
+                .map(Value::Int)
+                .unwrap_or(Value::Unknown),
+            SyntaxKind::LIT_FLOAT => lit
+                .text()
+                .parse::<f64>()
+                .map(Value::Float)
+                .unwrap_or(Value::Unknown),
+            SyntaxKind::LIT_BOOL => lit
+                .text()
+                .parse::<bool>()
+                .map(Value::Bool)
+                .unwrap_or(Value::Unknown),
+            SyntaxKind::LIT_STR => {
+                let mut text = lit.text();
+
+                if text.starts_with('"') {
+                    text = text
+                        .strip_prefix('"')
+                        .unwrap_or(text)
+                        .strip_suffix('"')
+                        .unwrap_or(text);
+
+                    Value::String(unescape(text, '"').0)
+                } else {
+                    text = text
+                        .strip_prefix('`')
+                        .unwrap_or(text)
+                        .strip_suffix('`')
+                        .unwrap_or(text);
+                    Value::String(unescape(text, '`').0)
+                }
+            }
+            SyntaxKind::LIT_CHAR => {
+                let mut text = lit.text();
+                text = text
+                    .strip_prefix('\'')
+                    .unwrap_or(text)
+                    .strip_suffix('\'')
+                    .unwrap_or(text);
+
+                Value::Char(
+                    // FIXME: this allocates a string.
+                    unescape(text, '\'').0.chars().next().unwrap_or('💩'),
+                )
+            }
+            _ => Value::Unknown,
+        }
+    } else {
+        // It's a string template literal
+        // FIXME: we know its content if it has
+        // no code interpolations.
+        Value::String(String::new())
     }
 }
