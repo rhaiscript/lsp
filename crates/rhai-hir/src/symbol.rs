@@ -923,6 +923,42 @@ pub enum ReferenceTarget {
     Module(Module),
 }
 
+impl ReferenceTarget {
+    /// Returns `true` if the reference target is [`Symbol`].
+    ///
+    /// [`Symbol`]: ReferenceTarget::Symbol
+    #[must_use]
+    pub fn is_symbol(&self) -> bool {
+        matches!(self, Self::Symbol(..))
+    }
+
+    #[must_use]
+    pub fn as_symbol(&self) -> Option<&Symbol> {
+        if let Self::Symbol(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
+    /// Returns `true` if the reference target is [`Module`].
+    ///
+    /// [`Module`]: ReferenceTarget::Module
+    #[must_use]
+    pub fn is_module(&self) -> bool {
+        matches!(self, Self::Module(..))
+    }
+
+    #[must_use]
+    pub fn as_module(&self) -> Option<&Module> {
+        if let Self::Module(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+}
+
 /// A symbol that does not and cannot originate
 /// from source code and was injected into the hir.
 #[derive(Debug, Clone)]

@@ -8,8 +8,13 @@ use lsp_types::{
     SemanticToken, SemanticTokenModifier, SemanticTokenType, SemanticTokens, SemanticTokensParams,
     SemanticTokensResult,
 };
-use rhai_rowan::TextRange;
 use rhai_common::environment::Environment;
+use rhai_hir::{
+    symbol::{BinaryOpKind, ReferenceTarget, SymbolKind},
+    ty::Type,
+    Hir, TypeKind,
+};
+use rhai_rowan::TextRange;
 
 #[tracing::instrument(skip_all)]
 pub(crate) async fn semantic_tokens<E: Environment>(
@@ -34,16 +39,79 @@ pub(crate) async fn semantic_tokens<E: Environment>(
 
     let mut token_builder = SemanticTokensBuilder::new(&doc.mapper);
 
-    token_builder.extend(ws.hir.symbols().filter_map(|(_, data)| {
+    token_builder.extend(ws.hir.symbols().filter_map(|(symbol, data)| {
         if !data.source.is(source) {
             return None;
         }
 
-        Some((
-            data.kind.as_binary()?.op.as_ref()?.as_custom()?.range,
-            TokenType::CustomOperator,
-            [],
-        ))
+        match &data.kind {
+            SymbolKind::Decl(d) => {
+                if let Some(ty) = token_for_ty(&ws.hir, ws.hir[symbol].ty) {
+                    Some((ws.hir[symbol].selection_range()?, ty, vec![]))
+                } else if d.is_const {
+                    Some((
+                        ws.hir[symbol].selection_range()?,
+                        TokenType::Variable,
+                        vec![TokenModifier::ReadOnly],
+                    ))
+                } else {
+                    None
+                }
+            }
+            SymbolKind::Reference(r) => {
+                if let Some(&target_symbol) = r.target.as_ref().and_then(ReferenceTarget::as_symbol)
+                {
+                    if let Some(ty) = token_for_ty(&ws.hir, ws.hir[target_symbol].ty) {
+                        Some((ws.hir[symbol].selection_range()?, ty, vec![]))
+                    } else if let Some(d) = ws.hir[target_symbol].kind.as_decl() {
+                        if  d.is_const {
+                            Some((
+                                ws.hir[symbol].selection_range()?,
+                                TokenType::Variable,
+                                vec![TokenModifier::ReadOnly],
+                            ))
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            }
+            SymbolKind::Path(p) => p.segments.last().and_then(|&sym| {
+                if let Some(ty) = token_for_ty(&ws.hir, ws.hir[sym].ty) {
+                    Some((ws.hir[sym].selection_range()?, ty, vec![]))
+                } else if let Some(&target) = ws.hir[sym]
+                    .kind
+                    .as_reference()
+                    .and_then(|r| r.target.as_ref().and_then(ReferenceTarget::as_symbol))
+                {
+                    if let Some(decl) = ws.hir[target].kind.as_decl() {
+                        if decl.is_const {
+                            Some((
+                                ws.hir[sym].selection_range()?,
+                                TokenType::Variable,
+                                vec![TokenModifier::ReadOnly],
+                            ))
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            }),
+            SymbolKind::Binary(b) => {
+                b.op.as_ref()
+                    .and_then(BinaryOpKind::as_custom)
+                    .map(|c| (c.range, TokenType::CustomOperator, vec![]))
+            }
+            _ => None,
+        }
     }));
 
     Ok(Some(SemanticTokensResult::Tokens(SemanticTokens {
@@ -52,14 +120,30 @@ pub(crate) async fn semantic_tokens<E: Environment>(
     })))
 }
 
+fn token_for_ty(hir: &Hir, ty: Type) -> Option<TokenType> {
+    match &hir[ty].kind {
+        TypeKind::Module => Some(TokenType::Module),
+        TypeKind::Fn(_) => Some(TokenType::Function),
+        _ => None,
+    }
+}
+
 #[derive(Debug, Copy, Clone)]
 #[repr(u32)]
 pub enum TokenType {
     CustomOperator,
+    Function,
+    Module,
+    Variable,
 }
 
 impl TokenType {
-    pub const LEGEND: &'static [SemanticTokenType] = &[SemanticTokenType::KEYWORD];
+    pub const LEGEND: &'static [SemanticTokenType] = &[
+        SemanticTokenType::KEYWORD,
+        SemanticTokenType::FUNCTION,
+        SemanticTokenType::NAMESPACE,
+        SemanticTokenType::VARIABLE,
+    ];
 }
 
 #[allow(dead_code)]
@@ -74,7 +158,7 @@ impl TokenModifier {
 }
 
 struct SemanticTokensBuilder<'b> {
-    tokens: Vec<(TextRange, TokenType, Vec<SemanticTokenModifier>)>,
+    tokens: Vec<(TextRange, TokenType, Vec<TokenModifier>)>,
     // tokens: Vec<SemanticToken>,
     mapper: &'b Mapper,
 }
@@ -91,13 +175,13 @@ impl<'b> SemanticTokensBuilder<'b> {
         &mut self,
         range: TextRange,
         ty: TokenType,
-        modifiers: impl IntoIterator<Item = SemanticTokenModifier>,
+        modifiers: impl IntoIterator<Item = TokenModifier>,
     ) {
         self.tokens
             .push((range, ty, modifiers.into_iter().collect()));
     }
 
-    fn extend<M: IntoIterator<Item = SemanticTokenModifier>>(
+    fn extend<M: IntoIterator<Item = TokenModifier>>(
         &mut self,
         iter: impl IntoIterator<Item = (TextRange, TokenType, M)>,
     ) {
