@@ -413,12 +413,14 @@ impl Hir {
                 let lookup_text = b.lookup_text.clone();
 
                 let ty = if b.is_field_access() {
-                    lhs.and_then(|lhs| self[self[lhs].ty].kind.as_object())
-                        .and_then(|object| {
-                            Some((object, rhs.and_then(|rhs| self[rhs].name(self))?))
-                        })
-                        .and_then(|(object, field_name)| object.fields.get(field_name))
-                        .copied()
+                    lhs.map(|lhs| {
+                        self.resolve_type_for_symbol(seen, lhs);
+                        lhs
+                    })
+                    .and_then(|lhs| self[self[lhs].ty].kind.as_object())
+                    .and_then(|object| Some((object, rhs.and_then(|rhs| self[rhs].name(self))?)))
+                    .and_then(|(object, field_name)| object.fields.get(field_name))
+                    .copied()
                 } else {
                     match (lhs, rhs) {
                         (Some(lhs), Some(rhs)) => {
