@@ -8,7 +8,7 @@ use lsp_async_stub::{
 };
 use lsp_types::{DocumentSymbol, DocumentSymbolParams, DocumentSymbolResponse, SymbolKind};
 use rhai_common::{environment::Environment, util::Normalize};
-use rhai_hir::{source::Source, symbol::ObjectSymbol, Hir, Scope, Type};
+use rhai_hir::{source::Source, symbol::ObjectSymbol, Hir, Scope};
 use rhai_rowan::{
     ast::{AstNode, ExprFn},
     syntax::{SyntaxElement, SyntaxKind, SyntaxNode},
@@ -103,7 +103,7 @@ fn collect_symbols(
                         .range(ident.text_range())
                         .unwrap_or_default()
                         .into_lsp(),
-                    detail: Some(signature_of(hir, root, symbol)),
+                    detail: Some(signature_of(hir, symbol)),
                     children: Some(collect_symbols(mapper, root, hir, f.scope, source)),
                     tags: None,
                 });
@@ -129,13 +129,7 @@ fn collect_symbols(
 
                 document_symbols.push(DocumentSymbol {
                     deprecated: None,
-                    kind: if matches!(&decl.ty, Type::Object(_)) {
-                        SymbolKind::OBJECT
-                    } else if decl.is_const {
-                        SymbolKind::CONSTANT
-                    } else {
-                        SymbolKind::VARIABLE
-                    },
+                    kind: SymbolKind::VARIABLE,
                     name: ident.to_string(),
                     range: mapper
                         .range(syntax.text_range())

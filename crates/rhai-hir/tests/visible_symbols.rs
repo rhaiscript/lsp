@@ -18,7 +18,7 @@ let bar = 3;
 
     hir.add_source(&url, &Parser::new(&src).parse_def().into_syntax());
 
-    hir.resolve_references();
+    hir.resolve_all();
 
     assert!(hir
         .visible_symbols_from_offset(hir.source_by_url(&url).unwrap(), offset, false)
@@ -41,7 +41,7 @@ fn test_visible_import() {
 
     hir.add_source(&url, &Parser::new(&src).parse_def().into_syntax());
 
-    hir.resolve_references();
+    hir.resolve_all();
 
     assert!(hir
         .visible_symbols_from_offset(hir.source_by_url(&url).unwrap(), offset, false)

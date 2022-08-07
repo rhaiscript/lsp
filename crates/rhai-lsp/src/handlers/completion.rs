@@ -17,7 +17,7 @@ use rhai_hir::{
     symbol::{ReferenceTarget, SymbolKind, VirtualSymbol},
     Hir, Symbol,
 };
-use rhai_rowan::{query::Query, syntax::SyntaxNode};
+use rhai_rowan::query::Query;
 
 pub(crate) async fn completion<E: Environment>(
     context: Context<World<E>>,
@@ -78,7 +78,7 @@ pub(crate) async fn completion<E: Environment>(
         if idx == 0 {
             return Ok(Some(CompletionResponse::Array(
                 modules
-                    .filter_map(|symbol| reference_completion(&ws.hir, &syntax, true, symbol))
+                    .filter_map(|symbol| reference_completion(&ws.hir, true, symbol))
                     .unique_by(|(symbol, _)| ws.hir.unique_symbol_name(symbol))
                     .map(|(_, c)| c)
                     .collect(),
@@ -118,7 +118,7 @@ pub(crate) async fn completion<E: Environment>(
         Ok(Some(CompletionResponse::Array(
             symbols
                 .into_iter()
-                .filter_map(|symbol| reference_completion(&ws.hir, &syntax, false, symbol))
+                .filter_map(|symbol| reference_completion(&ws.hir, false, symbol))
                 .unique_by(|(symbol, _)| ws.hir.unique_symbol_name(symbol))
                 .map(|(_, c)| c)
                 .collect(),
@@ -135,7 +135,7 @@ pub(crate) async fn completion<E: Environment>(
                         .and_then(|d| d.alias)
                         .or(Some(symbol))
                 })
-                .filter_map(|symbol| reference_completion(&ws.hir, &syntax, false, symbol))
+                .filter_map(|symbol| reference_completion(&ws.hir, false, symbol))
                 .unique_by(|(symbol, _)| ws.hir.unique_symbol_name(symbol))
                 .map(|(_, c)| c)
                 .collect(),
@@ -155,7 +155,7 @@ pub(crate) async fn completion<E: Environment>(
 
                     CompletionItem {
                         label: op.name.clone(),
-                        detail: Some(op.signature()),
+                        detail: Some(op.signature(&ws.hir)),
                         documentation: Some(Documentation::MarkupContent(MarkupContent {
                             kind: MarkupKind::Markdown,
                             value: op.docs.clone(),
@@ -176,7 +176,6 @@ pub(crate) async fn completion<E: Environment>(
 
 fn reference_completion(
     hir: &Hir,
-    syntax: &SyntaxNode,
     ident_only: bool,
     symbol: Symbol,
 ) -> Option<(Symbol, CompletionItem)> {
@@ -185,10 +184,10 @@ fn reference_completion(
             symbol,
             CompletionItem {
                 label: f.name.clone(),
-                detail: Some(signature_of(hir, syntax, symbol)),
+                detail: Some(signature_of(hir, symbol)),
                 documentation: Some(Documentation::MarkupContent(MarkupContent {
                     kind: MarkupKind::Markdown,
-                    value: documentation_for(hir, syntax, symbol, false),
+                    value: documentation_for(hir, symbol, false),
                 })),
                 kind: Some(CompletionItemKind::FUNCTION),
                 insert_text: Some(format!("{}($0)", &f.name)),
@@ -200,10 +199,10 @@ fn reference_completion(
             symbol,
             CompletionItem {
                 label: d.name.clone(),
-                detail: Some(signature_of(hir, syntax, symbol)),
+                detail: Some(signature_of(hir, symbol)),
                 documentation: Some(Documentation::MarkupContent(MarkupContent {
                     kind: MarkupKind::Markdown,
-                    value: documentation_for(hir, syntax, symbol, false),
+                    value: documentation_for(hir, symbol, false),
                 })),
                 kind: Some(if d.is_const {
                     CompletionItemKind::CONSTANT
@@ -229,10 +228,10 @@ fn reference_completion(
             symbol,
             CompletionItem {
                 label: m.name.clone(),
-                detail: Some(signature_of(hir, syntax, symbol)),
+                detail: Some(signature_of(hir, symbol)),
                 documentation: Some(Documentation::MarkupContent(MarkupContent {
                     kind: MarkupKind::Markdown,
-                    value: documentation_for(hir, syntax, symbol, false),
+                    value: documentation_for(hir, symbol, false),
                 })),
                 kind: Some(CompletionItemKind::MODULE),
                 insert_text: if ident_only || hir[hir[m.module].scope].is_empty() {

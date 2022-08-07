@@ -11,6 +11,7 @@ use crate::{
     scope::ScopeData,
     source::{Source, SourceData},
     symbol::*,
+    ty::{Type, TypeData},
     Module, Scope,
 };
 
@@ -26,6 +27,8 @@ pub struct Hir {
     scopes: SlotMap<Scope, ScopeData>,
     symbols: SlotMap<Symbol, SymbolData>,
     sources: SlotMap<Source, SourceData>,
+    types: SlotMap<Type, TypeData>,
+    builtin_types: BuiltinTypes,
 }
 
 impl Default for Hir {
@@ -37,6 +40,8 @@ impl Default for Hir {
             scopes: Default::default(),
             symbols: Default::default(),
             sources: Default::default(),
+            types: Default::default(),
+            builtin_types: BuiltinTypes::uninit(),
         };
         this.prepare();
         this
@@ -58,6 +63,8 @@ impl Hir {
         self.scopes.clear();
         self.modules.clear();
         self.sources.clear();
+        self.types.clear();
+        self.builtin_types = BuiltinTypes::uninit();
         self.static_module = Module::null();
         self.prepare();
     }
@@ -135,6 +142,7 @@ impl Hir {
     fn prepare(&mut self) {
         self.ensure_static_module();
         self.ensure_virtual_source();
+        self.ensure_builtin_types();
     }
 }
 
@@ -173,5 +181,56 @@ impl ops::Index<Source> for Hir {
 
     fn index(&self, index: Source) -> &Self::Output {
         self.sources.get(index).unwrap()
+    }
+}
+
+impl ops::Index<Type> for Hir {
+    type Output = TypeData;
+
+    fn index(&self, index: Type) -> &Self::Output {
+        self.types.get(index).unwrap()
+    }
+}
+
+/// Built-in (primitive) types are treated as any other type
+/// but always exist in the HIR and cannot be removed.
+///
+/// This struct keeps track of their keys.
+#[derive(Debug, Clone, Copy)]
+pub struct BuiltinTypes {
+    pub module: Type,
+    pub int: Type,
+    pub float: Type,
+    pub bool: Type,
+    pub char: Type,
+    pub string: Type,
+    pub timestamp: Type,
+    pub void: Type,
+    pub unknown: Type,
+    pub never: Type,
+}
+
+impl BuiltinTypes {
+    fn uninit() -> Self {
+        Self {
+            module: Default::default(),
+            int: Default::default(),
+            float: Default::default(),
+            bool: Default::default(),
+            char: Default::default(),
+            string: Default::default(),
+            timestamp: Default::default(),
+            void: Default::default(),
+            unknown: Default::default(),
+            never: Default::default(),
+        }
+    }
+
+    #[must_use]
+    fn is_uninit(&self) -> bool {
+        // We don't check all of the fields,
+        // as this is not exposed and we always
+        // initialize all of them.
+        self.module.is_null()
     }
 }

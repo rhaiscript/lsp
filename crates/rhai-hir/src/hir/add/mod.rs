@@ -3,7 +3,7 @@ use crate::{
     module::{ModuleKind, STATIC_URL_SCHEME},
     scope::ScopeParent,
     source::SourceKind,
-    Type,
+    TypeKind,
 };
 use rhai_rowan::{
     ast::{AstNode, Rhai, RhaiDef},
@@ -63,6 +63,57 @@ impl Hir {
                 module: self.static_module,
             });
             self.virtual_source = source;
+        }
+    }
+
+    pub(crate) fn ensure_builtin_types(&mut self) {
+        // If any of them is not null, it has been
+        // initialized.
+        if !self.builtin_types.is_uninit() {
+            return;
+        }
+
+        self.builtin_types = BuiltinTypes {
+            module: self.types.insert(TypeData {
+                kind: TypeKind::Module,
+                ..TypeData::default()
+            }),
+            int: self.types.insert(TypeData {
+                kind: TypeKind::Int,
+                ..TypeData::default()
+            }),
+            float: self.types.insert(TypeData {
+                kind: TypeKind::Float,
+                ..TypeData::default()
+            }),
+            bool: self.types.insert(TypeData {
+                kind: TypeKind::Bool,
+                ..TypeData::default()
+            }),
+            char: self.types.insert(TypeData {
+                kind: TypeKind::Char,
+                ..TypeData::default()
+            }),
+            string: self.types.insert(TypeData {
+                kind: TypeKind::String,
+                ..TypeData::default()
+            }),
+            timestamp: self.types.insert(TypeData {
+                kind: TypeKind::Timestamp,
+                ..TypeData::default()
+            }),
+            void: self.types.insert(TypeData {
+                kind: TypeKind::Void,
+                ..TypeData::default()
+            }),
+            unknown: self.types.insert(TypeData {
+                kind: TypeKind::Unknown,
+                ..TypeData::default()
+            }),
+            never: self.types.insert(TypeData {
+                kind: TypeKind::Never,
+                ..TypeData::default()
+            }),
         }
     }
 
@@ -127,6 +178,7 @@ impl Hir {
                         module,
                     })),
                     export: true,
+                    ty: self.builtin_types.unknown,
                 });
 
                 self[self.static_module]

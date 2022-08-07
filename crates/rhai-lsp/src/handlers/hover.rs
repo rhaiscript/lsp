@@ -80,7 +80,7 @@ fn hover_for_symbol(
             Some(Hover {
                 contents: HoverContents::Markup(MarkupContent {
                     kind: MarkupKind::Markdown,
-                    value: documentation_for(hir, root, symbol, true),
+                    value: documentation_for(hir, symbol, true),
                 }),
                 range: highlight_range,
             })

@@ -24,7 +24,7 @@ fn print();
         &Parser::new(global_src).parse_def().into_syntax(),
     );
 
-    hir.resolve_references();
+    hir.resolve_all();
 
     assert!(hir.errors().is_empty());
 }
@@ -52,7 +52,7 @@ fn print();
         &Parser::new(global_src).parse_def().into_syntax(),
     );
 
-    hir.resolve_references();
+    hir.resolve_all();
 
     assert!(hir.errors().is_empty());
 }
@@ -80,7 +80,7 @@ fn print();
         &Parser::new(global_src).parse_def().into_syntax(),
     );
 
-    hir.resolve_references();
+    hir.resolve_all();
 
     assert!(hir.errors().is_empty());
 }
@@ -108,7 +108,7 @@ fn print();
         &Parser::new(global_src).parse_def().into_syntax(),
     );
 
-    hir.resolve_references();
+    hir.resolve_all();
 
     assert!(hir.errors().is_empty());
 }

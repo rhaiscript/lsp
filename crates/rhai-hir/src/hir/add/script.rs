@@ -73,6 +73,7 @@ impl Hir {
             syntax: &SyntaxNode,
             is_const: bool,
             export: bool,
+            unknown_type: Type,
         ) -> Symbol {
             let (value, value_scope) = value
                 .map(|expr| {
@@ -111,6 +112,7 @@ impl Hir {
                     value_scope,
                     ..DeclSymbol::default()
                 })),
+                ty: unknown_type,
             });
 
             if let Some(value_scope) = value_scope {
@@ -138,6 +140,7 @@ impl Hir {
                         ..ReferenceSymbol::default()
                     }),
                     parent_scope: Scope::default(),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -183,12 +186,14 @@ impl Hir {
                                         part_of_path: true,
                                         ..ReferenceSymbol::default()
                                     }),
+                                    ty: self.builtin_types.unknown,
                                 });
                                 path_scope.add_symbol(self, symbol, false);
                                 symbol
                             })
                             .collect(),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
                 let sym = self.add_symbol(symbol);
 
@@ -206,25 +211,6 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Lit(LitSymbol {
-                        ty: expr
-                            .lit()
-                            .map(|l| {
-                                if let Some(lit) = l.lit_token() {
-                                    match lit.kind() {
-                                        SyntaxKind::LIT_INT => Type::Int,
-                                        SyntaxKind::LIT_FLOAT => Type::Float,
-                                        SyntaxKind::LIT_BOOL => Type::Bool,
-                                        SyntaxKind::LIT_STR => Type::String,
-                                        SyntaxKind::LIT_CHAR => Type::Char,
-                                        _ => Type::Unknown,
-                                    }
-                                } else if l.lit_str_template().is_some() {
-                                    Type::String
-                                } else {
-                                    Type::Unknown
-                                }
-                            })
-                            .unwrap_or(Type::Unknown),
                         value: expr
                             .lit()
                             .map(|l| {
@@ -285,12 +271,16 @@ impl Hir {
                                         _ => Value::Unknown,
                                     }
                                 } else {
-                                    Value::Unknown
+                                    // It's a string template literal
+                                    // FIXME: we know its content if it has
+                                    // no code interpolations.
+                                    Value::String(String::new())
                                 }
                             })
                             .unwrap_or(Value::Unknown),
                         interpolated_scopes: Vec::default(),
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 if let Some(lit) = expr.lit().and_then(|l| l.lit_str_template()) {
@@ -335,6 +325,7 @@ impl Hir {
                 &expr.syntax(),
                 false,
                 can_export,
+                self.builtin_types.unknown,
             )
             .into(),
             Expr::Const(expr) => add_decl(
@@ -346,6 +337,7 @@ impl Hir {
                 &expr.syntax(),
                 true,
                 can_export,
+                self.builtin_types.unknown,
             )
             .into(),
             Expr::Block(expr) => {
@@ -367,6 +359,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Block(BlockSymbol { scope: block_scope }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 block_scope.set_parent(self, symbol);
@@ -392,6 +385,7 @@ impl Hir {
                         op: expr.op_token().map(|t| t.kind()),
                         rhs,
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -434,6 +428,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Binary(BinarySymbol { lhs, op, rhs }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -457,6 +452,7 @@ impl Hir {
                             .filter_map(|expr| self.add_expression(source, scope, false, expr))
                             .collect(),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -482,6 +478,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Index(IndexSymbol { base, index }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -521,6 +518,7 @@ impl Hir {
                             })
                             .collect(),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -550,6 +548,7 @@ impl Hir {
                             None => Vec::default(),
                         },
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -584,6 +583,7 @@ impl Hir {
                                 is_param: true,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
 
                         closure_scope.add_symbol(self, symbol, false);
@@ -606,6 +606,7 @@ impl Hir {
                         scope,
                         expr: closure_expr_symbol,
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -623,6 +624,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::If(IfSymbol::default()),
+                    ty: self.builtin_types.unknown,
                 });
 
                 // Here we flatten the branches of the `if` expression
@@ -707,6 +709,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Loop(LoopSymbol { scope: loop_scope }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 loop_scope.set_parent(self, symbol);
@@ -740,6 +743,7 @@ impl Hir {
                                 is_pat: true,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
                         scope.add_symbol(self, ident_symbol, false);
                     }
@@ -763,6 +767,7 @@ impl Hir {
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
                         scope: for_scope,
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(sym);
@@ -798,6 +803,7 @@ impl Hir {
                             .expr()
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -820,6 +826,7 @@ impl Hir {
                             .expr()
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -836,6 +843,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Continue(ContinueSymbol {}),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -867,6 +875,7 @@ impl Hir {
                                         },
                                         parent_scope: Scope::default(),
                                         kind: SymbolKind::Discard(DiscardSymbol {}),
+                                        ty: self.builtin_types.unknown,
                                     }));
                                 }
 
@@ -901,6 +910,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Switch(SwitchSymbol { target, arms }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -920,6 +930,7 @@ impl Hir {
                             .expr()
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -953,7 +964,7 @@ impl Hir {
                     }
 
                     // So that We have syntax highlight.
-                    // FIXME: this replaces `rhai-scope` everywhere.
+                    // FIXME: this replaces `rhai-scope` everywhere, not just code blocks.
                     docs = fn_item.docs_content().replace("rhai-scope", "rhai");
                 }
 
@@ -975,6 +986,7 @@ impl Hir {
                                 is_param: true,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
 
                         fn_scope.add_symbol(self, symbol, false);
@@ -1001,6 +1013,7 @@ impl Hir {
                         scope: fn_scope,
                         ..FnSymbol::default()
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -1042,6 +1055,7 @@ impl Hir {
                                     ..DeclSymbol::default()
                                 })),
                                 parent_scope: Scope::default(),
+                                ty: self.builtin_types.unknown,
                             });
 
                             import_scope.add_symbol(self, alias_symbol, false);
@@ -1052,6 +1066,7 @@ impl Hir {
                             self.add_expression(source, import_scope, false, expr)
                         }),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -1085,6 +1100,7 @@ impl Hir {
                                 ..ReferenceSymbol::default()
                             }),
                             parent_scope: Scope::default(),
+                            ty: self.builtin_types.unknown,
                         });
 
                         scope.add_symbol(self, symbol, false);
@@ -1103,6 +1119,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Export(ExportSymbol { target }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -1150,6 +1167,7 @@ impl Hir {
                                 is_param: true,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
 
                         scope.add_symbol(self, symbol, false);
@@ -1172,6 +1190,7 @@ impl Hir {
                         try_scope,
                         catch_scope,
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(sym);
@@ -1194,6 +1213,7 @@ impl Hir {
                     parent_scope: Scope::default(),
                     export: false,
                     kind: SymbolKind::Throw(ThrowSymbol { expr }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);

@@ -79,5 +79,5 @@ pub(crate) async fn update_document<E: Environment>(ctx: Context<World<E>>, uri:
     let mut ws = ctx.workspaces.write().await;
     let ws = ws.by_document_mut(&uri);
     ws.add_document(uri, text);
-    ws.hir.resolve_references();
+    ws.hir.resolve_all();
 }

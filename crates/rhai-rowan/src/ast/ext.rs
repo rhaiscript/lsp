@@ -7,7 +7,7 @@ use rowan::NodeOrToken;
 
 use super::{
     AstNode, DefOpPrecedence, Expr, LitStrTemplate, LitStrTemplateInterpolation, ObjectField,
-    Param, ParamList, Stmt, SwitchArm, SwitchArmCondition, TypedParam,
+    Param, ParamList, Stmt, SwitchArm, SwitchArmCondition, Type, TypedParam,
 };
 use super::{ExprBlock, ExprIf, T};
 use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
@@ -353,11 +353,20 @@ impl super::DefFn {
             })
             .nth(if self.has_kw_get() { 1 } else { 0 })
     }
+
+    #[must_use]
+    pub fn ret_ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
+    }
 }
 
 impl super::DefOp {
     pub fn precedence(&self) -> Option<DefOpPrecedence> {
         self.syntax().children().find_map(AstNode::cast)
+    }
+
+    pub fn ret_ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
     }
 }
 
@@ -409,6 +418,24 @@ impl super::DefModule {
             }
             t.into_token()
         })
+    }
+}
+
+impl super::DefLet {
+    pub fn ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
+    }
+}
+
+impl super::DefConst {
+    pub fn ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
+    }
+}
+
+impl super::TypeList {
+    pub fn types(&self) -> impl Iterator<Item = Type> {
+        self.syntax().children().filter_map(Type::cast)
     }
 }
 

@@ -24,7 +24,7 @@ export const x = 1;
         &Parser::new(module_src).parse_script().into_syntax(),
     );
 
-    hir.resolve_references();
+    hir.resolve_all();
 
     assert!(hir.errors().is_empty());
 }
@@ -60,7 +60,7 @@ export const baz = 1;
         &Parser::new(bar_src).parse_script().into_syntax(),
     );
 
-    hir.resolve_references();
+    hir.resolve_all();
 
     assert!(hir.errors().is_empty());
 }
@@ -79,7 +79,7 @@ import "./foo.rhai" as foo;
         &Parser::new(root_src).parse_script().into_syntax(),
     );
 
-    hir.resolve_references();
+    hir.resolve_all();
 
     assert_eq!(hir.missing_modules().len(), 1);
 }

@@ -120,6 +120,7 @@ impl Hir {
                                     ..DeclSymbol::default()
                                 })),
                                 parent_scope: Scope::default(),
+                                ty: self.builtin_types.unknown,
                             });
 
                             import_scope.add_symbol(self, alias_symbol, true);
@@ -130,6 +131,7 @@ impl Hir {
                             self.add_expression(source, import_scope, false, expr)
                         }),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -157,8 +159,19 @@ impl Hir {
                         value: None,
                         value_scope: None,
                         docs,
+                        ty_decl: const_def.ty().map(|t| {
+                            self.types.insert(TypeData {
+                                source: SourceInfo {
+                                    source: Some(source),
+                                    text_range: Some(t.syntax().text_range()),
+                                    ..Default::default()
+                                },
+                                kind: TypeKind::Unresolved(t.syntax().to_string()),
+                            })
+                        }),
                         ..DeclSymbol::default()
                     })),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -183,8 +196,19 @@ impl Hir {
                         value: None,
                         value_scope: None,
                         docs,
+                        ty_decl: let_def.ty().map(|t| {
+                            self.types.insert(TypeData {
+                                source: SourceInfo {
+                                    source: Some(source),
+                                    text_range: Some(t.syntax().text_range()),
+                                    ..Default::default()
+                                },
+                                kind: TypeKind::Unresolved(t.syntax().to_string()),
+                            })
+                        }),
                         ..DeclSymbol::default()
                     })),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -201,6 +225,16 @@ impl Hir {
 
                 if let Some(param_list) = expr.typed_param_list() {
                     for param in param_list.params() {
+                        let param_ty = param.ty().map(|t| {
+                            self.types.insert(TypeData {
+                                source: SourceInfo {
+                                    source: Some(source),
+                                    text_range: Some(t.syntax().text_range()),
+                                    ..Default::default()
+                                },
+                                kind: TypeKind::Unresolved(t.syntax().to_string()),
+                            })
+                        });
                         let symbol = self.add_symbol(SymbolData {
                             export: false,
                             parent_scope: Scope::default(),
@@ -216,13 +250,26 @@ impl Hir {
                                     .map(|s| s.text().to_string())
                                     .unwrap_or_default(),
                                 is_param: true,
+                                ty_decl: param_ty,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
 
                         fn_scope.add_symbol(self, symbol, false);
                     }
                 }
+
+                let ret_ty = expr.ret_ty().map_or(self.builtin_types.unknown, |t| {
+                    self.types.insert(TypeData {
+                        source: SourceInfo {
+                            source: Some(source),
+                            text_range: Some(t.syntax().text_range()),
+                            ..Default::default()
+                        },
+                        kind: TypeKind::Unresolved(t.syntax().to_string()),
+                    })
+                });
 
                 let symbol = self.add_symbol(SymbolData {
                     export: true,
@@ -242,9 +289,11 @@ impl Hir {
                         scope: fn_scope,
                         getter: expr.has_kw_get(),
                         setter: expr.has_kw_set(),
-                        def: true,
+                        is_def: true,
+                        ret_ty,
                         ..FnSymbol::default()
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -262,6 +311,47 @@ impl Hir {
                     Some(i) => i,
                     None => return,
                 };
+
+                let mut lhs_ty = self.builtin_types.unknown;
+                let mut rhs_ty = None;
+                let mut ret_ty = self.builtin_types.unknown;
+
+                if let Some(ty_list) = f.type_list() {
+                    let mut types = ty_list.types();
+
+                    if let Some(t) = types.next() {
+                        lhs_ty = self.types.insert(TypeData {
+                            source: SourceInfo {
+                                source: Some(source),
+                                text_range: Some(t.syntax().text_range()),
+                                ..Default::default()
+                            },
+                            kind: TypeKind::Unresolved(t.syntax().to_string()),
+                        });
+                    }
+
+                    if let Some(t) = types.next() {
+                        rhs_ty = Some(self.types.insert(TypeData {
+                            source: SourceInfo {
+                                source: Some(source),
+                                text_range: Some(t.syntax().text_range()),
+                                ..Default::default()
+                            },
+                            kind: TypeKind::Unresolved(t.syntax().to_string()),
+                        }));
+                    }
+                }
+
+                if let Some(t) = f.ret_ty() {
+                    ret_ty = self.types.insert(TypeData {
+                        source: SourceInfo {
+                            source: Some(source),
+                            text_range: Some(t.syntax().text_range()),
+                            ..Default::default()
+                        },
+                        kind: TypeKind::Unresolved(t.syntax().to_string()),
+                    });
+                }
 
                 let symbol = self.symbols.insert(SymbolData {
                     export: true,
@@ -288,8 +378,11 @@ impl Hir {
                                 Some((bp_l, bp_r))
                             })
                             .unwrap_or((1, 2)),
-                        ..OpSymbol::default()
+                        lhs_ty,
+                        rhs_ty,
+                        ret_ty,
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -330,6 +423,7 @@ impl Hir {
                         module,
                     })),
                     export: true,
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, virt_module_symbol, true);

@@ -5,6 +5,7 @@ use super::*;
 
 pub mod modules;
 pub mod scope_iter;
+pub mod types;
 
 // Nested ranges only.
 fn range_scope(r1: TextRange, r2: TextRange) -> Ordering {

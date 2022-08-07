@@ -3,6 +3,7 @@ use crate::{source::SourceInfo, HashSet, IndexSet, Symbol};
 slotmap::new_key_type! { pub struct Scope; }
 
 #[derive(Debug, Default, Clone)]
+#[non_exhaustive]
 pub struct ScopeData {
     pub source: SourceInfo,
     pub parent: Option<ScopeParent>,
