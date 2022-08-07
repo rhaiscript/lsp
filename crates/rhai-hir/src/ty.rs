@@ -82,7 +82,7 @@ impl core::fmt::Display for TypeFormatter<'_> {
                 let mut first = true;
                 for ty in tys {
                     if !first {
-                        f.write_str("| ")?;
+                        f.write_str(" | ")?;
                     }
                     first = false;
 
