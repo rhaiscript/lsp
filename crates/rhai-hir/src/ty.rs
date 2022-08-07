@@ -125,31 +125,6 @@ impl core::fmt::Display for TypeFormatter<'_> {
     }
 }
 
-// impl TypeData {
-//     fn to_writer(&self, hir: &Hir, writer: &mut dyn fmt::Write) -> fmt::Result {
-//         match &self.kind {
-//             TypeKind::Module => writer.write_str("module")?,
-//             TypeKind::Int => writer.write_str("int"),
-//             TypeKind::Float => todo!(),
-//             TypeKind::Bool => todo!(),
-//             TypeKind::Char => todo!(),
-//             TypeKind::String => todo!(),
-//             TypeKind::Timestamp => todo!(),
-//             TypeKind::Array(_) => todo!(),
-//             TypeKind::Object(_) => todo!(),
-//             TypeKind::Union(_) => todo!(),
-//             TypeKind::Void => todo!(),
-//             TypeKind::Fn(_) => todo!(),
-//             TypeKind::Alias(_, _) => todo!(),
-//             TypeKind::Unresolved(_) => todo!(),
-//             TypeKind::Never => todo!(),
-//             TypeKind::Unknown => todo!(),
-//         }
-
-//         Ok(())
-//     }
-// }
-
 #[derive(Debug, Clone)]
 pub enum TypeKind {
     Module,
