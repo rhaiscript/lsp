@@ -1,12 +1,15 @@
 use super::*;
 use crate::{
+    eval::Value,
     module::{ModuleKind, STATIC_URL_SCHEME},
     scope::ScopeParent,
     source::SourceKind,
-    Type,
+    TypeKind,
 };
 use rhai_rowan::{
-    ast::{AstNode, Rhai, RhaiDef},
+    ast::{AstNode, Lit, Rhai, RhaiDef},
+    syntax::SyntaxKind,
+    util::unescape,
     TextRange, TextSize,
 };
 
@@ -63,6 +66,57 @@ impl Hir {
                 module: self.static_module,
             });
             self.virtual_source = source;
+        }
+    }
+
+    pub(crate) fn ensure_builtin_types(&mut self) {
+        // If any of them is not null, it has been
+        // initialized.
+        if !self.builtin_types.is_uninit() {
+            return;
+        }
+
+        self.builtin_types = BuiltinTypes {
+            module: self.types.insert(TypeData {
+                kind: TypeKind::Module,
+                ..TypeData::default()
+            }),
+            int: self.types.insert(TypeData {
+                kind: TypeKind::Int,
+                ..TypeData::default()
+            }),
+            float: self.types.insert(TypeData {
+                kind: TypeKind::Float,
+                ..TypeData::default()
+            }),
+            bool: self.types.insert(TypeData {
+                kind: TypeKind::Bool,
+                ..TypeData::default()
+            }),
+            char: self.types.insert(TypeData {
+                kind: TypeKind::Char,
+                ..TypeData::default()
+            }),
+            string: self.types.insert(TypeData {
+                kind: TypeKind::String,
+                ..TypeData::default()
+            }),
+            timestamp: self.types.insert(TypeData {
+                kind: TypeKind::Timestamp,
+                ..TypeData::default()
+            }),
+            void: self.types.insert(TypeData {
+                kind: TypeKind::Void,
+                ..TypeData::default()
+            }),
+            unknown: self.types.insert(TypeData {
+                kind: TypeKind::Unknown,
+                ..TypeData::default()
+            }),
+            never: self.types.insert(TypeData {
+                kind: TypeKind::Never,
+                ..TypeData::default()
+            }),
         }
     }
 
@@ -127,6 +181,7 @@ impl Hir {
                         module,
                     })),
                     export: true,
+                    ty: self.builtin_types.unknown,
                 });
 
                 self[self.static_module]
@@ -217,5 +272,67 @@ impl AddContext {
                 range
             }
         })
+    }
+}
+
+#[allow(clippy::needless_pass_by_value)]
+fn value_of_lit(lit: Lit) -> Value {
+    if let Some(lit) = lit.lit_token() {
+        match lit.kind() {
+            SyntaxKind::LIT_INT => lit
+                .text()
+                .parse::<i64>()
+                .map(Value::Int)
+                .unwrap_or(Value::Unknown),
+            SyntaxKind::LIT_FLOAT => lit
+                .text()
+                .parse::<f64>()
+                .map(Value::Float)
+                .unwrap_or(Value::Unknown),
+            SyntaxKind::LIT_BOOL => lit
+                .text()
+                .parse::<bool>()
+                .map(Value::Bool)
+                .unwrap_or(Value::Unknown),
+            SyntaxKind::LIT_STR => {
+                let mut text = lit.text();
+
+                if text.starts_with('"') {
+                    text = text
+                        .strip_prefix('"')
+                        .unwrap_or(text)
+                        .strip_suffix('"')
+                        .unwrap_or(text);
+
+                    Value::String(unescape(text, '"').0)
+                } else {
+                    text = text
+                        .strip_prefix('`')
+                        .unwrap_or(text)
+                        .strip_suffix('`')
+                        .unwrap_or(text);
+                    Value::String(unescape(text, '`').0)
+                }
+            }
+            SyntaxKind::LIT_CHAR => {
+                let mut text = lit.text();
+                text = text
+                    .strip_prefix('\'')
+                    .unwrap_or(text)
+                    .strip_suffix('\'')
+                    .unwrap_or(text);
+
+                Value::Char(
+                    // FIXME: this allocates a string.
+                    unescape(text, '\'').0.chars().next().unwrap_or('💩'),
+                )
+            }
+            _ => Value::Unknown,
+        }
+    } else {
+        // It's a string template literal
+        // FIXME: we know its content if it has
+        // no code interpolations.
+        Value::String(String::new())
     }
 }

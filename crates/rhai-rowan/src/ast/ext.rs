@@ -6,8 +6,8 @@
 use rowan::NodeOrToken;
 
 use super::{
-    AstNode, DefOpPrecedence, Expr, LitStrTemplate, LitStrTemplateInterpolation, ObjectField,
-    Param, ParamList, Stmt, SwitchArm, SwitchArmCondition, TypedParam,
+    AstNode, DefOpPrecedence, Expr, Lit, LitStrTemplate, LitStrTemplateInterpolation, ObjectField,
+    Param, ParamList, Stmt, SwitchArm, SwitchArmCondition, Type, TypeObjectField, TypedParam,
 };
 use super::{ExprBlock, ExprIf, T};
 use crate::syntax::{SyntaxElement, SyntaxKind, SyntaxToken};
@@ -353,11 +353,20 @@ impl super::DefFn {
             })
             .nth(if self.has_kw_get() { 1 } else { 0 })
     }
+
+    #[must_use]
+    pub fn ret_ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
+    }
 }
 
 impl super::DefOp {
     pub fn precedence(&self) -> Option<DefOpPrecedence> {
         self.syntax().children().find_map(AstNode::cast)
+    }
+
+    pub fn ret_ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
     }
 }
 
@@ -409,6 +418,69 @@ impl super::DefModule {
             }
             t.into_token()
         })
+    }
+}
+
+impl super::DefType {
+    pub fn ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
+    }
+
+    #[must_use]
+    pub fn op_spread(&self) -> Option<SyntaxToken> {
+        self.syntax().children_with_tokens().find_map(|t| {
+            if t.kind() != T!["..."] {
+                return None;
+            }
+            t.into_token()
+        })
+    }
+}
+
+impl super::DefLet {
+    pub fn ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
+    }
+}
+
+impl super::DefConst {
+    pub fn ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
+    }
+}
+
+impl super::TypeList {
+    pub fn types(&self) -> impl Iterator<Item = Type> {
+        self.syntax().children().filter_map(Type::cast)
+    }
+}
+
+impl super::TypeObject {
+    pub fn fields(&self) -> impl Iterator<Item = TypeObjectField> {
+        self.syntax().children().filter_map(TypeObjectField::cast)
+    }
+}
+
+impl super::TypeObjectField {
+    #[must_use]
+    pub fn name_ident(&self) -> Option<SyntaxToken> {
+        self.syntax().children_with_tokens().find_map(|t| {
+            if t.kind() != T!["ident"] {
+                return None;
+            }
+            t.into_token()
+        })
+    }
+
+    #[must_use]
+    pub fn name_lit(&self) -> Option<Lit> {
+        self.syntax().children().find_map(Lit::cast)
+    }
+}
+
+impl super::TypeTuple {
+    pub fn types(&self) -> impl Iterator<Item = Type> {
+        self.syntax().children().filter_map(Type::cast)
     }
 }
 

@@ -1,10 +1,11 @@
-use itertools::Itertools;
-use url::Url;
-
 use crate::{
     symbol::{ReferenceTarget, SymbolKind, VirtualSymbol},
     Hir, Module, Symbol,
 };
+use itertools::Itertools;
+use url::Url;
+
+mod types;
 
 impl Hir {
     pub fn clear_references(&mut self) {
@@ -23,6 +24,11 @@ impl Hir {
         }
     }
 
+    pub fn resolve_all(&mut self) {
+        self.resolve_references();
+        self.resolve_types();
+    }
+
     pub fn resolve_references(&mut self) {
         self.clear_references();
 
@@ -32,6 +38,11 @@ impl Hir {
         self.resolve_imports();
         self.resolve_paths();
         self.resolve_scope_references();
+    }
+
+    pub fn resolve_types(&mut self) {
+        self.resolve_type_aliases();
+        self.resolve_types_for_all_symbols();
     }
 
     fn resolve_scope_references(&mut self) {
@@ -188,7 +199,9 @@ impl Hir {
                                         visible_symbol = import_alias;
                                     }
                                     SymbolKind::Virtual(VirtualSymbol::Module(m)) => {
-                                        if self[module_reference].name(self) != Some(m.name.as_str()) {
+                                        if self[module_reference].name(self)
+                                            != Some(m.name.as_str())
+                                        {
                                             continue;
                                         }
                                     }

@@ -9,7 +9,7 @@ use lsp_async_stub::{rpc, util::Mapper};
 use lsp_types::Url;
 use once_cell::sync::Lazy;
 use rhai_common::{config::Config, environment::Environment, util::Normalize};
-use rhai_hir::{Hir, Type};
+use rhai_hir::{ty::Type, Hir};
 use rhai_rowan::{
     parser::{Operator, Parse, Parser},
     util::{is_rhai_def, is_valid_ident},
@@ -242,7 +242,7 @@ impl<E: Environment> Workspace<E> {
 
             self.add_document(document_url, &source_text);
         }
-        self.hir.resolve_references();
+        self.hir.resolve_all();
     }
 
     pub fn add_document(&mut self, url: Url, text: &str) {
@@ -306,13 +306,9 @@ impl<E: Environment> Workspace<E> {
         let new_operators = self
             .hir
             .operators()
-            .map(|op| {
-                (
-                    op.name.clone(),
-                    op.lhs_ty.clone(),
-                    op.rhs_ty.clone(),
-                    op.binding_powers,
-                )
+            .filter_map(|op| {
+                let rhs_ty = op.rhs_ty?;
+                Some((op.name.clone(), op.lhs_ty, rhs_ty, op.binding_powers))
             })
             .collect::<HashSet<_>>();
 

@@ -1,16 +1,18 @@
 use super::module::Module;
-use crate::{eval::Value, source::SourceInfo, HashSet, Hir, IndexMap, Scope, Type};
+use crate::{eval::Value, source::SourceInfo, ty::Type, HashSet, Hir, IndexMap, Scope};
 use rhai_rowan::{syntax::SyntaxKind, TextRange};
 use strum_macros::IntoStaticStr;
 
 slotmap::new_key_type! { pub struct Symbol; }
 
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub struct SymbolData {
     pub source: SourceInfo,
     pub parent_scope: Scope,
     pub kind: SymbolKind,
     pub export: bool,
+    pub ty: Type,
 }
 
 impl SymbolData {
@@ -124,6 +126,7 @@ pub enum SymbolKind {
     Import(ImportSymbol),
     Discard(DiscardSymbol),
     Virtual(VirtualSymbol),
+    TypeDecl(TypeDeclSymbol),
 }
 
 impl SymbolKind {
@@ -647,6 +650,23 @@ impl SymbolKind {
             None
         }
     }
+
+    /// Returns `true` if the symbol kind is [`TypeDecl`].
+    ///
+    /// [`TypeDecl`]: SymbolKind::TypeDecl
+    #[must_use]
+    pub fn is_type_decl(&self) -> bool {
+        matches!(self, Self::TypeDecl(..))
+    }
+
+    #[must_use]
+    pub fn as_type_decl(&self) -> Option<&TypeDeclSymbol> {
+        if let Self::TypeDecl(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -659,11 +679,11 @@ pub struct FnSymbol {
     pub name: String,
     pub docs: String,
     pub scope: Scope,
-    pub ty: Type,
     pub references: HashSet<Symbol>,
     pub getter: bool,
     pub setter: bool,
-    pub def: bool,
+    pub is_def: bool,
+    pub ret_ty: Type,
 }
 
 #[derive(Debug, Default, Clone)]
@@ -671,18 +691,27 @@ pub struct OpSymbol {
     pub name: String,
     pub docs: String,
     pub lhs_ty: Type,
-    pub rhs_ty: Type,
+    pub rhs_ty: Option<Type>,
     pub ret_ty: Type,
     pub binding_powers: (u8, u8),
 }
 
 impl OpSymbol {
+    #[allow(clippy::unused_self)]
     #[must_use]
-    pub fn signature(&self) -> String {
-        format!(
-            "{}({}, {}) -> {}",
-            self.name, self.lhs_ty, self.rhs_ty, self.ret_ty
-        )
+    pub fn signature(&self, hir: &Hir) -> String {
+        use core::fmt::Write;
+        let mut s = String::from("(");
+
+        write!(&mut s, "{}", self.lhs_ty.fmt(hir)).unwrap();
+
+        if let Some(rhs) = self.rhs_ty {
+            write!(&mut s, ", {}", rhs.fmt(hir)).unwrap();
+        }
+
+        write!(&mut s, ") -> {}", self.ret_ty.fmt(hir)).unwrap();
+
+        s
     }
 }
 
@@ -695,7 +724,7 @@ pub struct DeclSymbol {
     pub is_const: bool,
     pub is_pat: bool,
     pub is_import: bool,
-    pub ty: Type,
+    pub ty_decl: Option<Type>,
     pub value: Option<Symbol>,
     pub value_scope: Option<Scope>,
     pub references: HashSet<Symbol>,
@@ -721,22 +750,31 @@ pub struct PathSymbol {
 
 #[derive(Debug, Default, Clone)]
 pub struct LitSymbol {
-    pub ty: Type,
     pub value: Value,
     pub interpolated_scopes: Vec<Scope>,
 }
 
 #[derive(Debug, Clone)]
 pub struct UnarySymbol {
+    pub lookup_text: String,
     pub op: Option<SyntaxKind>,
     pub rhs: Option<Symbol>,
 }
 
 #[derive(Debug, Clone)]
 pub struct BinarySymbol {
+    pub scope: Scope,
+    pub lookup_text: String,
     pub lhs: Option<Symbol>,
     pub op: Option<BinaryOpKind>,
     pub rhs: Option<Symbol>,
+}
+
+impl BinarySymbol {
+    #[must_use]
+    pub fn is_field_access(&self) -> bool {
+        self.lookup_text == "."
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -913,6 +951,42 @@ pub enum ReferenceTarget {
     Module(Module),
 }
 
+impl ReferenceTarget {
+    /// Returns `true` if the reference target is [`Symbol`].
+    ///
+    /// [`Symbol`]: ReferenceTarget::Symbol
+    #[must_use]
+    pub fn is_symbol(&self) -> bool {
+        matches!(self, Self::Symbol(..))
+    }
+
+    #[must_use]
+    pub fn as_symbol(&self) -> Option<&Symbol> {
+        if let Self::Symbol(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
+    /// Returns `true` if the reference target is [`Module`].
+    ///
+    /// [`Module`]: ReferenceTarget::Module
+    #[must_use]
+    pub fn is_module(&self) -> bool {
+        matches!(self, Self::Module(..))
+    }
+
+    #[must_use]
+    pub fn as_module(&self) -> Option<&Module> {
+        if let Self::Module(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+}
+
 /// A symbol that does not and cannot originate
 /// from source code and was injected into the hir.
 #[derive(Debug, Clone)]
@@ -970,4 +1044,10 @@ pub struct VirtualProxySymbol {
 pub struct VirtualModuleSymbol {
     pub name: String,
     pub module: Module,
+}
+
+#[derive(Debug, Clone)]
+pub struct TypeDeclSymbol {
+    pub docs: String,
+    pub ty: Type,
 }

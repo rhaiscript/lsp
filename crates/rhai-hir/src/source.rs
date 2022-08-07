@@ -6,6 +6,7 @@ use crate::Module;
 slotmap::new_key_type! { pub struct Source; }
 
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub struct SourceData {
     pub url: Url,
     pub kind: SourceKind,

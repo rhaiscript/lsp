@@ -354,6 +354,7 @@ fn collect_symbol_scope_iters<'h>(
         | SymbolKind::Reference(_)
         | SymbolKind::Continue(_)
         | SymbolKind::Discard(_)
-        | SymbolKind::Virtual(VirtualSymbol::Proxy(..)) => {}
+        | SymbolKind::Virtual(VirtualSymbol::Proxy(..))
+        | SymbolKind::TypeDecl(_) => {}
     }
 }

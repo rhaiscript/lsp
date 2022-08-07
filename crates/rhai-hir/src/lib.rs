@@ -30,4 +30,4 @@ pub use hir::Hir;
 pub use module::Module;
 pub use scope::Scope;
 pub use symbol::Symbol;
-pub use ty::Type;
+pub use ty::TypeKind;

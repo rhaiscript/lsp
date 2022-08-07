@@ -3,7 +3,6 @@ use rhai_rowan::{
     ast::{ExportTarget, Expr, Item, Rhai, Stmt},
     parser::Parser,
     syntax::{SyntaxKind, SyntaxToken},
-    util::unescape,
     TextSize,
 };
 
@@ -73,6 +72,7 @@ impl Hir {
             syntax: &SyntaxNode,
             is_const: bool,
             export: bool,
+            unknown_type: Type,
         ) -> Symbol {
             let (value, value_scope) = value
                 .map(|expr| {
@@ -111,6 +111,7 @@ impl Hir {
                     value_scope,
                     ..DeclSymbol::default()
                 })),
+                ty: unknown_type,
             });
 
             if let Some(value_scope) = value_scope {
@@ -138,6 +139,7 @@ impl Hir {
                         ..ReferenceSymbol::default()
                     }),
                     parent_scope: Scope::default(),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -183,12 +185,14 @@ impl Hir {
                                         part_of_path: true,
                                         ..ReferenceSymbol::default()
                                     }),
+                                    ty: self.builtin_types.unknown,
                                 });
                                 path_scope.add_symbol(self, symbol, false);
                                 symbol
                             })
                             .collect(),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
                 let sym = self.add_symbol(symbol);
 
@@ -206,91 +210,10 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Lit(LitSymbol {
-                        ty: expr
-                            .lit()
-                            .map(|l| {
-                                if let Some(lit) = l.lit_token() {
-                                    match lit.kind() {
-                                        SyntaxKind::LIT_INT => Type::Int,
-                                        SyntaxKind::LIT_FLOAT => Type::Float,
-                                        SyntaxKind::LIT_BOOL => Type::Bool,
-                                        SyntaxKind::LIT_STR => Type::String,
-                                        SyntaxKind::LIT_CHAR => Type::Char,
-                                        _ => Type::Unknown,
-                                    }
-                                } else if l.lit_str_template().is_some() {
-                                    Type::String
-                                } else {
-                                    Type::Unknown
-                                }
-                            })
-                            .unwrap_or(Type::Unknown),
-                        value: expr
-                            .lit()
-                            .map(|l| {
-                                if let Some(lit) = l.lit_token() {
-                                    match lit.kind() {
-                                        SyntaxKind::LIT_INT => lit
-                                            .text()
-                                            .parse::<i64>()
-                                            .map(Value::Int)
-                                            .unwrap_or(Value::Unknown),
-                                        SyntaxKind::LIT_FLOAT => lit
-                                            .text()
-                                            .parse::<f64>()
-                                            .map(Value::Float)
-                                            .unwrap_or(Value::Unknown),
-                                        SyntaxKind::LIT_BOOL => lit
-                                            .text()
-                                            .parse::<bool>()
-                                            .map(Value::Bool)
-                                            .unwrap_or(Value::Unknown),
-                                        SyntaxKind::LIT_STR => {
-                                            let mut text = lit.text();
-
-                                            if text.starts_with('"') {
-                                                text = text
-                                                    .strip_prefix('"')
-                                                    .unwrap_or(text)
-                                                    .strip_suffix('"')
-                                                    .unwrap_or(text);
-
-                                                Value::String(unescape(text, '"').0)
-                                            } else {
-                                                text = text
-                                                    .strip_prefix('`')
-                                                    .unwrap_or(text)
-                                                    .strip_suffix('`')
-                                                    .unwrap_or(text);
-                                                Value::String(unescape(text, '`').0)
-                                            }
-                                        }
-                                        SyntaxKind::LIT_CHAR => {
-                                            let mut text = lit.text();
-                                            text = text
-                                                .strip_prefix('\'')
-                                                .unwrap_or(text)
-                                                .strip_suffix('\'')
-                                                .unwrap_or(text);
-
-                                            Value::Char(
-                                                // FIXME: this allocates a string.
-                                                unescape(text, '\'')
-                                                    .0
-                                                    .chars()
-                                                    .next()
-                                                    .unwrap_or('💩'),
-                                            )
-                                        }
-                                        _ => Value::Unknown,
-                                    }
-                                } else {
-                                    Value::Unknown
-                                }
-                            })
-                            .unwrap_or(Value::Unknown),
+                        value: expr.lit().map_or(Value::Unknown, value_of_lit),
                         interpolated_scopes: Vec::default(),
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 if let Some(lit) = expr.lit().and_then(|l| l.lit_str_template()) {
@@ -335,6 +258,7 @@ impl Hir {
                 &expr.syntax(),
                 false,
                 can_export,
+                self.builtin_types.unknown,
             )
             .into(),
             Expr::Const(expr) => add_decl(
@@ -346,6 +270,7 @@ impl Hir {
                 &expr.syntax(),
                 true,
                 can_export,
+                self.builtin_types.unknown,
             )
             .into(),
             Expr::Block(expr) => {
@@ -367,6 +292,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Block(BlockSymbol { scope: block_scope }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 block_scope.set_parent(self, symbol);
@@ -389,22 +315,36 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Unary(UnarySymbol {
+                        lookup_text: expr
+                            .op_token()
+                            .map(|t| t.text().trim().to_string())
+                            .unwrap_or_default(),
                         op: expr.op_token().map(|t| t.kind()),
                         rhs,
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
                 Some(symbol)
             }
             Expr::Binary(expr) => {
+                let binary_scope = self.add_scope(ScopeData {
+                    source: SourceInfo {
+                        source: Some(source),
+                        text_range: expr.syntax().text_range().into(),
+                        selection_text_range: None,
+                    },
+                    ..Default::default()
+                });
+
                 let lhs = expr
                     .lhs()
-                    .and_then(|lhs| self.add_expression(source, scope, false, lhs));
+                    .and_then(|lhs| self.add_expression(source, binary_scope, false, lhs));
 
                 let rhs = expr
                     .rhs()
-                    .and_then(|rhs| self.add_expression(source, scope, false, rhs));
+                    .and_then(|rhs| self.add_expression(source, binary_scope, false, rhs));
 
                 let op = expr.op_token().map(|t| {
                     if t.kind() == SyntaxKind::IDENT {
@@ -433,8 +373,19 @@ impl Hir {
                         text_range: expr.syntax().text_range().into(),
                         selection_text_range: None,
                     },
-                    kind: SymbolKind::Binary(BinarySymbol { lhs, op, rhs }),
+                    kind: SymbolKind::Binary(BinarySymbol {
+                        scope: binary_scope,
+                        lookup_text: expr
+                            .op_token()
+                            .map(|t| t.text().trim().to_string())
+                            .unwrap_or_default(),
+                        lhs,
+                        op,
+                        rhs,
+                    }),
+                    ty: self.builtin_types.unknown,
                 });
+                binary_scope.set_parent(self, symbol);
 
                 scope.add_symbol(self, symbol, false);
                 Some(symbol)
@@ -457,6 +408,7 @@ impl Hir {
                             .filter_map(|expr| self.add_expression(source, scope, false, expr))
                             .collect(),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -482,6 +434,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Index(IndexSymbol { base, index }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -521,6 +474,7 @@ impl Hir {
                             })
                             .collect(),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -550,6 +504,7 @@ impl Hir {
                             None => Vec::default(),
                         },
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -584,6 +539,7 @@ impl Hir {
                                 is_param: true,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
 
                         closure_scope.add_symbol(self, symbol, false);
@@ -606,6 +562,7 @@ impl Hir {
                         scope,
                         expr: closure_expr_symbol,
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -623,6 +580,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::If(IfSymbol::default()),
+                    ty: self.builtin_types.unknown,
                 });
 
                 // Here we flatten the branches of the `if` expression
@@ -707,6 +665,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Loop(LoopSymbol { scope: loop_scope }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 loop_scope.set_parent(self, symbol);
@@ -740,6 +699,7 @@ impl Hir {
                                 is_pat: true,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
                         scope.add_symbol(self, ident_symbol, false);
                     }
@@ -763,6 +723,7 @@ impl Hir {
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
                         scope: for_scope,
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(sym);
@@ -798,6 +759,7 @@ impl Hir {
                             .expr()
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -820,6 +782,7 @@ impl Hir {
                             .expr()
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -836,6 +799,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Continue(ContinueSymbol {}),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -867,6 +831,7 @@ impl Hir {
                                         },
                                         parent_scope: Scope::default(),
                                         kind: SymbolKind::Discard(DiscardSymbol {}),
+                                        ty: self.builtin_types.unknown,
                                     }));
                                 }
 
@@ -901,6 +866,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Switch(SwitchSymbol { target, arms }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -920,6 +886,7 @@ impl Hir {
                             .expr()
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -953,7 +920,7 @@ impl Hir {
                     }
 
                     // So that We have syntax highlight.
-                    // FIXME: this replaces `rhai-scope` everywhere.
+                    // FIXME: this replaces `rhai-scope` everywhere, not just code blocks.
                     docs = fn_item.docs_content().replace("rhai-scope", "rhai");
                 }
 
@@ -975,6 +942,7 @@ impl Hir {
                                 is_param: true,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
 
                         fn_scope.add_symbol(self, symbol, false);
@@ -1001,6 +969,7 @@ impl Hir {
                         scope: fn_scope,
                         ..FnSymbol::default()
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -1042,6 +1011,7 @@ impl Hir {
                                     ..DeclSymbol::default()
                                 })),
                                 parent_scope: Scope::default(),
+                                ty: self.builtin_types.unknown,
                             });
 
                             import_scope.add_symbol(self, alias_symbol, false);
@@ -1052,6 +1022,7 @@ impl Hir {
                             self.add_expression(source, import_scope, false, expr)
                         }),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -1085,6 +1056,7 @@ impl Hir {
                                 ..ReferenceSymbol::default()
                             }),
                             parent_scope: Scope::default(),
+                            ty: self.builtin_types.unknown,
                         });
 
                         scope.add_symbol(self, symbol, false);
@@ -1103,6 +1075,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Export(ExportSymbol { target }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);
@@ -1150,6 +1123,7 @@ impl Hir {
                                 is_param: true,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
 
                         scope.add_symbol(self, symbol, false);
@@ -1172,6 +1146,7 @@ impl Hir {
                         try_scope,
                         catch_scope,
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(sym);
@@ -1194,6 +1169,7 @@ impl Hir {
                     parent_scope: Scope::default(),
                     export: false,
                     kind: SymbolKind::Throw(ThrowSymbol { expr }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, false);

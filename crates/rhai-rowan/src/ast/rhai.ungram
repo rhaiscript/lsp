@@ -256,7 +256,7 @@ DefOp =
       | '.'
     )
   )
-  TypeList ('->' ty:Type)?
+  TypeList ('->' ret_ty:Type)?
   precedence:DefOpPrecedence?
 
 DefOpPrecedence =
@@ -265,14 +265,14 @@ DefOpPrecedence =
   binding_powers:('lit_int' (',' 'lit_int')* ','?)?
   ')'
 
-DefType = ty_token:'ident' 'ident' '=' ty:Type
+DefType = ty_token:'ident' 'ident' '=' (ty:Type | '...')
 
 DefFn =
   'fn'
   __kw_get:'ident'?
   __name:'ident'
   TypedParamList
-  ('->' ty:Type)?
+  ('->' ret_ty:Type)?
 
 Type =
   TypeIdent

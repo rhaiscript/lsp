@@ -64,6 +64,28 @@ impl Query {
     }
 
     #[must_use]
+    pub fn ident(&self) -> Option<SyntaxToken> {
+        self.before
+            .as_ref()
+            .and_then(|t| {
+                if t.syntax.kind() == IDENT {
+                    Some(t.syntax.clone())
+                } else {
+                    None
+                }
+            })
+            .or_else(|| {
+                self.after.as_ref().and_then(|t| {
+                    if t.syntax.kind() == IDENT {
+                        Some(t.syntax.clone())
+                    } else {
+                        None
+                    }
+                })
+            })
+    }
+
+    #[must_use]
     #[allow(clippy::missing_panics_doc)]
     pub fn binary_op_ident(&self) -> Option<SyntaxToken> {
         self.binary_expr().and_then(|expr| {

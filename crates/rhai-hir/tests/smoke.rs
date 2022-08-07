@@ -155,12 +155,12 @@ fn add_and_remove_sources() {
             add(&mut hir, name, source);
         }
 
-        hir.resolve_references();
+        hir.resolve_all();
 
         for (name, _) in sources {
             remove(&mut hir, name);
         }
 
-        hir.resolve_references();
+        hir.resolve_all();
     }
 }

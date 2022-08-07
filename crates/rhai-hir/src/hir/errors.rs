@@ -45,7 +45,7 @@ impl Hir {
                     }
                 }
                 SymbolKind::Fn(f) => {
-                    if f.def {
+                    if f.is_def {
                         return;
                     }
 

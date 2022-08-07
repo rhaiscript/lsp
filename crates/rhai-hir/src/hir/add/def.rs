@@ -1,8 +1,14 @@
 use super::*;
-use crate::{module::ModuleKind, source::SourceInfo, util::script_url, IndexSet};
+use crate::{
+    module::ModuleKind,
+    source::SourceInfo,
+    ty::{Array, Object},
+    util::script_url,
+    IndexSet,
+};
 use rhai_rowan::{
-    ast::{AstNode, Def, DefStmt, RhaiDef},
-    syntax::SyntaxElement,
+    ast::{self, AstNode, Def, DefStmt, RhaiDef},
+    syntax::{SyntaxElement, SyntaxKind},
     util::unescape,
     T,
 };
@@ -120,6 +126,7 @@ impl Hir {
                                     ..DeclSymbol::default()
                                 })),
                                 parent_scope: Scope::default(),
+                                ty: self.builtin_types.unknown,
                             });
 
                             import_scope.add_symbol(self, alias_symbol, true);
@@ -130,6 +137,7 @@ impl Hir {
                             self.add_expression(source, import_scope, false, expr)
                         }),
                     }),
+                    ty: self.builtin_types.unknown,
                 };
 
                 let symbol = self.add_symbol(symbol_data);
@@ -142,6 +150,8 @@ impl Hir {
                     Some(s) => s,
                     None => return,
                 };
+
+                let ty_decl = const_def.ty().map(|t| self.add_type(source, None, &t));
 
                 let symbol = self.symbols.insert(SymbolData {
                     export: true,
@@ -157,8 +167,10 @@ impl Hir {
                         value: None,
                         value_scope: None,
                         docs,
+                        ty_decl,
                         ..DeclSymbol::default()
                     })),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -168,6 +180,8 @@ impl Hir {
                     Some(s) => s,
                     None => return,
                 };
+
+                let ty_decl = let_def.ty().map(|t| self.add_type(source, None, &t));
 
                 let symbol = self.symbols.insert(SymbolData {
                     export: false,
@@ -183,8 +197,10 @@ impl Hir {
                         value: None,
                         value_scope: None,
                         docs,
+                        ty_decl,
                         ..DeclSymbol::default()
                     })),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -201,6 +217,7 @@ impl Hir {
 
                 if let Some(param_list) = expr.typed_param_list() {
                     for param in param_list.params() {
+                        let param_ty = param.ty().map(|t| self.add_type(source, None, &t));
                         let symbol = self.add_symbol(SymbolData {
                             export: false,
                             parent_scope: Scope::default(),
@@ -216,13 +233,19 @@ impl Hir {
                                     .map(|s| s.text().to_string())
                                     .unwrap_or_default(),
                                 is_param: true,
+                                ty_decl: param_ty,
                                 ..DeclSymbol::default()
                             })),
+                            ty: self.builtin_types.unknown,
                         });
 
                         fn_scope.add_symbol(self, symbol, false);
                     }
                 }
+
+                let ret_ty = expr.ret_ty().map_or(self.builtin_types.unknown, |t| {
+                    self.add_type(source, None, &t)
+                });
 
                 let symbol = self.add_symbol(SymbolData {
                     export: true,
@@ -242,9 +265,11 @@ impl Hir {
                         scope: fn_scope,
                         getter: expr.has_kw_get(),
                         setter: expr.has_kw_set(),
-                        def: true,
+                        is_def: true,
+                        ret_ty,
                         ..FnSymbol::default()
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -256,12 +281,36 @@ impl Hir {
                     .children_with_tokens()
                     .filter_map(SyntaxElement::into_token)
                     .skip(1)
-                    .find(|t| t.kind() == T!["ident"] || t.kind().infix_binding_power().is_some());
+                    .find(|t| {
+                        t.kind() == T!["ident"]
+                            || t.kind().infix_binding_power().is_some()
+                            || t.kind().prefix_binding_power().is_some()
+                    });
 
                 let ident = match name_token {
                     Some(i) => i,
                     None => return,
                 };
+
+                let mut lhs_ty = self.builtin_types.unknown;
+                let mut rhs_ty = None;
+                let mut ret_ty = self.builtin_types.unknown;
+
+                if let Some(ty_list) = f.type_list() {
+                    let mut types = ty_list.types();
+
+                    if let Some(t) = types.next() {
+                        lhs_ty = self.add_type(source, None, &t);
+                    }
+
+                    if let Some(t) = types.next() {
+                        rhs_ty = Some(self.add_type(source, None, &t));
+                    }
+                }
+
+                if let Some(t) = f.ret_ty() {
+                    ret_ty = self.add_type(source, None, &t);
+                }
 
                 let symbol = self.symbols.insert(SymbolData {
                     export: true,
@@ -272,7 +321,7 @@ impl Hir {
                     },
                     parent_scope: Scope::default(),
                     kind: SymbolKind::Op(OpSymbol {
-                        name: ident.text().into(),
+                        name: ident.text().trim().into(),
                         docs,
                         binding_powers: f
                             .precedence()
@@ -288,8 +337,11 @@ impl Hir {
                                 Some((bp_l, bp_r))
                             })
                             .unwrap_or((1, 2)),
-                        ..OpSymbol::default()
+                        lhs_ty,
+                        rhs_ty,
+                        ret_ty,
                     }),
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, symbol, true);
@@ -330,13 +382,162 @@ impl Hir {
                         module,
                     })),
                     export: true,
+                    ty: self.builtin_types.unknown,
                 });
 
                 scope.add_symbol(self, virt_module_symbol, true);
             }
-            Def::Type(_) => {
-                // TODO
+            Def::Type(ty_def) => {
+                if let Some(ident) = ty_def.ident_token() {
+                    let ty = if let Some(ty) = ty_def.ty() {
+                        self.add_type(source, ctx.text_range(ident.text_range()), &ty)
+                    } else if ty_def.op_spread().is_some() {
+                        self.types.insert(TypeData {
+                            source: SourceInfo {
+                                source: Some(source),
+                                text_range: ctx.text_range(ty_def.syntax().text_range()),
+                                selection_text_range: ctx.text_range(ident.text_range()),
+                            },
+                            protected: false,
+                            kind: TypeKind::Primitive(ident.text().trim().to_string()),
+                        })
+                    } else {
+                        self.builtin_types.unknown
+                    };
+
+                    let alias = self.types.insert(TypeData {
+                        source: SourceInfo {
+                            source: Some(source),
+                            text_range: ctx.text_range(ty_def.syntax().text_range()),
+                            selection_text_range: ctx.text_range(ident.text_range()),
+                        },
+                        protected: false,
+                        kind: TypeKind::Alias(ident.text().to_string(), ty),
+                    });
+
+                    let symbol = self.add_symbol(SymbolData {
+                        source: SourceInfo {
+                            source: Some(source),
+                            text_range: ctx.text_range(ty_def.syntax().text_range()),
+                            selection_text_range: ctx.text_range(ident.text_range()),
+                        },
+                        parent_scope: Default::default(),
+                        kind: SymbolKind::TypeDecl(TypeDeclSymbol { docs, ty: alias }),
+                        export: true,
+                        ty: self.builtin_types.unknown,
+                    });
+
+                    scope.add_symbol(self, symbol, false);
+                }
             }
+        }
+    }
+
+    fn add_type(
+        &mut self,
+        source: Source,
+        selection_text_range: Option<TextRange>,
+        ty: &ast::Type,
+    ) -> Type {
+        match &ty {
+            ast::Type::Ident(ident) => self.types.insert(TypeData {
+                source: SourceInfo {
+                    source: Some(source),
+                    text_range: Some(ty.syntax().text_range()),
+                    selection_text_range,
+                },
+                protected: false,
+                kind: TypeKind::Unresolved(
+                    ident
+                        .ident_token()
+                        .map(|t| t.text().trim().to_string())
+                        .unwrap_or_default(),
+                ),
+            }),
+            ast::Type::Lit(lit) => match &lit.lit() {
+                Some(l) => match l.lit_token() {
+                    Some(t) => match t.kind() {
+                        SyntaxKind::LIT_INT => self.builtin_types.int,
+                        SyntaxKind::LIT_FLOAT => self.builtin_types.float,
+                        SyntaxKind::LIT_BOOL => self.builtin_types.bool,
+                        SyntaxKind::LIT_STR => self.builtin_types.string,
+                        SyntaxKind::LIT_CHAR => self.builtin_types.char,
+                        _ => self.builtin_types.unknown,
+                    },
+                    None => {
+                        if l.lit_str_template().is_some() {
+                            self.builtin_types.string
+                        } else {
+                            self.builtin_types.unknown
+                        }
+                    }
+                },
+                None => self.builtin_types.unknown,
+            },
+            ast::Type::Object(o) => {
+                let fields = o
+                    .fields()
+                    .map(|field| {
+                        let name = if let Some(lit) = field.name_lit() {
+                            value_of_lit(lit).to_string()
+                        } else if let Some(ident) = field.name_ident() {
+                            ident.text().to_string()
+                        } else {
+                            String::new()
+                        };
+
+                        if let Some(ty) = field.ty() {
+                            (name, self.add_type(source, None, &ty))
+                        } else {
+                            (name, self.builtin_types.unknown)
+                        }
+                    })
+                    .collect();
+
+                self.types.insert(TypeData {
+                    source: SourceInfo {
+                        source: Some(source),
+                        text_range: Some(ty.syntax().text_range()),
+                        selection_text_range,
+                    },
+                    protected: false,
+                    kind: TypeKind::Object(Object { fields }),
+                })
+            }
+            ast::Type::Array(arr) => {
+                let ty = if let Some(ty) = arr.fist_ty() {
+                    self.add_type(source, None, &ty)
+                } else {
+                    self.builtin_types.unknown
+                };
+
+                self.types.insert(TypeData {
+                    source: SourceInfo {
+                        source: Some(source),
+                        text_range: Some(arr.syntax().text_range()),
+                        selection_text_range,
+                    },
+                    protected: false,
+                    kind: TypeKind::Array(Array { items: ty }),
+                })
+            }
+            ast::Type::Tuple(tuple) => {
+                let types = tuple
+                    .types()
+                    .map(|ty| self.add_type(source, None, &ty))
+                    .collect::<Vec<_>>();
+
+                self.types.insert(TypeData {
+                    source: SourceInfo {
+                        source: Some(source),
+                        text_range: Some(tuple.syntax().text_range()),
+                        selection_text_range,
+                    },
+                    protected: false,
+                    kind: TypeKind::Tuple(types),
+                })
+            }
+            ast::Type::Unknown(_) => self.builtin_types.unknown,
         }
     }
 }

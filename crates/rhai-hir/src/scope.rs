@@ -3,6 +3,7 @@ use crate::{source::SourceInfo, HashSet, IndexSet, Symbol};
 slotmap::new_key_type! { pub struct Scope; }
 
 #[derive(Debug, Default, Clone)]
+#[non_exhaustive]
 pub struct ScopeData {
     pub source: SourceInfo,
     pub parent: Option<ScopeParent>,
@@ -35,6 +36,26 @@ impl ScopeData {
 pub enum ScopeParent {
     Scope(Scope),
     Symbol(Symbol),
+}
+
+impl ScopeParent {
+    #[must_use]
+    pub fn as_scope(&self) -> Option<&Scope> {
+        if let Self::Scope(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
+    #[must_use]
+    pub fn as_symbol(&self) -> Option<&Symbol> {
+        if let Self::Symbol(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
 }
 
 impl From<Scope> for ScopeParent {

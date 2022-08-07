@@ -2,6 +2,7 @@ use crate::{
     scope::Scope,
     source::Source,
     symbol::{ReferenceTarget, SwitchArm, Symbol, SymbolData, SymbolKind, VirtualSymbol},
+    ty::Type,
     Hir, Module,
 };
 
@@ -16,8 +17,19 @@ impl Hir {
             .map(|(s, _)| s)
             .collect::<Vec<_>>();
 
+        let types_to_remove = self
+            .types
+            .iter()
+            .filter(|(_, ty_data)| ty_data.source.is(source))
+            .map(|(s, _)| s)
+            .collect::<Vec<_>>();
+
         for symbol in symbols_to_remove {
             self.remove_symbol(symbol);
+        }
+
+        for ty in types_to_remove {
+            self.remove_type(ty);
         }
 
         for m in self.modules.values_mut() {
@@ -63,6 +75,21 @@ impl Hir {
 
             for sym in symbols_to_remove {
                 self.remove_symbol(sym);
+            }
+        }
+    }
+
+    pub(crate) fn remove_type(&mut self, ty: Type) {
+        if let Some(ty) = self.types.get(ty) {
+            if ty.protected {
+                return;
+            }
+        }
+        self.types.remove(ty);
+
+        for symbol in self.symbols.values_mut() {
+            if symbol.ty == ty {
+                symbol.ty = self.builtin_types.unknown;
             }
         }
     }
@@ -130,6 +157,7 @@ impl Hir {
                 }
             }
             SymbolKind::Binary(binary) => {
+                self.remove_scope(binary.scope);
                 if let Some(s) = binary.lhs {
                     self.remove_symbol(s);
                 }
@@ -242,7 +270,10 @@ impl Hir {
                     self.remove_scope(scope);
                 }
             }
-             SymbolKind::Continue(_) | SymbolKind::Discard(_) => {}
+            SymbolKind::Continue(_)
+            | SymbolKind::Discard(_)
+            | SymbolKind::Op(_)
+            | SymbolKind::TypeDecl(_) => {}
             SymbolKind::Export(e) => {
                 if let Some(s) = e.target {
                     self.remove_symbol(s);
@@ -256,9 +287,6 @@ impl Hir {
                 if let Some(sym) = sym.expr {
                     self.remove_symbol(sym);
                 }
-            }
-            SymbolKind::Op(_op) => {
-                // TODO
             }
             SymbolKind::Virtual(virt) => {
                 match virt {
