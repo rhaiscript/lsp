@@ -23,6 +23,21 @@ impl Hir {
         let mut to_remove = HashSet::with_capacity(symbols.len());
 
         for symbol in symbols {
+            let visible_types: Vec<_> = self
+                .visible_symbols_from_symbol(symbol)
+                .filter_map(|sym| {
+                    if let Some(decl) = self[sym].kind.as_type_decl() {
+                        if let TypeKind::Alias(name, ty) = &self.types.get(decl.ty).unwrap().kind {
+                            Some((name.clone(), *ty))
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+
             let symbol_data = self.symbols.get_mut(symbol).unwrap();
 
             match &mut symbol_data.kind {
@@ -32,6 +47,7 @@ impl Hir {
                         self.builtin_types,
                         &mut sym.ret_ty,
                         &mut to_remove,
+                        &visible_types,
                     );
                 }
                 SymbolKind::Op(sym) => {
@@ -40,6 +56,7 @@ impl Hir {
                         self.builtin_types,
                         &mut sym.lhs_ty,
                         &mut to_remove,
+                        &visible_types,
                     );
 
                     if let Some(rhs_ty) = &mut sym.rhs_ty {
@@ -48,6 +65,7 @@ impl Hir {
                             self.builtin_types,
                             rhs_ty,
                             &mut to_remove,
+                            &visible_types,
                         );
                     }
 
@@ -56,6 +74,7 @@ impl Hir {
                         self.builtin_types,
                         &mut sym.ret_ty,
                         &mut to_remove,
+                        &visible_types,
                     );
                 }
                 SymbolKind::Decl(sym) => {
@@ -65,6 +84,7 @@ impl Hir {
                             self.builtin_types,
                             ty,
                             &mut to_remove,
+                            &visible_types,
                         );
                     }
                 }
@@ -76,11 +96,12 @@ impl Hir {
                 self.builtin_types,
                 &mut symbol_data.ty,
                 &mut to_remove,
+                &visible_types,
             );
         }
 
         for ty in to_remove {
-            self.types.remove(ty);
+            self.remove_type(ty);
         }
     }
 
@@ -177,6 +198,7 @@ impl Hir {
                     self.types.insert(TypeData {
                         source,
                         kind: TypeKind::Union(switch_types),
+                        protected: false,
                     })
                 };
             }
@@ -207,6 +229,7 @@ impl Hir {
                     self.types.insert(TypeData {
                         source,
                         kind: TypeKind::Union(branch_types),
+                        protected: false,
                     })
                 };
             }
@@ -263,6 +286,7 @@ impl Hir {
 
                 self.symbols.get_mut(symbol).unwrap().ty = self.types.insert(TypeData {
                     source,
+                    protected: false,
                     kind: TypeKind::Fn(Function {
                         is_closure: false,
                         params,
@@ -314,6 +338,7 @@ impl Hir {
 
                 self.symbols.get_mut(symbol).unwrap().ty = self.types.insert(TypeData {
                     source,
+                    protected: false,
                     kind: TypeKind::Fn(Function {
                         is_closure: false,
                         params,
@@ -369,12 +394,14 @@ impl Hir {
                     self.types.insert(TypeData {
                         source,
                         kind: TypeKind::Union(types),
+                        protected: false,
                     })
                 };
 
                 let arr_ty = self.types.insert(TypeData {
                     source,
                     kind: TypeKind::Array(Array { items }),
+                    protected: false,
                 });
 
                 self.symbols.get_mut(symbol).unwrap().ty = arr_ty;
@@ -398,6 +425,7 @@ impl Hir {
                 self.symbols.get_mut(symbol).unwrap().ty = self.types.insert(TypeData {
                     source,
                     kind: TypeKind::Object(Object { fields }),
+                    protected: false,
                 });
             }
 
@@ -513,7 +541,8 @@ impl Hir {
             | SymbolKind::Virtual(_)
             | SymbolKind::Discard(_)
             | SymbolKind::Op(_)
-            | SymbolKind::Try(_) => {
+            | SymbolKind::Try(_)
+            | SymbolKind::TypeDecl(_) => {
                 sym_data.ty = self.builtin_types.never;
             }
             SymbolKind::Import(_)
@@ -532,6 +561,7 @@ fn resolve_and_replace(
     builtin_types: BuiltinTypes,
     ty: &mut Type,
     to_remove: &mut HashSet<Type>,
+    visible_types: &[(String, Type)],
 ) {
     if let TypeKind::Unresolved(r) = &types.get(*ty).unwrap().kind {
         match r.trim() {
@@ -575,8 +605,19 @@ fn resolve_and_replace(
                 to_remove.insert(*ty);
                 *ty = builtin_types.never;
             }
-            _ => {
-                // TODO: resolve type definitions.
+            name => {
+                if let Some((name, alias_ty)) =
+                    visible_types.iter().find(|(def_name, _)| def_name == name)
+                {
+                    // to_remove.insert(*ty);
+                    let original_ty_source = types.get(*ty).unwrap().source;
+
+                    *ty = types.insert(TypeData {
+                        source: original_ty_source,
+                        kind: TypeKind::Alias(name.clone(), *alias_ty),
+                        protected: false,
+                    });
+                }
             }
         }
     }

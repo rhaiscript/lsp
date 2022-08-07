@@ -126,6 +126,7 @@ pub enum SymbolKind {
     Import(ImportSymbol),
     Discard(DiscardSymbol),
     Virtual(VirtualSymbol),
+    TypeDecl(TypeDeclSymbol),
 }
 
 impl SymbolKind {
@@ -649,6 +650,23 @@ impl SymbolKind {
             None
         }
     }
+
+    /// Returns `true` if the symbol kind is [`TypeDecl`].
+    ///
+    /// [`TypeDecl`]: SymbolKind::TypeDecl
+    #[must_use]
+    pub fn is_type_decl(&self) -> bool {
+        matches!(self, Self::TypeDecl(..))
+    }
+
+    #[must_use]
+    pub fn as_type_decl(&self) -> Option<&TypeDeclSymbol> {
+        if let Self::TypeDecl(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -1026,4 +1044,10 @@ pub struct VirtualProxySymbol {
 pub struct VirtualModuleSymbol {
     pub name: String,
     pub module: Module,
+}
+
+#[derive(Debug, Clone)]
+pub struct TypeDeclSymbol {
+    pub docs: String,
+    pub ty: Type,
 }

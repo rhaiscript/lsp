@@ -421,6 +421,22 @@ impl super::DefModule {
     }
 }
 
+impl super::DefType {
+    pub fn ty(&self) -> Option<Type> {
+        self.syntax().children().find_map(Type::cast)
+    }
+
+    #[must_use]
+    pub fn op_spread(&self) -> Option<SyntaxToken> {
+        self.syntax().children_with_tokens().find_map(|t| {
+            if t.kind() != T!["..."] {
+                return None;
+            }
+            t.into_token()
+        })
+    }
+}
+
 impl super::DefLet {
     pub fn ty(&self) -> Option<Type> {
         self.syntax().children().find_map(Type::cast)

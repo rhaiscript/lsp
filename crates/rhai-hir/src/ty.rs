@@ -63,6 +63,7 @@ impl Type {
 pub struct TypeData {
     pub source: SourceInfo,
     pub kind: TypeKind,
+    pub protected: bool,
 }
 
 /// Used to print a type.
@@ -157,6 +158,7 @@ impl core::fmt::Display for TypeFormatter<'_> {
             TypeKind::Unresolved(ty) => f.write_str(ty.trim())?,
             TypeKind::Never => f.write_str("!")?,
             TypeKind::Unknown => f.write_str("?")?,
+            TypeKind::Primitive(ty) => f.write_str(ty)?,
         }
 
         Ok(())
@@ -180,6 +182,8 @@ pub enum TypeKind {
     Alias(String, Type),
     Unresolved(String),
     Tuple(Vec<Type>),
+    /// An arbitrary atomic primitive type.
+    Primitive(String),
     Never,
     Unknown,
 }

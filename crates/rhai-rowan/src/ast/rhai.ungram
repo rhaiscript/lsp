@@ -265,7 +265,7 @@ DefOpPrecedence =
   binding_powers:('lit_int' (',' 'lit_int')* ','?)?
   ')'
 
-DefType = ty_token:'ident' 'ident' '=' ty:Type
+DefType = ty_token:'ident' 'ident' '=' (ty:Type | '...')
 
 DefFn =
   'fn'

@@ -244,14 +244,7 @@ impl Hir {
                 }
 
                 let ret_ty = expr.ret_ty().map_or(self.builtin_types.unknown, |t| {
-                    self.types.insert(TypeData {
-                        source: SourceInfo {
-                            source: Some(source),
-                            text_range: Some(t.syntax().text_range()),
-                            ..Default::default()
-                        },
-                        kind: TypeKind::Unresolved(t.syntax().to_string()),
-                    })
+                    self.add_type(source, None, &t)
                 });
 
                 let symbol = self.add_symbol(SymbolData {
@@ -307,37 +300,16 @@ impl Hir {
                     let mut types = ty_list.types();
 
                     if let Some(t) = types.next() {
-                        lhs_ty = self.types.insert(TypeData {
-                            source: SourceInfo {
-                                source: Some(source),
-                                text_range: Some(t.syntax().text_range()),
-                                ..Default::default()
-                            },
-                            kind: TypeKind::Unresolved(t.syntax().to_string()),
-                        });
+                        lhs_ty = self.add_type(source, None, &t);
                     }
 
                     if let Some(t) = types.next() {
-                        rhs_ty = Some(self.types.insert(TypeData {
-                            source: SourceInfo {
-                                source: Some(source),
-                                text_range: Some(t.syntax().text_range()),
-                                ..Default::default()
-                            },
-                            kind: TypeKind::Unresolved(t.syntax().to_string()),
-                        }));
+                        rhs_ty = Some(self.add_type(source, None, &t));
                     }
                 }
 
                 if let Some(t) = f.ret_ty() {
-                    ret_ty = self.types.insert(TypeData {
-                        source: SourceInfo {
-                            source: Some(source),
-                            text_range: Some(t.syntax().text_range()),
-                            ..Default::default()
-                        },
-                        kind: TypeKind::Unresolved(t.syntax().to_string()),
-                    });
+                    ret_ty = self.add_type(source, None, &t);
                 }
 
                 let symbol = self.symbols.insert(SymbolData {
@@ -415,8 +387,48 @@ impl Hir {
 
                 scope.add_symbol(self, virt_module_symbol, true);
             }
-            Def::Type(_) => {
-                // TODO
+            Def::Type(ty_def) => {
+                if let Some(ident) = ty_def.ident_token() {
+                    let ty = if let Some(ty) = ty_def.ty() {
+                        self.add_type(source, ctx.text_range(ident.text_range()), &ty)
+                    } else if ty_def.op_spread().is_some() {
+                        self.types.insert(TypeData {
+                            source: SourceInfo {
+                                source: Some(source),
+                                text_range: ctx.text_range(ty_def.syntax().text_range()),
+                                selection_text_range: ctx.text_range(ident.text_range()),
+                            },
+                            protected: false,
+                            kind: TypeKind::Primitive(ident.text().trim().to_string()),
+                        })
+                    } else {
+                        self.builtin_types.unknown
+                    };
+
+                    let alias = self.types.insert(TypeData {
+                        source: SourceInfo {
+                            source: Some(source),
+                            text_range: ctx.text_range(ty_def.syntax().text_range()),
+                            selection_text_range: ctx.text_range(ident.text_range()),
+                        },
+                        protected: false,
+                        kind: TypeKind::Alias(ident.text().to_string(), ty),
+                    });
+
+                    let symbol = self.add_symbol(SymbolData {
+                        source: SourceInfo {
+                            source: Some(source),
+                            text_range: ctx.text_range(ty_def.syntax().text_range()),
+                            selection_text_range: ctx.text_range(ident.text_range()),
+                        },
+                        parent_scope: Default::default(),
+                        kind: SymbolKind::TypeDecl(TypeDeclSymbol { docs, ty: alias }),
+                        export: true,
+                        ty: self.builtin_types.unknown,
+                    });
+
+                    scope.add_symbol(self, symbol, false);
+                }
             }
         }
     }
@@ -434,6 +446,7 @@ impl Hir {
                     text_range: Some(ty.syntax().text_range()),
                     selection_text_range,
                 },
+                protected: false,
                 kind: TypeKind::Unresolved(
                     ident
                         .ident_token()
@@ -487,6 +500,7 @@ impl Hir {
                         text_range: Some(ty.syntax().text_range()),
                         selection_text_range,
                     },
+                    protected: false,
                     kind: TypeKind::Object(Object { fields }),
                 })
             }
@@ -503,6 +517,7 @@ impl Hir {
                         text_range: Some(arr.syntax().text_range()),
                         selection_text_range,
                     },
+                    protected: false,
                     kind: TypeKind::Array(Array { items: ty }),
                 })
             }
@@ -518,6 +533,7 @@ impl Hir {
                         text_range: Some(tuple.syntax().text_range()),
                         selection_text_range,
                     },
+                    protected: false,
                     kind: TypeKind::Tuple(types),
                 })
             }

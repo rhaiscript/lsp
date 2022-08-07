@@ -353,7 +353,13 @@ pub fn parse_def_type(ctx: &mut Context) {
     expect_token!(ctx in node, T!["ident"]);
     expect_token!(ctx in node, T!["="]);
 
-    super::ty::parse_type(ctx);
+    let token = require_token!(ctx in node);
+
+    if token == T!["..."] {
+        ctx.eat();
+    } else {
+        super::ty::parse_type(ctx);
+    }
 
     ctx.finish_node();
 }
