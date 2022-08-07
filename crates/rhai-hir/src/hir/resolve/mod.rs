@@ -41,6 +41,7 @@ impl Hir {
     }
 
     pub fn resolve_types(&mut self) {
+        self.resolve_type_aliases();
         self.resolve_types_for_all_symbols();
     }
 

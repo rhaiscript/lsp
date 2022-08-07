@@ -1,9 +1,11 @@
 use crate::{
     eval::Value,
+    hir::BuiltinTypes,
     symbol::{ReferenceTarget, SymbolKind},
-    ty::{Array, Function, Object, TypeData},
+    ty::{Array, Function, Object, Type, TypeData},
     HashSet, Hir, IndexMap, IndexSet, Symbol, TypeKind,
 };
+use slotmap::SlotMap;
 
 impl Hir {
     pub(crate) fn resolve_types_for_all_symbols(&mut self) {
@@ -12,6 +14,73 @@ impl Hir {
         let mut seen = HashSet::with_capacity(symbols.len());
         for symbol in symbols {
             self.resolve_type_for_symbol(&mut seen, symbol);
+        }
+    }
+
+    pub(crate) fn resolve_type_aliases(&mut self) {
+        let symbols = self.symbols.keys().collect::<Vec<_>>();
+
+        let mut to_remove = HashSet::with_capacity(symbols.len());
+
+        for symbol in symbols {
+            let symbol_data = self.symbols.get_mut(symbol).unwrap();
+
+            match &mut symbol_data.kind {
+                SymbolKind::Fn(sym) => {
+                    resolve_and_replace(
+                        &mut self.types,
+                        self.builtin_types,
+                        &mut sym.ret_ty,
+                        &mut to_remove,
+                    );
+                }
+                SymbolKind::Op(sym) => {
+                    resolve_and_replace(
+                        &mut self.types,
+                        self.builtin_types,
+                        &mut sym.lhs_ty,
+                        &mut to_remove,
+                    );
+
+                    if let Some(rhs_ty) = &mut sym.rhs_ty {
+                        resolve_and_replace(
+                            &mut self.types,
+                            self.builtin_types,
+                            rhs_ty,
+                            &mut to_remove,
+                        );
+                    }
+
+                    resolve_and_replace(
+                        &mut self.types,
+                        self.builtin_types,
+                        &mut sym.ret_ty,
+                        &mut to_remove,
+                    );
+                }
+                SymbolKind::Decl(sym) => {
+                    if let Some(ty) = &mut sym.ty_decl {
+                        resolve_and_replace(
+                            &mut self.types,
+                            self.builtin_types,
+                            ty,
+                            &mut to_remove,
+                        );
+                    }
+                }
+                _ => {}
+            }
+
+            resolve_and_replace(
+                &mut self.types,
+                self.builtin_types,
+                &mut symbol_data.ty,
+                &mut to_remove,
+            );
+        }
+
+        for ty in to_remove {
+            self.types.remove(ty);
         }
     }
 
@@ -358,6 +427,61 @@ impl Hir {
             }
             SymbolKind::Unary(_) | SymbolKind::Binary(_) => {
                 // TODO
+            }
+        }
+    }
+}
+
+fn resolve_and_replace(
+    types: &mut SlotMap<Type, TypeData>,
+    builtin_types: BuiltinTypes,
+    ty: &mut Type,
+    to_remove: &mut HashSet<Type>,
+) {
+    if let TypeKind::Unresolved(r) = &types.get(*ty).unwrap().kind {
+        match r.trim() {
+            "module" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.module;
+            }
+            "int" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.int;
+            }
+            "float" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.float;
+            }
+            "bool" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.bool;
+            }
+            "char" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.char;
+            }
+            "String" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.string;
+            }
+            "timestamp" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.timestamp;
+            }
+            "void" | "()" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.void;
+            }
+            "?" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.unknown;
+            }
+            "!" => {
+                to_remove.insert(*ty);
+                *ty = builtin_types.never;
+            }
+            _ => {
+                // TODO: resolve type definitions.
             }
         }
     }

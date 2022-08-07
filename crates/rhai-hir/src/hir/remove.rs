@@ -16,8 +16,19 @@ impl Hir {
             .map(|(s, _)| s)
             .collect::<Vec<_>>();
 
+        let types_to_remove = self
+            .types
+            .iter()
+            .filter(|(_, ty_data)| ty_data.source.is(source))
+            .map(|(s, _)| s)
+            .collect::<Vec<_>>();
+
         for symbol in symbols_to_remove {
             self.remove_symbol(symbol);
+        }
+
+        for ty in types_to_remove {
+            self.types.remove(ty);
         }
 
         for m in self.modules.values_mut() {
@@ -242,7 +253,7 @@ impl Hir {
                     self.remove_scope(scope);
                 }
             }
-             SymbolKind::Continue(_) | SymbolKind::Discard(_) => {}
+            SymbolKind::Continue(_) | SymbolKind::Discard(_) => {}
             SymbolKind::Export(e) => {
                 if let Some(s) = e.target {
                     self.remove_symbol(s);
