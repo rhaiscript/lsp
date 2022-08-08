@@ -563,62 +563,66 @@ fn resolve_and_replace(
     to_remove: &mut HashSet<Type>,
     visible_types: &[(String, Type)],
 ) {
-    if let TypeKind::Unresolved(r) = &types.get(*ty).unwrap().kind {
-        match r.trim() {
-            "module" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.module;
-            }
-            "int" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.int;
-            }
-            "float" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.float;
-            }
-            "bool" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.bool;
-            }
-            "char" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.char;
-            }
-            "String" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.string;
-            }
-            "timestamp" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.timestamp;
-            }
-            "void" | "()" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.void;
-            }
-            "?" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.unknown;
-            }
-            "!" => {
-                to_remove.insert(*ty);
-                *ty = builtin_types.never;
-            }
-            name => {
-                if let Some((name, alias_ty)) =
-                    visible_types.iter().find(|(def_name, _)| def_name == name)
-                {
-                    // to_remove.insert(*ty);
-                    let original_ty_source = types.get(*ty).unwrap().source;
+    if let Some(ty_data) = types.get(*ty) {
+        if let TypeKind::Unresolved(r) = &ty_data.kind {
+            match r.trim() {
+                "module" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.module;
+                }
+                "int" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.int;
+                }
+                "float" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.float;
+                }
+                "bool" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.bool;
+                }
+                "char" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.char;
+                }
+                "String" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.string;
+                }
+                "timestamp" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.timestamp;
+                }
+                "void" | "()" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.void;
+                }
+                "?" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.unknown;
+                }
+                "!" => {
+                    to_remove.insert(*ty);
+                    *ty = builtin_types.never;
+                }
+                name => {
+                    if let Some((name, alias_ty)) =
+                        visible_types.iter().find(|(def_name, _)| def_name == name)
+                    {
+                        // to_remove.insert(*ty);
+                        let original_ty_source = types.get(*ty).unwrap().source;
 
-                    *ty = types.insert(TypeData {
-                        source: original_ty_source,
-                        kind: TypeKind::Alias(name.clone(), *alias_ty),
-                        protected: false,
-                    });
+                        *ty = types.insert(TypeData {
+                            source: original_ty_source,
+                            kind: TypeKind::Alias(name.clone(), *alias_ty),
+                            protected: false,
+                        });
+                    }
                 }
             }
         }
+    } else {
+        *ty = builtin_types.unknown;
     }
 }
