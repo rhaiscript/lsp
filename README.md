@@ -90,9 +90,7 @@ Currently the following steps are used to develop the project via vscode:
 cargo install --path crates/rhai-cli --debug
 ```
 
-This will build and install the `rhai` executable globally that the vscode extension looks for.
-
-After this step right now you have to manually kill the old running `rhai` executable or restart VSCode (`Developer: Reload Window`) in order for vscode to use the newly built language server.
+This will build and install the `rhai` executable globally that the vscode extension can also use.
 
 #### Debugging the Language Server
 
