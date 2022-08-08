@@ -157,6 +157,6 @@ code --install-extension rhai-0.0.0.vsix --force
 
 After this the Rhai extension will be available in vscode.
 
-If you modify any of the packages, unfortunately will have to build all dependent packages manually, e.g. if you modify `js/core`, you will have to repeat the above steps.
+If you modify any of the packages, unfortunately you will have to build all dependent packages manually, e.g. if you modify `js/core`, you will have to repeat all the above steps.
 
-Unless you wish to develop any of the javascript parts (the libraries or the extension itself), it is enough to instead install the Rhai CLI, and setting `"rhai.executable.bundled": false` in vscode. This way the extension will use the language server from the `rhai` executable which is easier to debug, rebuild and develop in general.
+Unless you wish to develop any of the javascript parts (the libraries or the extension itself), instead of rebuilding the extension, it is enough to install the Rhai CLI, and setting `"rhai.executable.bundled": false` in vscode. This way the extension will use the language server from the `rhai` executable which is easier to debug, rebuild and develop in general.
