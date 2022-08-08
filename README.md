@@ -15,7 +15,7 @@
       - [Debugging the Language Server](#debugging-the-language-server)
       - [Building the VSCode Extension](#building-the-vscode-extension)
         - [Requirements](#requirements-1)
-      - [Build Steps](#build-steps)
+        - [Build Steps](#build-steps)
 
 # Rhai LSP
 
@@ -84,15 +84,6 @@ The documentation is still pretty much WIP (as everything else). All contributio
 
 Currently the following steps are used to develop the project via vscode:
 
-#### Building and Installing the VSCode Extension
-
-Install the extension with the following:
-```sh
-(cd editors/vscode && yarn && vsce package --no-yarn && code --install-extension *.vsix --force)
-```
-
-You only have to do this at the beginning or whenever you update the extension.
-
 #### Building the Rhai CLI
 
 ```sh
@@ -118,7 +109,7 @@ The vscode extension relies on rhai-lsp compiled to WebAssembly via [`rhai-wasm`
 - Yarn (`npm i -g yarn`)
 - vsce (`npm i -g vsce`)
 
-#### Build Steps
+##### Build Steps
 
 You'll need to build all local js libraries in dependency order:
 
