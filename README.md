@@ -14,6 +14,8 @@
       - [Building the Rhai CLI](#building-the-rhai-cli)
       - [Debugging the Language Server](#debugging-the-language-server)
       - [Building the VSCode Extension](#building-the-vscode-extension)
+        - [Requirements](#requirements-1)
+      - [Build Steps](#build-steps)
 
 # Rhai LSP
 
@@ -23,9 +25,8 @@ It's incomplete and not recommended for general use yet, everything can be subje
 
 ## Requirements
 
-- Stable Rust toolchain (e.g. via [rustup](https://rustup.rs/))
-- yarn 2 (for VS Code)
-- [vsce](https://www.npmjs.com/package/vsce) for VS Code extensions
+- Stable Rust toolchain is required (e.g. via [rustup](https://rustup.rs/))
+- ... other required tools are described in the appropriate sections
 
 ## Project Structure
 
@@ -110,12 +111,52 @@ The debugging process can consist of either strategically placed `tracing::info`
 
 The vscode extension relies on rhai-lsp compiled to WebAssembly via [`rhai-wasm`](./crates/rhai-wasm). There are several related [js libraries](./js) that are built on top of it.
 
-Generally all you should need is `yarn` (2), and `vsce`, and the following single command:
+##### Requirements
+
+- The usual Rust tools along with the `wasm32-unknown-unknown` target, (`rustup target add wasm32-unknown-unknown`).
+- NodeJs with proper PATH variables set up.
+- Yarn (`npm i -g yarn`)
+- vsce (`npm i -g vsce`)
+
+#### Build Steps
+
+You'll need to build all local js libraries in dependency order:
+
+First the core js library with common utilities:
 
 ```sh
-(cd editors/vscode && yarn && vsce package --no-yarn && code --install-extension *.vsix --force)
+# from js/core
+
+yarn install --force
+yarn build
 ```
 
-If this fails, you will need to build each js package with `yarn build` individually.
+Then the LSP wrapper, it will also build the WASM library:
 
-If all that fails, make sure to perform your favourite JavaScript exorcism ritual or file an issue.
+```sh
+# from js/lsp
+
+yarn install --force
+yarn build
+```
+
+Finally the extension itself:
+
+```sh
+# from editors/vscode
+
+yarn install --force
+vsce package --no-yarn
+```
+
+Then you can use vscode to install the packaged extension via the UI or the following command:
+
+```sh
+code --install-extension rhai-0.0.0.vsix --force
+```
+
+After this the Rhai extension will be available in vscode.
+
+If you modify any of the packages, unfortunately will have to build all dependent packages manually, e.g. if you modify `js/core`, you will have to repeat the above steps.
+
+Unless you wish to develop any of the javascript parts (the libraries or the extension itself), it is enough to instead install the Rhai CLI, and setting `"rhai.executable.bundled": false` in vscode. This way the extension will use the language server from the `rhai` executable which is easier to debug, rebuild and develop in general.

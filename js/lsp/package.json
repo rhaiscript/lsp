@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "description": "A JavaScript wrapper for the Rhai language server.",
   "scripts": {
-    "build": "yarn rollup --silent -c rollup.config.js",
-    "prepare": "yarn build"
+    "build": "yarn rollup --silent -c rollup.config.js"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

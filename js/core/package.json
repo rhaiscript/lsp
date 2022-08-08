@@ -7,8 +7,7 @@
     "url": "https://github.com/tamasfe"
   },
   "scripts": {
-    "build": "yarn rollup --silent -c rollup.config.js",
-    "prepare": "yarn build"
+    "build": "yarn rollup --silent -c rollup.config.js"
   },
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
