@@ -12,7 +12,7 @@
     "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
     "build:syntax": "js-yaml syntax/rhai.tmLanguage.yaml > syntax/rhai.tmLanguage.json",
     "build:node": "rollup -c rollup.config.js",
-    "build": "rm -rf dist && yarn build:syntax && yarn build:node"
+    "build": "yarn build:syntax && yarn build:node"
   },
   "repository": {
     "url": "https://example.com"
