@@ -1,9 +1,9 @@
 - [Rhai LSP](#rhai-lsp)
   - [Requirements](#requirements)
   - [Project Structure](#project-structure)
-    - [`crates/rowan`](#cratesrowan)
-    - [`crates/lsp`](#crateslsp)
-    - [`crates/sourcegen`](#cratessourcegen)
+    - [`crates/rhai-rowan`](#cratesrowan)
+    - [`crates/rhai-lsp`](#crateslsp)
+    - [`crates/rhai-sourcegen`](#cratessourcegen)
     - [`editors/vscode`](#editorsvscode)
   - [Tests](#tests)
   - [Benchmarks](#benchmarks)
@@ -30,19 +30,19 @@ It's incomplete and not recommended for general use yet, everything can be subje
 
 ## Project Structure
 
-### [`crates/rowan`](crates/rowan)
+### [`crates/rowan`](crates/rhai-rowan)
 
 Rhai syntax and a recursive descent parser based on [Rowan](https://github.com/rust-analyzer/rowan).
 
-The high-level syntax ([ungrammar](https://rust-analyzer.github.io/blog/2020/10/24/introducing-ungrammar.html)) definition is found in [crates/rowan/src/ast/rhai.ungram](crates/rowan/src/ast/rhai.ungram). The parser mimics the structure and produces a fitting CST.
+The high-level syntax ([ungrammar](https://rust-analyzer.github.io/blog/2020/10/24/introducing-ungrammar.html)) definition is found in [crates/rowan/src/ast/rhai.ungram](crates/rhai-rowan/src/ast/rhai.ungram). The parser mimics the structure and produces a fitting CST.
 
-### [`crates/lsp`](crates/lsp)
+### [`crates/lsp`](crates/rhai-lsp)
 
-The LSP server implementation backed up by [lsp-async-stub](https://github.com/tamasfe/taplo/tree/master/lsp-async-stub).
+The LSP server implementation backed up by [lsp-async-stub](https://github.com/tamasfe/taplo/tree/master/crates/lsp-async-stub).
 
 It can be compiled to WASM only right now, but native binaries with stdio or TCP communication can be easily implemented.
 
-### [`crates/sourcegen`](crates/sourcegen)
+### [`crates/sourcegen`](crates/rhai-sourcegen)
 
 Crate for source generation.
 
@@ -58,7 +58,7 @@ If all the tools are available from the [Requirements](#requirements), it can be
 
 Run all tests with `cargo test`.
 
-[Parser tests](crates/rowan/tests) are based on scripts found in [`testdata`](testdata), and also in the upstream [rhai submodule](rhai/scripts).
+[Parser tests](crates/rhai-rowan/tests) are based on scripts found in [`testdata`](testdata), and also in the upstream [rhai submodule](rhai/scripts).
 
 ## Benchmarks
 
