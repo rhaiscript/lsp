@@ -42,7 +42,7 @@ The LSP server implementation backed up by [lsp-async-stub](https://github.com/t
 
 It can be compiled to WASM only right now, but native binaries with stdio or TCP communication can be easily implemented.
 
-### [`crates/sourcegen`](crates/sourcegen)
+### [`crates/sourcegen`](crates/rhai-sourcegen)
 
 Crate for source generation.
 
