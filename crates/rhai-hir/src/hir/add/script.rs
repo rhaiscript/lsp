@@ -822,7 +822,7 @@ impl Hir {
                                 let mut right = None;
 
                                 if let Some(discard) = arm.discard_token() {
-                                    left = Some(self.add_symbol(SymbolData {
+                                    let discard_symbol = self.add_symbol(SymbolData {
                                         export: false,
                                         source: SourceInfo {
                                             source: Some(source),
@@ -832,7 +832,11 @@ impl Hir {
                                         parent_scope: Scope::default(),
                                         kind: SymbolKind::Discard(DiscardSymbol {}),
                                         ty: self.builtin_types.unknown,
-                                    }));
+                                    });
+
+                                    scope.add_symbol(self, discard_symbol, false);
+
+                                    left = Some(discard_symbol);
                                 }
 
                                 if let Some(expr) = arm.condition().and_then(|c| c.expr()) {
