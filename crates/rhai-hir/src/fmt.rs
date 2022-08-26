@@ -42,8 +42,13 @@
 //!
 //! `!MISSING <item>` notations suggest a bug in the HIR.
 //!
-//! ## Duplicate symbols
+//! ## Parents
 //! 
+//! To uncover bugs, in some cases it is useful to print parents
+//! of items (e.g. scopes of symbols), parents use the `^<target>` notation.
+//! 
+//! ## Duplicate symbols
+//!
 //! You might notice that some symbols might appear more than once,
 //! this is *not* a bug. By design some symbols do not have a scope,
 //! for example symbols in arrays (`["foo", "bar"]`) share
@@ -51,7 +56,7 @@
 //! When the HIR is printed, we still want to show that the symbols
 //! in addition to being in the scope are also part of the array,
 //! thus the representation will end up something like this:
-//! 
+//!
 //! ```text
 //! $sym1
 //! $sym2
@@ -60,9 +65,9 @@
 //!   $sym2
 //! ]
 //! ```
-//! 
+//!
 //! # Examples
-//! 
+//!
 //! The following script:
 //!
 //! ```rhai
@@ -103,6 +108,7 @@
 use slotmap::{Key, KeyData};
 
 use crate::{
+    scope::ScopeParent,
     source::Source,
     symbol::{BinaryOpKind, ReferenceTarget, SymbolKind, VirtualSymbol},
     Hir, Module, Scope, Symbol,
@@ -135,11 +141,14 @@ macro_rules! windentln {
 
 #[derive(Clone, Copy)]
 #[must_use]
+#[allow(clippy::struct_excessive_bools)]
 pub struct HirFmt<'h> {
     hir: &'h Hir,
     indent_level: usize,
     include_slots: bool,
     include_sources: bool,
+    include_parents: bool,
+    print_all: bool,
 }
 
 impl fmt::Debug for Hir {
@@ -148,6 +157,8 @@ impl fmt::Debug for Hir {
 
         if f.alternate() {
             hir_fmt.include_sources = true;
+            hir_fmt.include_parents = true;
+            hir_fmt.print_all = true;
         }
 
         <_ as fmt::Display>::fmt(&hir_fmt, f)
@@ -166,6 +177,18 @@ impl fmt::Display for HirFmt<'_> {
             writeln!(f)?;
         }
 
+        if self.print_all {
+            for s in self.hir.symbols.keys() {
+                self.fmt_symbol(f, s)?;
+                writeln!(f)?;
+            }
+
+            for s in self.hir.scopes.keys() {
+                self.fmt_scope(f, s)?;
+                writeln!(f)?;
+            }
+        }
+
         Ok(())
     }
 }
@@ -177,6 +200,8 @@ impl<'h> HirFmt<'h> {
             indent_level: 0,
             include_slots: true,
             include_sources: false,
+            include_parents: false,
+            print_all: false,
         }
     }
 
@@ -187,6 +212,11 @@ impl<'h> HirFmt<'h> {
 
     pub fn with_source(mut self) -> Self {
         self.include_sources = true;
+        self
+    }
+
+    pub fn with_parents(mut self) -> Self {
+        self.include_parents = true;
         self
     }
 
@@ -273,17 +303,33 @@ impl<'h> HirFmt<'h> {
     fn fmt_scope(&self, f: &mut fmt::Formatter, scope: Scope) -> fmt::Result {
         match self.hir.scopes.get(scope) {
             Some(s) => {
-                let slot = if self.include_slots {
+                let mut extra = if self.include_slots {
                     KeyDataFmt(scope.data()).to_string()
                 } else {
                     String::new()
                 };
 
-                if s.is_empty() {
-                    write!(f, "{slot}{{")?;
-                } else {
-                    writeln!(f, "{slot}{{")?;
+                if self.include_parents {
+                    match s.parent {
+                        Some(parent) => match parent {
+                            ScopeParent::Scope(s) => {
+                                write!(&mut extra, "(^scope{})", KeyDataFmt(s.data())).unwrap();
+                            }
+                            ScopeParent::Symbol(s) => {
+                                write!(&mut extra, "(^${})", KeyDataFmt(s.data())).unwrap();
+                            }
+                        },
+                        None => {
+                            extra += "(^-)";
+                        }
+                    }
                 }
+
+                if s.is_empty() {
+                    return write!(f, "{extra}{{}}");
+                }
+
+                writeln!(f, "{extra}{{")?;
 
                 let fmt_child = self.incr_indent();
 
@@ -324,6 +370,10 @@ impl<'h> HirFmt<'h> {
             export = if data.export { "export " } else { "" },
             symbol_name = <&str>::from(&data.kind)
         )?;
+
+        if self.include_parents {
+            write!(f, " (^scope{})", KeyDataFmt(data.parent_scope.data()))?;
+        }
 
         if self.include_sources {
             write!(f, " (")?;
@@ -777,6 +827,11 @@ struct KeyDataFmt(KeyData);
 impl fmt::Display for KeyDataFmt {
     #[allow(clippy::cast_possible_truncation)]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // null value
+        if Symbol::default().data().as_ffi() == self.0.as_ffi() {
+            return write!(f, "@NULL");
+        }
+
         let value = self.0.as_ffi();
         let idx = value & 0xffff_ffff;
         let version = (value >> 32) | 1;
