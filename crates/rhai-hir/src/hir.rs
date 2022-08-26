@@ -150,7 +150,11 @@ impl ops::Index<Scope> for Hir {
     type Output = ScopeData;
 
     fn index(&self, index: Scope) -> &Self::Output {
-        self.scopes.get(index).unwrap()
+        assert!(!index.is_null(), "expected non-null scope");
+        match self.scopes.get(index) {
+            Some(s) => s,
+            None => panic!("scope was not found {:?}", index),
+        }
     }
 }
 
@@ -158,10 +162,17 @@ impl ops::Index<Symbol> for Hir {
     type Output = SymbolData;
 
     fn index(&self, index: Symbol) -> &Self::Output {
-        let sym = self.symbols.get(index).unwrap();
+        assert!(!index.is_null(), "expected non-null symbol");
+        let sym = match self.symbols.get(index) {
+            Some(s) => s,
+            None => panic!("symbol was not found {:?}", index),
+        };
 
         if let SymbolKind::Virtual(VirtualSymbol::Proxy(proxy)) = &sym.kind {
-            return self.symbols.get(proxy.target).unwrap();
+            return match self.symbols.get(proxy.target) {
+                Some(s) => s,
+                None => panic!("proxy target symbol was not found {:?}", proxy.target),
+            };
         }
 
         sym
@@ -172,7 +183,11 @@ impl ops::Index<Module> for Hir {
     type Output = ModuleData;
 
     fn index(&self, index: Module) -> &Self::Output {
-        self.modules.get(index).unwrap()
+        assert!(!index.is_null(), "expected non-null module");
+        match self.modules.get(index) {
+            Some(s) => s,
+            None => panic!("module was not found {:?}", index),
+        }
     }
 }
 
@@ -180,7 +195,11 @@ impl ops::Index<Source> for Hir {
     type Output = SourceData;
 
     fn index(&self, index: Source) -> &Self::Output {
-        self.sources.get(index).unwrap()
+        assert!(!index.is_null(), "expected non-null source");
+        match self.sources.get(index) {
+            Some(s) => s,
+            None => panic!("source was not found {:?}", index),
+        }
     }
 }
 
@@ -188,7 +207,11 @@ impl ops::Index<Type> for Hir {
     type Output = TypeData;
 
     fn index(&self, index: Type) -> &Self::Output {
-        self.types.get(index).unwrap()
+        assert!(!index.is_null(), "expected non-null type");
+        match self.types.get(index) {
+            Some(s) => s,
+            None => panic!("type was not found {:?}", index),
+        }
     }
 }
 
