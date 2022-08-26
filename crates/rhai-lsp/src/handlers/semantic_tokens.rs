@@ -58,7 +58,7 @@ pub(crate) async fn semantic_tokens<E: Environment>(
                     None
                 }
             }
-            SymbolKind::Reference(r) => {
+            SymbolKind::Ref(r) => {
                 if let Some(&target_symbol) = r.target.as_ref().and_then(ReferenceTarget::as_symbol)
                 {
                     if let Some(ty) = token_for_ty(&ws.hir, ws.hir[target_symbol].ty) {

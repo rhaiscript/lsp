@@ -8,6 +8,19 @@ pub enum Value {
     Unknown,
 }
 
+impl core::fmt::Display for Value {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Value::Int(v) => v.fmt(f),
+            Value::Float(v) => v.fmt(f),
+            Value::Bool(v) => v.fmt(f),
+            Value::String(v) => write!(f, r#""{v}""#),
+            Value::Char(v) => write!(f, "'{v}'"),
+            Value::Unknown => "UNKNOWN VALUE".fmt(f),
+        }
+    }
+}
+
 impl Value {
     /// Returns `true` if the value is [`Int`].
     ///
@@ -106,18 +119,5 @@ impl Value {
 impl Default for Value {
     fn default() -> Self {
         Self::Unknown
-    }
-}
-
-impl core::fmt::Display for Value {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Value::Int(v) => v.fmt(f),
-            Value::Float(v) => v.fmt(f),
-            Value::Bool(v) => v.fmt(f),
-            Value::String(v) => v.fmt(f),
-            Value::Char(v) => v.fmt(f),
-            Value::Unknown => f.write_str("<unknown value>"),
-        }
     }
 }

@@ -142,7 +142,7 @@ impl Hir {
                     Value::Unknown => self.builtin_types.unknown,
                 }
             }
-            SymbolKind::Reference(r) => match r.target {
+            SymbolKind::Ref(r) => match r.target {
                 Some(ReferenceTarget::Symbol(target_sym)) => {
                     self.resolve_type_for_symbol(seen, target_sym);
                     let target_sym_data = self.symbols.get(target_sym).unwrap();

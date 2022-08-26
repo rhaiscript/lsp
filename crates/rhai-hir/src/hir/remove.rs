@@ -131,7 +131,7 @@ impl Hir {
                     self.remove_scope(v);
                 }
             }
-            SymbolKind::Reference(r) => {
+            SymbolKind::Ref(r) => {
                 if let Some(ReferenceTarget::Symbol(r_target)) = r.target {
                     if let Some(target) = self.symbols.get_mut(r_target) {
                         match &mut target.kind {
@@ -213,7 +213,7 @@ impl Hir {
                 self.remove_scope(lp.scope);
             }
             SymbolKind::For(fr) => {
-                if let Some(s) = fr.iterable {
+                if let Some(s) = fr.cursor {
                     self.remove_symbol(s);
                 }
 

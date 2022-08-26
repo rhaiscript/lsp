@@ -16,10 +16,10 @@ slotmap = { version = "1.0.6", features = ["serde"] }
 static_assertions = "1.1.0"
 thiserror = "1.0.30"
 tracing = "0.1.29"
-strum_macros = "0.24.0"
 strsim = "0.10.0"
 url = "2.2.2"
 pulldown-cmark = "0.9.2"
+strum = { version = "0.24.1", features = ["derive"] }
 
 [dev-dependencies]
 insta = "1.8.0"

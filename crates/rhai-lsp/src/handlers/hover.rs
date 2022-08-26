@@ -85,7 +85,7 @@ fn hover_for_symbol(
                 range: highlight_range,
             })
         }
-        rhai_hir::symbol::SymbolKind::Reference(r) => match &r.target {
+        rhai_hir::symbol::SymbolKind::Ref(r) => match &r.target {
             Some(ReferenceTarget::Symbol(target)) => {
                 hover_for_symbol(hir, root, highlight_range, *target)
             }

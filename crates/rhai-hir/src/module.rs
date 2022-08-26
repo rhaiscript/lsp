@@ -19,6 +19,16 @@ pub enum ModuleKind {
     Url(Url),
 }
 
+impl core::fmt::Display for ModuleKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ModuleKind::Static => "static".fmt(f),
+            ModuleKind::Inline => "inline".fmt(f),
+            ModuleKind::Url(u) => u.fmt(f),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct ModuleData {
     pub scope: Scope,

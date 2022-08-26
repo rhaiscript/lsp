@@ -131,7 +131,7 @@ impl Hir {
                         text_range: expr.syntax().text_range().into(),
                         selection_text_range: expr.ident_token().map(|t| t.text_range()),
                     },
-                    kind: SymbolKind::Reference(ReferenceSymbol {
+                    kind: SymbolKind::Ref(ReferenceSymbol {
                         name: expr
                             .ident_token()
                             .map(|s| s.text().to_string())
@@ -180,7 +180,7 @@ impl Hir {
                                         selection_text_range: s.text_range().into(),
                                     },
                                     parent_scope: Scope::default(),
-                                    kind: SymbolKind::Reference(ReferenceSymbol {
+                                    kind: SymbolKind::Ref(ReferenceSymbol {
                                         name: s.text().to_string(),
                                         part_of_path: true,
                                         ..ReferenceSymbol::default()
@@ -559,7 +559,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::Closure(ClosureSymbol {
-                        scope,
+                        scope: closure_scope,
                         expr: closure_expr_symbol,
                     }),
                     ty: self.builtin_types.unknown,
@@ -718,7 +718,7 @@ impl Hir {
                         selection_text_range: None,
                     },
                     kind: SymbolKind::For(ForSymbol {
-                        iterable: expr
+                        cursor: expr
                             .iterable()
                             .and_then(|expr| self.add_expression(source, scope, false, expr)),
                         scope: for_scope,
@@ -1048,7 +1048,7 @@ impl Hir {
                                 text_range: expr.syntax().text_range().into(),
                                 selection_text_range: expr.ident_token().map(|t| t.text_range()),
                             },
-                            kind: SymbolKind::Reference(ReferenceSymbol {
+                            kind: SymbolKind::Ref(ReferenceSymbol {
                                 name: expr
                                     .ident_token()
                                     .map(|s| s.text().to_string())

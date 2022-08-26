@@ -12,6 +12,7 @@ rowan = { version = "0.15.5", features = ["serde1"] }
 thiserror = "1.0.29"
 tracing = { version = "0.1.28" }
 serde = { version = "1", features = ["derive"] }
+strum = "0.24.1"
 
 [dev-dependencies]
 insta = "1.8.0"
