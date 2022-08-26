@@ -181,19 +181,8 @@ impl<E: Environment> Workspace<E> {
 
         let mut paths = Vec::new();
 
-        let workspace_root = match self.env.url_to_file_path(&self.root) {
-            Some(root) => root.normalize(),
-            None => {
-                tracing::debug!("workspace is not in a valid filesystem");
-                return;
-            }
-        };
-
         for include_pattern in includes {
-            let pattern_paths = match self
-                .env
-                .glob_files(&workspace_root.join(include_pattern).to_string_lossy())
-            {
+            let pattern_paths = match self.env.glob_files(include_pattern) {
                 Ok(paths) => paths.normalize(),
                 Err(error) => {
                     tracing::error!(%error, "failed to load files");

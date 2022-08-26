@@ -35,7 +35,15 @@ process.on("message", async (d: RpcMessage) => {
         stdErrAtty: () => process.stderr.isTTY,
         stdin: process.stdin,
         stdout: process.stdout,
-        urlToFilePath: (url: string) => decodeURI(url).slice("file://".length),
+        urlToFilePath: (url: string) => {
+          const c = decodeURIComponent(url).slice("file://".length);
+
+          if (process.platform === "win32" && c.startsWith("/")) {
+            return c.slice(1);
+          }
+
+          return c;
+        },
         isDir: path => {
           try {
             return fs.statSync(path).isDirectory();
