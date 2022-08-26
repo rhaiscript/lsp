@@ -271,7 +271,7 @@ fn generate_ast(grammar: &Grammar) -> String {
                     };
 
                     let rule = match inner_rule {
-                        Rule::Labeled { label: _, rule } => &*rule,
+                        Rule::Labeled { label: _, rule } => rule,
                         r => r,
                     };
 
