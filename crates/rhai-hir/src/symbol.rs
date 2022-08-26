@@ -1,7 +1,7 @@
 use super::module::Module;
 use crate::{eval::Value, source::SourceInfo, ty::Type, HashSet, Hir, IndexMap, Scope};
 use rhai_rowan::{syntax::SyntaxKind, TextRange};
-use strum_macros::IntoStaticStr;
+use strum::IntoStaticStr;
 
 slotmap::new_key_type! { pub struct Symbol; }
 
@@ -21,7 +21,7 @@ impl SymbolData {
         match &self.kind {
             SymbolKind::Fn(f) => Some(&f.name),
             SymbolKind::Decl(d) => Some(&d.name),
-            SymbolKind::Reference(r) => Some(&r.name),
+            SymbolKind::Ref(r) => Some(&r.name),
             SymbolKind::Import(import) => import.alias.and_then(|alias| hir[alias].name(hir)),
             SymbolKind::Virtual(VirtualSymbol::Module(m)) => Some(&m.name),
             _ => None,
@@ -85,7 +85,7 @@ impl SymbolData {
     #[must_use]
     pub fn target(&self) -> Option<ReferenceTarget> {
         match &self.kind {
-            SymbolKind::Reference(r) => r.target,
+            SymbolKind::Ref(r) => r.target,
             SymbolKind::Decl(d) => d.target,
             SymbolKind::Import(i) => i.target.map(ReferenceTarget::Module),
             SymbolKind::Virtual(VirtualSymbol::Module(m)) => {
@@ -102,7 +102,7 @@ pub enum SymbolKind {
     Fn(FnSymbol),
     Op(OpSymbol),
     Decl(Box<DeclSymbol>),
-    Reference(ReferenceSymbol),
+    Ref(ReferenceSymbol),
     Path(PathSymbol),
     Lit(LitSymbol),
     Unary(UnarySymbol),
@@ -212,12 +212,12 @@ impl SymbolKind {
     /// [`Reference`]: SymbolKind::Reference
     #[must_use]
     pub fn is_reference(&self) -> bool {
-        matches!(self, Self::Reference(..))
+        matches!(self, Self::Ref(..))
     }
 
     #[must_use]
     pub fn as_reference(&self) -> Option<&ReferenceSymbol> {
-        if let Self::Reference(v) = self {
+        if let Self::Ref(v) = self {
             Some(v)
         } else {
             None
@@ -226,7 +226,7 @@ impl SymbolKind {
 
     #[must_use]
     pub fn as_reference_mut(&mut self) -> Option<&mut ReferenceSymbol> {
-        if let Self::Reference(v) = self {
+        if let Self::Ref(v) = self {
             Some(v)
         } else {
             None
@@ -879,7 +879,7 @@ pub struct LoopSymbol {
 
 #[derive(Debug, Default, Clone)]
 pub struct ForSymbol {
-    pub iterable: Option<Symbol>,
+    pub cursor: Option<Symbol>,
     pub scope: Scope,
 }
 

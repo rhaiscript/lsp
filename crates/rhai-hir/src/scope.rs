@@ -14,10 +14,10 @@ pub struct ScopeData {
 impl ScopeData {
     /// Iterate over all direct symbols in the scope.
     pub fn iter_symbols(&self) -> impl Iterator<Item = Symbol> + '_ {
-        self.symbols
+        self.hoisted_symbols
             .iter()
             .copied()
-            .chain(self.hoisted_symbols.iter().copied())
+            .chain(self.symbols.iter().copied())
     }
 
     /// Total count of direct symbols in the scope.

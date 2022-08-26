@@ -50,7 +50,7 @@ pub async fn prepare_rename<E: Environment>(
             Some(range) => match &data.kind {
                 symbol::SymbolKind::Fn(_)
                 | symbol::SymbolKind::Decl(_)
-                | symbol::SymbolKind::Reference(_) => {
+                | symbol::SymbolKind::Ref(_) => {
                     Some(PrepareRenameResponse::Range(range.into_lsp()))
                 }
                 _ => None,
@@ -92,7 +92,7 @@ pub async fn rename<E: Environment>(
         .map(|s| (s, &ws.hir[s]));
 
     if let Some((sym, data)) = target_symbol.take() {
-        if let symbol::SymbolKind::Reference(r) = &data.kind {
+        if let symbol::SymbolKind::Ref(r) = &data.kind {
             match r.target {
                 Some(t) => match t {
                     symbol::ReferenceTarget::Symbol(ts) => {

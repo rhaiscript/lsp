@@ -279,7 +279,7 @@ fn collect_symbol_scope_iters<'h>(
         }
         SymbolKind::Loop(sym) => iters.push(Box::new(hir.scope_symbols(sym.scope))),
         SymbolKind::For(sym) => {
-            if let Some(sym) = sym.iterable {
+            if let Some(sym) = sym.cursor {
                 collect_symbol_scope_iters(hir, iters, sym);
             }
 
@@ -351,7 +351,7 @@ fn collect_symbol_scope_iters<'h>(
             }
         }
         SymbolKind::Op(_)
-        | SymbolKind::Reference(_)
+        | SymbolKind::Ref(_)
         | SymbolKind::Continue(_)
         | SymbolKind::Discard(_)
         | SymbolKind::Virtual(VirtualSymbol::Proxy(..))

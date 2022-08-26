@@ -18,7 +18,7 @@ impl Hir {
                     d.target = None;
                     d.references.clear();
                 }
-                SymbolKind::Reference(r) => r.target = None,
+                SymbolKind::Ref(r) => r.target = None,
                 _ => {}
             }
         }
@@ -50,7 +50,7 @@ impl Hir {
             .symbols
             .iter()
             .filter_map(|(s, data)| match &data.kind {
-                SymbolKind::Reference(ref_data)
+                SymbolKind::Ref(ref_data)
                     if !ref_data.part_of_path && !ref_data.field_access =>
                 {
                     Some(s)
@@ -68,7 +68,7 @@ impl Hir {
                 }
 
                 match &self[ref_symbol].kind {
-                    SymbolKind::Reference(_) => {
+                    SymbolKind::Ref(_) => {
                         if matches!(
                             &self[visible_symbol].kind,
                             SymbolKind::Fn(_)
@@ -89,7 +89,7 @@ impl Hir {
                             }
 
                             match &mut self.symbol_mut(ref_symbol).kind {
-                                SymbolKind::Reference(r) => {
+                                SymbolKind::Ref(r) => {
                                     r.target = Some(ReferenceTarget::Symbol(visible_symbol));
                                 }
                                 _ => {}
@@ -173,7 +173,7 @@ impl Hir {
 
                 while let Some(mut visible_symbol) = visible_symbols.next() {
                     match &self[module_reference].kind {
-                        SymbolKind::Reference(_) => {
+                        SymbolKind::Ref(_) => {
                             if matches!(
                                 &self[visible_symbol].kind,
                                 SymbolKind::Import(_)
@@ -210,7 +210,7 @@ impl Hir {
 
                                 drop(visible_symbols);
                                 match &mut self.symbol_mut(module_reference).kind {
-                                    SymbolKind::Reference(r) => {
+                                    SymbolKind::Ref(r) => {
                                         r.target = Some(ReferenceTarget::Symbol(visible_symbol));
                                     }
                                     _ => {}

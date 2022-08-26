@@ -19,16 +19,16 @@ use rhai_rowan::syntax::SyntaxNode;
 use slotmap::{Key, SlotMap};
 use url::Url;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Hir {
-    static_module: Module,
-    virtual_source: Source,
-    modules: SlotMap<Module, ModuleData>,
-    scopes: SlotMap<Scope, ScopeData>,
-    symbols: SlotMap<Symbol, SymbolData>,
-    sources: SlotMap<Source, SourceData>,
-    types: SlotMap<Type, TypeData>,
-    builtin_types: BuiltinTypes,
+    pub(crate) static_module: Module,
+    pub(crate) virtual_source: Source,
+    pub(crate) modules: SlotMap<Module, ModuleData>,
+    pub(crate) scopes: SlotMap<Scope, ScopeData>,
+    pub(crate) symbols: SlotMap<Symbol, SymbolData>,
+    pub(crate) sources: SlotMap<Source, SourceData>,
+    pub(crate) types: SlotMap<Type, TypeData>,
+    pub(crate) builtin_types: BuiltinTypes,
 }
 
 impl Default for Hir {

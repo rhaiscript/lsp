@@ -20,6 +20,7 @@ pub mod source;
 pub mod symbol;
 pub mod ty;
 pub(crate) mod util;
+pub mod fmt;
 
 pub(crate) type IndexMap<K, V> = indexmap::IndexMap<K, V, ahash::RandomState>;
 pub(crate) type IndexSet<V> = indexmap::IndexSet<V, ahash::RandomState>;

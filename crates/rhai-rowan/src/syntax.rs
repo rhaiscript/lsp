@@ -8,10 +8,22 @@
 use logos::{Lexer as LogosLexer, Logos};
 use serde::{Deserialize, Serialize};
 use std::ops::Range;
+use strum::IntoStaticStr;
 
 /// `SyntaxKind` represents all the node and token types (kinds) found in the grammar.
 #[derive(
-    Logos, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize,
+    Logos,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Serialize,
+    Deserialize,
+    IntoStaticStr,
 )]
 #[repr(u16)]
 pub enum SyntaxKind {

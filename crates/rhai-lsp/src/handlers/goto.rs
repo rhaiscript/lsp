@@ -70,7 +70,7 @@ async fn goto_target<E: Environment>(
             .selection_or_text_range()
             .and_then(|range| doc.mapper.range(range).map(LspExt::into_lsp));
         match &data.kind {
-            rhai_hir::symbol::SymbolKind::Reference(r) => {
+            rhai_hir::symbol::SymbolKind::Ref(r) => {
                 if let Some(ReferenceTarget::Symbol(target)) = &r.target {
                     let target_data = &ws.hir[*target];
 

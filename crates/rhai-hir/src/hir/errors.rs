@@ -34,7 +34,7 @@ impl Hir {
     fn collect_errors_from_symbol(&self, symbol: Symbol, errors: &mut Vec<Error>) {
         if let Some(symbol_data) = self.symbol(symbol) {
             match &symbol_data.kind {
-                SymbolKind::Reference(r) => {
+                SymbolKind::Ref(r) => {
                     if !r.field_access && r.target.is_none() && r.name != "this" {
                         errors.push(Error {
                             kind: ErrorKind::UnresolvedReference {
