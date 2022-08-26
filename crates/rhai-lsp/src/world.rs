@@ -65,6 +65,11 @@ impl<E: Environment> std::ops::DerefMut for Workspaces<E> {
 
 impl<E: Environment> Workspaces<E> {
     #[must_use]
+    pub fn get_detached(&self) -> &Workspace<E> {
+        self.0.get(&*DEFAULT_WORKSPACE_URL).unwrap()
+    }
+
+    #[must_use]
     #[allow(clippy::missing_panics_doc)]
     pub fn by_document(&self, url: &Url) -> &Workspace<E> {
         self.0

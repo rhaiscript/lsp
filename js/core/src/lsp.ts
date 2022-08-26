@@ -30,6 +30,17 @@ export namespace Client {
   interface ClientNotifications {}
 
   interface ClientRequests {
+    "rhai/hirDump": {
+      params: {
+        workspaceUri?: string;
+      };
+      response:
+        | {
+            hir: string;
+          }
+        | null
+        | undefined;
+    };
     "rhai/syntaxTree": {
       params: {
         /**

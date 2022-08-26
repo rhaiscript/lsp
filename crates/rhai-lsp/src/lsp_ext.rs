@@ -2,9 +2,34 @@ pub mod request {
     use lsp_types::{request::Request, Url};
     use serde::{Deserialize, Serialize};
 
+    pub enum HirDump {}
+
+    #[derive(Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct HirDumpParams {
+        pub workspace_uri: Option<Url>,
+    }
+
+    #[derive(Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct HirDumpResult {
+        /// The unstable textual representation
+        /// of the HIR.
+        pub hir: String,
+    }
+
+    impl Request for HirDump {
+        type Params = HirDumpParams;
+
+        type Result = Option<HirDumpResult>;
+
+        const METHOD: &'static str = "rhai/hirDump";
+    }
+
     pub enum SyntaxTree {}
 
     #[derive(Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
     pub struct SyntaxTreeParams {
         pub uri: Url,
     }
@@ -28,6 +53,7 @@ pub mod request {
     pub enum ConvertOffsets {}
 
     #[derive(Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
     pub struct ConvertOffsetsParams {
         pub uri: Url,
         pub ranges: Option<Vec<rhai_rowan::TextRange>>,

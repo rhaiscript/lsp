@@ -42,3 +42,6 @@ pub(crate) use completion::*;
 
 mod semantic_tokens;
 pub(crate) use semantic_tokens::*;
+
+mod debug;
+pub(crate) use debug::*;

@@ -36,6 +36,20 @@
     "onLanguage:rhai"
   ],
   "contributes": {
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "rhai.showHirDump",
+          "when": "rhai.extensionActive"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "title": "Rhai: Show HIR",
+        "command": "rhai.showHirDump"
+      }
+    ],
     "configuration": {
       "title": "Rhai",
       "properties": {

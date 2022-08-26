@@ -49,6 +49,7 @@ pub fn create_server<E: Environment>() -> Server<World<E>> {
         .on_notification::<notification::DidChangeConfiguration, _>(handlers::configuration_change)
         .on_notification::<notification::DidChangeWorkspaceFolders, _>(handlers::workspace_change)
         .on_notification::<notification::DidChangeWatchedFiles, _>(handlers::watched_file_change)
+        .on_request::<lsp_ext::request::HirDump, _>(handlers::hir_dump)
         .on_request::<lsp_ext::request::SyntaxTree, _>(handlers::syntax_tree)
         .on_request::<lsp_ext::request::ConvertOffsets, _>(handlers::convert_offsets)
         .build()

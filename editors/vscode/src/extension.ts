@@ -3,6 +3,7 @@ import { SyntaxTreeProvider } from "./syntax-tree";
 
 import { createClient } from "./client";
 import { getOutput } from "./util";
+import { registerCommands } from "./commands";
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
@@ -38,7 +39,10 @@ export async function activate(context: vscode.ExtensionContext) {
     c.registerProposedFeatures();
 
     context.subscriptions.push(getOutput(), c.start());
+
+    registerCommands(context, c);
     await c.onReady();
+
     vscode.commands.executeCommand("setContext", "rhai.extensionActive", true);
     context.subscriptions.push({
       dispose: () => {

@@ -43,10 +43,10 @@
 //! `!MISSING <item>` notations suggest a bug in the HIR.
 //!
 //! ## Parents
-//! 
+//!
 //! To uncover bugs, in some cases it is useful to print parents
 //! of items (e.g. scopes of symbols), parents use the `^<target>` notation.
-//! 
+//!
 //! ## Duplicate symbols
 //!
 //! You might notice that some symbols might appear more than once,
@@ -218,6 +218,10 @@ impl<'h> HirFmt<'h> {
     pub fn with_parents(mut self) -> Self {
         self.include_parents = true;
         self
+    }
+
+    pub fn with_all(self) -> Self {
+        self.with_slots().with_parents().with_source()
     }
 
     pub fn module(self, module: Module) -> ModuleFmt<'h> {

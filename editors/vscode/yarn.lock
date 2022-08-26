@@ -29,7 +29,7 @@
 "@rhaiscript/lsp@file:../../js/lsp":
   version "0.1.0"
   dependencies:
-    "@rhaiscript/core" "file:../../../../../../.cache/yarn/v6/npm-@rhaiscript-lsp-0.1.0-b999d754-8a7e-46af-af16-880d42b29194-1661531690271/node_modules/@rhaiscript/core"
+    "@rhaiscript/core" "file:../../../../../../.cache/yarn/v6/npm-@rhaiscript-lsp-0.1.0-dd9a934d-d8c0-4266-9cd4-dffde7709c6a-1661557545075/node_modules/@rhaiscript/core"
 
 "@rollup/plugin-commonjs@^22.0.2":
   version "22.0.2"
