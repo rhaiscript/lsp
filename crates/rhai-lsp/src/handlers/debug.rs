@@ -22,6 +22,10 @@ pub(crate) async fn hir_dump<E: Environment>(
     };
 
     Ok(Some(HirDumpResult {
-        hir: HirFmt::new(&ws.hir).with_all().to_string(),
+        hir: if ws.config.debug.hir.full {
+            format!("{:#?}", ws.hir)
+        } else {
+            HirFmt::new(&ws.hir).with_source().to_string()
+        },
     }))
 }

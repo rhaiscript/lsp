@@ -28,6 +28,7 @@ fn default_configuration_section() -> String {
 #[serde(rename_all = "camelCase")]
 pub struct LspConfig {
     pub syntax: SyntaxConfig,
+    pub debug: DebugConfig,
 }
 
 impl LspConfig {
@@ -51,5 +52,23 @@ impl Default for SyntaxConfig {
         Self {
             semantic_tokens: true,
         }
+    }
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DebugConfig {
+    pub hir: DebugHirConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DebugHirConfig {
+    pub full: bool,
+}
+
+impl Default for DebugHirConfig {
+    fn default() -> Self {
+        Self { full: true }
     }
 }

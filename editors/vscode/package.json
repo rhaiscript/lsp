@@ -91,6 +91,12 @@
             "type": "string"
           },
           "default": null
+        },
+        "rhai.debug.hir.full": {
+          "type": "boolean",
+          "scope": "resource",
+          "description": "Set whether to include all available information in the HIR dump.",
+          "default": true
         }
       }
     },

@@ -443,9 +443,17 @@ impl<'h> HirFmt<'h> {
                 }
             }
             SymbolKind::Path(p) => {
+                let indented = self.incr_indent();
+                writeln!(f)?;
+
+                let mut first = true;
                 for &segment in &p.segments {
-                    write!(f, " :: ")?;
-                    self.fmt_symbol(f, segment)?;
+                    if !first {
+                        writeln!(f)?;
+                    }
+                    first = false;
+
+                    indented.fmt_symbol(f, segment)?;
                 }
             }
             SymbolKind::Lit(lit) => {
@@ -583,7 +591,9 @@ impl<'h> HirFmt<'h> {
                     windent!(indented, f, "MISSING CALL LHS")?;
                 }
 
-                writeln!(f)?;
+                if !call.arguments.is_empty() {
+                    writeln!(f)?;
+                }
 
                 let args = indented.incr_indent();
 
@@ -763,7 +773,7 @@ impl<'h> HirFmt<'h> {
                     write!(f, " => ${}", KeyDataFmt(proxy.target.data()))?;
                 }
                 VirtualSymbol::Module(m) => {
-                    write!(f, "{} => module{}", m.name, KeyDataFmt(m.module.data()))?;
+                    write!(f, " {} => module{}", m.name, KeyDataFmt(m.module.data()))?;
                 }
             },
             SymbolKind::Continue(_)
