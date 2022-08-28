@@ -1,12 +1,10 @@
-use rhai_common::environment::Environment;
-use crate::{
-    world::{Document, World},
-};
+use crate::world::{Document, World};
 use lsp_async_stub::{util::LspExt, Context, RequestWriter};
 use lsp_types::{
     notification, Diagnostic, DiagnosticRelatedInformation, DiagnosticSeverity, Location,
     PublishDiagnosticsParams, Url,
 };
+use rhai_common::{environment::Environment, util::Normalize};
 use rhai_hir::{error::ErrorKind, Hir};
 
 #[tracing::instrument(skip_all)]
@@ -65,7 +63,7 @@ pub(crate) async fn publish_diagnostics<E: Environment>(
         None => return,
     };
 
-    collect_hir_errors(&document_url, doc, &ws.hir, &mut diags);
+    collect_hir_errors(&document_url.clone().normalize(), doc, &ws.hir, &mut diags);
     drop(workspaces);
 
     context.clone().env.spawn_local(async move {

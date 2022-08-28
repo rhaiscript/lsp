@@ -8,7 +8,7 @@ use lsp_types::{
     SemanticToken, SemanticTokenModifier, SemanticTokenType, SemanticTokens, SemanticTokensParams,
     SemanticTokensResult,
 };
-use rhai_common::environment::Environment;
+use rhai_common::{environment::Environment, util::Normalize};
 use rhai_hir::{
     symbol::{BinaryOpKind, ReferenceTarget, SymbolKind},
     ty::Type,
@@ -32,7 +32,7 @@ pub(crate) async fn semantic_tokens<E: Environment>(
         return Ok(None);
     }
 
-    let source = match ws.hir.source_by_url(&p.text_document.uri) {
+    let source = match ws.hir.source_by_url(&p.text_document.uri.clone().normalize()) {
         Some(s) => s,
         None => return Ok(None),
     };
