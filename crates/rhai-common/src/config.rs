@@ -31,12 +31,11 @@ pub struct SourceConfig {
 
 impl SourceConfig {
     pub fn prepare(&mut self, e: &impl Environment, base: &Path) -> anyhow::Result<()> {
-        self.make_absolute(e, base);
-
         self.include = self
             .include
             .take()
             .or_else(|| Some(vec![String::from("**/*.rhai")]));
+        self.make_absolute(e, base);
 
         self.file_rule = Some(GlobRule::new(
             self.include.as_deref().unwrap(),
