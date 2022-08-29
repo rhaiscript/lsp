@@ -3,7 +3,6 @@ use crate::{
     Hir, Module, Symbol,
 };
 use itertools::Itertools;
-use url::Url;
 
 mod types;
 
@@ -50,9 +49,7 @@ impl Hir {
             .symbols
             .iter()
             .filter_map(|(s, data)| match &data.kind {
-                SymbolKind::Ref(ref_data)
-                    if !ref_data.part_of_path && !ref_data.field_access =>
-                {
+                SymbolKind::Ref(ref_data) if !ref_data.part_of_path && !ref_data.field_access => {
                     Some(s)
                 }
                 _ => None,
@@ -125,10 +122,13 @@ impl Hir {
 
             if let Some(import_symbol_data) = self[import_symbol].kind.as_import() {
                 if let Some(import_path) = import_symbol_data.import_path(self) {
-                    let import_url = match self.resolve_import_url(self[module].url(), import_path)
+                    let import_url = match self.module_resolver.resolve_url_from_module(self, module, import_path)
                     {
-                        Some(u) => u,
-                        None => continue,
+                        Ok(u) => u,
+                        Err(error) => {
+                            tracing::error!(%error, "failed to resolve import URL");
+                            continue;
+                        }
                     };
 
                     let target_module = match self.module_by_url(&import_url) {
@@ -260,28 +260,6 @@ impl Hir {
             if let Some(r) = self.symbol_mut(ref_symbol).kind.as_reference_mut() {
                 r.target = Some(ReferenceTarget::Symbol(target_symbol));
             }
-        }
-    }
-
-    #[allow(clippy::unused_self)]
-    pub(super) fn resolve_import_url(&self, from: Option<&Url>, import_path: &str) -> Option<Url> {
-        if import_path.starts_with('.') {
-            match from {
-                Some(from) => match from.join(import_path) {
-                    Ok(import) => Some(import),
-                    Err(err) => {
-                        tracing::debug!("{err}");
-                        None
-                    }
-                },
-                None => {
-                    tracing::debug!("cannot resolve relative module with no base");
-                    None
-                }
-            }
-        } else {
-            // TODO: delegate non-url string import paths.
-            import_path.parse().ok()
         }
     }
 }

@@ -1,4 +1,6 @@
-use crate::{source::Source, IndexSet, Scope};
+use std::{ffi::OsStr, path::Path};
+
+use crate::{source::Source, Hir, IndexSet, Scope};
 use url::Url;
 
 slotmap::new_key_type! { pub struct Module; }
@@ -51,3 +53,68 @@ impl ModuleData {
 }
 
 pub const STATIC_URL_SCHEME: &str = "rhai-static";
+
+/// Used to resolve module URLs for import statements and definitions.
+pub trait ModuleResolver: Send + Sync {
+    /// Construct an URL for a module that should be imported
+    /// based on the module where the import statement was found
+    /// and the processed (e.g. unescaped) import path.
+    ///
+    /// This function is also called for `module "foo.rhai"` definitions.
+    ///
+    /// # Examples
+    ///
+    /// Take the following statement in a rhai script:
+    ///
+    /// ```rhai
+    /// // file:///path/to/foo.rhai
+    /// import "./bar.rhai"
+    /// ```
+    ///
+    /// This function will be called with the `file:///path/to/foo.rhai` module
+    /// as the base and `./bar.rhai` as the import path.
+    /// Resolvers typically would return the `file:///path/to/bar.rhai` URL
+    /// in this case.
+    ///
+    /// # Errors
+    ///
+    /// This function should only report errors if the import
+    /// path is invalid, it does not need to do further checks
+    /// regarding module imports.
+    fn resolve_url(&self, from: &Url, path: &str) -> anyhow::Result<Url>;
+
+    /// Same as `resolve_url`, but this function is called instead if
+    /// the import statement is in a module.
+    /// 
+    /// # Errors
+    ///
+    /// This function should only report errors if the import
+    /// path is invalid, it does not need to do further checks
+    /// regarding module imports.
+    fn resolve_url_from_module(&self, hir: &Hir, from: Module, path: &str) -> anyhow::Result<Url> {
+        self.resolve_url(
+            hir[from]
+                .url()
+                .ok_or_else(|| anyhow::anyhow!("could not determine base url"))?,
+            path,
+        )
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct DefaultModuleResolver;
+
+impl ModuleResolver for DefaultModuleResolver {
+    fn resolve_url(&self, from: &Url, path: &str) -> anyhow::Result<Url> {
+        if let Ok(url) = Url::parse(path) {
+            return Ok(url);
+        }
+
+        if Path::new(path).extension() == Some(OsStr::new("rhai")) {
+            Ok(from.join(path)?)
+        } else {
+            let path = format!("{path}.rhai");
+            Ok(from.join(&path)?)
+        }
+    }
+}

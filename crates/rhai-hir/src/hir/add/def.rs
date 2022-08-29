@@ -38,12 +38,12 @@ impl Hir {
                 .unwrap_or(lit_str);
 
             let import_url =
-                self.resolve_import_url(Some(&self[source].url), &unescape(lit_str, '"').0);
+                self.module_resolver.resolve_url(&self[source].url, &unescape(lit_str, '"').0);
 
             match import_url {
-                Some(url) => ModuleKind::Url(url),
-                None => {
-                    tracing::debug!("failed to resolve import url");
+                Ok(url) => ModuleKind::Url(url),
+                Err(error) => {
+                    tracing::error!(%error, "failed to resolve import url");
                     return;
                 }
             }

@@ -5,9 +5,10 @@ mod remove;
 mod resolve;
 
 use core::ops;
+use std::sync::Arc;
 
 use crate::{
-    module::ModuleData,
+    module::{ModuleData, ModuleResolver, DefaultModuleResolver},
     scope::ScopeData,
     source::{Source, SourceData},
     symbol::*,
@@ -29,6 +30,7 @@ pub struct Hir {
     pub(crate) sources: SlotMap<Source, SourceData>,
     pub(crate) types: SlotMap<Type, TypeData>,
     pub(crate) builtin_types: BuiltinTypes,
+    pub(crate) module_resolver: Arc<dyn ModuleResolver>
 }
 
 impl Default for Hir {
@@ -42,6 +44,7 @@ impl Default for Hir {
             sources: Default::default(),
             types: Default::default(),
             builtin_types: BuiltinTypes::uninit(),
+            module_resolver: Arc::new(DefaultModuleResolver)
         };
         this.prepare();
         this
@@ -54,6 +57,10 @@ impl Hir {
     #[must_use]
     pub fn new() -> Self {
         Self::default()
+    }
+
+    pub fn set_import_resolver(&mut self, resolver: impl ModuleResolver + 'static) {
+        self.module_resolver = Arc::new(resolver);
     }
 }
 
