@@ -61,14 +61,17 @@ impl Hir {
 
     /// All the missing modules that appear in imports.
     #[must_use]
+    #[allow(clippy::missing_panics_doc)]
     pub fn missing_modules(&self) -> impl ExactSizeIterator<Item = Url> {
         let mut missing = Vec::new();
 
-        for (_, data) in &self.symbols {
+        for (symbol, data) in &self.symbols {
             if let SymbolKind::Import(import) = &data.kind {
                 if let Some(import_path) = import.import_path(self) {
-                    if let Some(module_url) = self
-                        .resolve_import_url(data.source.source.map(|s| &self[s].url), import_path)
+                    let m = self.module_by_symbol(symbol).unwrap();
+
+                    if let Ok(module_url) = 
+                        self.module_resolver.resolve_url_from_module(self, m, import_path)
                     {
                         if !self
                             .modules
