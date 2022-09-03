@@ -124,7 +124,11 @@ fn collect_hir_errors(uri: &Url, doc: &Document, hir: &Hir, diags: &mut Vec<Diag
                 } => diags.push(Diagnostic {
                     range: doc
                         .mapper
-                        .range(hir[*duplicate_symbol].source.text_range.unwrap_or_default())
+                        .range(
+                            hir[*duplicate_symbol]
+                                .selection_or_text_range()
+                                .unwrap_or_default(),
+                        )
                         .unwrap_or_default()
                         .into_lsp(),
                     severity: Some(DiagnosticSeverity::ERROR),
@@ -137,7 +141,11 @@ fn collect_hir_errors(uri: &Url, doc: &Document, hir: &Hir, diags: &mut Vec<Diag
                         location: Location {
                             range: doc
                                 .mapper
-                                .range(hir[*existing_symbol].source.text_range.unwrap_or_default())
+                                .range(
+                                    hir[*existing_symbol]
+                                        .selection_or_text_range()
+                                        .unwrap_or_default(),
+                                )
                                 .unwrap_or_default()
                                 .into_lsp(),
                             uri: uri.clone(),
@@ -152,7 +160,11 @@ fn collect_hir_errors(uri: &Url, doc: &Document, hir: &Hir, diags: &mut Vec<Diag
                 } => diags.push(Diagnostic {
                     range: doc
                         .mapper
-                        .range(hir[*reference_symbol].source.text_range.unwrap_or_default())
+                        .range(
+                            hir[*reference_symbol]
+                                .selection_or_text_range()
+                                .unwrap_or_default(),
+                        )
                         .unwrap_or_default()
                         .into_lsp(),
                     severity: Some(DiagnosticSeverity::ERROR),
@@ -167,7 +179,7 @@ fn collect_hir_errors(uri: &Url, doc: &Document, hir: &Hir, diags: &mut Vec<Diag
                 ErrorKind::UnresolvedImport { import } => diags.push(Diagnostic {
                     range: doc
                         .mapper
-                        .range(hir[*import].source.text_range.unwrap_or_default())
+                        .range(hir[*import].selection_or_text_range().unwrap_or_default())
                         .unwrap_or_default()
                         .into_lsp(),
                     severity: Some(DiagnosticSeverity::ERROR),
@@ -182,7 +194,7 @@ fn collect_hir_errors(uri: &Url, doc: &Document, hir: &Hir, diags: &mut Vec<Diag
                 ErrorKind::NestedFunction { function } => diags.push(Diagnostic {
                     range: doc
                         .mapper
-                        .range(hir[*function].source.text_range.unwrap_or_default())
+                        .range(hir[*function].selection_or_text_range().unwrap_or_default())
                         .unwrap_or_default()
                         .into_lsp(),
                     severity: Some(DiagnosticSeverity::ERROR),

@@ -1,9 +1,7 @@
-use rhai_common::environment::Environment;
-use crate::{
-    world::{Workspace, World},
-};
+use crate::world::{Workspace, World};
 use lsp_async_stub::{rpc, util::LspExt, Context, Params};
 use lsp_types::{Location, ReferenceParams};
+use rhai_common::environment::Environment;
 use rhai_hir::Symbol;
 use rhai_rowan::{syntax::SyntaxKind, TextRange, TextSize};
 
@@ -86,8 +84,7 @@ pub(crate) fn collect_references<E: Environment>(
                 };
 
                 reference_data
-                    .source
-                    .text_range
+                    .selection_or_text_range()
                     .and_then(|range| target_document.mapper.range(range).map(LspExt::into_lsp))
                     .map(|range| (reference_source_data.url.clone(), range))
             })
@@ -110,8 +107,7 @@ pub(crate) fn collect_references<E: Environment>(
         };
 
         if let Some(range) = target_data
-            .source
-            .text_range
+            .selection_or_text_range()
             .and_then(|range| target_document.mapper.range(range).map(LspExt::into_lsp))
         {
             locations.push(Location {
