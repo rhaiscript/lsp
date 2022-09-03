@@ -10,6 +10,7 @@ use lsp_async_stub::{
 use lsp_types::{FoldingRange, FoldingRangeKind, FoldingRangeParams, Range};
 use rhai_rowan::syntax::{SyntaxElement, SyntaxKind::*, SyntaxNode};
 
+#[tracing::instrument(skip_all)]
 pub(crate) async fn folding_ranges<E: Environment>(
     context: Context<World<E>>,
     params: Params<FoldingRangeParams>,

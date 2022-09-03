@@ -21,6 +21,7 @@ use rhai_hir::{
 };
 use rhai_rowan::{query::Query, TextRange};
 
+#[tracing::instrument(skip_all)]
 pub(crate) async fn completion<E: Environment>(
     context: Context<World<E>>,
     params: Params<CompletionParams>,

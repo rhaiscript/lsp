@@ -7,6 +7,7 @@ use lsp_types::{Location, ReferenceParams};
 use rhai_hir::Symbol;
 use rhai_rowan::{syntax::SyntaxKind, TextRange, TextSize};
 
+#[tracing::instrument(skip_all)]
 pub(crate) async fn references<E: Environment>(
     context: Context<World<E>>,
     params: Params<ReferenceParams>,

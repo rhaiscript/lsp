@@ -14,6 +14,7 @@ use rhai_rowan::{
     syntax::{SyntaxElement, SyntaxKind, SyntaxNode},
 };
 
+#[tracing::instrument(skip_all)]
 pub(crate) async fn document_symbols<E: Environment>(
     context: Context<World<E>>,
     params: Params<DocumentSymbolParams>,

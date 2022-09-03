@@ -6,6 +6,7 @@ use lsp_async_stub::{rpc, Context, Params};
 use rhai_common::environment::Environment;
 use rhai_hir::fmt::HirFmt;
 
+#[tracing::instrument(skip_all)]
 pub(crate) async fn hir_dump<E: Environment>(
     context: Context<World<E>>,
     params: Params<HirDumpParams>,

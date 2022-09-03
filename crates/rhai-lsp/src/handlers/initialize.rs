@@ -62,6 +62,7 @@ pub async fn initialize<E: Environment>(
             definition_provider: Some(OneOf::Left(true)),
             document_symbol_provider: Some(OneOf::Left(true)),
             hover_provider: Some(HoverProviderCapability::Simple(true)),
+            document_formatting_provider: Some(OneOf::Left(true)),
             semantic_tokens_provider: Some(
                 SemanticTokensServerCapabilities::SemanticTokensOptions(SemanticTokensOptions {
                     work_done_progress_options: WorkDoneProgressOptions {
