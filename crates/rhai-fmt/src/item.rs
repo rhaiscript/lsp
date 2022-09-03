@@ -29,9 +29,11 @@ impl<S: Write> Formatter<S> {
     }
 
     pub(crate) fn fmt_doc(&mut self, doc: rhai_rowan::ast::Doc) -> Result<(), io::Error> {
+        let syntax = doc.syntax();
         if let Some(t) = doc.token() {
             self.word(t.static_text().trim_end())?;
-            self.trailing_comments_after(&doc.syntax(), false)?;
+            self.comment_same_line_after(&syntax)?;
+            self.standalone_comments_after(&syntax)?;
             self.hardbreak();
         };
         Ok(())

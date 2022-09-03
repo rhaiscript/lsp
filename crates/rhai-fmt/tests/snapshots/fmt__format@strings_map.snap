@@ -5,11 +5,8 @@ expression: formatted
 // This script tests object maps and strings.
 
 print("Ready... Go!");
-
 let now = timestamp();
-
 let adverbs = ["moderately", "really", "slightly", "very"];
-
 let adjectives = [
   "abandoned",
   "able",
@@ -212,7 +209,6 @@ let adjectives = [
   "courteous",
   "crafty",
 ];
-
 let animals = [
   "aardvark",
   "african buffalo",
@@ -415,9 +411,7 @@ let animals = [
   "wallaby",
   "wildebeest",
 ];
-
 let keys = [];
-
 for animal in animals {
   for adjective in adjectives {
     for adverb in adverbs {
@@ -426,15 +420,12 @@ for animal in animals {
   }
 }
 let map = #{};
-
 let i = 0;
-
 for key in keys {
   map[key] = i;
   i += 1;
 }
 let sum = 0;
-
 for key in keys {
   sum += map[key];
 }
@@ -442,5 +433,5 @@ for key in keys {
   map.remove(key);
 }
 print(`Sum = ${sum}`);
-print(`Finished. Run time = ${now.elapsed} seconds0);
+print(`Finished. Run time = ${now.elapsed} seconds.`);
 

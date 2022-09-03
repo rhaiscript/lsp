@@ -5,23 +5,19 @@ use rhai_rowan::{
         AstNode, ExportTarget, Expr, ExprBinary, ExprBlock, ExprConst, ExprContinue, ExprIf,
         ExprLet, LitStrTemplateSegment,
     },
-    syntax::{
-        SyntaxElement,
-        SyntaxKind::{self, *},
-    },
+    syntax::SyntaxKind::{self, *},
     T,
 };
 
 use crate::{
     algorithm::Formatter,
+    comments::CommentInfo,
     source::needs_stmt_separator,
     util::{break_count, ScopedStatic},
 };
 
 impl<S: Write> Formatter<S> {
     pub(crate) fn fmt_expr(&mut self, expr: Expr) -> io::Result<()> {
-        let syntax = expr.syntax();
-
         if is_access_chain(&expr) {
             self.fmt_access_chain(expr, true)?;
             return Ok(());
@@ -109,10 +105,6 @@ impl<S: Write> Formatter<S> {
             Expr::Throw(expr) => {
                 self.fmt_expr_throw(expr)?;
             }
-        }
-
-        if let Some(child) = syntax.first_child() {
-            self.trailing_comments_after(&child, true)?;
         }
 
         Ok(())
@@ -852,97 +844,88 @@ impl<S: Write> Formatter<S> {
                 .descendants_with_tokens()
                 .any(|c| matches!(c.kind(), COMMENT_LINE | COMMENT_LINE_DOC));
 
-        let syntax = expr.syntax();
-
         if !no_cbox {
             self.cbox(1);
         }
 
         self.word("{")?;
+
+        let leading_comments = self.standalone_leading_comments_in(&expr.syntax())?;
+
         match expr.statements().count() {
             0 => {
-                // Special case where the block
-                // contains comments but nothing else.
-                let comments = expr
-                    .syntax()
-                    .children_with_tokens()
-                    .filter_map(SyntaxElement::into_token)
-                    .filter(|t| matches!(t.kind(), COMMENT_BLOCK | COMMENT_LINE))
-                    .collect::<Vec<_>>();
-
-                if !comments.is_empty() {
-                    self.space();
-
-                    let mut first = true;
-                    for comment in comments {
-                        if !first {
-                            self.hardbreak();
-                        }
-                        first = false;
-                        self.word(comment.static_text().trim())?;
-                    }
+                if leading_comments.hardbreak_end {
+                    self.offset(-1);
+                } else if leading_comments.hardbreak_added {
                     self.hardbreak();
                     self.offset(-1);
                 }
             }
             1 => {
-                self.space();
-                self.leading_comments_in(&syntax)?;
-
                 let stmt = expr.statements().next().unwrap();
-
-                let had_sep = stmt
-                    .syntax()
-                    .children_with_tokens()
-                    .any(|c| c.kind() == T![";"]);
-
                 if let Some(item) = stmt.item() {
+                    if !leading_comments.comment_added {
+                        self.space();
+                    }
+
+                    let stmt_syntax = stmt.syntax();
+                    let item_syntax = item.syntax();
+
+                    let had_sep = stmt
+                        .syntax()
+                        .children_with_tokens()
+                        .any(|c| c.kind() == T![";"]);
+
                     let needs_sep = needs_stmt_separator(&item);
+
+                    self.ibox(0);
+
                     self.fmt_item(item)?;
 
                     if had_sep && needs_sep {
                         self.word(";")?;
                     }
 
-                    self.trailing_comments_after(&stmt.syntax(), true)?;
-                }
+                    let mut comments = CommentInfo::default();
 
-                if always_break {
-                    self.hardbreak();
-                    self.offset(-1);
-                } else {
-                    self.space();
+                    comments.update(self.comment_same_line_after(&item_syntax)?);
+                    comments.update(self.comment_same_line_after(&stmt_syntax)?);
+
+                    self.end();
+
+                    comments.update(self.standalone_comments_after(&item_syntax)?);
+                    comments.update(self.standalone_comments_after(&stmt_syntax)?);
+
+                    if always_break {
+                        self.hardbreak();
+                        self.offset(-1);
+                    } else {
+                        self.space();
+                        self.offset(-1);
+                    }
                 }
             }
             _ => {
-                self.space();
-                self.leading_comments_in(&syntax)?;
+                if !leading_comments.comment_added {
+                    self.space();
+                }
 
                 let count = expr.statements().count();
 
-                let mut first = true;
-                let mut needs_sep = false;
                 for (idx, stmt) in expr.statements().enumerate() {
                     let item = match stmt.item() {
                         Some(item) => item,
                         _ => continue,
                     };
-
-                    let syntax = stmt.syntax();
-
-                    if !first {
-                        if needs_sep {
-                            self.word(";")?;
-                        }
-
-                        self.comments_before(&syntax, true)?;
-                    }
-                    first = false;
-
-                    needs_sep = needs_stmt_separator(&item);
-                    self.fmt_item(item)?;
+                    let stmt_syntax = stmt.syntax();
+                    let item_syntax = item.syntax();
 
                     let last = count == idx + 1;
+                    let needs_sep = needs_stmt_separator(&item);
+
+                    self.ibox(0);
+
+                    self.fmt_item(item)?;
 
                     if last {
                         let had_sep = stmt
@@ -953,10 +936,19 @@ impl<S: Write> Formatter<S> {
                         if had_sep && needs_sep {
                             self.word(";")?;
                         }
-
-                        self.trailing_comments_after(&syntax, false)?;
-                        self.hardbreak();
+                    } else if needs_sep {
+                        self.word(";")?;
                     }
+
+                    self.comment_same_line_after(&item_syntax)?;
+                    self.comment_same_line_after(&stmt_syntax)?;
+
+                    self.end();
+
+                    self.standalone_comments_after(&item_syntax)?;
+                    self.standalone_comments_after(&stmt_syntax)?;
+
+                    self.hardbreak();
                 }
 
                 self.offset(-1);

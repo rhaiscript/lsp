@@ -17,32 +17,24 @@ impl<S: Write> Formatter<S> {
             self.hardbreak();
         }
 
-        self.leading_comments_in(&rhai.syntax())?;
+        self.standalone_leading_comments_in(&rhai.syntax())?;
 
         let count = rhai.statements().count();
 
-        let mut first = true;
-        let mut needs_sep = false;
         for (idx, stmt) in rhai.statements().enumerate() {
             let item = match stmt.item() {
                 Some(item) => item,
                 _ => continue,
             };
-            let syntax = stmt.syntax();
-
-            if !first {
-                if needs_sep {
-                    self.word(";")?;
-                }
-
-                self.comments_before(&syntax, true)?;
-            }
-            first = false;
-
-            needs_sep = needs_stmt_separator(&item);
-            self.fmt_item(item)?;
+            let stmt_syntax = stmt.syntax();
+            let item_syntax = item.syntax();
 
             let last = count == idx + 1;
+            let needs_sep = needs_stmt_separator(&item);
+
+            self.ibox(0);
+
+            self.fmt_item(item)?;
 
             if last {
                 let had_sep = stmt
@@ -53,9 +45,19 @@ impl<S: Write> Formatter<S> {
                 if had_sep && needs_sep {
                     self.word(";")?;
                 }
-                self.trailing_comments_after(&syntax, false)?;
-                self.hardbreak();
+            } else if needs_sep {
+                self.word(";")?;
             }
+
+            self.comment_same_line_after(&item_syntax)?;
+            self.comment_same_line_after(&stmt_syntax)?;
+
+            self.end();
+
+            self.standalone_comments_after(&item_syntax)?;
+            self.standalone_comments_after(&stmt_syntax)?;
+
+            self.hardbreak();
         }
 
         self.end();

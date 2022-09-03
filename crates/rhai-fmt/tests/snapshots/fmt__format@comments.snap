@@ -13,6 +13,5 @@ let x = 5;
 /* look /* at /* that, /* multi-line */ comments */ can be */ nested */
 
 /* surrounded by */
-let this_is_not_a_comment = true // comments
-
+let this_is_not_a_comment = true
 
