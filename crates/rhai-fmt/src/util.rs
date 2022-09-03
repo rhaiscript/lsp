@@ -144,18 +144,3 @@ pub(crate) fn break_count(t: &SyntaxToken) -> u64 {
     t.text().chars().filter(|c| *c == '\n').count() as u64
 }
 
-#[test]
-fn lol() {
-    let src = r#"
-#{
-    a: 2,
-
-    b: 3,
-}"#;
-
-    let node = rhai_rowan::parser::Parser::new(src)
-        .parse_script()
-        .into_syntax();
-
-    println!("{node:#?}");
-}
