@@ -1,7 +1,10 @@
 use std::io::{self, Write};
 
 use rhai_rowan::{
-    ast::{AstNode, ExportTarget, Expr, ExprBlock, ExprConst, ExprContinue, ExprIf, ExprLet},
+    ast::{
+        AstNode, ExportTarget, Expr, ExprBlock, ExprConst, ExprContinue, ExprIf, ExprLet,
+        LitStrTemplateSegment,
+    },
     syntax::{
         SyntaxElement,
         SyntaxKind::{self, *},
@@ -555,11 +558,43 @@ impl<S: Write> Formatter<S> {
 
     pub(crate) fn fmt_expr_lit(&mut self, expr: rhai_rowan::ast::ExprLit) -> Result<(), io::Error> {
         if let Some(lit) = expr.lit() {
-            if let Some(t) = lit
-                .lit_token()
-                .or_else(|| lit.lit_str_template().and_then(|t| t.lit_str_token()))
-            {
+            if let Some(t) = lit.lit_token() {
                 self.word(t.static_text())?;
+            } else if let Some(template) = lit.lit_str_template() {
+                for segment in template.segments() {
+                    match segment {
+                        LitStrTemplateSegment::LitStr(s) => {
+                            self.word(s.static_text())?;
+                        }
+                        LitStrTemplateSegment::Interpolation(interpolation) =>  {
+                            let count = interpolation.statements().count();
+
+                            match count {
+                                0 => {
+                                    self.word("${}")?;
+                                }
+                                _ => {
+                                    self.word("${")?;
+                                    self.ibox(0);
+                                    self.zerobreak();
+
+                                    for (idx, statement) in interpolation.statements().enumerate() {
+                                        if idx != 0 {
+                                            self.word(";")?;
+                                            self.space();
+                                        }
+
+                                        self.fmt_stmt(statement)?;
+                                    }
+
+                                    self.zerobreak();
+                                    self.end();
+                                    self.word("}")?;
+                                }
+                            }
+                        },
+                    }
+                }
             }
         };
         Ok(())
@@ -773,7 +808,7 @@ impl<S: Write> Formatter<S> {
 
 fn space_between(kind: SyntaxKind) -> bool {
     match kind {
-        T![".."] | T!["..="] => false,
+        T![".."] | T!["..="] | T!["."] => false,
         _ => true,
     }
 }

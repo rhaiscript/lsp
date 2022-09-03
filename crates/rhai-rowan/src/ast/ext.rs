@@ -46,11 +46,35 @@ impl super::Lit {
     }
 }
 
+pub enum LitStrTemplateSegment {
+    /// A string literal segment.
+    LitStr(SyntaxToken),
+    /// Interpolation block without the surrounding `${}`.
+    Interpolation(LitStrTemplateInterpolation),
+}
+
 impl super::LitStrTemplate {
     pub fn interpolations(&self) -> impl Iterator<Item = LitStrTemplateInterpolation> {
         self.syntax()
             .children()
             .filter_map(LitStrTemplateInterpolation::cast)
+    }
+
+    pub fn segments(&self) -> impl Iterator<Item = LitStrTemplateSegment> {
+        self.syntax()
+            .children_with_tokens()
+            .filter_map(|c| match c {
+                NodeOrToken::Node(c) => Some(LitStrTemplateSegment::Interpolation(
+                    LitStrTemplateInterpolation::cast(c)?,
+                )),
+                NodeOrToken::Token(t) => {
+                    if t.kind() == T!["lit_str"] {
+                        Some(LitStrTemplateSegment::LitStr(t))
+                    } else {
+                        None
+                    }
+                }
+            })
     }
 }
 
