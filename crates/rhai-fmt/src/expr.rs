@@ -39,7 +39,7 @@ impl<S: Write> Formatter<S> {
                 self.fmt_expr_const(expr)?;
             }
             Expr::Block(expr) => {
-                self.fmt_expr_block(expr, false)?;
+                self.fmt_expr_block(expr, false, false)?;
             }
             Expr::Unary(expr) => {
                 self.fmt_expr_unary(expr)?;
@@ -66,7 +66,7 @@ impl<S: Write> Formatter<S> {
                 self.fmt_expr_closure(expr)?;
             }
             Expr::If(expr) => {
-                self.fmt_expr_if(expr)?;
+                self.fmt_expr_if(expr, false)?;
             }
             Expr::Loop(expr) => {
                 self.fmt_expr_loop(expr)?;
@@ -128,7 +128,7 @@ impl<S: Write> Formatter<S> {
     pub(crate) fn fmt_expr_try(&mut self, expr: rhai_rowan::ast::ExprTry) -> Result<(), io::Error> {
         self.word("try ")?;
         if let Some(body) = expr.try_block() {
-            self.fmt_expr_block(body, true)?;
+            self.fmt_expr_block(body, true, false)?;
         }
         self.word(" catch ")?;
         if let Some(param_list) = expr.catch_params() {
@@ -152,7 +152,7 @@ impl<S: Write> Formatter<S> {
             self.neverbreak();
         }
         if let Some(body) = expr.catch_block() {
-            self.fmt_expr_block(body, true)?;
+            self.fmt_expr_block(body, true, false)?;
         };
         Ok(())
     }
@@ -218,7 +218,7 @@ impl<S: Write> Formatter<S> {
         self.end();
         self.neverbreak();
         if let Some(body) = expr.body() {
-            self.fmt_expr_block(body, true)?;
+            self.fmt_expr_block(body, true, false)?;
         };
         Ok(())
     }
@@ -307,7 +307,7 @@ impl<S: Write> Formatter<S> {
         }
         self.nbsp()?;
         if let Some(body) = expr.loop_body() {
-            self.fmt_expr_block(body, true)?;
+            self.fmt_expr_block(body, true, false)?;
         }
         self.end();
         Ok(())
@@ -319,7 +319,7 @@ impl<S: Write> Formatter<S> {
     ) -> Result<(), io::Error> {
         self.word("loop ")?;
         if let Some(expr) = expr.loop_body() {
-            self.fmt_expr_block(expr, false)?;
+            self.fmt_expr_block(expr, false, false)?;
         };
         Ok(())
     }
@@ -355,7 +355,7 @@ impl<S: Write> Formatter<S> {
         self.nbsp()?;
         self.neverbreak();
         if let Some(block) = expr.loop_body() {
-            self.fmt_expr_block(block, true)?;
+            self.fmt_expr_block(block, true, false)?;
         }
         self.end();
         Ok(())
@@ -520,18 +520,15 @@ impl<S: Write> Formatter<S> {
             self.fmt_expr(lhs)?;
         }
         self.end();
-        let space = expr
-            .op_token()
-            .map(|t| space_between(t.kind()))
-            .unwrap_or(false);
-        if space {
-            self.space();
+
+        if let Some(op) = expr.op_token().map(|t| t.kind()) {
+            self.break_before_op(op)?;
         }
         if let Some(op) = expr.op_token() {
             self.word(op.static_text())?;
         }
-        if space {
-            self.nbsp()?;
+        if let Some(op) = expr.op_token().map(|t| t.kind()) {
+            self.break_after_op(op)?;
         }
         if let Some(rhs) = expr.rhs() {
             self.fmt_expr(rhs)?;
@@ -566,7 +563,7 @@ impl<S: Write> Formatter<S> {
                         LitStrTemplateSegment::LitStr(s) => {
                             self.word(s.static_text())?;
                         }
-                        LitStrTemplateSegment::Interpolation(interpolation) =>  {
+                        LitStrTemplateSegment::Interpolation(interpolation) => {
                             let count = interpolation.statements().count();
 
                             match count {
@@ -592,7 +589,7 @@ impl<S: Write> Formatter<S> {
                                     self.word("}")?;
                                 }
                             }
-                        },
+                        }
                     }
                 }
             }
@@ -654,30 +651,33 @@ impl<S: Write> Formatter<S> {
         Ok(())
     }
 
-    pub(crate) fn fmt_expr_if(&mut self, expr: ExprIf) -> Result<(), io::Error> {
-        self.cbox(0);
+    pub(crate) fn fmt_expr_if(&mut self, expr: ExprIf, no_cbox: bool) -> Result<(), io::Error> {
         self.word("if ")?;
-        self.cbox(0);
+        if !no_cbox {
+            self.cbox(1);
+        }
+
         if let Some(cond) = expr.expr() {
             self.fmt_expr(cond)?;
         }
         self.nbsp()?;
-        self.end();
+
         if let Some(then) = expr.then_branch() {
-            self.fmt_expr_block(then, true)?;
+            self.fmt_expr_block(then, true, true)?;
         }
-        self.end();
 
         if let Some(else_if_branch) = expr.else_if_branch() {
             self.word(" else ")?;
-            self.fmt_expr_if(else_if_branch)?;
+            self.fmt_expr_if(else_if_branch, true)?;
         }
-        self.cbox(0);
         if let Some(else_branch) = expr.else_branch() {
             self.word(" else ")?;
-            self.fmt_expr_block(else_branch, true)?;
+            self.fmt_expr_block(else_branch, true, true)?;
         }
-        self.end();
+
+        if !no_cbox {
+            self.end();
+        }
 
         Ok(())
     }
@@ -686,6 +686,7 @@ impl<S: Write> Formatter<S> {
         &mut self,
         expr: ExprBlock,
         mut always_break: bool,
+        no_cbox: bool,
     ) -> io::Result<()> {
         always_break = always_break
             || expr
@@ -695,7 +696,10 @@ impl<S: Write> Formatter<S> {
 
         let syntax = expr.syntax();
 
-        self.cbox(1);
+        if !no_cbox {
+            self.cbox(1);
+        }
+
         self.word("{")?;
         match expr.statements().count() {
             0 => {
@@ -801,14 +805,28 @@ impl<S: Write> Formatter<S> {
             }
         }
         self.word("}")?;
-        self.end();
+        if !no_cbox {
+            self.end();
+        }
         Ok(())
     }
-}
 
-fn space_between(kind: SyntaxKind) -> bool {
-    match kind {
-        T![".."] | T!["..="] | T!["."] => false,
-        _ => true,
+    fn break_before_op(&mut self, kind: SyntaxKind) -> io::Result<()> {
+        match kind {
+            T![".."] | T!["..="] => {}
+            T!["."] | T!["?."] => self.zerobreak(),
+            _ => self.space(),
+        }
+
+        Ok(())
+    }
+
+    fn break_after_op(&mut self, kind: SyntaxKind) -> io::Result<()> {
+        match kind {
+            T![".."] | T!["..="] | T!["."] | T!["?."] => {}
+            _ => self.nbsp()?,
+        }
+
+        Ok(())
     }
 }
