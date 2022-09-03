@@ -8,6 +8,7 @@ use lsp_types::{
 };
 use rhai_hir::symbol::ReferenceTarget;
 
+#[tracing::instrument(skip_all)]
 pub(crate) async fn goto_declaration<E: Environment>(
     context: Context<World<E>>,
     params: Params<GotoDeclarationParams>,

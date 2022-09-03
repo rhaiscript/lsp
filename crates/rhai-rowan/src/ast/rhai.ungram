@@ -156,7 +156,7 @@ SwitchArmList =
   '{' arms:(SwitchArm (',' SwitchArm)* ','?)? '}'
 
 SwitchArm =
-  pattern:(Expr | '_') condition:SwitchArmCondition? '=>' Expr
+  pattern:(Expr | '_') condition:SwitchArmCondition? '=>' __expr:Expr
 
 SwitchArmCondition =
   'if' Expr

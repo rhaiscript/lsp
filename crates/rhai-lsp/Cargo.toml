@@ -33,3 +33,4 @@ tracing-subscriber = { version = "0.3.11", features = ["env-filter"] }
 url = "2.2.2"
 rhai-common = { version = "0.1.0", path = "../rhai-common" }
 tokio = { version = "1.20.1", features = ["sync"] }
+rhai-fmt = { version = "0.1.0", path = "../rhai-fmt" }

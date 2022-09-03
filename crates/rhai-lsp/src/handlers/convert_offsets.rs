@@ -6,6 +6,7 @@ use crate::{
     world::World,
 };
 
+#[tracing::instrument(skip_all)]
 pub(crate) async fn convert_offsets<E: Environment>(
     context: Context<World<E>>,
     params: Params<ConvertOffsetsParams>,

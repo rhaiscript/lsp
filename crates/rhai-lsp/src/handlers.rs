@@ -45,3 +45,6 @@ pub(crate) use semantic_tokens::*;
 
 mod debug;
 pub(crate) use debug::*;
+
+mod formatting;
+pub(crate) use formatting::*;

@@ -13,6 +13,7 @@ rhai = "1.8.0"
 anyhow = "1.0.59"
 async-ctrlc = { version = "1.2.0", features = ["stream"] }
 tracing = "0.1.36"
+rhai-fmt = { version = "0.1.0", path = "../rhai-fmt" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 atty = "0.2.14"

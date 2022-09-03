@@ -66,18 +66,6 @@ impl super::ExprLet {
     }
 }
 
-impl super::ExprReturn {
-    pub fn expr(&self) -> Option<Expr> {
-        self.syntax().children().find_map(Expr::cast)
-    }
-}
-
-impl super::ExprBreak {
-    pub fn expr(&self) -> Option<Expr> {
-        self.syntax().children().find_map(Expr::cast)
-    }
-}
-
 impl super::Stmt {
     pub fn item(&self) -> Option<super::Item> {
         self.syntax().children().find_map(super::Item::cast)
@@ -114,18 +102,6 @@ impl super::Path {
                     && t.kind() != SyntaxKind::COMMENT_LINE
             })
             .filter_map(SyntaxElement::into_token)
-    }
-}
-
-impl super::ExprFn {
-    #[must_use]
-    pub fn kw_private_token(&self) -> Option<SyntaxToken> {
-        self.syntax().children_with_tokens().find_map(|t| {
-            if t.kind() != SyntaxKind::KW_PRIVATE {
-                return None;
-            }
-            t.into_token()
-        })
     }
 }
 
