@@ -13,7 +13,17 @@ rhai = "1.8.0"
 anyhow = "1.0.59"
 async-ctrlc = { version = "1.2.0", features = ["stream"] }
 tracing = "0.1.36"
-rhai-fmt = { version = "0.1.0", path = "../rhai-fmt" }
+rhai-fmt = { version = "0.1.0", path = "../rhai-fmt", features = ["schema"] }
+schemars = "0.8.10"
+toml = "0.5.9"
+figment = "0.10.6"
+serde_json = "1.0.85"
+codespan-reporting = "0.11.1"
+rhai-rowan = { version = "0.1.0", path = "../rhai-rowan" }
+itertools = "0.10.3"
+glob = "0.3.0"
+rhai-hir = { version = "0.1.0", path = "../rhai-hir" }
+url = "2.2.2"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 atty = "0.2.14"

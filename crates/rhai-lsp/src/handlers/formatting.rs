@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use crate::world::World;
 use lsp_async_stub::{rpc, util::LspExt, Context, Params};
 use lsp_types::{DocumentFormattingParams, TextEdit};
@@ -24,7 +22,7 @@ pub(crate) async fn format<E: Environment>(
 
     let format_opts = rhai_fmt::Options {
         indent_string: if p.options.insert_spaces {
-            Arc::from(" ".repeat(p.options.tab_size as usize).as_str())
+            " ".repeat(p.options.tab_size as usize)
         } else {
             "\t".into()
         },

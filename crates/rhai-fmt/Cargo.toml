@@ -7,6 +7,7 @@ publish = false
 [dependencies]
 rhai-rowan = { version = "0.1.0", path = "../rhai-rowan" }
 rowan = "0.15.8"
+schemars = { version = "0.8.10", optional = true }
 serde = { version = "1.0.144", features = ["derive"] }
 tracing = "0.1.36"
 
@@ -15,6 +16,9 @@ criterion = "0.3.6"
 insta = "1.19.1"
 test-case = "2.2.1"
 tracing-subscriber = "0.3.15"
+
+[features]
+schema = ["schemars"]
 
 [[bench]]
 name = "fmt"

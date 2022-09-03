@@ -1,4 +1,4 @@
-use rhai_rowan::{TextRange, TextSize};
+use rhai_rowan::{parser, util::is_valid_ident, TextRange, TextSize};
 use std::cmp::Ordering;
 
 use super::*;
@@ -89,6 +89,22 @@ impl Hir {
 
     pub fn operators(&self) -> impl Iterator<Item = &OpSymbol> + '_ {
         self.symbols.values().filter_map(|v| v.kind.as_op())
+    }
+
+    /// Return the custom operators for parsing.
+    pub fn parser_operators(&self) -> impl Iterator<Item = (String, parser::Operator)> + '_ {
+        self.operators().filter_map(|op| {
+            if is_valid_ident(&op.name) {
+                Some((
+                    op.name.clone(),
+                    parser::Operator {
+                        binding_power: op.binding_powers,
+                    },
+                ))
+            } else {
+                None
+            }
+        })
     }
 
     #[must_use]
