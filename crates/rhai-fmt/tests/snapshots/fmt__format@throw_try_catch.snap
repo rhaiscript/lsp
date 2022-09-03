@@ -1,0 +1,8 @@
+---
+source: crates/rhai-fmt/tests/fmt.rs
+expression: formatted
+---
+try {
+  throw "hello";
+} catch {}
+

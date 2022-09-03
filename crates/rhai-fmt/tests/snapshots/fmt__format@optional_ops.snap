@@ -1,0 +1,9 @@
+---
+source: crates/rhai-fmt/tests/fmt.rs
+expression: formatted
+---
+fn test_a() {
+  let foo = #{};
+  let val = foo?.bar["baz"] ?? 2;
+}
+

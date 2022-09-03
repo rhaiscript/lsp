@@ -1,0 +1,7 @@
+---
+source: crates/rhai-fmt/tests/fmt.rs
+expression: formatted
+---
+let val = 'a';
+let val = '\n';
+

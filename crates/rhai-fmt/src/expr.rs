@@ -311,14 +311,14 @@ impl<S: Write> Formatter<S> {
         &mut self,
         expr: rhai_rowan::ast::ExprWhile,
     ) -> Result<(), io::Error> {
-        self.cbox(0);
+        self.cbox(1);
         self.word("while ")?;
         if let Some(cond) = expr.expr() {
             self.fmt_expr(cond)?;
         }
         self.nbsp()?;
         if let Some(body) = expr.loop_body() {
-            self.fmt_expr_block(body, true, false)?;
+            self.fmt_expr_block(body, true, true)?;
         }
         self.end();
         Ok(())
@@ -344,15 +344,12 @@ impl<S: Write> Formatter<S> {
                 self.word(pat.idents().next().unwrap().static_text())?;
             } else {
                 self.word("(")?;
-                self.cbox(1);
-                self.zerobreak();
-
                 for (i, ident) in pat.idents().enumerate() {
+                    if i != 0 {
+                        self.word(", ")?;
+                    }
                     self.word(ident.static_text())?;
-                    self.trailing_comma(i + 1 == ident_count)?;
                 }
-                self.offset(-1);
-                self.end();
                 self.word(")")?;
             }
 
@@ -671,6 +668,12 @@ impl<S: Write> Formatter<S> {
             if let Some(t) = lit.lit_token() {
                 self.word(t.static_text())?;
             } else if let Some(template) = lit.lit_str_template() {
+                let segment_count = template.segments().count();
+
+                if segment_count > 1 {
+                    self.ibox(1);
+                }
+
                 for segment in template.segments() {
                     match segment {
                         LitStrTemplateSegment::LitStr(s) => {
@@ -685,7 +688,6 @@ impl<S: Write> Formatter<S> {
                                 }
                                 _ => {
                                     self.word("${")?;
-                                    self.ibox(0);
                                     self.zerobreak();
 
                                     for (idx, statement) in interpolation.statements().enumerate() {
@@ -698,12 +700,15 @@ impl<S: Write> Formatter<S> {
                                     }
 
                                     self.zerobreak();
-                                    self.end();
                                     self.word("}")?;
                                 }
                             }
                         }
                     }
+                }
+
+                if segment_count > 1 {
+                    self.end();
                 }
             }
         };

@@ -97,7 +97,7 @@ impl<W: Write> Formatter<W> {
             match ws_or_comment.kind() {
                 COMMENT_BLOCK | COMMENT_LINE => {
                     if idx == 0 {
-                        self.nbsp()?;
+                        self.space();
                     }
                     self.word(ws_or_comment.static_text().trim_end())?;
                     hardbreak_last = false;
@@ -105,7 +105,7 @@ impl<W: Write> Formatter<W> {
                 WHITESPACE => {
                     let breaks = break_count(&ws_or_comment);
                     if idx == 0 && breaks == 0 && comment_at_p1 {
-                        self.nbsp()?;
+                        self.space();
                     } else if breaks > 0 {
                         hardbreak_last = true;
                         self.hardbreaks(breaks)
@@ -165,7 +165,7 @@ impl<W: Write> Formatter<W> {
             match ws_or_comment.kind() {
                 COMMENT_BLOCK | COMMENT_LINE => {
                     if idx == 0 {
-                        self.nbsp()?;
+                        self.space();
                     }
                     self.word(ws_or_comment.static_text().trim_end())?;
 
@@ -179,7 +179,7 @@ impl<W: Write> Formatter<W> {
                 WHITESPACE => {
                     let breaks = break_count(&ws_or_comment);
                     if idx == 0 && breaks == 0 && comment_at_p1 {
-                        self.nbsp()?;
+                        self.space();
                     } else if breaks != 0 {
                         self.hardbreaks(breaks);
                     }

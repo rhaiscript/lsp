@@ -1,0 +1,10 @@
+---
+source: crates/rhai-fmt/tests/fmt.rs
+expression: formatted
+---
+let a = """";
+let a = " "" ";
+
+let b = ````;
+let b = ` `` `;
+
