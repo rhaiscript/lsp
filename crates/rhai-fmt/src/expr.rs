@@ -2,8 +2,8 @@ use std::io::{self, Write};
 
 use rhai_rowan::{
     ast::{
-        AstNode, ExportTarget, Expr, ExprBlock, ExprConst, ExprContinue, ExprIf, ExprLet,
-        LitStrTemplateSegment,
+        AstNode, ExportTarget, Expr, ExprBinary, ExprBlock, ExprConst, ExprContinue, ExprIf,
+        ExprLet, LitStrTemplateSegment,
     },
     syntax::{
         SyntaxElement,
@@ -21,6 +21,11 @@ use crate::{
 impl<S: Write> Formatter<S> {
     pub(crate) fn fmt_expr(&mut self, expr: Expr) -> io::Result<()> {
         let syntax = expr.syntax();
+
+        if is_access_chain(&expr) {
+            self.fmt_access_chain(expr, true)?;
+            return Ok(());
+        }
 
         match expr {
             Expr::Ident(expr) => {
@@ -525,7 +530,6 @@ impl<S: Write> Formatter<S> {
         &mut self,
         expr: rhai_rowan::ast::ExprBinary,
     ) -> Result<(), io::Error> {
-        // Assignment is treated differently.
         if let Some(op) = expr.op_token() {
             if op.kind() == T!["="] {
                 let indent_expr = if let Some(rhs) = expr.rhs() {
@@ -582,6 +586,67 @@ impl<S: Write> Formatter<S> {
             self.fmt_expr(rhs)?;
         }
         self.end();
+        Ok(())
+    }
+
+    fn fmt_access_chain(&mut self, expr: Expr, cbox: bool) -> Result<(), io::Error> {
+        if cbox {
+            self.cbox(0);
+        }
+
+        match &expr {
+            Expr::Binary(expr) => {
+                if let Some(lhs) = expr.lhs() {
+                    self.fmt_access_chain(lhs, false)?;
+                }
+                if let Some(op) = expr.op_token().map(|t| t.kind()) {
+                    self.break_before_op(op)?;
+                }
+                if let Some(op) = expr.op_token() {
+                    self.word(op.static_text())?;
+                }
+                if let Some(op) = expr.op_token().map(|t| t.kind()) {
+                    self.break_after_op(op)?;
+                }
+                if let Some(rhs) = expr.rhs() {
+                    self.fmt_expr(rhs)?;
+                }
+            }
+            Expr::Call(expr) => {
+                if let Some(base) = expr.expr() {
+                    self.fmt_access_chain(base, false)?;
+                }
+                self.word("(")?;
+                self.cbox(1);
+                self.zerobreak();
+                if let Some(args) = expr.arg_list() {
+                    let count = args.arguments().count();
+
+                    for (i, arg) in args.arguments().enumerate() {
+                        self.fmt_expr(arg)?;
+                        self.trailing_comma(i + 1 == count)?;
+                    }
+                }
+                self.offset(-1);
+                self.end();
+                self.word(")")?;
+            }
+            Expr::Index(expr) => {
+                if let Some(base) = expr.base() {
+                    self.fmt_access_chain(base, false)?;
+                }
+                self.word("[")?;
+                if let Some(idx) = expr.index() {
+                    self.fmt_expr(idx)?;
+                }
+                self.word("]")?;
+            }
+            _ => self.fmt_expr(expr)?,
+        }
+
+        if cbox {
+            self.end();
+        }
         Ok(())
     }
 
@@ -936,4 +1001,36 @@ fn needs_indent_after_assign(expr: &Expr) -> bool {
         | Expr::Throw(_) => false,
         _ => true,
     }
+}
+
+fn is_access_chain(expr: &Expr) -> bool {
+    fn extract_binary_expr(expr: &Expr) -> Option<ExprBinary> {
+        match expr {
+            Expr::Binary(bin) => Some(bin.clone()),
+            Expr::Call(call) => call.expr().as_ref().and_then(extract_binary_expr),
+            Expr::Index(idx) => idx.base().as_ref().and_then(extract_binary_expr),
+            _ => None,
+        }
+    }
+
+    let mut count = 0;
+    let mut binary_expr = extract_binary_expr(expr);
+    while let Some(bin) = binary_expr {
+        if let Some(op) = bin.op_token() {
+            if op.kind() != T!["."] {
+                return false;
+            }
+            count += 1;
+        } else {
+            return false;
+        }
+
+        if let Some(lhs) = bin.lhs() {
+            binary_expr = extract_binary_expr(&lhs);
+        } else {
+            break;
+        }
+    }
+
+    count > 1
 }
