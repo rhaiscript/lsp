@@ -290,7 +290,9 @@ impl Hir {
             }
             SymbolKind::Virtual(virt) => {
                 match virt {
-                    VirtualSymbol::Module(_) | VirtualSymbol::Proxy(_) => {
+                    VirtualSymbol::Module(_)
+                    | VirtualSymbol::Proxy(_)
+                    | VirtualSymbol::Alias(_) => {
                         // no cleanup needed.
                     }
                 }

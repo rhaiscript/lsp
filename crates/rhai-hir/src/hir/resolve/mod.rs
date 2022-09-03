@@ -122,8 +122,11 @@ impl Hir {
 
             if let Some(import_symbol_data) = self[import_symbol].kind.as_import() {
                 if let Some(import_path) = import_symbol_data.import_path(self) {
-                    let import_url = match self.module_resolver.resolve_url_from_module(self, module, import_path)
-                    {
+                    let import_url = match self.module_resolver.resolve_url_from_module(
+                        self,
+                        module,
+                        import_path,
+                    ) {
                         Ok(u) => u,
                         Err(error) => {
                             tracing::error!(%error, "failed to resolve import URL");
@@ -244,7 +247,15 @@ impl Hir {
                 })
         };
 
-        if let Some(target_symbol) = target_symbol {
+        if let Some(mut target_symbol) = target_symbol {
+            if let Some(alias) = self[target_symbol]
+                .kind
+                .as_virtual()
+                .and_then(VirtualSymbol::as_alias)
+            {
+                target_symbol = alias.target;
+            }
+
             let target_symbol_data = self.symbol_mut(target_symbol);
 
             match &mut target_symbol_data.kind {

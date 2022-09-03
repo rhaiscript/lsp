@@ -345,6 +345,9 @@ fn collect_symbol_scope_iters<'h>(
         SymbolKind::Virtual(VirtualSymbol::Module(m)) => {
             iters.push(Box::new(hir.scope_symbols(hir[m.module].scope)));
         }
+        SymbolKind::Virtual(VirtualSymbol::Alias(a)) => {
+            collect_symbol_scope_iters(hir, iters, a.target);
+        }
         SymbolKind::Lit(lit) => {
             for scope in lit.interpolated_scopes.iter().copied() {
                 iters.push(Box::new(hir.scope_symbols(scope)));

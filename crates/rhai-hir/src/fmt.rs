@@ -774,6 +774,9 @@ impl<'h> HirFmt<'h> {
                 }
                 VirtualSymbol::Module(m) => {
                     write!(f, " {} => module{}", m.name, KeyDataFmt(m.module.data()))?;
+                },
+                VirtualSymbol::Alias(a) => {
+                    write!(f, " {} => ${}", a.name, KeyDataFmt(a.target.data()))?;
                 }
             },
             SymbolKind::Continue(_)

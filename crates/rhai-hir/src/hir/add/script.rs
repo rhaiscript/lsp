@@ -1046,7 +1046,7 @@ impl Hir {
                     }
                     ExportTarget::Ident(expr) => {
                         let symbol = self.add_symbol(SymbolData {
-                            export: can_export,
+                            export: can_export && expr.alias().is_none(),
                             source: SourceInfo {
                                 source: Some(source),
                                 text_range: expr.syntax().text_range().into(),
@@ -1064,6 +1064,30 @@ impl Hir {
                         });
 
                         scope.add_symbol(self, symbol, false);
+
+                        if let Some(alias) = expr.alias() {
+                            let alias_symbol = self.add_symbol(SymbolData {
+                                export: can_export,
+                                source: SourceInfo {
+                                    source: Some(source),
+                                    text_range: expr.syntax().text_range().into(),
+                                    selection_text_range: expr
+                                        .ident_token()
+                                        .map(|t| t.text_range()),
+                                },
+                                kind: SymbolKind::Virtual(VirtualSymbol::Alias(
+                                    VirtualAliasSymbol {
+                                        name: alias.text().to_string(),
+                                        target: symbol,
+                                    },
+                                )),
+                                parent_scope: Scope::default(),
+                                ty: self.builtin_types.unknown,
+                            });
+
+                            scope.add_symbol(self, alias_symbol, false);
+                        }
+
                         Some(symbol)
                     }
                 });

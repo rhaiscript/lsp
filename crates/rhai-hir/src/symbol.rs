@@ -24,6 +24,7 @@ impl SymbolData {
             SymbolKind::Ref(r) => Some(&r.name),
             SymbolKind::Import(import) => import.alias.and_then(|alias| hir[alias].name(hir)),
             SymbolKind::Virtual(VirtualSymbol::Module(m)) => Some(&m.name),
+            SymbolKind::Virtual(VirtualSymbol::Alias(a)) => Some(&a.name),
             _ => None,
         }
     }
@@ -993,6 +994,7 @@ impl ReferenceTarget {
 pub enum VirtualSymbol {
     Proxy(VirtualProxySymbol),
     Module(VirtualModuleSymbol),
+    Alias(VirtualAliasSymbol),
 }
 
 #[allow(irrefutable_let_patterns)]
@@ -1030,6 +1032,23 @@ impl VirtualSymbol {
             None
         }
     }
+
+    /// Returns `true` if the virtual symbol is [`Alias`].
+    ///
+    /// [`Alias`]: VirtualSymbol::Alias
+    #[must_use]
+    pub fn is_alias(&self) -> bool {
+        matches!(self, Self::Alias(..))
+    }
+
+    #[must_use]
+    pub fn as_alias(&self) -> Option<&VirtualAliasSymbol> {
+        if let Self::Alias(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
 }
 
 /// A symbol that points to some other symbols transparently.
@@ -1044,6 +1063,15 @@ pub struct VirtualProxySymbol {
 pub struct VirtualModuleSymbol {
     pub name: String,
     pub module: Module,
+}
+
+/// A symbol that points to some other symbol under an alias.
+/// 
+/// Has the same semantics as [`VirtualModuleSymbol`].
+#[derive(Debug, Clone)]
+pub struct VirtualAliasSymbol {
+    pub name: String,
+    pub target: Symbol,
 }
 
 #[derive(Debug, Clone)]

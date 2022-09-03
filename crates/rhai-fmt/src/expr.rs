@@ -185,9 +185,15 @@ impl<S: Write> Formatter<S> {
                     if let Some(ident) = ident.ident_token() {
                         self.word(ident.static_text())?;
                     }
+
+                    if let Some(alias) = ident.alias() {
+                        self.word(" as ")?;
+                        self.word(alias.static_text())?;
+                    }
                 }
             }
         };
+
         Ok(())
     }
 

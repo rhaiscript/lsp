@@ -515,3 +515,14 @@ fn docs_to_string(docs: impl Iterator<Item = super::Doc>) -> String {
     s.truncate(s.trim_end().len());
     s
 }
+
+impl super::ExportIdent {
+    #[must_use]
+    pub fn alias(&self) -> Option<SyntaxToken> {
+        self.syntax()
+            .children_with_tokens()
+            .filter_map(SyntaxElement::into_token)
+            .filter(|t| t.kind() == SyntaxKind::IDENT)
+            .nth(1)
+    }
+}

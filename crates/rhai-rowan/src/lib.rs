@@ -19,3 +19,5 @@ pub mod syntax;
 pub mod util;
 
 pub use rowan::{TextRange, TextSize};
+
+pub use parser::{parsers, Parser};
