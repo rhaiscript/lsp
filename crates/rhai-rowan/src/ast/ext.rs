@@ -141,6 +141,12 @@ impl super::ExprUnary {
     pub fn op_token(&self) -> Option<SyntaxToken> {
         self.syntax()
             .children_with_tokens()
+            .filter(|e| {
+                !matches!(
+                    e.kind(),
+                    SyntaxKind::WHITESPACE | SyntaxKind::COMMENT_BLOCK | SyntaxKind::COMMENT_LINE
+                )
+            })
             .find_map(SyntaxElement::into_token)
     }
 }
