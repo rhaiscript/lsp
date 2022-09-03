@@ -117,6 +117,7 @@ impl<W: Write> Formatter<W> {
     pub(crate) fn standalone_comments_after(
         &mut self,
         node: &SyntaxNode,
+        trailing_newlines: bool,
     ) -> io::Result<CommentInfo> {
         let mut info = CommentInfo::default();
 
@@ -143,24 +144,26 @@ impl<W: Write> Formatter<W> {
             .filter_map(SyntaxElement::into_token)
             .collect::<Vec<_>>();
 
-        let last_comment_position =
-            ws_and_comments
-                .iter()
-                .enumerate()
-                .rev()
-                .find_map(|(idx, t)| {
-                    if t.kind() != WHITESPACE {
-                        Some(idx)
-                    } else {
-                        None
-                    }
-                });
+        if !trailing_newlines {
+            let last_comment_position =
+                ws_and_comments
+                    .iter()
+                    .enumerate()
+                    .rev()
+                    .find_map(|(idx, t)| {
+                        if t.kind() != WHITESPACE {
+                            Some(idx)
+                        } else {
+                            None
+                        }
+                    });
 
-        match last_comment_position {
-            Some(p) => {
-                ws_and_comments.truncate(p + 1);
+            match last_comment_position {
+                Some(p) => {
+                    ws_and_comments.truncate(p + 1);
+                }
+                None => return Ok(info),
             }
-            None => return Ok(info),
         }
 
         for ws_or_comment in ws_and_comments {
@@ -196,5 +199,9 @@ impl CommentInfo {
     pub(crate) fn update(&mut self, other: CommentInfo) {
         self.comment_added = self.comment_added || other.comment_added;
         self.hardbreak_added = self.hardbreak_added || other.hardbreak_added;
+
+        if other.comment_added || other.hardbreak_added {
+            self.hardbreak_end = other.hardbreak_end;
+        }
     }
 }

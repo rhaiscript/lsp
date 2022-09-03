@@ -36,12 +36,12 @@ impl<S: Write> Formatter<S> {
 
             self.fmt_item(item)?;
 
-            if last {
-                let had_sep = stmt
-                    .syntax()
-                    .children_with_tokens()
-                    .any(|c| c.kind() == T![";"]);
+            let had_sep = stmt
+                .syntax()
+                .children_with_tokens()
+                .any(|c| c.kind() == T![";"]);
 
+            if last {
                 if had_sep && needs_sep {
                     self.word(";")?;
                 }
@@ -54,10 +54,15 @@ impl<S: Write> Formatter<S> {
 
             self.end();
 
-            self.standalone_comments_after(&item_syntax)?;
-            self.standalone_comments_after(&stmt_syntax)?;
+            let standalone_comments = if had_sep {
+                self.standalone_comments_after(&stmt_syntax, !last)?
+            } else {
+                self.standalone_comments_after(&item_syntax, !last)?
+            };
 
-            self.hardbreak();
+            if !standalone_comments.hardbreak_end {
+                self.hardbreak();
+            }
         }
 
         self.end();

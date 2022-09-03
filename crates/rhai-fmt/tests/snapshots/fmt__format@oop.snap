@@ -12,11 +12,14 @@ let obj1 = #{
   _data: 42,
   // data field
 
+
   get_data: || this._data,
   // property getter
 
+
   action: || print(`Data=${this._data}`),
   // method
+
 
   update: |x| {// property setter
     this._data = x;
@@ -24,6 +27,7 @@ let obj1 = #{
     this.action();
   },
 };
+
 if obj1.get_data() > 0 {// property access
   obj1.update(123); // call method
 } else {
@@ -33,6 +37,7 @@ let obj2 = #{
   _data: 0,
   // data field - new value
 
+
   update: |x| {// property setter - another function
     this._data = x * 2;
     last_value = this._data; // capture 'last_value'
@@ -40,6 +45,7 @@ let obj2 = #{
   },
 };
 obj2.fill_with(obj1); // add all other fields from obj1
+
 if obj2.get_data() > 0 {// property access
   print("we have another problem here");
 } else {

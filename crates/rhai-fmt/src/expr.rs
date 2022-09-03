@@ -485,9 +485,8 @@ impl<S: Write> Formatter<S> {
                     self.hardbreak();
                 }
 
-                comments.update(self.standalone_comments_after(&field_syntax)?);
+                comments.update(self.standalone_comments_after(&field_syntax, !last)?);
                 self.hardbreak();
-
             } else {
                 self.trailing_comma_or_space(last)?;
             }
@@ -926,8 +925,8 @@ impl<S: Write> Formatter<S> {
 
                     self.end();
 
-                    comments.update(self.standalone_comments_after(&item_syntax)?);
-                    comments.update(self.standalone_comments_after(&stmt_syntax)?);
+                    comments.update(self.standalone_comments_after(&item_syntax, false)?);
+                    comments.update(self.standalone_comments_after(&stmt_syntax, false)?);
 
                     if always_break {
                         self.hardbreak();
@@ -960,12 +959,12 @@ impl<S: Write> Formatter<S> {
 
                     self.fmt_item(item)?;
 
-                    if last {
-                        let had_sep = stmt
-                            .syntax()
-                            .children_with_tokens()
-                            .any(|c| c.kind() == T![";"]);
+                    let had_sep = stmt
+                        .syntax()
+                        .children_with_tokens()
+                        .any(|c| c.kind() == T![";"]);
 
+                    if last {
                         if had_sep && needs_sep {
                             self.word(";")?;
                         }
@@ -978,10 +977,15 @@ impl<S: Write> Formatter<S> {
 
                     self.end();
 
-                    self.standalone_comments_after(&item_syntax)?;
-                    self.standalone_comments_after(&stmt_syntax)?;
+                    let standalone_comments = if had_sep {
+                        self.standalone_comments_after(&stmt_syntax, !last)?
+                    } else {
+                        self.standalone_comments_after(&item_syntax, !last)?
+                    };
 
-                    self.hardbreak();
+                    if !standalone_comments.hardbreak_end {
+                        self.hardbreak();
+                    }
                 }
 
                 self.offset(-1);
