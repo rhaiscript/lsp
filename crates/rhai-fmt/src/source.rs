@@ -35,7 +35,7 @@ impl<S: Write> Formatter<S> {
                     self.word(";")?;
                 }
 
-                self.comments_before_or_hardbreak(&syntax)?;
+                self.comments_before(&syntax, true)?;
             }
             first = false;
 
@@ -71,8 +71,8 @@ pub(crate) fn needs_stmt_separator(item: &Item) -> bool {
         .map(|e| e.kind())
     {
         Some(
-            EXPR_IDENT | EXPR_BLOCK | EXPR_IF | EXPR_LOOP | EXPR_FOR | EXPR_WHILE | EXPR_SWITCH
-            | EXPR_FN | EXPR_TRY,
+            EXPR_BLOCK | EXPR_IF | EXPR_LOOP | EXPR_FOR | EXPR_WHILE | EXPR_SWITCH | EXPR_FN
+            | EXPR_TRY,
         ) => false,
         _ => true,
     }

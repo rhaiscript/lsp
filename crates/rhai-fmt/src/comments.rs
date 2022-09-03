@@ -43,6 +43,15 @@ impl<W: Write> Formatter<W> {
             .filter_map(SyntaxElement::into_token)
             .collect::<Vec<_>>();
 
+        let comment_count = ws_and_comments
+            .iter()
+            .filter(|c| c.kind() != WHITESPACE)
+            .count();
+
+        if comment_count == 0 {
+            return Ok(false);
+        }
+
         let mut hardbreak_last = false;
         for ws_or_comment in ws_and_comments {
             match ws_or_comment.kind() {
@@ -65,7 +74,9 @@ impl<W: Write> Formatter<W> {
     }
 
     /// Comments in position 2.
-    pub(crate) fn comments_before_or_hardbreak(&mut self, node: &SyntaxNode) -> io::Result<()> {
+    ///
+    /// Optionally insert a hardbreak if none was inserted.
+    pub(crate) fn comments_before(&mut self, node: &SyntaxNode, hardbreak: bool) -> io::Result<()> {
         let mut ws_and_comments = node
             .siblings_with_tokens(Direction::Prev)
             .skip(1)
@@ -104,7 +115,7 @@ impl<W: Write> Formatter<W> {
             }
         }
 
-        if !hardbreak_last {
+        if !hardbreak_last && hardbreak {
             self.hardbreak();
         }
 

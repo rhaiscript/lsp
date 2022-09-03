@@ -783,7 +783,7 @@ impl<S: Write> Formatter<S> {
                             self.word(";")?;
                         }
 
-                        self.comments_before_or_hardbreak(&syntax)?;
+                        self.comments_before(&syntax, true)?;
                     }
                     first = false;
 
