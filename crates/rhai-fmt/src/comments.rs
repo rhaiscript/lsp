@@ -4,17 +4,15 @@
 //!
 //! ```rhai
 //! {
-//!   // 1. leading child comments
+//!   // 1. leading standalone comments
 //!   
 //!   // 1. with whitespace in between
 //!
-//!   let a = "foo"; // 2. comment between but still same line
-//!
-//!   // 2. standalone comments between nodes with white space
-//!
-//!   let b = "bar"; // 3. comments after last node
+//!   let a = "foo"; // 2. comment on the same line.
 //!
 //!   // 3. trailing standalone comments
+//!
+//!   // 3. also with whitespace
 //! }
 //! ```
 
@@ -84,6 +82,11 @@ impl<W: Write> Formatter<W> {
         let mut ws_and_comments = node
             .siblings_with_tokens(Direction::Next)
             .skip(1)
+            .skip_while(|ws| {
+                // Skip punctuation
+                ws.as_token().is_some()
+                    && !matches!(ws.kind(), WHITESPACE | COMMENT_BLOCK | COMMENT_LINE)
+            })
             .take_while(|e| matches!(e.kind(), WHITESPACE | COMMENT_BLOCK | COMMENT_LINE))
             .filter_map(SyntaxElement::into_token);
 
@@ -117,19 +120,24 @@ impl<W: Write> Formatter<W> {
     ) -> io::Result<CommentInfo> {
         let mut info = CommentInfo::default();
 
-        let mut same_line = false;
         let mut ws_and_comments = node
             .siblings_with_tokens(Direction::Next)
             .skip(1)
             .skip_while(|ws| {
-                if same_line {
-                    same_line = false;
+                // Skip punctuation
+                if ws.as_token().is_some()
+                    && !matches!(ws.kind(), WHITESPACE | COMMENT_BLOCK | COMMENT_LINE)
+                {
                     return true;
                 }
 
-                let no_break = ws.kind() == WHITESPACE && break_count(ws.as_token().unwrap()) == 0;
-                same_line = no_break;
-                no_break
+                if let Some(token) = ws.as_token() {
+                    if break_count(token) != 0 {
+                        return false;
+                    }
+                }
+
+                true
             })
             .take_while(|e| matches!(e.kind(), WHITESPACE | COMMENT_BLOCK | COMMENT_LINE))
             .filter_map(SyntaxElement::into_token)
@@ -186,7 +194,7 @@ pub(crate) struct CommentInfo {
 
 impl CommentInfo {
     pub(crate) fn update(&mut self, other: CommentInfo) {
-        self.comment_added |= other.comment_added;
-        self.hardbreak_added |= other.hardbreak_added;
+        self.comment_added = self.comment_added || other.comment_added;
+        self.hardbreak_added = self.hardbreak_added || other.hardbreak_added;
     }
 }

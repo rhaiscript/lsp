@@ -138,6 +138,9 @@ pub(crate) fn breaks_before(node: &SyntaxNode) -> u64 {
 }
 
 pub(crate) fn break_count(t: &SyntaxToken) -> u64 {
+    if t.kind() != WHITESPACE {
+        return 0;
+    }
     t.text().chars().filter(|c| *c == '\n').count() as u64
 }
 

@@ -10,8 +10,14 @@ let last_value = ();
 // Define object
 let obj1 = #{
   _data: 42,
+  // data field
+
   get_data: || this._data,
+  // property getter
+
   action: || print(`Data=${this._data}`),
+  // method
+
   update: |x| {// property setter
     this._data = x;
     last_value = this._data; // capture 'last_value'
@@ -25,6 +31,8 @@ if obj1.get_data() > 0 {// property access
 }
 let obj2 = #{
   _data: 0,
+  // data field - new value
+
   update: |x| {// property setter - another function
     this._data = x * 2;
     last_value = this._data; // capture 'last_value'

@@ -419,15 +419,12 @@ impl<S: Write> Formatter<S> {
     ) -> Result<(), io::Error> {
         let count = expr.fields().count();
 
-        if count == 0 {
-            return self.word("#{}");
-        }
+        let obj_syntax = expr.syntax();
 
-        let always_break = expr
-            .syntax()
+        let always_break = obj_syntax
             .descendants_with_tokens()
             .any(|c| match c.kind() {
-                COMMENT_LINE | COMMENT_LINE_DOC => true,
+                COMMENT_LINE | COMMENT_LINE_DOC | COMMENT_BLOCK | COMMENT_BLOCK_DOC => true,
                 WHITESPACE => break_count(c.as_token().unwrap()) > 0,
                 _ => false,
             });
@@ -435,10 +432,28 @@ impl<S: Write> Formatter<S> {
         self.word("#{")?;
         self.cbox(1);
 
-        if always_break {
-            self.hardbreak();
-        } else {
-            self.space();
+        let comments = self.standalone_leading_comments_in(&obj_syntax)?;
+
+        if !comments.comment_added && count == 0 {
+            return self.word("}");
+        } else if count == 0 {
+            if comments.hardbreak_added {
+                if !comments.hardbreak_end {
+                    self.hardbreak();
+                }
+                self.offset(-1);
+            }
+
+            self.end();
+            return self.word("#}");
+        }
+
+        if !comments.comment_added {
+            if always_break {
+                self.hardbreak();
+            } else {
+                self.space();
+            }
         }
 
         for (i, field) in expr.fields().enumerate() {
@@ -457,7 +472,25 @@ impl<S: Write> Formatter<S> {
 
             let last = i + 1 == count;
 
-            self.trailing_comma_or_space(last)?;
+            let field_syntax = field.syntax();
+
+            if always_break {
+                self.word(",")?;
+
+                let mut comments = CommentInfo::default();
+
+                let comment_same_line = self.comment_same_line_after(&field_syntax)?.comment_added;
+
+                if comment_same_line {
+                    self.hardbreak();
+                }
+
+                comments.update(self.standalone_comments_after(&field_syntax)?);
+                self.hardbreak();
+
+            } else {
+                self.trailing_comma_or_space(last)?;
+            }
         }
         self.offset(-1);
         self.end();
