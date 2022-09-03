@@ -20,15 +20,16 @@
 )]
 
 mod algorithm;
+mod comments;
 mod cst;
 mod expr;
 mod item;
-mod options;
 mod path;
 mod ring;
 mod source;
 mod util;
-mod comments;
+
+pub mod options;
 
 pub use options::Options;
 use rhai_rowan::{parser::Parser, syntax::SyntaxElement};
