@@ -54,6 +54,10 @@ impl Environment for NativeEnvironment {
         Ok(tokio::fs::read(path).await?)
     }
 
+    async fn write_file(&self, path: &std::path::Path, bytes: &[u8]) -> Result<(), anyhow::Error> {
+        Ok(tokio::fs::write(path, bytes).await?)
+    }
+
     fn url_to_file_path(&self, url: &Url) -> Option<std::path::PathBuf> {
         url.to_file_path().ok()
     }

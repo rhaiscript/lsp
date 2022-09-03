@@ -11,6 +11,8 @@ async-trait = "0.1.57"
 futures = "0.3.21"
 globset = "0.4.9"
 percent-encoding = "2.1.0"
+rhai-fmt = { version = "0.1.0", path = "../rhai-fmt", features = ["schema"] }
+schemars = "0.8.10"
 serde = { version = "1.0.142", features = ["derive"] }
 serde_json = "1.0.83"
 tracing = "0.1.36"

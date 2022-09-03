@@ -2,12 +2,16 @@ use crate::{
     environment::Environment,
     util::{GlobRule, Normalize},
 };
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct Config {
+    #[serde(default)]
     pub source: SourceConfig,
+    #[serde(default)]
+    pub fmt: FmtConfig,
 }
 
 impl Config {
@@ -16,7 +20,7 @@ impl Config {
     }
 }
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SourceConfig {
     /// A list of UNIX-style glob patterns
     /// for Rhai files that should be included.
@@ -45,6 +49,17 @@ impl SourceConfig {
         Ok(())
     }
 
+    #[must_use]
+    pub fn is_included(&self, path: &Path) -> bool {
+        match &self.file_rule {
+            Some(r) => r.is_match(path),
+            None => {
+                tracing::debug!("no file matches were set up");
+                false
+            }
+        }
+    }
+
     fn make_absolute(&mut self, e: &impl Environment, base: &Path) {
         if let Some(included) = &mut self.include {
             for pat in included {
@@ -70,4 +85,10 @@ impl SourceConfig {
             }
         }
     }
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct FmtConfig {
+    #[serde(default)]
+    pub options: rhai_fmt::options::OptionsIncomplete,
 }

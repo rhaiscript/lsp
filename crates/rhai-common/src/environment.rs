@@ -20,7 +20,7 @@ pub trait Environment: Clone + Send + Sync + 'static {
     fn stdin(&self) -> Self::Stdin;
     fn stdout(&self) -> Self::Stdout;
     fn stderr(&self) -> Self::Stderr;
-    
+
     fn spawn<F>(&self, fut: F)
     where
         F: Future + Send + 'static,
@@ -33,6 +33,8 @@ pub trait Environment: Clone + Send + Sync + 'static {
     fn env_var(&self, name: &str) -> Option<String>;
 
     async fn read_file(&self, path: &Path) -> Result<Vec<u8>, anyhow::Error>;
+
+    async fn write_file(&self, path: &Path, bytes: &[u8]) -> Result<(), anyhow::Error>;
 
     fn url_to_file_path(&self, url: &Url) -> Option<PathBuf>;
 

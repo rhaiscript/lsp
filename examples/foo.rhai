@@ -24,8 +24,8 @@ let hello;
 /// let hi;
 /// ```
 fn scoped() {
-    return hello;
+  return hello;
 
-    // error:
-    // hi
+  // error:
+  // hi
 }

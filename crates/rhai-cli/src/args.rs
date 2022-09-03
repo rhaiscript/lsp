@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::{crate_version, ArgEnum, Parser, Subcommand};
 
 #[derive(Clone, Parser)]
@@ -13,6 +15,9 @@ pub struct RhaiArgs {
     /// Enable logging spans.
     #[clap(long, global = true)]
     pub log_spans: bool,
+    /// Path to `Rhai.toml` configuration file.
+    #[clap(long, global = true)]
+    pub config: Option<PathBuf>,
     #[clap(subcommand)]
     pub cmd: RootCommand,
 }
@@ -24,6 +29,15 @@ pub enum RootCommand {
         #[clap(subcommand)]
         cmd: LspCommand,
     },
+    /// Configuration file operations
+    #[clap(visible_aliases = &["cfg"])]
+    Config {
+        #[clap(subcommand)]
+        cmd: ConfigCommand,
+    },
+    /// Format Rhai source code.
+    #[clap(visible_aliases = &["format"])]
+    Fmt(FmtCommand),
 }
 
 #[derive(Clone, Subcommand)]
@@ -35,7 +49,37 @@ pub enum LspCommand {
         address: String,
     },
     /// Run the language server over the standard input and output.
-    Stdio {},
+    Stdio,
+}
+
+#[derive(Clone, Subcommand)]
+pub enum ConfigCommand {
+    /// Print the configuration JSON schema.
+    Schema,
+    /// Create a new configuration file with default values.
+    Init {
+        /// Output file path.
+        #[clap(short = 'o', long, default_value = "Rhai.toml")]
+        output: String,
+    },
+}
+
+#[derive(Clone, Parser)]
+pub struct FmtCommand {
+    /// Proceed with formatting even if the files contain
+    /// syntax errors.
+    #[clap(short, long)]
+    pub force: bool,
+
+    /// Dry-run and report any files that are not correctly formatted.
+    #[clap(long)]
+    pub check: bool,
+
+    /// Optional pattern to search for files.
+    ///
+    /// If not provided, it will be determined by
+    /// the configuration.
+    pub files: Option<String>,
 }
 
 #[derive(Clone, Copy, ArgEnum)]
