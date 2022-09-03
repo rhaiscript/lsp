@@ -66,7 +66,7 @@ impl<S: Write> Formatter<S> {
             kind => {
                 // TODO: def and type formatting
                 self.out.write_all(node.to_string().as_bytes())?;
-                tracing::warn!(?kind, "unformatted syntax node");
+                tracing::debug!(?kind, "unformatted syntax node");
             }
         }
 
