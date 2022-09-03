@@ -33,7 +33,7 @@ impl<S: Write> Formatter<S> {
         if let Some(t) = doc.token() {
             self.word(t.static_text().trim_end())?;
             self.comment_same_line_after(&syntax)?;
-            self.standalone_comments_after(&syntax, true)?;
+            self.standalone_comments_after(&syntax, false)?;
             self.hardbreak();
         };
         Ok(())
