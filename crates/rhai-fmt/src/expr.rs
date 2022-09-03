@@ -510,7 +510,12 @@ impl<S: Write> Formatter<S> {
     ) -> Result<(), io::Error> {
         self.word("(")?;
         if let Some(expr) = expr.expr() {
+            self.cbox(1);
+            self.zerobreak();
             self.fmt_expr(expr)?;
+            self.zerobreak();
+            self.offset(-1);
+            self.end();
         }
         self.word(")")?;
         Ok(())
@@ -520,6 +525,43 @@ impl<S: Write> Formatter<S> {
         &mut self,
         expr: rhai_rowan::ast::ExprBinary,
     ) -> Result<(), io::Error> {
+        // Assignment is treated differently.
+        if let Some(op) = expr.op_token() {
+            if op.kind() == T!["="] {
+                let indent_expr = if let Some(rhs) = expr.rhs() {
+                    needs_indent_after_assign(&rhs)
+                } else {
+                    false
+                };
+
+                if indent_expr {
+                    self.ibox(1);
+                    self.ibox(-1);
+                    if let Some(lhs) = expr.lhs() {
+                        self.fmt_expr(lhs)?;
+                    }
+                    self.end();
+                    self.word(" = ")?;
+                    if let Some(rhs) = expr.rhs() {
+                        self.fmt_expr(rhs)?;
+                    }
+                    self.end();
+                } else {
+                    self.ibox(0);
+                    if let Some(lhs) = expr.lhs() {
+                        self.fmt_expr(lhs)?;
+                    }
+                    self.end();
+                    self.word(" = ")?;
+                    if let Some(rhs) = expr.rhs() {
+                        self.fmt_expr(rhs)?;
+                    }
+                }
+
+                return Ok(());
+            }
+        }
+
         self.ibox(1);
         self.ibox(-1);
         if let Some(lhs) = expr.lhs() {
@@ -624,36 +666,76 @@ impl<S: Write> Formatter<S> {
     }
 
     pub(crate) fn fmt_expr_const(&mut self, expr: ExprConst) -> Result<(), io::Error> {
-        self.ibox(1);
-        self.word("const")?;
-        self.ibox(-1);
-        self.nbsp()?;
-        if let Some(ident) = expr.ident_token() {
-            self.word(ident.static_text())?;
+        let indent_expr = if let Some(rhs) = expr.expr() {
+            needs_indent_after_assign(&rhs)
+        } else {
+            false
+        };
+
+        if indent_expr {
+            self.ibox(1);
+            self.word("const")?;
+            self.ibox(-1);
+            self.nbsp()?;
+            if let Some(ident) = expr.ident_token() {
+                self.word(ident.static_text())?;
+            }
+            self.end();
+            if let Some(rhs) = expr.expr() {
+                self.word(" = ")?;
+                self.fmt_expr(rhs)?;
+            }
+            self.end();
+        } else {
+            self.ibox(0);
+            self.word("const")?;
+            self.nbsp()?;
+            if let Some(ident) = expr.ident_token() {
+                self.word(ident.static_text())?;
+            }
+            self.end();
+            if let Some(rhs) = expr.expr() {
+                self.word(" = ")?;
+                self.fmt_expr(rhs)?;
+            }
         }
-        self.end();
-        if let Some(rhs) = expr.expr() {
-            self.word(" = ")?;
-            self.fmt_expr(rhs)?;
-        }
-        self.end();
         Ok(())
     }
 
     pub(crate) fn fmt_expr_let(&mut self, expr: ExprLet) -> Result<(), io::Error> {
-        self.ibox(1);
-        self.word("let")?;
-        self.ibox(-1);
-        self.nbsp()?;
-        if let Some(ident) = expr.ident_token() {
-            self.word(ident.static_text())?;
+        let indent_expr = if let Some(rhs) = expr.expr() {
+            needs_indent_after_assign(&rhs)
+        } else {
+            false
+        };
+
+        if indent_expr {
+            self.ibox(1);
+            self.word("let")?;
+            self.ibox(-1);
+            self.nbsp()?;
+            if let Some(ident) = expr.ident_token() {
+                self.word(ident.static_text())?;
+            }
+            self.end();
+            if let Some(rhs) = expr.expr() {
+                self.word(" = ")?;
+                self.fmt_expr(rhs)?;
+            }
+            self.end();
+        } else {
+            self.ibox(0);
+            self.word("let")?;
+            self.nbsp()?;
+            if let Some(ident) = expr.ident_token() {
+                self.word(ident.static_text())?;
+            }
+            self.end();
+            if let Some(rhs) = expr.expr() {
+                self.word(" = ")?;
+                self.fmt_expr(rhs)?;
+            }
         }
-        self.end();
-        if let Some(rhs) = expr.expr() {
-            self.word(" = ")?;
-            self.fmt_expr(rhs)?;
-        }
-        self.end();
         Ok(())
     }
 
@@ -821,6 +903,7 @@ impl<S: Write> Formatter<S> {
         match kind {
             T![".."] | T!["..="] => {}
             T!["."] | T!["?."] => self.zerobreak(),
+            T!["="] => self.nbsp()?,
             _ => self.space(),
         }
 
@@ -834,5 +917,23 @@ impl<S: Write> Formatter<S> {
         }
 
         Ok(())
+    }
+}
+
+fn needs_indent_after_assign(expr: &Expr) -> bool {
+    match expr {
+        Expr::Block(_)
+        | Expr::Array(_)
+        | Expr::Object(_)
+        | Expr::Closure(_)
+        | Expr::If(_)
+        | Expr::Loop(_)
+        | Expr::For(_)
+        | Expr::While(_)
+        | Expr::Switch(_)
+        | Expr::Fn(_)
+        | Expr::Try(_)
+        | Expr::Throw(_) => false,
+        _ => true,
     }
 }
