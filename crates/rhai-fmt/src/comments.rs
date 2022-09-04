@@ -17,7 +17,11 @@
 //! ```
 
 #![allow(dead_code)]
-use rhai_rowan::syntax::{SyntaxElement, SyntaxKind::*, SyntaxNode};
+use rhai_rowan::syntax::{
+    SyntaxElement,
+    SyntaxKind::{self, *},
+    SyntaxNode,
+};
 use rowan::Direction;
 
 use crate::{
@@ -125,20 +129,13 @@ impl<W: Write> Formatter<W> {
             .siblings_with_tokens(Direction::Next)
             .skip(1)
             .skip_while(|ws| {
-                // Skip punctuation
-                if ws.as_token().is_some()
-                    && !matches!(ws.kind(), WHITESPACE | COMMENT_BLOCK | COMMENT_LINE)
-                {
-                    return true;
-                }
-
                 if let Some(token) = ws.as_token() {
-                    if break_count(token) != 0 {
-                        return false;
+                    if break_count(token) == 0 {
+                        return true;
                     }
                 }
 
-                true
+                false
             })
             .take_while(|e| matches!(e.kind(), WHITESPACE | COMMENT_BLOCK | COMMENT_LINE))
             .filter_map(SyntaxElement::into_token)
@@ -186,6 +183,100 @@ impl<W: Write> Formatter<W> {
 
         Ok(info)
     }
+
+    /// Add comments that are before the expression.
+    pub(crate) fn comments_in_expr_before(&mut self, expr: &SyntaxNode) -> io::Result<()> {
+        let comments_before = expr
+            .children_with_tokens()
+            .take_while(|t| t.as_node().is_none())
+            .filter_map(SyntaxElement::into_token)
+            .filter(|t| matches!(t.kind(), COMMENT_LINE | COMMENT_BLOCK));
+
+        let mut first = true;
+        let mut hardbreak_last = false;
+        for comment in comments_before {
+            if !first {
+                self.space();
+            }
+            first = false;
+            match comment.kind() {
+                COMMENT_LINE => {
+                    self.word(comment.static_text().trim_end())?;
+                    self.hardbreak();
+                    hardbreak_last = true;
+                }
+                COMMENT_BLOCK => {
+                    self.word(comment.static_text().trim_end())?;
+                }
+                _ => unreachable!(),
+            }
+        }
+
+        if !first && !hardbreak_last {
+            self.space();
+        }
+
+        Ok(())
+    }
+
+    /// Add comments that are before the expression.
+    pub(crate) fn comments_in_expr_after(&mut self, expr: &SyntaxNode) -> io::Result<()> {
+        let comments_before = expr
+            .children_with_tokens()
+            .skip_while(|t| t.as_token().is_some())
+            .filter_map(SyntaxElement::into_token)
+            .filter(|t| matches!(t.kind(), COMMENT_LINE | COMMENT_BLOCK));
+
+        for comment in comments_before {
+            self.space();
+            match comment.kind() {
+                COMMENT_LINE => {
+                    self.word(comment.static_text().trim_end())?;
+                    self.hardbreak();
+                }
+                COMMENT_BLOCK => {
+                    self.word(comment.static_text().trim_end())?;
+                }
+                _ => unreachable!(),
+            }
+        }
+
+        Ok(())
+    }
+
+    pub(crate) fn comments_after_child(
+        &mut self,
+        node: &SyntaxNode,
+        kind: SyntaxKind,
+    ) -> io::Result<()> {
+        let comments_after = node
+            .children_with_tokens()
+            .skip_while(|t| t.kind() != kind)
+            .skip_while(|t| t.kind() == kind)
+            .filter_map(SyntaxElement::into_token)
+            .filter(|t| matches!(t.kind(), COMMENT_BLOCK | COMMENT_LINE));
+
+        let mut first = true;
+        for comment in comments_after {
+            if first {
+                self.space();
+            }
+            first = false;
+            match comment.kind() {
+                COMMENT_LINE => {
+                    self.word(comment.static_text().trim_end())?;
+                    self.hardbreak();
+                }
+                COMMENT_BLOCK => {
+                    self.word(comment.static_text().trim_end())?;
+                    self.space();
+                }
+                _ => unreachable!(),
+            }
+        }
+
+        Ok(())
+    }
 }
 
 #[derive(Default)]
@@ -204,4 +295,9 @@ impl CommentInfo {
             self.hardbreak_end = other.hardbreak_end;
         }
     }
+}
+
+pub(crate) fn comments_in_expr(expr: &SyntaxNode) -> bool {
+    expr.children_with_tokens()
+        .any(|c| matches!(c.kind(), COMMENT_LINE | COMMENT_BLOCK))
 }

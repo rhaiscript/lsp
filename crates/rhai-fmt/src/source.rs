@@ -14,7 +14,8 @@ impl<S: Write> Formatter<S> {
 
         if let Some(t) = rhai.shebang_token() {
             self.word(t.static_text())?;
-            self.hardbreak();
+            // No hardbreak required here, as we should
+            // already have whitespace in the file.
         }
 
         self.standalone_leading_comments_in(&rhai.syntax())?;

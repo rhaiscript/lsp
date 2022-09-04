@@ -143,4 +143,3 @@ pub(crate) fn break_count(t: &SyntaxToken) -> u64 {
     }
     t.text().chars().filter(|c| *c == '\n').count() as u64
 }
-

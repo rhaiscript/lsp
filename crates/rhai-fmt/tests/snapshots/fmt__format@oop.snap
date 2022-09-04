@@ -32,7 +32,8 @@ if obj1.get_data() > 0 {// property access
   obj1.update(123); // call method
 } else {
   print("we have a problem here");
-}
+} // Define another object based on the first object
+
 let obj2 = #{
   _data: 0,
   // data field - new value

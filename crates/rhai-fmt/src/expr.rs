@@ -11,7 +11,7 @@ use rhai_rowan::{
 
 use crate::{
     algorithm::Formatter,
-    comments::CommentInfo,
+    comments::{comments_in_expr, CommentInfo},
     source::needs_stmt_separator,
     util::{break_count, ScopedStatic},
 };
@@ -22,6 +22,16 @@ impl<S: Write> Formatter<S> {
             self.fmt_access_chain(expr, true)?;
             return Ok(());
         }
+
+        let syntax = expr.syntax();
+
+        let has_comments = comments_in_expr(&syntax);
+
+        if has_comments {
+            self.ibox(0);
+        }
+
+        self.comments_in_expr_before(&syntax)?;
 
         match expr {
             Expr::Ident(expr) => {
@@ -105,6 +115,12 @@ impl<S: Write> Formatter<S> {
             Expr::Throw(expr) => {
                 self.fmt_expr_throw(expr)?;
             }
+        }
+
+        self.comments_in_expr_after(&syntax)?;
+
+        if has_comments {
+            self.end();
         }
 
         Ok(())
@@ -766,13 +782,18 @@ impl<S: Write> Formatter<S> {
             false
         };
 
+        let syntax = expr.syntax();
+
         if indent_expr {
             self.ibox(1);
             self.word("const")?;
             self.ibox(-1);
             self.nbsp()?;
+            self.comments_after_child(&syntax, KW_CONST)?;
+
             if let Some(ident) = expr.ident_token() {
                 self.word(ident.static_text())?;
+                self.comments_after_child(&syntax, IDENT)?;
             }
             self.end();
             if let Some(rhs) = expr.expr() {
@@ -784,8 +805,11 @@ impl<S: Write> Formatter<S> {
             self.ibox(0);
             self.word("const")?;
             self.nbsp()?;
+            self.comments_after_child(&syntax, KW_CONST)?;
+
             if let Some(ident) = expr.ident_token() {
                 self.word(ident.static_text())?;
+                self.comments_after_child(&syntax, IDENT)?;
             }
             self.end();
             if let Some(rhs) = expr.expr() {
@@ -803,13 +827,19 @@ impl<S: Write> Formatter<S> {
             false
         };
 
+        let syntax = expr.syntax();
+
         if indent_expr {
             self.ibox(1);
             self.word("let")?;
             self.ibox(-1);
             self.nbsp()?;
+
+            self.comments_after_child(&syntax, KW_LET)?;
+
             if let Some(ident) = expr.ident_token() {
                 self.word(ident.static_text())?;
+                self.comments_after_child(&syntax, IDENT)?;
             }
             self.end();
             if let Some(rhs) = expr.expr() {
@@ -821,8 +851,12 @@ impl<S: Write> Formatter<S> {
             self.ibox(0);
             self.word("let")?;
             self.nbsp()?;
+
+            self.comments_after_child(&syntax, KW_LET)?;
+
             if let Some(ident) = expr.ident_token() {
                 self.word(ident.static_text())?;
+                self.comments_after_child(&syntax, IDENT)?;
             }
             self.end();
             if let Some(rhs) = expr.expr() {
