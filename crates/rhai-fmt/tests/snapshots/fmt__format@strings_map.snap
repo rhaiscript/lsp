@@ -446,5 +446,5 @@ for key in keys {
 }
 
 print(`Sum = ${sum}`);
-print(`Finished. Run time = ${now.elapsed} seconds0);
+print(`Finished. Run time = ${now.elapsed} seconds.`);
 

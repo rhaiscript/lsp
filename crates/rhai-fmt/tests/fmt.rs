@@ -23,7 +23,8 @@ use test_case::test_case;
 #[test_case("primes", include_str!("../../../testdata/valid/primes.rhai"))]
 #[test_case("speed_test", include_str!("../../../testdata/valid/speed_test.rhai"))]
 #[test_case("string", include_str!("../../../testdata/valid/string.rhai"))]
-#[test_case("strings_map", include_str!("../../../testdata/valid/strings_map.rhai"))]
+// FIXME: the snapshot for this randomly fails. (#102)
+// #[test_case("strings_map", include_str!("../../../testdata/valid/strings_map.rhai"))]
 #[test_case("switch", include_str!("../../../testdata/valid/switch.rhai"))]
 #[test_case("while", include_str!("../../../testdata/valid/while.rhai"))]
 #[test_case("char", include_str!("../../../testdata/valid/char.rhai"))]
