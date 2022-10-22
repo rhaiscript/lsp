@@ -31,6 +31,7 @@ process.on("message", async (d: RpcMessage) => {
         glob: p => glob.sync(p),
         isAbsolute: p => path.isAbsolute(p),
         readFile: path => fsPromise.readFile(path),
+        writeFile: (path, data) => fsPromise.writeFile(path, data),
         stderr: process.stderr,
         stdErrAtty: () => process.stderr.isTTY,
         stdin: process.stdin,
