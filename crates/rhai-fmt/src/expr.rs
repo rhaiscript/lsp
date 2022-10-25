@@ -463,7 +463,7 @@ impl<S: Write> Formatter<S> {
             }
 
             self.end();
-            return self.word("#}");
+            return self.word("}");
         }
 
         if !comments.comment_added {
@@ -475,6 +475,10 @@ impl<S: Write> Formatter<S> {
         }
 
         for (i, field) in expr.fields().enumerate() {
+            if i != 0 {
+                self.add_standalone_comments_before(&field.syntax())?;
+            }
+
             self.ibox(0);
             if let Some(prop) = field.property() {
                 self.word(prop.static_text())?;
@@ -489,24 +493,10 @@ impl<S: Write> Formatter<S> {
             self.end();
 
             let last = i + 1 == count;
+            self.trailing_comma_or_space(last)?;
 
-            let field_syntax = field.syntax();
-
-            if always_break {
-                self.word(",")?;
-
-                let mut comments = CommentInfo::default();
-
-                let comment_same_line = self.comment_same_line_after(&field_syntax)?.comment_added;
-
-                if comment_same_line {
-                    self.hardbreak();
-                }
-
-                comments.update(self.standalone_comments_after(&field_syntax, !last)?);
-                self.hardbreak();
-            } else {
-                self.trailing_comma_or_space(last)?;
+            if last {
+                self.add_standalone_comments_after(&field.syntax())?;
             }
         }
         self.offset(-1);
@@ -835,9 +825,12 @@ impl<S: Write> Formatter<S> {
             self.ibox(1);
             self.word("let")?;
             self.ibox(-1);
-            self.nbsp()?;
 
-            self.comments_after_child(&syntax, KW_LET)?;
+            let c = self.comments_after_child(&syntax, KW_LET)?;
+
+            if c == 0 {
+                self.nbsp()?;
+            }
 
             if let Some(ident) = expr.ident_token() {
                 self.word(ident.static_text())?;
@@ -896,6 +889,8 @@ impl<S: Write> Formatter<S> {
         if !no_cbox {
             self.end();
         }
+
+        self.comments_after_child(&expr.syntax(), SyntaxKind::EXPR_BLOCK)?;
 
         Ok(())
     }

@@ -103,13 +103,13 @@ impl<W: Write> Formatter<W> {
             } else if t.kind() == WHITESPACE {
                 if let Some(c) = ws_and_comments.next() {
                     if c.kind() != WHITESPACE {
-                        self.space();
+                        self.nbsp()?;
                         self.word(c.static_text().trim())?;
                         info.comment_added = true;
                     }
                 }
             } else {
-                self.space();
+                self.nbsp()?;
                 self.word(t.static_text().trim())?;
                 info.comment_added = true;
             }
@@ -244,11 +244,15 @@ impl<W: Write> Formatter<W> {
         Ok(())
     }
 
+    /// Adds the child comments after the given syntax kind,
+    /// but before the next node after that.
+    ///
+    /// Returns the amount of comments added
     pub(crate) fn comments_after_child(
         &mut self,
         node: &SyntaxNode,
         kind: SyntaxKind,
-    ) -> io::Result<()> {
+    ) -> io::Result<usize> {
         let comments_after = node
             .children_with_tokens()
             .skip_while(|t| t.kind() != kind)
@@ -256,8 +260,11 @@ impl<W: Write> Formatter<W> {
             .filter_map(SyntaxElement::into_token)
             .filter(|t| matches!(t.kind(), COMMENT_BLOCK | COMMENT_LINE));
 
+        let mut count = 0;
+
         let mut first = true;
         for comment in comments_after {
+            count += 1;
             if first {
                 self.space();
             }
@@ -275,7 +282,7 @@ impl<W: Write> Formatter<W> {
             }
         }
 
-        Ok(())
+        Ok(count)
     }
 
     /// Add comments that are before the node until another node
@@ -299,6 +306,29 @@ impl<W: Write> Formatter<W> {
         let count = comments_before.len();
 
         for comment in comments_before {
+            self.word(comment.static_text().trim())?;
+            self.hardbreak();
+        }
+
+        Ok(count)
+    }
+
+    /// Add comments that are before the node until another node
+    /// is encountered.
+    ///
+    /// Returns the amount of comments that were added.
+    pub(crate) fn add_standalone_comments_after(&mut self, expr: &SyntaxNode) -> io::Result<usize> {
+        let comments_after = expr
+            .siblings_with_tokens(Direction::Next)
+            .skip(1)
+            .take_while(|t| t.as_node().is_none())
+            .filter_map(SyntaxElement::into_token)
+            .filter(|t| matches!(t.kind(), COMMENT_LINE | COMMENT_BLOCK))
+            .collect::<Vec<_>>();
+
+        let count = comments_after.len();
+
+        for comment in comments_after {
             self.word(comment.static_text().trim())?;
             self.hardbreak();
         }
