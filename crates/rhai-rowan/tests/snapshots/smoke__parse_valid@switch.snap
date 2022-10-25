@@ -1,9 +1,8 @@
 ---
-source: crates/rowan/tests/smoke.rs
-assertion_line: 65
+source: crates/rhai-rowan/tests/smoke.rs
 expression: "format!(\"{:#?}\", parse.into_syntax())"
 ---
-RHAI@0..779
+RHAI@0..781
   COMMENT_LINE@0..53 "// This script runs a ..."
   WHITESPACE@53..55 "\n\n"
   STMT@55..123
@@ -86,10 +85,10 @@ RHAI@0..779
               PUNCT_BRACKET_END@121..122 "]"
     PUNCT_SEMI@122..123 ";"
   WHITESPACE@123..125 "\n\n"
-  STMT@125..779
-    ITEM@125..778
-      EXPR@125..778
-        EXPR_FOR@125..778
+  STMT@125..781
+    ITEM@125..780
+      EXPR@125..780
+        EXPR_FOR@125..780
           KW_FOR@125..128 "for"
           PAT@128..133
             WHITESPACE@128..129 " "
@@ -102,20 +101,20 @@ RHAI@0..779
             EXPR_IDENT@137..141
               IDENT@137..140 "arr"
               WHITESPACE@140..141 " "
-          EXPR_BLOCK@141..778
+          EXPR_BLOCK@141..780
             PUNCT_BRACE_START@141..142 "{"
             WHITESPACE@142..147 "\n    "
-            STMT@147..777
-              ITEM@147..777
-                EXPR@147..777
-                  EXPR_SWITCH@147..776
+            STMT@147..779
+              ITEM@147..779
+                EXPR@147..779
+                  EXPR_SWITCH@147..778
                     KW_SWITCH@147..153 "switch"
                     EXPR@153..159
                       WHITESPACE@153..154 " "
                       EXPR_IDENT@154..159
                         IDENT@154..158 "item"
                         WHITESPACE@158..159 " "
-                    SWITCH_ARM_LIST@159..776
+                    SWITCH_ARM_LIST@159..778
                       PUNCT_BRACE_START@159..160 "{"
                       WHITESPACE@160..169 "\n        "
                       COMMENT_LINE@169..192 "// Match single integer"
@@ -353,53 +352,54 @@ RHAI@0..779
                       WHITESPACE@678..687 "\n        "
                       COMMENT_LINE@687..702 "// Default case"
                       WHITESPACE@702..711 "\n        "
-                      SWITCH_ARM@711..775
+                      SWITCH_ARM@711..771
                         PUNCT_UNDERSCORE@711..712 "_"
-                        WHITESPACE@712..713 " "
-                        PUNCT_ARROW_FAT@713..715 "=>"
-                        EXPR@715..775
-                          EXPR_CALL@715..770
-                            EXPR@715..721
-                              WHITESPACE@715..716 " "
-                              EXPR_IDENT@716..721
-                                IDENT@716..721 "print"
-                            ARG_LIST@721..770
-                              PUNCT_PAREN_START@721..722 "("
-                              EXPR@722..769
-                                EXPR_LIT@722..769
-                                  LIT@722..769
-                                    LIT_STR_TEMPLATE@722..769
-                                      LIT_STR@722..740 "`Something else: <"
-                                      INTERPOLATION_START@740..742 "${"
-                                      LIT_STR_TEMPLATE_INTERPOLATION@742..746
-                                        STMT@742..746
-                                          ITEM@742..746
-                                            EXPR@742..746
-                                              EXPR_IDENT@742..746
-                                                IDENT@742..746 "item"
-                                      PUNCT_BRACE_END@746..747 "}"
-                                      LIT_STR@747..752 "> is "
-                                      INTERPOLATION_START@752..754 "${"
-                                      LIT_STR_TEMPLATE_INTERPOLATION@754..767
-                                        STMT@754..767
-                                          ITEM@754..767
-                                            EXPR@754..767
-                                              EXPR_CALL@754..767
-                                                EXPR@754..761
-                                                  EXPR_IDENT@754..761
-                                                    IDENT@754..761 "type_of"
-                                                ARG_LIST@761..767
-                                                  PUNCT_PAREN_START@761..762 "("
-                                                  EXPR@762..766
-                                                    EXPR_IDENT@762..766
-                                                      IDENT@762..766 "item"
-                                                  PUNCT_PAREN_END@766..767 ")"
-                                      PUNCT_BRACE_END@767..768 "}"
-                                      LIT_STR@768..769 "`"
-                              PUNCT_PAREN_END@769..770 ")"
-                          WHITESPACE@770..775 "\n    "
-                      PUNCT_BRACE_END@775..776 "}"
-                  WHITESPACE@776..777 "\n"
-            PUNCT_BRACE_END@777..778 "}"
-    WHITESPACE@778..779 "\n"
+                        WHITESPACE@712..714 "  "
+                        PUNCT_ARROW_FAT@714..716 "=>"
+                        EXPR@716..771
+                          EXPR_CALL@716..771
+                            EXPR@716..722
+                              WHITESPACE@716..717 " "
+                              EXPR_IDENT@717..722
+                                IDENT@717..722 "print"
+                            ARG_LIST@722..771
+                              PUNCT_PAREN_START@722..723 "("
+                              EXPR@723..770
+                                EXPR_LIT@723..770
+                                  LIT@723..770
+                                    LIT_STR_TEMPLATE@723..770
+                                      LIT_STR@723..741 "`Something else: <"
+                                      INTERPOLATION_START@741..743 "${"
+                                      LIT_STR_TEMPLATE_INTERPOLATION@743..747
+                                        STMT@743..747
+                                          ITEM@743..747
+                                            EXPR@743..747
+                                              EXPR_IDENT@743..747
+                                                IDENT@743..747 "item"
+                                      PUNCT_BRACE_END@747..748 "}"
+                                      LIT_STR@748..753 "> is "
+                                      INTERPOLATION_START@753..755 "${"
+                                      LIT_STR_TEMPLATE_INTERPOLATION@755..768
+                                        STMT@755..768
+                                          ITEM@755..768
+                                            EXPR@755..768
+                                              EXPR_CALL@755..768
+                                                EXPR@755..762
+                                                  EXPR_IDENT@755..762
+                                                    IDENT@755..762 "type_of"
+                                                ARG_LIST@762..768
+                                                  PUNCT_PAREN_START@762..763 "("
+                                                  EXPR@763..767
+                                                    EXPR_IDENT@763..767
+                                                      IDENT@763..767 "item"
+                                                  PUNCT_PAREN_END@767..768 ")"
+                                      PUNCT_BRACE_END@768..769 "}"
+                                      LIT_STR@769..770 "`"
+                              PUNCT_PAREN_END@770..771 ")"
+                      PUNCT_COMMA@771..772 ","
+                      WHITESPACE@772..777 "\n    "
+                      PUNCT_BRACE_END@777..778 "}"
+                  WHITESPACE@778..779 "\n"
+            PUNCT_BRACE_END@779..780 "}"
+    WHITESPACE@780..781 "\n"
 
