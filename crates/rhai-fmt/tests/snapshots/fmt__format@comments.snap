@@ -4,7 +4,7 @@ expression: formatted
 ---
 // I am a single line comment!
 
-let  /* I am a spy in a variable declaration! */ x = 5;
+let /* I am a spy in a variable declaration! */ x = 5;
 
 /* I am a simple
    multi-line

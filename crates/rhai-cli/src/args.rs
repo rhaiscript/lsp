@@ -1,13 +1,13 @@
 use std::path::PathBuf;
 
-use clap::{crate_version, ArgEnum, Parser, Subcommand};
+use clap::{crate_version, Parser, Subcommand, ValueEnum};
 
 #[derive(Clone, Parser)]
 #[clap(name = "rhai")]
 #[clap(bin_name = "rhai")]
 #[clap(version = crate_version!())]
 pub struct RhaiArgs {
-    #[clap(long, arg_enum, global = true, default_value = "auto")]
+    #[clap(long, global = true, default_value = "auto")]
     pub colors: Colors,
     /// Enable a verbose logging format.
     #[clap(long, global = true)]
@@ -82,7 +82,7 @@ pub struct FmtCommand {
     pub files: Option<String>,
 }
 
-#[derive(Clone, Copy, ArgEnum)]
+#[derive(Clone, Copy, ValueEnum)]
 pub enum Colors {
     /// Determine whether to colorize output automatically.
     Auto,

@@ -20,6 +20,8 @@ for p in 2..=MAX_NUMBER_TO_CHECK {
   if !prime_mask[p] {
     continue;
   }
+  //print(p);
+
   total_primes_found += 1;
 
   for i in range(2 * p, MAX_NUMBER_TO_CHECK + 1, p) {
