@@ -17,6 +17,6 @@ for item in arr {
         // Match another range
         0..100 => print(`A small odd number: ${item}`),
         // Default case
-        _ => print(`Something else: <${item}> is ${type_of(item)}`)
+        _  => print(`Something else: <${item}> is ${type_of(item)}`),
     }
 }

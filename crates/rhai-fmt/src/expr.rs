@@ -259,6 +259,7 @@ impl<S: Write> Formatter<S> {
         expr: rhai_rowan::ast::ExprSwitch,
     ) -> Result<(), io::Error> {
         self.word("switch ")?;
+
         if let Some(expr) = expr.expr() {
             self.fmt_expr(expr)?;
         }
@@ -269,11 +270,13 @@ impl<S: Write> Formatter<S> {
         if let Some(arm_list) = expr.switch_arm_list() {
             let arm_count = arm_list.arms().count();
             for (i, arm) in arm_list.arms().enumerate() {
-                if i != 0 {
-                    self.hardbreak();
-                }
+                let is_last = i + 1 == arm_count;
 
-                if let Some(pat) = arm.pattern_expr() {
+                self.add_standalone_comments_before(&arm.syntax())?;
+
+                if arm.discard_token().is_some() {
+                    self.word("_ ")?;
+                } else if let Some(pat) = arm.pattern_expr() {
                     self.fmt_expr(pat)?;
                 }
 
@@ -288,7 +291,6 @@ impl<S: Write> Formatter<S> {
                     self.fmt_expr(expr)?;
                 }
 
-                let is_last = i + 1 == arm_count;
                 self.trailing_comma(is_last)?;
             }
         }

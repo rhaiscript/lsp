@@ -15,6 +15,9 @@
 //!   // 3. also with whitespace
 //! }
 //! ```
+//!
+//! This file also contains utilities for comments in
+//! other positions.
 
 #![allow(dead_code)]
 use rhai_rowan::syntax::{
@@ -94,25 +97,22 @@ impl<W: Write> Formatter<W> {
             .take_while(|e| matches!(e.kind(), WHITESPACE | COMMENT_BLOCK | COMMENT_LINE))
             .filter_map(SyntaxElement::into_token);
 
-        match ws_and_comments.next() {
-            Some(t) => {
-                if t.kind() == WHITESPACE && break_count(&t) > 0 {
-                    return Ok(info);
-                } else if t.kind() == WHITESPACE {
-                    if let Some(c) = ws_and_comments.next() {
-                        if c.kind() != WHITESPACE {
-                            self.space();
-                            self.word(c.static_text().trim())?;
-                            info.comment_added = true;
-                        }
+        if let Some(t) = ws_and_comments.next() {
+            if t.kind() == WHITESPACE && break_count(&t) > 0 {
+                return Ok(info);
+            } else if t.kind() == WHITESPACE {
+                if let Some(c) = ws_and_comments.next() {
+                    if c.kind() != WHITESPACE {
+                        self.space();
+                        self.word(c.static_text().trim())?;
+                        info.comment_added = true;
                     }
-                } else {
-                    self.space();
-                    self.word(t.static_text().trim())?;
-                    info.comment_added = true;
                 }
+            } else {
+                self.space();
+                self.word(t.static_text().trim())?;
+                info.comment_added = true;
             }
-            None => {}
         }
 
         Ok(info)
@@ -276,6 +276,34 @@ impl<W: Write> Formatter<W> {
         }
 
         Ok(())
+    }
+
+    /// Add comments that are before the node until another node
+    /// is encountered.
+    ///
+    /// Returns the amount of comments that were added.
+    pub(crate) fn add_standalone_comments_before(
+        &mut self,
+        expr: &SyntaxNode,
+    ) -> io::Result<usize> {
+        let mut comments_before = expr
+            .siblings_with_tokens(Direction::Prev)
+            .skip(1)
+            .take_while(|t| t.as_node().is_none())
+            .filter_map(SyntaxElement::into_token)
+            .filter(|t| matches!(t.kind(), COMMENT_LINE | COMMENT_BLOCK))
+            .collect::<Vec<_>>();
+
+        comments_before.reverse();
+
+        let count = comments_before.len();
+
+        for comment in comments_before {
+            self.word(comment.static_text().trim())?;
+            self.hardbreak();
+        }
+
+        Ok(count)
     }
 }
 
