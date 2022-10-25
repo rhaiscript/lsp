@@ -37,6 +37,10 @@ export interface Environment {
    */
   readFile: (path: string) => Promise<Uint8Array>;
   /**
+   * Write a file at the given path.
+   */
+  writeFile: (path: string, data: Uint8Array) => Promise<void>;
+  /**
    * Search a glob file pattern and return the matched files.
    */
   glob: (pattern: string) => Array<string>;
@@ -93,6 +97,7 @@ export function convertEnv(env: Environment): any {
     js_url_to_file_path: env.urlToFilePath,
     js_sleep: env.sleep,
     js_read_file: env.readFile,
+    js_write_file: env.writeFile,
   };
 }
 

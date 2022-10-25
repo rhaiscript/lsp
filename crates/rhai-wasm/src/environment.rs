@@ -171,6 +171,7 @@ pub(crate) struct WasmEnvironment {
     js_on_stderr: Function,
     js_glob_files: Function,
     js_read_file: Function,
+    js_write_file: Function,
     js_sleep: Function,
     js_is_absolute: Function,
     js_cwd: Function,
@@ -201,6 +202,9 @@ impl From<JsValue> for WasmEnvironment {
                 .unwrap()
                 .into(),
             js_read_file: js_sys::Reflect::get(&val, &JsValue::from_str("js_read_file"))
+                .unwrap()
+                .into(),
+            js_write_file: js_sys::Reflect::get(&val, &JsValue::from_str("js_write_file"))
                 .unwrap()
                 .into(),
             js_is_absolute: js_sys::Reflect::get(&val, &JsValue::from_str("js_is_absolute"))
@@ -306,6 +310,18 @@ impl Environment for WasmEnvironment {
             .map_err(|err| anyhow!("{:?}", err))?;
 
         Ok(Uint8Array::from(ret).to_vec())
+    }
+
+    async fn write_file(&self, path: &Path, bytes: &[u8]) -> Result<(), anyhow::Error> {
+        let path_str = JsValue::from_str(&path.to_string_lossy());
+        let this = JsValue::null();
+        let data = JsValue::from(js_sys::Uint8Array::from(bytes));
+        let res: JsValue = self.js_write_file.call2(&this, &path_str, &data).unwrap();
+
+        JsFuture::from(Promise::from(res))
+            .await
+            .map(|_| ())
+            .map_err(|err| anyhow!("{:?}", err))
     }
 
     fn is_absolute(&self, path: &Path) -> bool {
