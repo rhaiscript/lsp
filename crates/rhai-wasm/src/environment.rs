@@ -297,7 +297,7 @@ impl Environment for WasmEnvironment {
             .js_glob_files
             .call1(&this, &JsValue::from_str(glob))
             .unwrap();
-        res.into_serde().map_err(|err| anyhow!("{err}"))
+        serde_wasm_bindgen::from_value(res).map_err(|err| anyhow!("{err}"))
     }
 
     async fn read_file(&self, path: &Path) -> Result<Vec<u8>, anyhow::Error> {
