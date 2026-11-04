@@ -43,7 +43,8 @@ use test_case::test_case;
 #[test_case("unary_ops", include_str!("../../../testdata/valid/unary_ops.rhai"))]
 #[test_case("v1_9_0_switch_duplicate", include_str!("../../../testdata/versions/v1-9-0/switch-duplicate.rhai"))]
 #[test_case("v1_9_0_switch_multi_values", include_str!("../../../testdata/versions/v1-9-0/switch-multi-values.rhai"))]
-#[test_case("v1_9_0_module_doc", include_str!("../../../testdata/versions/v1-9-0/module-doc.rhai") => ignore["//! lexed as COMMENT_LINE in LSP"])]
+#[test_case("v1_9_0_module_doc", include_str!("../../../testdata/versions/v1-9-0/module-doc.rhai"))]
+#[test_case("v1_9_0_function_pointer_shorthand", include_str!("../../../testdata/versions/v1-9-0/function-pointer-shorthand.rhai"))]
 fn parse_valid(name: &str, src: &str) {
     let parse = Parser::new(src)
         // This operator does not actually exist among the scripts.
@@ -55,14 +56,13 @@ fn parse_valid(name: &str, src: &str) {
     engine.set_max_expr_depths(0, 0);
 
     let compile_result = if src.starts_with("#!") {
-        engine
-            .compile(
-                src.lines()
-                    .skip(1)
-                    .map(ToString::to_string)
-                    .collect::<Vec<String>>()
-                    .join("\n"),
-            )
+        engine.compile(
+            src.lines()
+                .skip(1)
+                .map(ToString::to_string)
+                .collect::<Vec<String>>()
+                .join("\n"),
+        )
     } else {
         engine.compile(src)
     };
@@ -74,6 +74,32 @@ fn parse_valid(name: &str, src: &str) {
     //         insta::assert_snapshot!(format!("{:#?}", parse.into_syntax()));
     //     }
     // );
+}
+
+#[test_case("v1_9_0_reserved_left_right_pipe", include_str!("../../../testdata/versions/v1-9-0/reserved-left-right-pipe.rhai"))]
+fn parse_invalid(name: &str, src: &str) {
+    let parse = Parser::new(src)
+        // This operator does not actually exist among the scripts.
+        .with_operator("op", Operator::default())
+        .parse_script();
+    assert!(!parse.errors.is_empty(), "{:#?}", parse.errors);
+
+    let mut engine = rhai::Engine::new();
+    engine.set_max_expr_depths(0, 0);
+
+    let compile_result = if src.starts_with("#!") {
+        engine.compile(
+            src.lines()
+                .skip(1)
+                .map(ToString::to_string)
+                .collect::<Vec<String>>()
+                .join("\n"),
+        )
+    } else {
+        engine.compile(src)
+    };
+
+    assert!(compile_result.is_err());
 }
 
 #[test]
