@@ -1,4 +1,4 @@
-// This script simulates object-oriented programming (OOP) techniques using closures.
+//! This script simulates object-oriented programming (OOP) techniques using closures.
 
 // External variable that will be captured.
 let last_value = ();

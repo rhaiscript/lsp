@@ -1,8 +1,9 @@
-// This script uses the Sieve of Eratosthenes to calculate prime numbers.
+//! This script uses the Sieve of Eratosthenes to calculate prime numbers.
 
 let now = timestamp();
 
-const MAX_NUMBER_TO_CHECK = 1_000_000;     // 9592 primes <= 100000
+const ANSWER = 78_498;
+const MAX_NUMBER_TO_CHECK = 1_000_000;
 
 let prime_mask = [];
 prime_mask.pad(MAX_NUMBER_TO_CHECK + 1, true);
@@ -27,6 +28,6 @@ for p in 2..=MAX_NUMBER_TO_CHECK {
 print(`Total ${total_primes_found} primes <= ${MAX_NUMBER_TO_CHECK}`);
 print(`Run time = ${now.elapsed} seconds.`);
 
-if total_primes_found != 78_498 {
-    print("The answer is WRONG! Should be 78,498!");
+if total_primes_found != ANSWER {
+    print(`The answer is WRONG! Should be ${ANSWER}!`);
 }

@@ -1,4 +1,4 @@
-// This script runs for-loops
+//! This script runs for-loops
 
 const MAX = 1_000_000;
 

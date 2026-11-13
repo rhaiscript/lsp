@@ -1,4 +1,4 @@
-// This script runs a complex expression.
+//! This script runs a complex expression.
 
 print("The result should be 230:");
 

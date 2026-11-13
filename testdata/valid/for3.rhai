@@ -1,4 +1,4 @@
-// This script runs for-loops with closures.
+//! This script runs for-loops with closures.
 
 const MAX = 100;
 const CHECK = ((MAX - 1) ** 2) * MAX;

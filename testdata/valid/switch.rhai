@@ -1,4 +1,4 @@
-// This script runs a switch statement in a for-loop.
+//! This script runs a switch statement in a for-loop.
 
 let arr = [42, 123.456, "hello", true, "hey", 'x', 999, 1, 2, 3, 4];
 
@@ -17,6 +17,6 @@ for item in arr {
         // Match another range
         0..100 => print(`A small odd number: ${item}`),
         // Default case
-        _  => print(`Something else: <${item}> is ${type_of(item)}`),
+        _ => print(`Something else: <${item}> is ${type_of(item)}`)
     }
 }

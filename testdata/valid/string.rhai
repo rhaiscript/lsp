@@ -1,4 +1,4 @@
-// This script tests string operations.
+//! This script tests string operations.
 
 print("hello");
 print("this\nis \\ nice");      // escape sequences

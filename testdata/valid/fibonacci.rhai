@@ -1,5 +1,5 @@
-// This script calculates the n-th Fibonacci number using a really dumb algorithm
-// to test the speed of the scripting engine.
+//! This script calculates the n-th Fibonacci number using a really dumb algorithm
+//! to test the speed of the scripting engine.
 
 const TARGET = 28;
 const REPEAT = 5;

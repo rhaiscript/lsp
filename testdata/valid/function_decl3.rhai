@@ -1,5 +1,4 @@
-// This script defines a function with many parameters.
-// 
+//! This script defines a function with many parameters.
 
 const KEY = 38;
 

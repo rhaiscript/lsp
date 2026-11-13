@@ -1,4 +1,4 @@
-// This script tests object maps and strings.
+//! This script tests object maps and strings.
 
 print("Ready... Go!");
 

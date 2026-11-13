@@ -4,3 +4,4 @@ Cargo.lock
 yarn-error.log
 .vscode
 .cargo/config.toml
+.idea/

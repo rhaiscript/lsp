@@ -1,4 +1,4 @@
-// This script defines a function that acts as a method.
+//! This script defines a function that acts as a method.
 
 // Use 'this' to refer to the object of a method call
 fn action(x, y) {

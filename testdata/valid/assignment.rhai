@@ -1,4 +1,4 @@
-// This script contains a single assignment statement.
+//! This script contains a single assignment statement.
 
 let x = 78;
 

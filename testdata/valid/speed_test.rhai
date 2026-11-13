@@ -1,4 +1,4 @@
-// This script runs 1 million iterations to test the speed of the scripting engine.
+//! This script runs 1 million iterations to test the speed of the scripting engine.
 
 let now = timestamp();
 let x = 1_000_000;

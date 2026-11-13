@@ -1,4 +1,4 @@
-// This script runs a while loop.
+//! This script runs a while loop.
 
 let x = 10;
 

@@ -1,4 +1,4 @@
-// This script runs for-loops.
+//! This script runs for-loops.
 
 let arr = [1, true, 123.456, "hello", 3, 42];
 

@@ -1,4 +1,4 @@
-// This script defines a function with two parameters and local variables.
+//! This script defines a function with two parameters and local variables.
 
 let a = 3;
 

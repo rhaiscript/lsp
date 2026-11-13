@@ -1,3 +1,5 @@
+//! This script illustrates how to put doc-comments on functions.
+
 /// The function `foo`, which prints `hello, world!` and a magic number,
 /// accepts three parameters.
 ///

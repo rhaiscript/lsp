@@ -1,4 +1,4 @@
-// This script imports an external script as a module.
+//! This script imports an external script as a module.
 
 import "loop" as x;
 

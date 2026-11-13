@@ -1,4 +1,4 @@
-// This script runs a single expression.
+//! This script runs a single expression.
 
 print("The result should be 46:");
 

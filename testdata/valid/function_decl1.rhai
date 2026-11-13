@@ -1,4 +1,4 @@
-// This script defines a function and calls it.
+//! This script defines a function and calls it.
 
 fn call_me() {
     return 3;

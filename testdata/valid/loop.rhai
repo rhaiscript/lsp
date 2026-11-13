@@ -1,4 +1,4 @@
-// This script runs an infinite loop, ending it with a break statement.
+//! This script runs an infinite loop, ending it with a break statement.
 
 let x = 10;
 

@@ -1,4 +1,4 @@
-// This script runs an if expression.
+//! This script runs an if expression.
 
 let a = 42;
 let b = 123;

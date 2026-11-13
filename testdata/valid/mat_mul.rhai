@@ -1,4 +1,4 @@
-// This script simulates multi-dimensional matrix calculations.
+//! This script simulates multi-dimensional matrix calculations.
 
 const SIZE = 50;
 
