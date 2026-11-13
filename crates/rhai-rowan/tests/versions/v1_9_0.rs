@@ -49,3 +49,17 @@ fn reserved_right_pipe() {
     assert!(first.unwrap().is_reserved_keyword(), "first token is not reserved: {first:#?}");
     assert!(second.is_none(), "second token was {second:#?}");
 }
+
+#[test]
+fn module_doc() {
+    let parse = Parser::new("//! Module docs.\n").parse_script();
+    assert!(parse.errors.is_empty());
+    let rhai = Rhai::cast(parse.into_syntax()).unwrap();
+    assert_eq!(rhai.script_docs(), "Module docs.\n");
+
+    let mut lexer = SyntaxKind::lexer("//!");
+    let first = lexer.next();
+    assert!(first.is_some());
+    let first = first.unwrap();
+    assert_ne!(first, SyntaxKind::COMMENT_LINE, "//! should be module documentation: {first:#?}");
+}
